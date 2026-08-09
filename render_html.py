@@ -568,3 +568,12 @@ html = TEMPLATE.replace("__DATA_JS__", DATA_JS)
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html)
 print("WROTE", OUT, "bytes=", len(html))
+
+# 同时输出 public/index.html：规范入口文件名，供 Cloudflare Pages 等静态托管识别。
+# 内容与主看板完全一致（单文件自包含），部署时只需指向 public/ 目录。
+pub_dir = os.path.join(HERE, "public")
+os.makedirs(pub_dir, exist_ok=True)
+pub_out = os.path.join(pub_dir, "index.html")
+with open(pub_out, "w", encoding="utf-8") as f:
+    f.write(html)
+print("WROTE", pub_out, "bytes=", len(html))
