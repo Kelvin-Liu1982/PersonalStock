@@ -1,0 +1,21 @@
+# ---- 构建中间产物 ----
+# build_tracker.py 生成、render_html.py 读取，每次构建都会重新生成，不入库
+_data_js.txt
+# build_financials.py 的东方财富 API 抽取回退缓存，每次构建会重新生成，不入库
+财报原始数据_缓存.json
+
+# ---- Excel 临时锁文件（打开 xlsx 时生成）----
+~$*.xlsx
+
+# ---- Python ----
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+
+# ---- 系统/编辑器 ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
