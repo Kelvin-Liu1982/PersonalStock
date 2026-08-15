@@ -35,21 +35,34 @@
       if (mode === 'rebuild') {
         const t0 = Date.now();
         fetch(endpoint, { cache: 'no-store' })
-          .then((r) => r.json().then((o) => ({ status: r.status, o })))
-          .then(({ status, o }) => {
+          .then(async (r) => {
             const dt = ((Date.now() - t0) / 1000).toFixed(1);
-            if (o && o.ok) {
+            let o = null;
+            try {
+              o = await r.json();
+            } catch (e) {
+              // 响应不是 JSON（例如线上 404 HTML/空 body）
+            }
+            if (r.ok && o && o.ok) {
               if (msg) {
                 msg.className = 'qmsg ok';
                 msg.textContent = '✓ ' + o.msg + '（' + dt + 's）';
               }
               setTimeout(() => location.reload(), 800);
-            } else {
+            } else if (o && o.msg) {
+              // 本地 rebuild 服务端返回了明确的错误 JSON
               if (msg) {
                 msg.className = 'qmsg err';
-                msg.textContent = '✗ ' + (o && o.msg || 'HTTP ' + status);
+                msg.textContent = '✗ ' + o.msg;
               }
               if (label) label.textContent = '重试';
+            } else {
+              // 非 JSON 或非 OK 响应：线上不存在 /rebuild，降级为静态快照提示
+              if (msg) {
+                msg.className = 'qmsg';
+                msg.textContent = infoMsg;
+              }
+              if (label) label.textContent = '刷新行情';
             }
           })
           .catch((e) => {
