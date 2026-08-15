@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方向C · 状态分组看板（中煤能源监测）</title>
+<style>
+  :root{--navy:#1f3a5f;--navy2:#2c5282;--ink:#1f2937;--muted:#6b7280;--line:#e3e7ec;
+        --good:#1e7a46;--watch:#c07a00;--alert:#c0392b;--pend:#2c5282;--bg:#eceff2;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;}
+  header{background:var(--navy);color:#fff;padding:16px 24px;}
+  header h1{margin:0;font-size:18px;font-weight:600;}
+  header .sub{font-size:12.5px;opacity:.8;margin-top:2px;}
+  .wrap{display:flex;gap:14px;padding:16px 24px;align-items:flex-start;}
+  .rail{width:150px;flex:0 0 auto;background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 12px;}
+  .rail h4{margin:0 0 8px;font-size:12.5px;color:var(--navy);}
+  .rail .dim{display:flex;align-items:center;gap:7px;padding:4px 0;font-size:12px;}
+  .rail .ch{width:20px;height:20px;border-radius:5px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .board{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .col{background:#fff;border:1px solid var(--line);border-radius:9px;display:flex;flex-direction:column;min-height:200px;}
+  .col-head{padding:8px 11px;font-weight:700;font-size:13px;color:#fff;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;}
+  .col-head.g{background:var(--good);}.col-head.w{background:var(--watch);}.col-head.a{background:var(--alert);}.col-head.p{background:var(--pend);}
+  .col-head .cnt{background:rgba(255,255,255,.25);border-radius:10px;padding:0 8px;font-size:11px;}
+  .col-body{padding:10px;display:flex;flex-direction:column;gap:9px;}
+  .kcard{border:1px solid var(--line);border-left:3px solid var(--muted);border-radius:7px;padding:8px 10px;background:#fafbfc;}
+  .kcard.g{border-left-color:var(--good);}.kcard.w{border-left-color:var(--watch);}.kcard.a{border-left-color:var(--alert);}.kcard.p{border-left-color:var(--pend);}
+  .kcard .top{display:flex;justify-content:space-between;align-items:center;}
+  .kcard .ch{width:18px;height:18px;border-radius:4px;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  .kcard .name{font-weight:600;font-size:12.5px;margin:4px 0 2px;}
+  .kcard .val{font-size:13px;font-weight:700;color:var(--navy2);}
+  .kcard .thr{font-size:11px;color:var(--muted);margin-top:3px;}
+  .foot{padding:4px 24px 18px;font-size:11.5px;color:var(--muted);}
+  @media(max-width:880px){.wrap{flex-direction:column;}.rail{width:100%;}.board{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:520px){.board{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<header><h1>中煤能源（601898）业务监测看板 · 方向C：状态分组</h1>
+<div class="sub">按指标当前状态分列（达标/观察/预警/待验证），卡片可在列间迁移 ｜ 内容示意（选定后展开全部指标）</div></header>
+
+<div class="wrap">
+  <div class="rail"><h4>八大维度</h4>
+    <div class="dim"><span class="ch" style="background:#7a5230">一</span>产销储量</div>
+    <div class="dim"><span class="ch" style="background:#8a6d3b">二</span>价格成本</div>
+    <div class="dim"><span class="ch" style="background:#2c5282">三</span>板块协同</div>
+    <div class="dim"><span class="ch" style="background:#1e7a46">四</span>财务表现</div>
+    <div class="dim"><span class="ch" style="background:#c0392b">五</span>政策环境</div>
+    <div class="dim"><span class="ch" style="background:#b8860b">六</span>产能Capex</div>
+    <div class="dim"><span class="ch" style="background:#5b6b7a">七</span>市场客户</div>
+    <div class="dim"><span class="ch" style="background:#3a3f4a">八</span>估值回报</div>
+  </div>
+
+  <div class="board">
+    <div class="col"><div class="col-head g">达标<span class="cnt">6</span></div><div class="col-body">
+      <div class="kcard g"><div class="top"><span class="ch" style="background:#1e7a46">四</span></div><div class="name">经营现金流</div><div class="val">298 亿</div><div class="thr">为净利 1.6 倍+</div></div>
+      <div class="kcard g"><div class="top"><span class="ch" style="background:#1e7a46">四</span></div><div class="name">资产负债率</div><div class="val">45.8%</div><div class="thr">&lt;55% 安全</div></div>
+      <div class="kcard g"><div class="top"><span class="ch" style="background:#8a6d3b">二</span></div><div class="name">自产煤吨成本</div><div class="val">251.5 元</div><div class="thr">同比-10.7%</div></div>
+      <div class="kcard g"><div class="top"><span class="ch" style="background:#8a6d3b">二</span></div><div class="name">长协比例</div><div class="val">75%</div><div class="thr">执行率≥90%</div></div>
+      <div class="kcard g"><div class="top"><span class="ch" style="background:#2c5282">三</span></div><div class="name">发电量</div><div class="val">180 亿度</div><div class="thr">+34.7%</div></div>
+      <div class="kcard g"><div class="top"><span class="ch" style="background:#3a3f4a">八</span></div><div class="name">PE / PB</div><div class="val">11x</div><div class="thr">破净为机会</div></div>
+    </div></div>
+
+    <div class="col"><div class="col-head w">观察<span class="cnt">5</span></div><div class="col-body">
+      <div class="kcard w"><div class="top"><span class="ch" style="background:#8a6d3b">二</span></div><div class="name">自产煤吨售价</div><div class="val">448 元</div><div class="thr">破400 预警</div></div>
+      <div class="kcard w"><div class="top"><span class="ch" style="background:#2c5282">三</span></div><div class="name">煤化工产量</div><div class="val">606 万</div><div class="thr">开工率跟踪</div></div>
+      <div class="kcard w"><div class="top"><span class="ch" style="background:#2c5282">三</span></div><div class="name">聚烯烃价格</div><div class="val">+10%</div><div class="thr">随原油回落</div></div>
+      <div class="kcard w"><div class="top"><span class="ch" style="background:#3a3f4a">八</span></div><div class="name">分红比率</div><div class="val">30~35%</div><div class="thr">提至40%+ 利好</div></div>
+      <div class="kcard w"><div class="top"><span class="ch" style="background:#5b6b7a">七</span></div><div class="name">钢铁需求</div><div class="val">开工率</div><div class="thr">钢厂检修风险</div></div>
+    </div></div>
+
+    <div class="col"><div class="col-head a">预警<span class="cnt">1</span></div><div class="col-body">
+      <div class="kcard a"><div class="top"><span class="ch" style="background:#c0392b">五</span></div><div class="name">安监环保限产</div><div class="val">事件</div><div class="thr">重大事故→停产</div></div>
+    </div></div>
+
+    <div class="col"><div class="col-head p">待验证 / 建设中<span class="cnt">3</span></div><div class="col-body">
+      <div class="kcard p"><div class="top"><span class="ch" style="background:#7a5230">一</span></div><div class="name">自产煤产量</div><div class="val">1.351 亿</div><div class="thr">vs 年度计划</div></div>
+      <div class="kcard p"><div class="top"><span class="ch" style="background:#b8860b">六</span></div><div class="name">里必+苇子沟</div><div class="val">640 万</div><div class="thr">2026底~27 达产</div></div>
+      <div class="kcard p"><div class="top"><span class="ch" style="background:#b8860b">六</span></div><div class="name">榆林二期</div><div class="val">90 万吨</div><div class="thr">2027 满产</div></div>
+    </div></div>
+  </div>
+</div>
+<div class="foot">方向C · 状态分组看板：最贴近「看板」本义——按状态分列，一张卡片=一个可追踪指标，状态变化即跨列迁移；左下角维度色标用于快速定位归属。</div>
+</body></html>

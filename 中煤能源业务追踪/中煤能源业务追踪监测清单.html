@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中煤能源（601898.SH / 01898.HK）业务追踪监测看板</title>
+<style>
+:root{
+  --bg:#f4f6f8;--card:#fff;--line:#e3e8ee;--ink:#1f2733;--dim:#7a8694;
+  --acc:#c8102e;--acc2:#15616d;--ok:#2e9e6b;--warn:#d98a14;--todo:#9aa6b2;--soft:#f7f9fb;
+  --navy:#1e3a5f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+img{max-width:100%}
+
+/* Header (sticky) */
+header.top{background:var(--card);border-bottom:1px solid var(--line);padding:16px 28px;position:sticky;top:0;z-index:20;box-shadow:0 1px 4px rgba(20,30,50,.04)}
+.top h1{font-size:19px;font-weight:700;letter-spacing:.5px}
+.top .sub{color:var(--dim);font-size:12px;margin-top:3px}
+.wrap{max-width:1280px;margin:0 auto;padding:22px 22px 90px}
+
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 4px}
+.meta span{background:#fff;color:var(--dim);padding:5px 12px;border-radius:16px;font-size:12px;border:1px solid var(--line)}
+
+/* Quote bar (static snapshot) */
+.quotebar{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:14px 0 22px;display:flex;flex-direction:column;gap:10px}
+.quotebar .qhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.quotebar .qname{font-size:16px;font-weight:700}
+.quotebar .qcode{font-size:12px;color:var(--dim)}
+.quotebar .qdate{margin-left:auto;font-size:11px;color:var(--todo)}
+.quotebar .qrefresh{font-size:11px;color:#fff;background:var(--acc2);border:none;border-radius:10px;padding:4px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.quotebar .qrefresh:hover{background:#0e4a55}
+.quotebar .qrefresh:disabled{background:var(--dim);cursor:not-allowed}
+.quotebar .qrefresh .spinner{display:inline-block;width:10px;height:10px;border:1.5px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite}
+.quotebar .qrefresh .spinner.hidden{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.quotebar .qmsg{font-size:10.5px;color:var(--dim);margin-left:6px}
+.quotebar .qmsg.ok{color:var(--ok)} .quotebar .qmsg.err{color:var(--acc)}
+.quotebar .qrow{display:flex;gap:20px;flex-wrap:wrap}
+.quotebar .qgroup{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.quotebar .qg-title{font-size:11px;font-weight:700;color:#fff;background:var(--acc2);padding:2px 8px;border-radius:10px}
+.quotebar .qitem{display:flex;flex-direction:column;align-items:flex-start;min-width:56px}
+.quotebar .ql{font-size:10.5px;color:var(--dim);white-space:nowrap}
+.quotebar .qv{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25}
+.quotebar .qv.up{color:var(--acc)} .quotebar .qv.down{color:var(--ok)} .quotebar .qv.flat{color:var(--dim)}
+.quotebar .qv small{font-size:11px;font-weight:400;color:var(--dim);margin-left:2px}
+
+/* Status bar */
+.statusbar{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0 22px}
+.stbox{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;box-shadow:0 1px 3px rgba(20,30,50,.04);display:flex;align-items:center;gap:12px}
+.sticon{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+.sticon.red{background:#fde8e8;color:var(--acc)} .sticon.navy{background:#e8f0f8;color:var(--navy)}
+.sticon.green{background:#e7f6ee;color:var(--ok)} .sticon.amber{background:#fdf3e3;color:var(--warn)}
+.stval{font-size:20px;font-weight:700;color:var(--ink)} .stlab{font-size:12px;color:var(--dim)}
+
+/* Notes */
+.note{background:#fff8e8;border:1px solid #f0d98a;border-radius:10px;padding:12px 16px;font-size:13px;color:#6b5310;margin:16px 0}
+.note b{color:#8a6500}
+.bignote{background:var(--soft);border:1px solid var(--line);border-left:3px solid var(--acc2);border-radius:0 8px 8px 0;padding:10px 14px;font-size:12.5px;color:var(--dim);margin:14px 0;line-height:1.7}
+
+/* Section titles */
+.sec-title{font-size:18px;font-weight:700;margin:38px 0 16px;color:var(--ink);display:flex;align-items:center;gap:10px}
+.sec-title::before{content:"";width:5px;height:20px;background:var(--acc);border-radius:3px}
+.sec-sub{color:var(--dim);font-size:13px;margin:-10px 0 16px}
+
+/* Cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(20,30,50,.04);display:flex;flex-direction:column}
+.card .hd{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.card .idx{width:26px;height:26px;border-radius:7px;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+.card h3{font-size:15px;font-weight:700}
+.chip{margin-left:auto;font-size:10px;padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
+.chip.ok{background:#e7f6ee;color:var(--ok)} .chip.part{background:#fdf3e3;color:var(--warn)} .chip.todo{background:#f0f2f5;color:var(--todo)}
+.card .desc{font-size:12px;color:var(--dim);margin-bottom:10px}
+.metric{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
+.metric:last-of-type{border-bottom:none}
+.metric .k{color:var(--dim);font-size:13px}
+.metric .right{text-align:right;display:flex;align-items:center;gap:2px}
+.metric .v{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.metric .v.up{color:var(--acc)} .metric .v.down{color:var(--ok)} .metric .v.todo{color:var(--todo);font-weight:400;font-size:12px}
+.metric .v.ex{color:var(--ink);font-weight:600;font-size:12px}
+.metric .chg{font-size:11px;color:var(--dim);margin-left:4px;white-space:nowrap}
+.metric .chg.up{color:var(--acc)} .metric .chg.down{color:var(--ok)}
+.spark{width:62px;height:28px;flex-shrink:0;display:inline-block;vertical-align:middle;margin-left:6px}
+.spark img,.spark svg{width:100%;height:100%;display:block}
+.tbtn{font-size:10px;color:var(--acc);border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:2px 8px;cursor:pointer;margin-left:6px;white-space:nowrap}
+.tbtn:hover{background:#ffeef0}
+.card .note{font-size:11px;color:var(--dim);background:var(--soft);border:none;border-left:3px solid var(--acc2);padding:7px 10px;border-radius:0 6px 6px 0;margin-top:10px;line-height:1.6}
+.card .foot{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:11px;color:var(--todo);border-top:1px solid var(--line);padding-top:9px}
+.tag{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11px;font-weight:600;margin-left:5px}
+.tag.d{background:#fde8e8;color:var(--acc)} .tag.w{background:#fdf3e3;color:var(--warn)} .tag.m{background:#e8f0f8;color:var(--navy)}
+.tag.q{background:#e7f6ee;color:var(--ok)} .tag.e{background:#f0f2f5;color:var(--todo)}
+
+/* Method cards */
+.method{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(20,30,50,.04)}
+.mcard h4{margin:0 0 8px;font-size:14px;color:var(--acc2)}
+.mcard .big{font-size:22px;font-weight:700;color:var(--ink);margin-bottom:6px}
+.mcard p{margin:0;font-size:12.5px;color:var(--dim);line-height:1.55}
+
+/* Tables */
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;background:var(--card);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(20,30,50,.04)}
+th,td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+thead th{background:var(--acc2);color:#fff;font-weight:600}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:#fafbfc}
+td.k{color:var(--ink);font-weight:600;white-space:nowrap}
+
+/* Scenario */
+.scn{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:14px 0}
+.scn .box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;box-shadow:0 1px 3px rgba(20,30,50,.04);border-top:4px solid var(--line)}
+.scn .bear{border-top-color:var(--acc)} .scn .base{border-top-color:var(--navy)} .scn .bull{border-top-color:var(--ok)}
+.scn h4{margin:0 0 6px;font-size:15px} .scn .price{font-size:22px;font-weight:700;margin:8px 0}
+.bear h4,.bear .price{color:var(--acc)} .base h4,.base .price{color:var(--navy)} .bull h4,.bull .price{color:var(--ok)}
+.scn ul{margin:8px 0 0;padding-left:18px;font-size:12.5px;color:var(--dim)} .scn li{margin:4px 0}
+
+/* Trend section */
+.trend-section{margin-top:14px}
+.trend-section details{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:12px;box-shadow:0 1px 3px rgba(16,24,40,.04)}
+.trend-section summary{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;font-weight:650;color:var(--ink);font-size:15px;list-style:none}
+.trend-section summary::-webkit-details-marker{display:none}
+.trend-section summary::before{content:'▶';font-size:11px;color:var(--dim);transition:transform .15s}
+.trend-section details[open] summary::before{transform:rotate(90deg)}
+.trend-section .trend-body{padding:0 16px 16px}
+.trend-section .trend-body img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;margin-bottom:10px;background:#fff}
+.trend-section .trend-foot{font-size:11px;color:var(--dim);margin-top:2px}
+
+/* Trend modal */
+.trend-modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(15,23,42,.55);align-items:center;justify-content:center;padding:20px}
+.trend-modal.active{display:flex}
+.trend-modal-box{position:relative;width:100%;max-width:1100px;max-height:90vh;background:#fff;border-radius:14px;box-shadow:0 20px 50px rgba(15,23,42,.25);overflow:auto;padding:18px 20px 22px}
+.trend-modal-close{position:absolute;top:10px;right:14px;width:32px;height:32px;border:none;background:transparent;font-size:24px;color:#6b7280;cursor:pointer;border-radius:50%}
+.trend-modal-close:hover{background:#f3f4f6;color:#1f2937}
+.trend-modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:12px}
+.trend-modal-title{margin:0;font-size:16px;font-weight:700;color:var(--navy)}
+.period-toggle{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.period-toggle .pt{padding:5px 14px;border:none;background:#fff;color:#6b7280;font-size:12.5px;cursor:pointer}
+.period-toggle .pt + .pt{border-left:1px solid var(--line)}
+.period-toggle .pt.active{background:var(--navy);color:#fff}
+.trend-modal img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px}
+
+/* Log inputs */
+.log input{border:1px solid var(--line);width:100%;padding:5px 7px;font-size:12.5px;border-radius:4px}
+
+footer.foot2{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);font-size:12px;color:var(--dim)}
+
+@media (max-width:1100px){ .statusbar{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:900px){ .method,.scn{grid-template-columns:1fr} }
+@media (max-width:680px){ .statusbar{grid-template-columns:1fr} }
+@media print{ body{background:#fff} .wrap{padding:0} header.top{position:static} .card,.mcard,.stbox,table,.scn .box{border:1px solid var(--line)} }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<!-- 行情快照条（静态基线，实时刷新需本地 build） -->
+<div class="quotebar" id="quotebar">
+  <div class="qhead">
+    <span class="qname">中煤能源</span>
+    <span class="qcode">601898.SH / 01898.HK</span>
+    <span class="qdate">行情快照 2026-08-14 收盘</span>
+    <button class="qrefresh" id="qRefreshBtn" title="行情为静态基线，实时刷新需本地运行构建脚本">
+      <span class="spinner hidden"></span><span class="lbl">刷新行情</span>
+    </button>
+    <span class="qmsg" id="qRefreshMsg"></span>
+  </div>
+  <div class="qrow">
+    <div class="qgroup">
+      <span class="qg-title">A股</span>
+      <div class="qitem"><span class="ql">最新价</span><span class="qv up">14.05</span></div>
+      <div class="qitem"><span class="ql">涨跌幅</span><span class="qv up">+0.86%</span></div>
+      <div class="qitem"><span class="ql">涨跌额</span><span class="qv up">+0.12</span></div>
+      <div class="qitem"><span class="ql">昨收</span><span class="qv">13.93</span></div>
+      <div class="qitem"><span class="ql">今开</span><span class="qv">13.93</span></div>
+      <div class="qitem"><span class="ql">成交额</span><span class="qv">5.38亿</span></div>
+    </div>
+    <div class="qgroup">
+      <span class="qg-title">H股</span>
+      <div class="qitem"><span class="ql">最新价</span><span class="qv up">10.98<small>港元</small></span></div>
+      <div class="qitem"><span class="ql">涨跌幅</span><span class="qv up">+1.57%</span></div>
+      <div class="qitem"><span class="ql">AH溢价</span><span class="qv flat">≈+39%</span></div>
+    </div>
+  </div>
+</div>
+
+<h2 class="sec-title">八大维度监测看板</h2>
+
+<div class="grid">
+
+  <!-- Card 1 -->
+  <div class="card">
+    <div class="hd"><div class="idx">1</div><h3>煤炭产销与资源储量</h3><span class="chip ok">稳定</span></div>
+    <div class="desc">核心基本盘，储产比超 57 年，产量稳定性决定业绩下限。</div>
+    <div class="metric"><span class="k">自产商品煤产量</span><span class="right"><span class="v">1.35 亿吨</span><span class="chg down">-1.8%</span><span class="spark"><img src="spark_selfprod.svg" alt="自产商品煤产量趋势"></span><button class="tbtn" data-chart="selfprod" data-title="自产商品煤产量(2020-2025)">趋势</button></span></div>
+    <div class="metric"><span class="k">商品煤总销量</span><span class="right"><span class="v">2.56 亿吨</span><span class="chg down">-10.2%</span><span class="spark"><img src="spark_totalsales.svg" alt="商品煤总销量趋势"></span><button class="tbtn" data-chart="totalsales" data-title="商品煤总销量(2020-2025)">趋势</button></span></div>
+    <div class="metric"><span class="k">自产 / 贸易煤结构</span><span class="right"><span class="v ex">1.36 / 1.20 亿吨</span></span></div>
+    <div class="metric"><span class="k">在产矿井核定产能</span><span class="right"><span class="v ex">≈1.7 亿吨</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 22 L12 20 L22 18 L32 16 L42 14 L52 12 L60 10" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">剩余可采储量</span><span class="right"><span class="v ex">≈139 亿吨</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 20 L60 8" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">在建新增产能</span><span class="right"><span class="v ex">里必400 + 苇子沟240 万吨</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 22 L22 18 L42 12 L60 6" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="note">传导逻辑：自产煤是利润底盘，<b>产量</b>决定收入规模与固定成本摊薄；<b>储产比</b>与<b>在产/在建产能</b>决定中长期供给弹性与业绩下限。长协托底下，现货波动对综合售价的传导约 0.5~0.6，故港口现货为盈利弹性核心锚。</div>
+    
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <div class="hd"><div class="idx">2</div><h3>价格与成本</h3><span class="chip part">假设</span></div>
+    <div class="desc">吨煤售价与完全成本剪刀差，是盈利弹性的核心驱动。</div>
+    <div class="metric"><span class="k">秦皇岛5500现货价（中性假设）</span><span class="right"><span class="v">≈650 元/吨</span><span class="spark"><img src="spark_qhd5500.svg" alt="秦皇岛5500现货价趋势"></span><button class="tbtn" data-chart="qhd5500" data-title="秦皇岛5500现货价(2026周度)">趋势</button></span></div>
+    <div class="metric"><span class="k">下水煤长协占比</span><span class="right"><span class="v ex">≈75%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 12 L60 12" fill="none" stroke="#7a8694" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">自产煤吨售价</span><span class="right"><span class="v">448 元</span><span class="chg down">-10.2%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 8 L12 10 L22 12 L32 14 L42 18 L52 20 L60 22" fill="none" stroke="#c8102e" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">自产煤吨完全成本</span><span class="right"><span class="v">251.51 元</span><span class="chg down">-10.7%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 10 L12 12 L22 14 L32 16 L42 18 L52 20 L60 22" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">自产煤吨毛利</span><span class="right"><span class="v ex">≈197 元</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 14 L12 16 L22 14 L32 18 L42 16 L52 20 L60 18" fill="none" stroke="#c8102e" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">长协履约率</span><span class="right"><span class="v ex">≥90%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L60 10" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="note">传导逻辑：<b>吨毛利 = 吨售价 − 吨完全成本</b>。75% 长协按月浮动定价，使综合售价对港口现货弹性约 0.5~0.6；成本端受开采条件与人工物料影响，下行弹性弱于售价。现货每 ±50 元/吨，综合传导约 ±27 亿元毛利（见情景假设）。</div>
+    
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <div class="hd"><div class="idx">3</div><h3>业务结构与板块协同</h3><span class="chip ok">稳定</span></div>
+    <div class="desc">煤-电-化-新一体化，弱化纯周期属性，提升现金流稳定性。</div>
+    <div class="metric"><span class="k">煤化工主要产品产量</span><span class="right"><span class="v ex">606 万吨</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 16 L22 17 L32 15 L42 14 L52 13 L60 12" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">煤化工毛利（估）</span><span class="right"><span class="v ex">≈30 亿元</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 20 L12 18 L22 16 L32 14 L42 12 L52 11 L60 10" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">煤炭自给率（化工用煤）</span><span class="right"><span class="v ex">&gt;90%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 16 L60 8" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">尿素销量</span><span class="right"><span class="v">242.3 万吨</span><span class="chg up">+18.9%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 20 L12 18 L22 16 L32 14 L42 11 L52 9 L60 6" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">电力发电量</span><span class="right"><span class="v">180 亿千瓦时</span><span class="chg up">+34.7%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 22 L12 19 L22 16 L32 13 L42 10 L52 7 L60 4" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">装备制造产值</span><span class="right"><span class="v ex">92.1 亿元</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 16 L12 15 L22 16 L32 14 L42 15 L52 13 L60 14" fill="none" stroke="#7a8694" stroke-width="2"/></svg></span></span></div>
+    <div class="note">传导逻辑：化工/电力以<b>自产低价煤</b>为原料，自给率&gt;90% 形成成本护城河；煤电、煤化协同将波动的煤价转化为稳定的化工品/电力现金流，弱化纯周期属性，提升整体抗风险能力。</div>
+    
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <div class="hd"><div class="idx">4</div><h3>财务表现</h3><span class="chip ok">已验证</span></div>
+    <div class="desc">高分红央企核心指标：盈利质量、现金流覆盖与资本结构。</div>
+    <div class="metric"><span class="k">营业收入</span><span class="right"><span class="v">341.89 亿</span><span class="chg down">-10.9%</span><span class="spark"><img src="spark_revenue.svg" alt="营业收入趋势"></span><button class="tbtn" data-chart="revenue" data-title="营业收入趋势">趋势</button></span></div>
+    <div class="metric"><span class="k">归母净利润（A股口径）</span><span class="right"><span class="v">≈38.44 亿元</span><span class="spark"><img src="spark_profit.svg" alt="归母净利润趋势"></span><button class="tbtn" data-chart="profit" data-title="归母净利润趋势">趋势</button></span></div>
+    <div class="metric"><span class="k">经营性现金流净额</span><span class="right"><span class="v">57.47 亿元</span><span class="spark"><img src="spark_cash.svg" alt="经营性现金流净额趋势"></span><button class="tbtn" data-chart="cash" data-title="经营现金流净额趋势">趋势</button></span></div>
+    <div class="metric"><span class="k">资产负债率</span><span class="right"><span class="v">45.31%</span><span class="spark"><img src="spark_debt.svg" alt="资产负债率趋势"></span><button class="tbtn" data-chart="debt" data-title="资产负债率趋势">趋势</button></span></div>
+    <div class="metric"><span class="k">ROE / 分红率</span><span class="right"><span class="v ex">2.34% / 30~35%</span><span class="spark"><img src="spark_roe.svg" alt="ROE / 分红率趋势"></span><button class="tbtn" data-chart="roe" data-title="ROE趋势">趋势</button></span></div>
+    <div class="metric"><span class="k">每股净资产</span><span class="right"><span class="v ex">12.38 元</span><span class="spark"><img src="spark_bps.svg" alt="每股净资产趋势"></span><button class="tbtn" data-chart="bps" data-title="每股净资产趋势">趋势</button></span></div>
+    <div class="note">传导逻辑：营收、归母、现金流、负债率、ROE、每股净资产构成<b>财务质量六维</b>。资产负债率低位（45%）与经营现金流覆盖，支撑高分红与资本开支；ROE 随煤价周期波动，是估值与股东回报的核心锚。</div>
+    
+  </div>
+
+  <!-- Card 5 -->
+  <div class="card">
+    <div class="hd"><div class="idx">5</div><h3>政策与行业环境</h3><span class="chip todo">事件驱动</span></div>
+    <div class="desc">保供稳价、安监环保、进口冲击与碳中和构成政策四角。</div>
+    <div class="metric"><span class="k">保供稳价政策强度</span><span class="right"><span class="v ex">长协机制强化</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 16 L22 14 L32 12 L42 10 L52 8 L60 6" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">长协签约率要求</span><span class="right"><span class="v ex">高位维持</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 14 L60 10" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">安监环保限产</span><span class="right"><span class="v ex">2025 杜绝较大以上事故</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 20 L12 19 L22 18 L32 18 L42 17 L52 17 L60 16" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">进口煤量影响</span><span class="right"><span class="v ex">压制沿海煤价</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 16 L12 15 L22 16 L32 14 L42 15 L52 13 L60 14" fill="none" stroke="#7a8694" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">碳中和/需求中长期</span><span class="right"><span class="v ex">十五五规划研讨期</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 12 L12 13 L22 14 L32 15 L42 16 L52 17 L60 18" fill="none" stroke="#d98a14" stroke-width="2"/></svg></span></span></div>
+    <div class="note">传导逻辑：政策四角中，<b>保供稳价+长协</b>托底需求与价格下限；<b>安监限产</b>收缩供给、支撑煤价；<b>进口煤</b>形成沿海价格天花板；<b>碳中和</b>压制长期需求预期。四者共振决定煤价波动区间与业绩可预见性。</div>
+    
+  </div>
+
+  <!-- Card 6 -->
+  <div class="card">
+    <div class="hd"><div class="idx">6</div><h3>产能扩张与资本开支</h3><span class="chip part">在建</span></div>
+    <div class="desc">重点项目集中投放期，Capex 进度决定未来量与成本曲线。</div>
+    <div class="metric"><span class="k">新建矿井进度</span><span class="right"><span class="v ex">里必400 / 苇子沟240</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 22 L12 20 L22 18 L32 14 L42 10 L52 6 L60 4" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">大海则煤矿</span><span class="right"><span class="v ex">1500 万吨爬坡</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 20 L12 18 L22 16 L32 14 L42 12 L52 10 L60 8" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">榆林二期聚烯烃</span><span class="right"><span class="v ex">90 万吨，2026 底打通</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 22 L22 16 L42 10 L60 6" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">图克液态阳光绿氢甲醇</span><span class="right"><span class="v ex">10 万吨级，2026 内投产</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 16 L22 14 L32 12 L42 10 L52 8 L60 6" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">2030 自产煤目标</span><span class="right"><span class="v ex">1.5 亿吨 / 核定 2 亿吨</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 20 L60 8" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="note">传导逻辑：在建与爬坡项目是<b>中期量增</b>来源，里必/苇子沟/大海则贡献增量产量，榆林二期与图克绿氢延伸<b>煤化一体化</b>价值链条；Capex 高峰期内压制自由现金流，投产转固后放量摊薄成本、增厚盈利。</div>
+    
+  </div>
+
+  <!-- Card 7 -->
+  <div class="card">
+    <div class="hd"><div class="idx">7</div><h3>市场与客户</h3><span class="chip part">高频</span></div>
+    <div class="desc">电力长协托底、钢铁需求波动、日耗库存是高频验证锚。</div>
+    <div class="metric"><span class="k">长协客户结构</span><span class="right"><span class="v ex">电力央企为主</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 14 L60 14" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">沿海八省火电日耗</span><span class="right"><span class="v ex">迎峰度夏/冬波动</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 16 L22 18 L32 14 L42 16 L52 12 L60 14" fill="none" stroke="#c8102e" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">电厂库存天数</span><span class="right"><span class="v ex">警戒：&gt;30 天</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 12 L12 14 L22 12 L32 15 L42 13 L52 16 L60 14" fill="none" stroke="#7a8694" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">钢厂高炉开工率</span><span class="right"><span class="v ex">影响焦煤/喷吹煤</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 16 L12 15 L22 16 L32 14 L42 15 L52 13 L60 14" fill="none" stroke="#7a8694" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">出口及转运能力</span><span class="right"><span class="v ex">政策与运力跟踪</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 17 L22 17 L32 16 L42 16 L52 15 L60 15" fill="none" stroke="#7a8694" stroke-width="2"/></svg></span></span></div>
+    <div class="note">传导逻辑：电力长协客户提供<b>需求托底</b>，使销量可预见；<b>火电日耗/电厂库存</b>是高频需求验证锚，库存高于 30 天预警需求走弱；钢厂开工牵动焦煤/喷吹煤，构成冶金煤需求弹性。</div>
+    
+  </div>
+
+  <!-- Card 8 -->
+  <div class="card">
+    <div class="hd"><div class="idx">8</div><h3>估值与股东回报</h3><span class="chip part">随行情</span></div>
+    <div class="desc">央企市值管理框架下，PE/PB、股息率与回购增持动向。</div>
+    <div class="metric"><span class="k">PE（2026E）</span><span class="right"><span class="v ex">≈11.3x</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 16 L22 17 L32 15 L42 16 L52 14 L60 15" fill="none" stroke="#7a8694" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">PB（每股净资产锚）</span><span class="right"><span class="v ex">12.08 元</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 20 L60 8" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">股息率（静态）</span><span class="right"><span class="v ex">≈2.2%</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 17 L22 16 L32 15 L42 14 L52 13 L60 12" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">分红率</span><span class="right"><span class="v ex">30~35%（关注能否 40%+）</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 17 L22 16 L32 15 L42 14 L52 13 L60 12" fill="none" stroke="#1e3a5f" stroke-width="2"/></svg></span></span></div>
+    <div class="metric"><span class="k">回购与增持</span><span class="right"><span class="v ex">央企市值管理框架下</span><span class="spark"><svg viewBox="0 0 62 28"><path d="M2 18 L12 16 L22 14 L32 12 L42 10 L52 8 L60 6" fill="none" stroke="#2e9e6b" stroke-width="2"/></svg></span></span></div>
+    <div class="note">传导逻辑：估值由 <b>业绩中枢 × 行业 PE</b> 决定，股息率 = 每股分红 / 股价，分红率与回购增持构成股东回报锚；央企市值管理强化下，低估值 + 高分红 + 潜在回购是估值修复催化。</div>
+    
+  </div>
+
+</div><!-- grid -->
+
+<h2 class="sec-title">长期趋势专区</h2>
+<p class="sec-sub">各业务维度基于财报/官方数据的历史趋势图，点击下方折叠项展开；数据源自 A股财报（季/年）及公司公告，按卡片归类。</p>
+
+<div class="trend-section">
+
+  <details open>
+    <summary><span class="idx" style="width:22px;height:22px;font-size:12px;border-radius:6px">4</span> 财务表现</summary>
+    <div class="trend-body">
+      <img src="trend_revenue_profit.svg" alt="营收与归母净利趋势">
+      <img src="trend_ratios.svg" alt="负债率ROE每股净资产趋势">
+      <div class="trend-foot">数据截至 2026-03-31 · 图1 营业收入 vs 归母净利润；图2 资产负债率 / ROE累计 / 每股净资产（合并口径·A股财报）</div>
+    </div>
+  </details>
+
+  <!-- 其它卡片趋势图后续按 details 结构追加即可：
+  <details>
+    <summary><span class="idx" style="width:22px;height:22px;font-size:12px;border-radius:6px">1</span> 煤炭产销与资源储量</summary>
+    <div class="trend-body">
+      <img src="trend_card1.svg" alt="产销与储量趋势">
+    </div>
+  </details>
+  -->
+
+</div>
+
+<!-- 趋势图模态框 -->
+<div id="trendModal" class="trend-modal" onclick="closeTrendModal(event)">
+  <div class="trend-modal-box" onclick="event.stopPropagation()">
+    <button class="trend-modal-close" onclick="closeTrendModal()">&times;</button>
+    <div class="trend-modal-head">
+      <h3 id="trendModalTitle" class="trend-modal-title">趋势图</h3>
+      <div class="period-toggle" id="periodToggle">
+        <button class="pt active" data-period="q">季度</button>
+        <button class="pt" data-period="y">年度</button>
+      </div>
+    </div>
+    <img id="trendModalImg" src="" alt="趋势图">
+  </div>
+</div>
+
+<h2 class="sec-title">高频数据跟踪清单</h2>
+<table>
+  <thead><tr><th style="width:10%">频率</th><th style="width:32%">跟踪项</th><th style="width:32%">数据源</th><th style="width:26%">用途 / 触发</th></tr></thead>
+  <tbody>
+    <tr><td class="k"><span class="tag d">日</span></td><td>秦皇岛/曹妃甸 5500 现货价；沿海八省电厂日耗与库存</td><td>CCTD、煤炭资源网、中电联</td><td>煤价与需求日内变化，突破阈值即预警</td></tr>
+    <tr><td class="k"><span class="tag d">日</span></td><td>行情 PE/PB、股价成交量、回购/增持公告</td><td>东方财富/腾讯财经、交易所公告</td><td>估值与市值管理信号</td></tr>
+    <tr><td class="k"><span class="tag w">周</span></td><td>环渤海动力煤指数、焦煤/焦炭期货(JM/J)、钢厂高炉开工率</td><td>大商所、我的钢铁、CCTD</td><td>现货周度趋势、钢铁需求景气</td></tr>
+    <tr><td class="k"><span class="tag w">周</span></td><td>港口煤炭库存、坑口价格</td><td>煤炭资源网、易煤网</td><td>供需松紧与价格传导</td></tr>
+    <tr><td class="k"><span class="tag m">月</span></td><td>公司月度经营数据（产量、销量、售价简况）</td><td>上交所/港交所临时公告</td><td>产销方向，先于季报</td></tr>
+    <tr><td class="k"><span class="tag m">月</span></td><td>全国原煤产量、进口煤量、聚烯烃/尿素价格</td><td>统计局、海关、石化资讯</td><td>行业供需与化工弹性</td></tr>
+    <tr><td class="k"><span class="tag m">月</span></td><td>火电发电量、水泥/粗钢产量（下游景气）</td><td>统计局、中电联、钢协</td><td>验证需求端假设</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec-title">季度验证清单</h2>
+<div class="method">
+  <div class="mcard">
+    <h4>① 产销与价格</h4>
+    <ul style="margin:8px 0 0; padding-left:18px; font-size:12.5px; color:var(--dim);">
+      <li>自产商品煤产量 vs 年度计划进度（>25%/50%/75%）</li>
+      <li>商品煤销量、自产/贸易结构</li>
+      <li>自产煤吨售价、吨成本、吨毛利 vs 情景假设</li>
+      <li>长协履约比例是否稳定</li>
+    </ul>
+  </div>
+  <div class="mcard">
+    <h4>② 板块与财务</h4>
+    <ul style="margin:8px 0 0; padding-left:18px; font-size:12.5px; color:var(--dim);">
+      <li>煤炭/煤化工/电力分部毛利与占比</li>
+      <li>煤化工产量、聚烯烃/尿素价格弹性</li>
+      <li>营收、归母净利润 vs 高频预判</li>
+      <li>经营现金流、资产负债率、ROE</li>
+    </ul>
+  </div>
+  <div class="mcard">
+    <h4>③ 资本与回报</h4>
+    <ul style="margin:8px 0 0; padding-left:18px; font-size:12.5px; color:var(--dim);">
+      <li>资本开支进度 vs 预算</li>
+      <li>重点项目建设/试产节点</li>
+      <li>分红方案、分红率变化</li>
+      <li>回购/增持、机构持仓变动</li>
+    </ul>
+  </div>
+</div>
+<div class="bignote"><b>验证动作：</b>每季度用实际值回填「情景假设」中的弹性参数（吨售价对港口现货弹性、化工品价格弹性），使下一期中性的业绩中枢更贴近真实。</div>
+
+<h2 class="sec-title">情景假设框架</h2>
+<p class="sec-sub">以<b>秦皇岛5500港口现货年均价</b>为核心锚变量（自产煤75%长协、长协按月浮动定价，故综合吨售价对现货弹性约 0.5~0.6）。以下为<b>示意性</b>区间，需按季度验证后的真实弹性校准。</p>
+
+<div class="scn">
+  <div class="box bear">
+    <h4>悲观情景</h4>
+    <div class="price">现货 ≈ 550 元/吨</div>
+    <ul>
+      <li>需求弱+进口冲击，煤价下行</li>
+      <li>自产煤吨售价≈410、吨毛利≈160</li>
+      <li>化工品价格低迷、弹性弱</li>
+      <li>预估归母净利润 ≈ <b>120~140 亿</b></li>
+    </ul>
+  </div>
+  <div class="box base">
+    <h4>中性情景</h4>
+    <div class="price">现货 ≈ 650 元/吨</div>
+    <ul>
+      <li>供需紧平衡、长协托底</li>
+      <li>自产煤吨售价≈448（持平2025）、吨毛利≈197</li>
+      <li>化工小幅回暖</li>
+      <li>预估归母净利润 ≈ <b>180~210 亿</b></li>
+    </ul>
+  </div>
+  <div class="box bull">
+    <h4>乐观情景</h4>
+    <div class="price">现货 ≈ 750 元/吨</div>
+    <ul>
+      <li>地缘扰动+保供偏紧，煤价上行</li>
+      <li>自产煤吨售价≈490、吨毛利≈238</li>
+      <li>聚烯烃随原油上涨弹性释放</li>
+      <li>预估归母净利润 ≈ <b>230~260 亿</b></li>
+    </ul>
+  </div>
+</div>
+
+<h3 style="font-size:15px;color:var(--navy);margin:24px 0 10px;">速算弹性（用于高频跟踪快速映射）</h3>
+<table>
+  <thead><tr><th style="width:34%">变量变动</th><th style="width:33%">对税前毛利影响</th><th style="width:33%">对归母净利润 / EPS</th></tr></thead>
+  <tbody>
+    <tr><td class="k">自产煤吨售价 +10 元/吨</td><td>≈ +13.5 亿元（1.35亿吨）</td><td>≈ +10 亿元 / EPS +0.08 元</td></tr>
+    <tr><td class="k">秦皇岛5500现货 +50 元/吨（综合传导）</td><td>≈ +27 亿元（弹性0.5~0.6）</td><td>≈ +20 亿元 / EPS +0.15 元</td></tr>
+    <tr><td class="k">聚烯烃价格 +100 元/吨</td><td>≈ +1.2 亿元（120万吨）</td><td>≈ +0.9 亿元 / EPS +0.007 元</td></tr>
+    <tr><td class="k">尿素价格 +100 元/吨</td><td>≈ +1.75 亿元（175万吨产能）</td><td>≈ +1.3 亿元 / EPS +0.01 元</td></tr>
+  </tbody>
+</table>
+<div class="bignote"><b>情景切换触发条件：</b>当港口现货连续 1 个月处于某一情景区间且伴随日耗/库存印证时，切换为该情景作为基准并重新评估估值（PE/PB/股息率）。</div>
+
+<h2 class="sec-title">数据源目录</h2>
+<table>
+  <thead><tr><th style="width:18%">类别</th><th style="width:82%">来源与获取方式</th></tr></thead>
+  <tbody>
+    <tr><td class="k">公司公告</td><td>上交所(601898)、港交所(01898)、巨潮资讯网、公司官网投资者关系——定期报告、月度经营数据、分红/回购/项目公告</td></tr>
+    <tr><td class="k">行业价格</td><td>CCTD 中国煤炭市场网、秦皇岛煤炭网、环渤海动力煤价格指数、我的钢铁(焦煤/焦炭)、大商所 JM/J 期货</td></tr>
+    <tr><td class="k">供需数据</td><td>国家统计局（原煤产量/发电量/粗钢）、海关总署（进口煤）、中电联（电厂日耗库存）、中国煤炭工业协会</td></tr>
+    <tr><td class="k">行情与估值</td><td>东方财富、腾讯财经、Wind、同花顺——PE/PB/股息率/机构持仓/ESG评级</td></tr>
+    <tr><td class="k">政策与研报</td><td>发改委/能源局官网、应急部（安监）、券商研究所（中金/中信/国君等煤炭行业报告）</td></tr>
+  </tbody>
+</table>
+
+<h2 class="sec-title">月度监测日志模板</h2>
+<table class="log">
+  <thead><tr><th style="width:18%">指标</th><th style="width:14%">本月值</th><th style="width:14%">上月值</th><th style="width:14%">同比</th><th style="width:14%">预警?</th><th style="width:26%">备注</th></tr></thead>
+  <tbody>
+    <tr><td class="k">秦皇岛5500现货</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">自产商品煤产量</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">商品煤总销量</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">煤化工产量</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">聚烯烃价格</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">火电日耗(八省)</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">港口库存</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">进口煤量</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">PE / PB</td><td><input></td><td><input></td><td><input></td><td><input></td><td><input></td></tr>
+    <tr><td class="k">情景判定</td><td colspan="3"><input placeholder="悲观 / 中性 / 乐观"></td><td colspan="2"><input placeholder="切换理由"></td></tr>
+  </tbody>
+</table>
+
+<footer class="foot2">
+  中煤能源业务追踪监测看板 · 对齐中远海控同款风格（sticky header + 行情快照条 + chip 状态 + 统一配色）· 单文件交付 ·
+  行情快照为静态基线（2026-08-14 收盘，来源东方财富/腾讯财经），实时刷新需本地运行构建脚本后重新生成。最后更新：2026-08-09。
+</footer>
+
+</div>
+
+<script>
+  // ---- 行情快照条：静态基线，刷新提示本地 build ----
+  (function(){
+    const btn=document.getElementById('qRefreshBtn');
+    const sp=btn&&btn.querySelector('.spinner');
+    const lb=btn&&btn.querySelector('.lbl');
+    const mg=document.getElementById('qRefreshMsg');
+    if(btn){
+      btn.addEventListener('click',()=>{
+        btn.disabled=true;
+        if(sp)sp.classList.remove('hidden');
+        if(lb)lb.textContent='检查中…';
+        setTimeout(()=>{
+          if(mg){mg.className='qmsg';mg.textContent='行情为静态快照（2026-08-14 收盘），实时刷新请本地运行构建脚本后重新生成看板。';}
+          if(lb)lb.textContent='刷新行情';
+          btn.disabled=false;
+          if(sp)sp.classList.add('hidden');
+        },600);
+      });
+    }
+  })();
+
+  // ---- 趋势图：卡片「趋势」按钮 → 模态框（季度/年度切换） ----
+  const CHART_MAP = {
+    revenue: { title: "营业收入趋势", q: "trend_revenue_q.svg", y: "trend_revenue_y.svg" },
+    profit:  { title: "归母净利润趋势", q: "trend_profit_q.svg", y: "trend_profit_y.svg" },
+    cash:    { title: "经营现金流净额趋势", q: "trend_cash_q.svg", y: "trend_cash_y.svg" },
+    debt:    { title: "资产负债率趋势", q: "trend_debt_q.svg", y: "trend_debt_y.svg" },
+    roe:     { title: "ROE趋势", q: "trend_roe_q.svg", y: "trend_roe_y.svg" },
+    bps:     { title: "每股净资产趋势", q: "trend_bps_q.svg", y: "trend_bps_y.svg" },
+    qhd5500: { title: "秦皇岛5500现货价(2026周度)", q: "trend_qhd5500_weekly.svg", y: "trend_qhd5500_weekly.svg", single: true },
+    selfprod: { title: "自产商品煤产量(2020-2025)", q: "trend_selfprod_y.svg", y: "trend_selfprod_y.svg", single: true },
+    totalsales: { title: "商品煤总销量(2020-2025)", q: "trend_totalsales_y.svg", y: "trend_totalsales_y.svg", single: true }
+  };
+
+  const modal = document.getElementById('trendModal');
+  const modalImg = document.getElementById('trendModalImg');
+  const modalTitle = document.getElementById('trendModalTitle');
+  const periodToggle = document.getElementById('periodToggle');
+  let curKey = null;
+  let curPeriod = 'q';
+
+  function renderChart() {
+    if (!curKey || !CHART_MAP[curKey]) return;
+    const m = CHART_MAP[curKey];
+    modalImg.src = m[curPeriod];
+    const suffix = m.single ? '（周度）' : (curPeriod === 'q' ? '（季度）' : '（年度）');
+    modalTitle.textContent = m.title + suffix;
+  }
+
+  document.querySelectorAll('.tbtn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      curKey = btn.getAttribute('data-chart');
+      curPeriod = 'q';
+      const m = CHART_MAP[curKey];
+      periodToggle.style.display = m.single ? 'none' : 'inline-flex';
+      periodToggle.querySelectorAll('.pt').forEach(b => b.classList.toggle('active', b.dataset.period === 'q'));
+      renderChart();
+      modal.classList.add('active');
+    });
+  });
+
+  periodToggle.querySelectorAll('.pt').forEach(b => {
+    b.addEventListener('click', () => {
+      curPeriod = b.dataset.period;
+      periodToggle.querySelectorAll('.pt').forEach(x => x.classList.toggle('active', x === b));
+      renderChart();
+    });
+  });
+
+  function closeTrendModal(e) {
+    if (!e || e.target === modal || e.target.classList.contains('trend-modal-close')) {
+      modal.classList.remove('active');
+    }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeTrendModal(); });
+</script>
+</body>
+</html>

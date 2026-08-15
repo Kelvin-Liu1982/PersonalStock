@@ -19,3 +19,6 @@ venv/
 Thumbs.db
 .idea/
 .vscode/
+
+# ---- WorkBuddy 本地记忆（不入库）----
+.workbuddy/

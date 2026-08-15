@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>方向A · 频率泳道看板（中煤能源监测）</title>
+<style>
+  :root{--navy:#1f3a5f;--navy2:#2c5282;--ink:#1f2937;--muted:#6b7280;--line:#e3e7ec;
+        --good:#1e7a46;--watch:#c07a00;--alert:#c0392b;--pend:#2c5282;--bg:#f4f6f8;}
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;margin:0;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55;}
+  header{background:var(--navy);color:#fff;padding:16px 24px;}
+  header h1{margin:0;font-size:18px;font-weight:600;}
+  header .sub{font-size:12.5px;opacity:.8;margin-top:2px;}
+  .legend{display:flex;gap:16px;padding:10px 24px;background:#fff;border-bottom:1px solid var(--line);font-size:12.5px;flex-wrap:wrap;}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .d-g{background:var(--good);}.d-w{background:var(--watch);}.d-a{background:var(--alert);}.d-p{background:var(--pend);}
+  .lane{border-bottom:1px solid var(--line);}
+  .lane-head{display:flex;align-items:center;gap:10px;padding:9px 24px;background:#eef2f6;font-weight:600;color:var(--navy);position:sticky;top:0;}
+  .lane-head .freq{background:var(--navy);color:#fff;border-radius:4px;padding:1px 9px;font-size:12px;}
+  .lane-body{display:flex;gap:12px;padding:12px 24px;overflow-x:auto;}
+  .card{background:#fff;border:1px solid var(--line);border-top:3px solid var(--muted);border-radius:8px;padding:10px 12px;min-width:188px;flex:0 0 auto;}
+  .card.g{border-top-color:var(--good);}.card.w{border-top-color:var(--watch);}.card.a{border-top-color:var(--alert);}.card.p{border-top-color:var(--pend);}
+  .card .dim{font-size:11px;color:var(--muted);}
+  .card .name{font-weight:600;margin:2px 0 4px;}
+  .card .val{font-size:15px;font-weight:700;color:var(--navy2);}
+  .card .thr{font-size:11.5px;color:var(--muted);margin-top:4px;}
+  .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:10px;float:right;}
+  .pill.g{background:#e3f3e9;color:var(--good);}.pill.w{background:#fbeed7;color:var(--watch);}.pill.a{background:#fbe3e0;color:var(--alert);}.pill.p{background:#e3ecf7;color:var(--pend);}
+  .foot{padding:14px 24px;font-size:11.5px;color:var(--muted);}
+  @media(max-width:680px){.lane-body{flex-direction:column;}.card{min-width:0;}}
+</style>
+</head>
+<body>
+<header><h1>中煤能源（601898）业务监测看板 · 方向A：频率泳道</h1>
+<div class="sub">按跟踪频率分泳道，卡片在泳道内从左到右按紧迫度排布 ｜ 内容示意（选定后展开全部八大维度）</div></header>
+<div class="legend"><span><i class="dot d-g"></i>达标</span><span><i class="dot d-w"></i>观察</span><span><i class="dot d-a"></i>预警</span><span><i class="dot d-p"></i>待验证/建设中</span></div>
+
+<div class="lane">
+  <div class="lane-head"><span class="freq">日 · 周</span> 高频信号（煤价 · 需求 · 估值）</div>
+  <div class="lane-body">
+    <div class="card w"><span class="pill w">观察</span><div class="dim">二、价格</div><div class="name">秦皇岛5500现货价</div><div class="val">≈650 元/吨</div><div class="thr">预警：跌破长协基准</div></div>
+    <div class="card a"><span class="pill a">预警</span><div class="dim">五、政策</div><div class="name">安监环保限产</div><div class="val">事件驱动</div><div class="thr">重大事故→区域停产</div></div>
+    <div class="card w"><span class="pill w">观察</span><div class="dim">七、市场</div><div class="name">沿海八省日耗</div><div class="val">迎峰波动</div><div class="thr">库存天数&gt;30 预警</div></div>
+    <div class="card g"><span class="pill g">达标</span><div class="dim">八、估值</div><div class="name">PE / PB</div><div class="val">11x / 锚12.08</div><div class="thr">破净为机会信号</div></div>
+  </div>
+</div>
+
+<div class="lane">
+  <div class="lane-head"><span class="freq">月</span> 月度产销与化工弹性</div>
+  <div class="lane-body">
+    <div class="card w"><span class="pill w">观察</span><div class="dim">三、板块</div><div class="name">煤化工产量</div><div class="val">606 万吨</div><div class="thr">开工率下滑预警</div></div>
+    <div class="card w"><span class="pill w">观察</span><div class="dim">三、板块</div><div class="name">聚烯烃价格</div><div class="val">聚乙烯+10%</div><div class="thr">随原油回落收敛</div></div>
+    <div class="card p"><span class="pill p">待验证</span><div class="dim">一、产销</div><div class="name">商品煤总销量</div><div class="val">2.56 亿吨</div><div class="thr">贸易煤占比变化</div></div>
+    <div class="card w"><span class="pill w">观察</span><div class="dim">五、政策</div><div class="name">进口煤量</div><div class="val">月度</div><div class="thr">大增压制国内价</div></div>
+  </div>
+</div>
+
+<div class="lane">
+  <div class="lane-head"><span class="freq">季</span> 季度验证（财报 · 财务 · 成本）</div>
+  <div class="lane-body">
+    <div class="card g"><span class="pill g">达标</span><div class="dim">二、成本</div><div class="name">自产煤吨成本</div><div class="val">251.51 元</div><div class="thr">回升&gt;5% 预警</div></div>
+    <div class="card g"><span class="pill g">达标</span><div class="dim">四、财务</div><div class="name">经营现金流</div><div class="val">298 亿</div><div class="thr">远低于净利即预警</div></div>
+    <div class="card g"><span class="pill g">达标</span><div class="dim">四、财务</div><div class="name">资产负债率</div><div class="val">45.8%</div><div class="thr">&gt;55% 预警</div></div>
+    <div class="card w"><span class="pill w">观察</span><div class="dim">二、价格</div><div class="name">自产煤吨售价</div><div class="val">448 元/吨</div><div class="thr">破400 预警</div></div>
+    <div class="card p"><span class="pill p">待验证</span><div class="dim">一、产销</div><div class="name">自产商品煤产量</div><div class="val">1.351 亿吨</div><div class="thr">vs 年度计划进度</div></div>
+  </div>
+</div>
+
+<div class="lane">
+  <div class="lane-head"><span class="freq">事件 · 情景</span> 产能 / 分红 / 情景切换</div>
+  <div class="lane-body">
+    <div class="card p"><span class="pill p">待验证</span><div class="dim">六、产能</div><div class="name">里必+苇子沟矿</div><div class="val">640 万吨</div><div class="thr">2026底~27 达产</div></div>
+    <div class="card w"><span class="pill w">观察</span><div class="dim">八、回报</div><div class="name">分红比率</div><div class="val">30~35%</div><div class="thr">提至40%+ 利好</div></div>
+    <div class="card g"><span class="pill g">达标</span><div class="dim">十一、情景</div><div class="name">中性情景</div><div class="val">现货≈650</div><div class="thr">归母≈180~210亿</div></div>
+  </div>
+</div>
+<div class="foot">方向A · 泳道看板：以「跟踪频率」为横轴组织信息，最紧迫的日频信号置顶，天然呈现监测节奏。选定后将在每条泳道内补全全部指标卡与「年度计划进度条」。</div>
+</body></html>
