@@ -150,6 +150,7 @@ footer.foot2{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);f
 @media (max-width:680px){ .statusbar{grid-template-columns:1fr} }
 @media print{ body{background:#fff} .wrap{padding:0} header.top{position:static} .card,.mcard,.stbox,table,.scn .box{border:1px solid var(--line)} }
 </style>
+<script src="../quote-refresh.js" defer></script>
 </head>
 <body>
 
@@ -161,7 +162,7 @@ footer.foot2{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);f
     <span class="qname">中煤能源</span>
     <span class="qcode">601898.SH / 01898.HK</span>
     <span class="qdate">行情快照 2026-08-14 收盘</span>
-    <button class="qrefresh" id="qRefreshBtn" title="行情为静态基线，实时刷新需本地运行构建脚本">
+    <button class="qrefresh" id="qRefreshBtn" title="行情为静态基线，实时刷新需本地运行构建脚本" data-refresh-mode="message" data-refresh-message="行情为静态快照（2026-08-14 收盘），实时刷新请本地运行构建脚本后重新生成看板。">
       <span class="spinner hidden"></span><span class="lbl">刷新行情</span>
     </button>
     <span class="qmsg" id="qRefreshMsg"></span>
@@ -470,27 +471,6 @@ footer.foot2{margin-top:40px;padding-top:14px;border-top:1px solid var(--line);f
 </div>
 
 <script>
-  // ---- 行情快照条：静态基线，刷新提示本地 build ----
-  (function(){
-    const btn=document.getElementById('qRefreshBtn');
-    const sp=btn&&btn.querySelector('.spinner');
-    const lb=btn&&btn.querySelector('.lbl');
-    const mg=document.getElementById('qRefreshMsg');
-    if(btn){
-      btn.addEventListener('click',()=>{
-        btn.disabled=true;
-        if(sp)sp.classList.remove('hidden');
-        if(lb)lb.textContent='检查中…';
-        setTimeout(()=>{
-          if(mg){mg.className='qmsg';mg.textContent='行情为静态快照（2026-08-14 收盘），实时刷新请本地运行构建脚本后重新生成看板。';}
-          if(lb)lb.textContent='刷新行情';
-          btn.disabled=false;
-          if(sp)sp.classList.add('hidden');
-        },600);
-      });
-    }
-  })();
-
   // ---- 趋势图：卡片「趋势」按钮 → 模态框（季度/年度切换） ----
   const CHART_MAP = {
     revenue: { title: "营业收入趋势", q: "trend_revenue_q.svg", y: "trend_revenue_y.svg" },

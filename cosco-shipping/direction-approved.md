@@ -2,7 +2,7 @@
 
 ## 选定方向
 - **方向C + 趋势增强**：模块化追踪看板（浅色卡片网格 + 状态 chip + 进度条/数据源标注）叠加长期趋势集成。
-- 最终交付物：`中远海控追踪看板(方向C).html`（原型阶段的设计稿 design-demos/ 已清理）。
+- 最终交付物：`cosco-dashboard.html`（原型阶段的设计稿 design-demos/ 已清理）。
 
 ## 设计原则
 - 单文件 HTML 交付，双击即开，移动目录不裂图。
@@ -42,13 +42,13 @@
 1. 编辑数据主源 Excel。
 2. 在终端运行：
    ```bash
-   cd 中远海控追踪框架
+   cd cosco-shipping
    /Users/sto1/.workbuddy/binaries/python/envs/default/bin/python build.py
    ```
-3. 产物：`中远海控追踪看板(方向C).html` 会自动刷新。
+3. 产物：`cosco-dashboard.html` 会自动刷新。
 
 ## 产出清单
-- `中远海控追踪看板(方向C).html`（正式版看板，单文件）
+- `cosco-dashboard.html`（正式版看板，单文件）
 - `build.py`（一键重建）
 - `build_tracker.py`（读 Excel + 生成数据/趋势图）
 - `render_html.py`（合成 HTML 模板）

@@ -3,7 +3,7 @@
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 DATA_JS = open(os.path.join(HERE, "_data_js.txt"), encoding="utf-8").read()
-OUT = os.path.join(HERE, "中远海控追踪看板(方向C).html")
+OUT = os.path.join(HERE, "cosco-dashboard.html")
 
 TEMPLATE = r"""<!DOCTYPE html>
 <html lang="zh-CN">

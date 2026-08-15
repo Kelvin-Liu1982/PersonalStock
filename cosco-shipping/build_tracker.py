@@ -4,7 +4,7 @@
 =====================================================================
 数据主源: 中远海控_行业供需与运价数据.xlsx
 约定    : 该 Excel 为唯一主数据源；更新文件后重跑本脚本即可刷新整个看板。
-输出    : 中远海控追踪框架/中远海控追踪看板(方向C).html  (单文件，双击即开)
+输出    : cosco-shipping/cosco-dashboard.html  (单文件，双击即开)
 机制    : 时序数据抽成 JS 数组 + 长期趋势图 base64 内嵌，快照与趋势同源驱动。
 """
 import os, re, json, base64, io
@@ -19,7 +19,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 WS   = os.path.dirname(HERE)  # 工作区根
 SRC  = os.path.join(HERE, "数据源")  # 所有 Excel 数据源集中存放
 XLSX = os.path.join(SRC, "中远海控_行业供需与运价数据.xlsx")
-OUT  = os.path.join(HERE, "中远海控追踪看板(方向C).html")
+OUT  = os.path.join(HERE, "cosco-dashboard.html")
 
 # ---------- 中文字体（候选优先级：PingFang SC/HK → Songti SC → Heiti TC → STHeiti → SimHei） ----------
 try:

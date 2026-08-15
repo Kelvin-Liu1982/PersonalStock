@@ -28,7 +28,7 @@ requests.get = _session.get
 
 STOCK = "sh601898"
 EXCEL = "数据源/中煤能源_业务追踪数据.xlsx"
-HTML = "中煤能源业务追踪监测清单.html"
+HTML = "china-coal-dashboard.html"
 KEEP_FROM = "20200101"
 SHARES = 13_250_000_000.0  # 中煤能源股本
 
