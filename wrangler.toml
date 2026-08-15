@@ -1,0 +1,7 @@
+name = "personalstock"
+compatibility_date = "2024-09-23"
+
+# 将整个仓库根作为静态资源目录
+# 根 index.html 会作为站点首页
+# cosco-shipping/ 与 china-coal/ 子目录会保持原路径被访问
+assets = { directory = "." }
