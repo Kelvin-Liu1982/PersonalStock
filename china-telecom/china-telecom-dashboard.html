@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国电信 · 业绩追踪看板</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--line:#e3e8ee;--ink:#1f2733;--dim:#7a8694;--acc:#c8102e;--acc2:#15616d;--ok:#2e9e6b;--warn:#d98a14;--todo:#9aa6b2;--soft:#f7f9fb}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6}
+header.top{background:var(--card);border-bottom:1px solid var(--line);padding:16px 28px;position:sticky;top:0;z-index:5;box-shadow:0 1px 4px rgba(20,30,50,.04)}
+.top h1{font-size:19px;font-weight:700;letter-spacing:.5px}
+.top .sub{color:var(--dim);font-size:12px;margin-top:3px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;justify-content:flex-start;align-items:center}
+.meta span{background:#fff;color:var(--dim);padding:4px 12px;border-radius:16px;font-size:12px;border:1px solid var(--line);white-space:nowrap}
+.wrap{max-width:1200px;margin:0 auto;padding:24px 22px 90px}
+/* 顶部行情快照条 */
+.quotebar{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:22px;display:flex;flex-direction:column;gap:10px}
+.quotebar .qhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.quotebar .qname{font-size:16px;font-weight:700}
+.quotebar .qcode{font-size:12px;color:var(--dim)}
+.quotebar .qdate{margin-left:auto;font-size:11px;color:var(--todo)}
+.quotebar .qtoday{font-size:11px;color:var(--ink);background:#eef2f6;border:1px solid var(--line);border-radius:10px;padding:2px 8px}
+.quotebar .qrefresh{font-size:11px;color:#fff;background:var(--acc2);border:none;border-radius:10px;padding:4px 10px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.quotebar .qrefresh:hover{background:#0e4a55}
+.quotebar .qrefresh:disabled{background:var(--dim);cursor:not-allowed}
+.quotebar .qrefresh .spinner{display:inline-block;width:10px;height:10px;border:1.5px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite}
+.quotebar .qrefresh .spinner.hidden{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.quotebar .qmsg{font-size:10.5px;color:var(--dim);margin-left:6px}
+.quotebar .qmsg.ok{color:var(--ok)}
+.quotebar .qmsg.err{color:var(--acc)}
+.quotebar .qrow{display:flex;gap:20px;flex-wrap:wrap}
+.quotebar .qgroup{display:flex;align-items:center;gap:15px;flex-wrap:wrap}
+.quotebar .qg-title{font-size:11px;font-weight:700;color:#fff;background:var(--acc2);padding:2px 8px;border-radius:10px;align-self:center}
+.quotebar .qitem{display:flex;flex-direction:column;align-items:flex-start;min-width:58px}
+.quotebar .ql{font-size:10.5px;color:var(--dim);white-space:nowrap}
+.quotebar .qv{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25}
+.quotebar .qv.up{color:var(--acc)} .quotebar .qv.down{color:var(--ok)} .quotebar .qv.flat{color:var(--dim)}
+.quotebar .qv small{font-size:11px;font-weight:400;color:var(--dim);margin-left:2px}
+/* 维度总览说明 */
+.intro{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:18px}
+.intro h2{font-size:16px;font-weight:700;margin-bottom:6px}
+.intro p{font-size:12.5px;color:var(--dim);line-height:1.8}
+.intro b{color:var(--ink)}
+/* 卡片网格 */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(20,30,50,.04);display:flex;flex-direction:column}
+.card .hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.card .idx{width:26px;height:26px;border-radius:7px;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
+.card h3{font-size:15px;font-weight:700}
+.chip{margin-left:auto;font-size:10px;padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
+.chip.ok{background:#e7f6ee;color:var(--ok)} .chip.part{background:#fdf3e3;color:var(--warn)} .chip.todo{background:#f0f2f5;color:var(--todo)} .chip.risk{background:#fdeced;color:var(--acc)}
+.card .desc{font-size:12px;color:var(--dim);margin-bottom:10px}
+.metric{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
+.metric:last-of-type{border-bottom:none}
+.metric .k{color:var(--dim);font-size:13px;line-height:1.35}
+.metric .right{text-align:right;display:flex;align-items:center;gap:2px;flex:none;margin-left:8px}
+.metric .v{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.metric .v.up{color:var(--acc)} .metric .v.down{color:var(--ok)} .metric .v.flat{color:var(--dim)}
+.metric .v.todo{color:var(--todo);font-weight:400;font-size:12px}
+.metric .v.ex{color:var(--ink);font-weight:600;font-size:12px}
+.metric .chg{font-size:11px;color:var(--dim);margin-left:4px}
+.note{font-size:11px;color:var(--dim);background:var(--soft);border-left:3px solid var(--acc);padding:7px 10px;border-radius:0 6px 6px 0;margin-top:10px;line-height:1.7}
+.note b{color:var(--ink)}
+/* 指标行内联 sparkline */
+.spark-mini{display:inline-block;width:58px;height:18px;min-width:48px;vertical-align:middle;margin-left:6px;flex:none}
+.spark-mini svg{display:block;width:100%;height:100%}
+/* 趋势专区 */
+.trend-zone{margin-top:30px;border-top:2px solid var(--line);padding-top:20px}
+.trend-zone h2{font-size:17px;margin-bottom:12px}
+.trend-zone details{margin-bottom:10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.trend-zone summary{padding:12px 16px;cursor:pointer;font-weight:600;font-size:14px}
+.trend-zone summary:hover{background:var(--soft)}
+.trend-zone .body{padding:6px 16px 18px}
+.chart{width:100%;max-width:680px;margin:6px auto 2px}
+.chart svg{width:100%;height:auto;display:block}
+.chart .legend{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:6px;font-size:11px;color:var(--dim)}
+.chart .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.chart .legend b{color:var(--ink);font-weight:600}
+.chart .caption{text-align:center;font-size:10.5px;color:var(--todo);margin-top:4px}
+.gline{stroke:var(--line);stroke-width:1}
+.ytick{fill:var(--dim);font-size:10px;text-anchor:end}
+.xtick{fill:var(--dim);font-size:10px;text-anchor:middle}
+.axisline{stroke:#c3ccd6;stroke-width:1}
+.bar{opacity:.88}
+.valab{fill:var(--ink);font-size:9.5px;text-anchor:middle;font-weight:600}
+/* 财务表 */
+.fin-sec h4{font-size:13px;margin:16px 0 6px;color:var(--acc2);font-weight:700}
+.fin-note{font-size:11.5px;color:var(--dim);background:var(--soft);border-left:3px solid var(--acc);padding:8px 11px;border-radius:0 6px 6px 0;margin:8px 0 4px;line-height:1.7}
+.ftab{border-collapse:collapse;width:100%;font-size:12px;margin:4px 0 6px;font-variant-numeric:tabular-nums}
+.ftab th,.ftab td{border:1px solid var(--line);padding:6px 9px;text-align:right;white-space:nowrap}
+.ftab th{background:var(--soft);color:var(--ink);font-weight:600;text-align:center}
+.ftab td:first-child,.ftab th:first-child{text-align:left}
+.ftab td.muted{color:var(--todo)}
+footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
+@media(max-width:640px){.qdate{margin-left:0}}
+</style>
+<script src="../quote-refresh.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <div class="quotebar">
+    <div class="qhead">
+      <span class="qname">中国电信</span>
+      <span class="qcode">601728.SH / 00728.HK</span>
+      <span class="qtoday">编制 2026-08-17</span>
+      <span class="qdate">行情快照 2026-08-14 收盘（静态基线·待接入实时行情）</span>
+      <button class="qrefresh" id="qRefreshBtn" data-refresh-mode="message" data-refresh-message="行情为静态快照，实时刷新请本地运行构建脚本后重新生成看板。">
+        <span class="spinner hidden"></span><span class="lbl">刷新行情</span>
+      </button>
+      <span class="qmsg" id="qRefreshMsg"></span>
+    </div>
+    <div class="qrow">
+      <div class="qgroup"><span class="qg-title">A股</span>
+        <div class="qitem"><span class="ql">最新价</span><span class="qv up">7.45</span></div>
+        <div class="qitem"><span class="ql">涨跌幅</span><span class="qv up">+1.2%</span></div>
+        <div class="qitem"><span class="ql">动态PE</span><span class="qv">17.1</span></div>
+        <div class="qitem"><span class="ql">市净率</span><span class="qv">1.21</span></div>
+        <div class="qitem"><span class="ql">总市值</span><span class="qv">6818亿</span></div>
+      </div>
+      <div class="qgroup"><span class="qg-title">H股</span>
+        <div class="qitem"><span class="ql">最新价</span><span class="qv up">5.58<small>港元</small></span></div>
+        <div class="qitem"><span class="ql">涨跌幅</span><span class="qv up">+0.9%</span></div>
+        <div class="qitem"><span class="ql">动态PE</span><span class="qv">12.8</span></div>
+        <div class="qitem"><span class="ql">市净率</span><span class="qv">0.91</span></div>
+        <div class="qitem"><span class="ql">股息率TTM</span><span class="qv ok">4.8%</span></div>
+        <div class="qitem"><span class="ql">溢价(H/A)</span><span class="qv down">-25.1%</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="intro">
+    <h2>中国电信业绩追踪框架</h2>
+    <p>中国电信主业正从"云改数转"向"<b>云改数转智惠</b>"升级，坚持<b>基础业务（移动通信 + 固网智慧家庭）与产业数字化"双轮驱动"</b>。本看板按五大维度拆解，每个维度均给出<b>量化指标、数据来源与跟踪频率</b>：以财报与月度运营数据为底，跟踪"压舱石"（基础业务）的稳固度与"第二增长曲线"（天翼云、算力/AIDC、量子/卫星等战新业务）的动能，同时盯住资本开支拐点带来的现金释放，以及高股息承诺的兑现。</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="hd"><div class="idx">1</div><h3>财务健康与盈利质量</h3><span class="chip ok">年度为主</span></div>
+      <div class="desc">评估基本面底座，对重资产通信企业尤为关键。</div>
+      <div class="metric"><span class="k">营业收入(营业额)</span><span class="right"><span class="v">5,295.6亿</span><span class="chg">+0.0%</span><span class="spark-mini" id="sk1_rev"></span></span></div>
+      <div class="metric"><span class="k">归母净利润</span><span class="right"><span class="v">331.9亿</span><span class="chg">+0.5%</span><span class="spark-mini" id="sk1_np"></span></span></div>
+      <div class="metric"><span class="k">EBITDA率</span><span class="right"><span class="v up">27.2%</span><span class="chg">+0.6pp</span><span class="spark-mini" id="sk1_eb"></span></span></div>
+      <div class="metric"><span class="k">ROE(摊薄)</span><span class="right"><span class="v">7.27%</span><span class="chg">-0.1pp</span><span class="spark-mini" id="sk1_roe"></span></span></div>
+      <div class="metric"><span class="k">自由现金流</span><span class="right"><span class="v up">447亿</span><span class="chg">2025</span><span class="spark-mini" id="sk1_fcf"></span></span></div>
+      <div class="metric"><span class="k">资产负债率</span><span class="right"><span class="v">46.22%</span><span class="chg">-1.1pp</span><span class="spark-mini" id="sk1_db"></span></span></div>
+      <div class="metric"><span class="k">应收账款</span><span class="right"><span class="v down">531.5亿</span><span class="chg">-11.2%</span><span class="spark-mini" id="sk1_ar"></span></span></div>
+      <div class="note">传导逻辑：<b>EBITDA 率 27.2%（+2.1%）</b>逆势提升，说明通信主业"造血"能力稳健；<b>归母净利 +0.5%</b>在低基数下微增，营收/利润增速均处近五年低位，行业进入平台期。<b>自由现金流 2025 年 447 亿</b>保持充裕，是分红与再投资的安全垫；<b>ROE 7.27%</b> 仍在央企考核合意区间。风险排查点：<b>应收账款 2025 年 531.5 亿（同比 -11.2%）</b>——广义应收账款较 2024 年（598.5 亿）实际收窄，政企/产数业务赊销敞口与回款周期边际改善，纸面利润向自由现金流转化的掣肘有所缓解，但仍需跟踪。（口径：H 股"营业额"，与港交所年报一致）</div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><div class="idx">2</div><h3>核心业务运营与结构转型</h3><span class="chip part">动能转换</span></div>
+      <div class="desc">基础业务为“压舱石”，产业数字化为“第二增长曲线”。</div>
+      <div class="metric"><span class="k">服务收入</span><span class="right"><span class="v">4,854亿</span><span class="chg">+0.7%</span><span class="spark-mini" id="sk2_sr"></span></span></div>
+      <div class="metric"><span class="k">产业数字化占服务收入比</span><span class="right"><span class="v up">30.3%</span><span class="chg">-0.1pp</span><span class="spark-mini" id="sk2_ind"></span></span></div>
+      <div class="metric"><span class="k">天翼云收入</span><span class="right"><span class="v up">1,207亿</span><span class="chg">+6.0%</span><span class="spark-mini" id="sk2_cloud"></span></span></div>
+      <div class="metric"><span class="k">产业数字化收入</span><span class="right"><span class="v up">1,473亿</span><span class="chg">+0.5%</span><span class="spark-mini" id="sk2_ind2"></span></span></div>
+      <div class="metric"><span class="k">移动ARPU</span><span class="right"><span class="v">45.6元</span><span class="chg">2024·25待补</span><span class="spark-mini" id="sk2_marpu"></span></span></div>
+      <div class="metric"><span class="k">宽带综合ARPU</span><span class="right"><span class="v up">47.6元</span><span class="chg">2024·25待补</span><span class="spark-mini" id="sk2_harpu"></span></span></div>
+      <div class="note">传导逻辑：<b>服务收入</b>2025 年 4,854 亿（+0.7%）底盘稳固。<b>产业数字化占服务收入比升至 30.3%</b>，是"双轮驱动"中第二曲线的核心进度指标——公司战略已从"云改数转"升级为"云改数转智惠"，全面拥抱 AI。<b>天翼云收入 1,207 亿</b>（+6.0%，公有云 IaaS 国内第二）是算力服务放量的旗舰，安全收入 166 亿、AI/智算等战新业务均高速增长。<b>ARPU</b>看价值经营：移动 ARPU 45.6 元、宽带综合 ARPU 47.6 元（2025 待补），资费下行下需紧盯降幅是否趋缓、智慧家庭增值能否对冲。</div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><div class="idx">3</div><h3>资本开支与基础设施</h3><span class="chip ok">拐点释放</span></div>
+      <div class="desc">重资产行业，CAPEX 走向决定折旧摊销与自由现金流池。</div>
+      <div class="metric"><span class="k">资本开支总额</span><span class="right"><span class="v down">804亿</span><span class="chg">-14.0%</span><span class="spark-mini" id="sk3_capex"></span></span></div>
+      <div class="metric"><span class="k">算力基础设施投资</span><span class="right"><span class="v up">202亿(25)</span><span class="chg">730亿(26F,+26%)</span><span class="spark-mini" id="sk3_compute"></span></span></div>
+      <div class="metric"><span class="k">智算总规模</span><span class="right"><span class="v up">62 EFLOPS</span><span class="chg">2024末·25待补</span><span class="spark-mini" id="sk3_ai"></span></span></div>
+      <div class="metric"><span class="k">5G基站(含共建共享)</span><span class="right"><span class="v">137.5万站</span><span class="chg">2024末·25待补</span><span class="spark-mini" id="sk3_5g"></span></span></div>
+      <div class="metric"><span class="k">城镇千兆住宅覆盖率</span><span class="right"><span class="v up">97%</span><span class="chg">10G PON端口超千万</span></span></div>
+      <div class="note">传导逻辑：<b>资本开支总额连续下降</b>（2025 年 804 亿，同比 -14%；2026 计划 730 亿），5G 大规模建设期步入尾声，折旧摊销压力见顶回落、更多利润与现金释放。<b>结构倾斜</b>是更关键的信号：网络基础设施投资约 407 亿（-14%），而<b>算力基础设施投资 202 亿、2026 计划 255 亿（+26%，占总投资 35%）</b>，资金加速涌向智算中心、万兆光网与 AI 大模型等新型基础设施。投资"减量提质" + 结构"由连接转向算力"，是自由现金流改善（2025 年 447 亿）与估值重估的底层逻辑。（AIDC 收入约 345 亿、智算规模/5G 基站 2025 待补，以年报披露为准）</div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><div class="idx">4</div><h3>客户生态（CHBN）战略协同</h3><span class="chip part">B/N 拉动</span></div>
+      <div class="desc">个人(C)、家庭(H)、政企(B)、新兴(N)四向发力。</div>
+      <div class="metric"><span class="k">移动用户 (C)</span><span class="right"><span class="v up">4.39亿户</span><span class="chg">净增1400万</span><span class="spark-mini" id="sk4_c"></span></span></div>
+      <div class="metric"><span class="k">宽带用户 (H)</span><span class="right"><span class="v up">2.01亿户</span><span class="chg">2025</span><span class="spark-mini" id="sk4_h"></span></span></div>
+      <div class="metric"><span class="k">产业数字化收入 (B)</span><span class="right"><span class="v up">1,473亿</span><span class="chg">+0.5%</span><span class="spark-mini" id="sk4_b"></span></span></div>
+      <div class="metric"><span class="k">安全收入 (B)</span><span class="right"><span class="v up">166亿</span><span class="chg">+2.5%</span><span class="spark-mini" id="sk4_sec"></span></span></div>
+      <div class="metric"><span class="k">5G套餐用户</span><span class="right"><span class="v">2.68亿户</span><span class="chg">2022·23-25待补</span><span class="spark-mini" id="sk4_5gp"></span></span></div>
+      <div class="metric"><span class="k">国际业务收入 (N)</span><span class="right"><span class="v up">137亿</span><span class="chg">2023·待补</span><span class="spark-mini" id="sk4_intl"></span></span></div>
+      <div class="note">传导逻辑：<b>C+H</b>属存量博弈，防守看增值服务渗透（智慧家庭 +7.6%、FTTR、权益融合），宽带综合 ARPU 升至 47.6 元成为新亮点；<b>B（政企/产数）</b>是收入增长核心引擎，产业数字化收入 1,473 亿，天翼云 1207 亿、安全 166 亿持续放量；<b>N（新兴）</b>中量子通信用户突破 680 万户、卫星/视联网高速增，构筑差异化安全与空天地一体能力。整体看，"基础 + 产数"双轮驱动格局清晰，个人市场"单一压舱"正被"多轮驱动"取代。（5G 网络用户渗透率 2025 约 68.8%；智慧家庭收入约 238 亿、基础业务收入约 3305 亿，框架口径）</div>
+    </div>
+
+    <div class="card">
+      <div class="hd"><div class="idx">5</div><h3>宏观政策与股东回报</h3><span class="chip ok">高股息</span></div>
+      <div class="desc">决定长线资金胜率与安全垫的维度。</div>
+      <div class="metric"><span class="k">派息率</span><span class="right"><span class="v up">75%</span><span class="chg">72%(24)</span><span class="spark-mini" id="sk5_payout"></span></span></div>
+      <div class="metric"><span class="k">每股股息(全年)</span><span class="right"><span class="v up">0.2720元</span><span class="chg">中期+末期</span><span class="spark-mini" id="sk5_dps"></span></span></div>
+      <div class="metric"><span class="k">每股基本盈利EPS</span><span class="right"><span class="v">0.36元</span><span class="chg">+0.0%</span><span class="spark-mini" id="sk5_eps"></span></span></div>
+      <div class="metric"><span class="k">现金分红总额</span><span class="right"><span class="v up">248.90亿</span><span class="chg">+4.7%</span><span class="spark-mini" id="sk5_div"></span></span></div>
+      <div class="metric"><span class="k">股息率</span><span class="right"><span class="v up">4.8%</span><span class="chg">静态快照</span></span></div>
+      <div class="metric"><span class="k">股息利差</span><span class="right"><span class="v up">2.95pp</span><span class="chg">4.8% − 1.85%</span><span class="spark-mini" id="sk5_spread"></span></span></div>
+      <div class="metric"><span class="k">服务增值税 <span class="chip risk" style="margin-left:6px">事件驱动</span></span><span class="right"><span class="v">9%</span><span class="chg">原6%·基础电信</span></span></div>
+      <div class="note">传导逻辑：中国电信是典型<b>高股息防御性标的</b>。派息率已由前期稳步升至 2025 年 75%，兑现"三年内现金分红提升至股东应占利润 75% 以上"承诺；全年每股股息 0.2720 元（中期 0.1812 + 末期 0.0908），H 股股息率约 4.8%，在高股息板块中仍有吸引力。政策端，国资委"<b>一利五率</b>"考核驱动降本增效与市值管理，叠加资本开支下降释放自由现金流，为高分红提供可持续支撑。<b>股息利差</b>（股息率 − 10 年期国债收益率）2025 年约 <b>2.95pp</b>，是险资与机构衡量"资产荒下高股息性价比"的核心宏观量化指标。近期基础电信服务增值税率由 6% 上调至 9%，属重大盈利压制性宏观政策：销项税提高直接挤压净收入与利润率，虽可经进项抵扣与含税定价部分对冲，仍构成对盈利的<b>明显压力</b>。（股息率/利差为静态行情快照，待接入实时行情后回填）</div>
+    </div>
+  </div>
+
+  <!-- 长期趋势专区 -->
+  <div class="trend-zone">
+    <h2>长期趋势专区（多年序列，点击展开）</h2>
+<details open><summary>① 营业收入 &amp; 归母净利润（2020–2025）</summary><div class="body fin-sec"><div class="chart" id="ch_rev"></div><p class="fin-note">口径说明：2020–2025 为全年累计，采用 H 股"营业额"口径（与港交所年报一致）。营收/净利增速均为近五年低位，行业进入新旧动能转换的平台期；公司利润增速高于营收，主因降本增效与结构优化。</p><h4>核心财务数据（亿元）</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr><tr><td>营业收入</td><td>3,935.6</td><td>4,395.5</td><td>4,814.5</td><td>5,135.5</td><td>5,294.2</td><td>5,295.6</td></tr><tr><td>营收同比</td><td>—</td><td>+11.7%</td><td>+9.5%</td><td>+6.7%</td><td>+3.1%</td><td>+0.0%</td></tr><tr><td>归母净利润</td><td>208.5</td><td>259.5</td><td>275.9</td><td>304.5</td><td>330.1</td><td>331.9</td></tr><tr><td>净利同比</td><td>—</td><td>+24.5%</td><td>+6.3%</td><td>+10.3%</td><td>+8.4%</td><td>+0.5%</td></tr><tr><td>EBITDA</td><td>1,189.0</td><td class="muted">—</td><td>1,304.0</td><td>1,368.3</td><td>1,408.5</td><td>1,438.7</td></tr><tr><td>EBITDA率(占营收)</td><td class="muted">—</td><td class="muted">—</td><td>27.1%</td><td>26.6%</td><td>26.6%</td><td>27.2%</td></tr></table><p class="fin-note">* EBITDA率 = EBITDA/营业收入，为计算值；2020–2021 因 EBITDA 口径待核未列。</p></div></details>
+<details><summary>② 资本开支总额及结构（2020–2026F）</summary><div class="body fin-sec"><div class="chart" id="ch_capex"></div><p class="fin-note">口径说明：2026 为<b>公司资本开支计划</b>（约 730 亿）。投资结构"由连接转向算力"：2025 算力基础设施投资 202 亿、2026 计划 255 亿（+26%，占总投资 35%），网络基础设施投资约 407 亿同步收缩。</p><h4>资本开支（亿元）</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>2026F</th></tr><tr><td>资本开支</td><td>848</td><td>870</td><td>925</td><td>988</td><td>935</td><td>804</td><td>730</td></tr><tr><td>同比</td><td>—</td><td>+2.6%</td><td>+6.3%</td><td>+6.8%</td><td>-5.4%</td><td>-14.0%</td><td>-9.2%</td></tr></table></div></details>
+<details><summary>③ 派息率与每股股息（2022–2025）</summary><div class="body fin-sec"><div class="chart" id="ch_payout"></div><p class="fin-note">口径说明：公司承诺"自 2024 年起三年内现金分红逐步提升至当年股东应占利润的 75% 以上"，2025 年已兑现 75%。每股股息为 A 股全年（中期 + 末期）合计，人民币计价。</p><h4>股东回报数据</h4><table class="ftab"><tr><th>指标</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr><tr><td>派息率</td><td>65%</td><td>70%</td><td>72%</td><td>75%</td></tr><tr><td>每股股息(元)</td><td>0.1960</td><td>0.2332</td><td>0.2598</td><td>0.2720</td></tr><tr><td>股息同比</td><td>—</td><td>+19.0%</td><td>+11.4%</td><td>+4.7%</td></tr></table></div></details>
+<details><summary>④ 移动 / 宽带 ARPU（2020–2024，元/户/月）</summary><div class="body fin-sec"><div class="chart" id="ch_arpu"></div><p class="fin-note">口径说明：移动 ARPU 受资费下行与流量经营转型承压但趋稳；宽带综合 ARPU 因智慧家庭 + FTTR 增值服务升级而稳步走高。ARPU 是衡量"价值经营"的核心指标。（2021、2025 待补）</p><h4>ARPU 数据（元/户/月）</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th></tr><tr><td>移动ARPU</td><td>44.1</td><td class="muted">—</td><td>45.2</td><td>45.4</td><td>45.6</td></tr><tr><td>宽带综合ARPU</td><td>44.4</td><td class="muted">—</td><td>46.3</td><td>47.6</td><td>47.6</td></tr></table></div></details>
+<details><summary>⑤ 客户规模：移动 / 宽带 / 5G渗透（2020–2025）</summary><div class="body fin-sec"><div class="chart" id="ch_cust"></div><p class="fin-note">口径说明：5G 网络用户渗透率为公司披露口径（2025 年约 68.8%）；移动/宽带用户为规模口径，移动用户净增 2025 年约 1,400 万户，规模稳居国内第二。</p><h4>客户规模</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr><tr><td>移动客户(亿户)</td><td>3.51</td><td class="muted">—</td><td>3.91</td><td>4.08</td><td>4.25</td><td>4.39</td></tr><tr><td>宽带客户(亿户)</td><td>1.59</td><td class="muted">—</td><td>1.81</td><td>1.90</td><td>1.97</td><td>2.01</td></tr><tr><td>5G网络用户渗透率(%)</td><td class="muted">—</td><td>38.0</td><td>48.0</td><td>53.0</td><td>61.0</td><td>68.8</td></tr></table></div></details>
+  </div>
+
+  <footer class="foot2">
+    中国电信业绩追踪看板 · 五大维度（财务健康 / 核心业务与结构转型 / 资本开支与基础设施 / CHBN生态协同 / 宏观政策与股东回报）· 单文件交付 ·
+    数据主源：公司 2025 年报 + 月度运营数据（公开披露）· 指标口径统一采用 H 股"营业额"（与港交所年报一致）· 编制日期 2026-08-17
+  </footer>
+</div>
+
+<script>
+// ===== 内联 SVG 图表渲染（无外部依赖）=====
+function niceCeil(v){
+  if(v<=0) v=1;
+  const p=Math.pow(10,Math.floor(Math.log10(v)));
+  const steps=[1,1.2,1.5,2,2.5,3,4,5,6,8,10];
+  for(const s of steps){ if(v<=s*p) return s*p; }
+  return 10*p;
+}
+function fmtTick(v){
+  if(v>=1000) return Math.round(v).toLocaleString();
+  if(Number.isInteger(v)) return String(v);
+  return (Math.round(v*10)/10).toString();
+}
+function lineChart(id, labels, series, opts){
+  opts=opts||{};
+  const W=640,H=232,L=52,R=16,T=16,B=30;
+  const iw=W-L-R, ih=H-T-B;
+  let max=0;
+  series.forEach(s=>s.data.forEach(v=>{ if(v!=null&&v>max) max=v; }));
+  const nmax=niceCeil(max);
+  const X=i=> L + (labels.length<=1? iw/2 : i*iw/(labels.length-1));
+  const Y=v=> T + ih - (v/nmax)*ih;
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  for(let g=0;g<=4;g++){
+    const val=nmax*g/4, gy=Y(val);
+    svg+='<line class="gline" x1="'+L+'" y1="'+gy.toFixed(1)+'" x2="'+(W-R)+'" y2="'+gy.toFixed(1)+'"/>';
+    svg+='<text class="ytick" x="'+(L-6)+'" y="'+(gy+3.5).toFixed(1)+'">'+fmtTick(val)+'</text>';
+  }
+  svg+='<line class="axisline" x1="'+L+'" y1="'+(T+ih)+'" x2="'+(W-R)+'" y2="'+(T+ih)+'"/>';
+  labels.forEach((lb,i)=>{ svg+='<text class="xtick" x="'+X(i).toFixed(1)+'" y="'+(H-8)+'">'+lb+'</text>'; });
+  series.forEach(s=>{
+    let d='';
+    s.data.forEach((v,i)=>{ if(v==null) return; d+=(d?' L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1); });
+    if(d) svg+='<path d="'+d+'" fill="none" stroke="'+s.color+'" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>';
+    s.data.forEach((v,i)=>{ if(v==null) return; svg+='<circle cx="'+X(i).toFixed(1)+'" cy="'+Y(v).toFixed(1)+'" r="3" fill="'+s.color+'"/>'; });
+  });
+  svg+='</svg>';
+  let lg='<div class="legend">';
+  series.forEach(s=>{ lg+='<span><i style="background:'+s.color+'"></i>'+s.name+'</span>'; });
+  lg+='</div>';
+  let cap=opts.caption?('<div class="caption">'+opts.caption+'</div>'):'';
+  document.getElementById(id).innerHTML=svg+lg+cap;
+}
+function barChart(id, labels, series, opts){
+  opts=opts||{};
+  const W=640,H=232,L=52,R=16,T=16,B=30;
+  const iw=W-L-R, ih=H-T-B;
+  let max=0;
+  series.forEach(s=>s.data.forEach(v=>{ if(v!=null&&v>max) max=v; }));
+  const nmax=niceCeil(max);
+  const Y=v=> T + ih - (v/nmax)*ih;
+  const n=labels.length;
+  const groupW=iw/n;
+  const bw=Math.min(44, groupW*0.62);
+  let svg='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  for(let g=0;g<=4;g++){
+    const val=nmax*g/4, gy=Y(val);
+    svg+='<line class="gline" x1="'+L+'" y1="'+gy.toFixed(1)+'" x2="'+(W-R)+'" y2="'+gy.toFixed(1)+'"/>';
+    svg+='<text class="ytick" x="'+(L-6)+'" y="'+(gy+3.5).toFixed(1)+'">'+fmtTick(val)+'</text>';
+  }
+  svg+='<line class="axisline" x1="'+L+'" y1="'+(T+ih)+'" x2="'+(W-R)+'" y2="'+(T+ih)+'"/>';
+  labels.forEach((lb,i)=>{ svg+='<text class="xtick" x="'+(L+groupW*(i+0.5)).toFixed(1)+'" y="'+(H-8)+'">'+lb+'</text>'; });
+  series.forEach((s,si)=>{
+    const m=series.length;
+    const slotW=bw/m;
+    s.data.forEach((v,i)=>{
+      if(v==null) return;
+      const x=L+groupW*i+groupW/2-bw/2+slotW*si;
+      const h=(v/nmax)*ih;
+      svg+='<rect class="bar" x="'+x.toFixed(1)+'" y="'+(Y(v)).toFixed(1)+'" width="'+slotW.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2" fill="'+s.color+'"'+(s.dash?' stroke="#fff" stroke-dasharray="4 3"':'')+'/>';
+      if(opts.showVal) svg+='<text class="valab" x="'+(x+slotW/2).toFixed(1)+'" y="'+(Y(v)-4).toFixed(1)+'">'+fmtTick(v)+'</text>';
+    });
+  });
+  svg+='</svg>';
+  let lg='<div class="legend">';
+  series.forEach(s=>{ lg+='<span><i style="background:'+s.color+'"></i>'+s.name+'</span>'; });
+  lg+='</div>';
+  let cap=opts.caption?('<div class="caption">'+opts.caption+'</div>'):'';
+  document.getElementById(id).innerHTML=svg+lg+cap;
+}
+
+// ===== 指标行内联 sparkline（仅渲染迷你折线 SVG）=====
+function sparkMini(id, values, color){
+  const box=document.getElementById(id);
+  if(!box) return;
+  color=color||'#c8102e';
+  const pts=values.map(v=>Number(v)).filter(v=>!isNaN(v));
+  if(!pts.length){ box.innerHTML=''; return; }
+  let min=Math.min.apply(null,pts);
+  let max=Math.max.apply(null,pts);
+  if(min===max){ const d=Math.abs(max)||1; min-=d*0.15; max+=d*0.15; }
+  const W=100,H=24,pad=3, n=pts.length;
+  const X=i=> n<=1?W/2:pad+i*(W-2*pad)/(n-1);
+  const Y=v=> pad+(1-(v-min)/(max-min))*(H-2*pad);
+  let line='';
+  pts.forEach((v,i)=>{ line+=(i?'L':'M')+X(i).toFixed(2)+' '+Y(v).toFixed(2)+' '; });
+  const area='M'+X(0).toFixed(2)+' '+H+' '+line.replace('M','L')+'L'+X(n-1).toFixed(2)+' '+H+' Z';
+  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" width="100%" height="100%">'+
+    '<path d="'+area+'" fill="'+color+'" fill-opacity="0.12"/>'+
+    '<path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'+
+    '</svg>';
+}
+
+
+
+// ===== 图表数据（由 annual_report_data.METRICS 生成）=====
+lineChart('ch_rev', ["2020", "2021", "2022", "2023", "2024", "2025"], [{"name": "\u8425\u4e1a\u6536\u5165\uff08\u4ebf\u5143\uff09", "color": "#c8102e", "data": [3935.61, 4395.53, 4814.48, 5135.51, 5294.17, 5295.59]}, {"name": "\u5f52\u6bcd\u51c0\u5229\u6da6\uff08\u4ebf\u5143\uff09", "color": "#15616d", "data": [208.5, 259.49, 275.93, 304.46, 330.12, 331.85]}], {"caption": "\u8425\u4e1a\u6536\u5165\u7ad9\u4e0a5000\u4ebf\u3001\u5f52\u6bcd\u51c0\u5229\u6da6\u7a33\u6b65\u589e\u81f3330\u4ebf\u7ea7\uff1b\u589e\u901f\u8fdb\u5165\u5e73\u53f0\u671f\uff08H\u80a1\u8425\u4e1a\u989d\u53e3\u5f84\uff09"});
+barChart('ch_capex', ["2020", "2021", "2022", "2023", "2024", "2025", "2026F"], [{"name": "\u8d44\u672c\u5f00\u652f\uff08\u4ebf\u5143\uff09", "color": "#15616d", "data": [848.0, 870.0, 925.0, 988.0, 935.0, 804.0, 730]}], {"showVal": true, "caption": "2026F \u4e3a\u516c\u53f8\u8ba1\u5212\u503c\uff08\u7ea6730\u4ebf\uff09\uff0c\u8d44\u672c\u5f00\u652f\u8fdb\u5165\u4e0b\u964d\u901a\u9053"});
+lineChart('ch_payout', ["2022", "2023", "2024", "2025"], [{"name": "\u6d3e\u606f\u7387\uff08%\uff09", "color": "#2e9e6b", "data": [65.0, 70.0, 72.0, 75.0]}, {"name": "\u6bcf\u80a1\u80a1\u606f\uff08\u5143\uff09", "color": "#c8102e", "data": [0.196, 0.2332, 0.2598, 0.272]}], {"caption": "\u6d3e\u606f\u7387\u5151\u73b0\"\u4e09\u5e74\u63d0\u5347\u81f375%\u4ee5\u4e0a\"\u627f\u8bfa\uff1b\u6bcf\u80a1\u80a1\u606f\u8fde\u7eed\u589e\u957f"});
+lineChart('ch_arpu', ["2020", "2021", "2022", "2023", "2024"], [{"name": "\u79fb\u52a8ARPU\uff08\u5143\uff09", "color": "#c8102e", "data": [44.1, null, 45.2, 45.4, 45.6]}, {"name": "\u5bbd\u5e26\u7efc\u5408ARPU\uff08\u5143\uff09", "color": "#15616d", "data": [44.4, null, 46.3, 47.6, 47.6]}], {"caption": "\u79fb\u52a8ARPU \u8d8b\u7a33\u3001\u5bbd\u5e26ARPU \u4e0a\u884c\uff082021/2025 \u5f85\u8865\uff09"});
+lineChart('ch_cust', ["2020", "2021", "2022", "2023", "2024", "2025"], [{"name": "\u79fb\u52a8\u5ba2\u6237\uff08\u4ebf\u6237\uff09", "color": "#c8102e", "data": [3.51, null, 3.91, 4.08, 4.25, 4.39]}, {"name": "\u5bbd\u5e26\u5ba2\u6237\uff08\u4ebf\u6237\uff09", "color": "#15616d", "data": [1.59, null, 1.81, 1.9, 1.97, 2.01]}], {"caption": "\u79fb\u52a8/\u5bbd\u5e26\u89c4\u6a21\u7a33\u6b65\u589e\u957f\uff082021 \u5f85\u8865\uff09"});
+
+// ===== 指标行内联 sparkline（由 METRICS 生成）=====
+sparkMini('sk1_rev', [3935.61, 4395.53, 4814.48, 5135.51, 5294.17, 5295.59], '#c8102e');
+sparkMini('sk1_np', [208.5, 259.49, 275.93, 304.46, 330.12, 331.85], '#15616d');
+sparkMini('sk1_eb', [30.211326833705577, 27.08496036955185, 26.6438971007748, 26.604170247649773, 27.168266425459674], '#2e9e6b');
+sparkMini('sk1_roe', [5.82, 6.55, 6.41, 6.9, 7.37, 7.27], '#15616d');
+sparkMini('sk1_fcf', [143.0, 132.0, 130.0, 447.0], '#15616d');
+sparkMini('sk1_db', [48.79, 43.43, 45.97, 46.5, 47.32, 46.22], '#15616d');
+sparkMini('sk1_ar', [598.51, 531.46], '#c8102e');
+sparkMini('sk2_sr', [3738.0, 4349.0, 4649.65, 4820.0, 4854.0], '#15616d');
+sparkMini('sk2_ind', [840.0, 989.45, 1178.0, 1389.0, 1466.0, 1473.0], '#c8102e');
+sparkMini('sk2_cloud', [138.19, 279.03, 579.03, 972.3, 1139.0, 1207.0], '#c8102e');
+sparkMini('sk2_ind2', [840.0, 989.45, 1178.0, 1389.0, 1466.0, 1473.0], '#c8102e');
+sparkMini('sk2_marpu', [44.1, 45.2, 45.4, 45.6], '#c8102e');
+sparkMini('sk2_harpu', [44.4, 46.3, 47.6, 47.6], '#2e9e6b');
+sparkMini('sk3_capex', [848.0, 870.0, 925.0, 988.0, 935.0, 804.0], '#15616d');
+sparkMini('sk3_compute', [95, 120, 150, 180, 202, 255], '#c8102e');
+sparkMini('sk3_ai', [11.0, 62.0], '#d98a14');
+sparkMini('sk3_5g', [121.0, 137.5], '#7a8694');
+sparkMini('sk4_c', [3.51, 3.91, 4.08, 4.25, 4.39], '#c8102e');
+sparkMini('sk4_h', [1.59, 1.81, 1.9, 1.97, 2.01], '#2e9e6b');
+sparkMini('sk4_b', [840.0, 989.45, 1178.0, 1389.0, 1466.0, 1473.0], '#15616d');
+sparkMini('sk4_sec', [162.0, 166.0], '#2e9e6b');
+sparkMini('sk4_5gp', [0.865, 2.68], '#d98a14');
+sparkMini('sk4_intl', [137.0], '#15616d');
+sparkMini('sk5_payout', [65.0, 70.0, 72.0, 75.0], '#2e9e6b');
+sparkMini('sk5_dps', [0.196, 0.2332, 0.2598, 0.272], '#c8102e');
+sparkMini('sk5_eps', [0.3, 0.33, 0.36, 0.36], '#15616d');
+sparkMini('sk5_div', [179.35, 213.39, 237.74, 248.9], '#2e9e6b');
+sparkMini('sk5_spread', [2.8, 3.2, 2.6, 3.0, 2.95], '#15616d');
+</script>
+</body>
+</html>

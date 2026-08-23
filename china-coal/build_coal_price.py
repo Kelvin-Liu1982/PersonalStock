@@ -1,164 +1,77 @@
 # -*- coding: utf-8 -*-
 """
-构建「秦皇岛港5500大卡动力煤现货价」2026年以来周度序列。
+构建「秦皇岛港5500大卡动力煤现货价」2026年以来周度序列的趋势图与火花线。
 
-数据说明（重要）：
-- CCTD（中国煤炭市场网）确有「秦皇岛动力煤价格（周度）」数据，但历史序列在付费会员墙内，
-  无法免费程序化直接抓取（已实测：周度数据页需登录且后端异常）。
-- 本脚本【仅采用 CCTD 披露的锚点】，剔除环渤海 BSPI / Wind / 同花顺 / 雪球 / 券商研报等其他来源。
-  锚点日期为 CCTD 真实披露日；CCTD 锚点之间的周度缺失值用两端 CCTD 锚点线性插值补足（仍仅基于 CCTD），
-  标注「CCTD插值(估算)」；首个 CCTD 锚点之前（如1月）无 CCTD 披露数据，留空。保证口径单一、可追溯。
-
-输出：
-- 数据源/秦皇岛5500现货价_周度.xlsx  (新 Excel 文件)
-- trend_qhd5500_weekly.svg     (趋势图)
+【数据口径 · 重要变更】
+- 价格数据由人工维护在  数据源/中煤能源_价格和成本.xlsx（原「秦皇岛5500现货价_周度.xlsx」改名）的「秦皇岛5500周度」sheet  （仅 CCTD 口径）。
+- 本脚本【只读】该 xlsx，【不再联网抓取】 CCTD，也【不再改写】该 xlsx 文件。
+- 脚本仅据此生成两张 SVG 图表（供 china-coal-dashboard.html 引用）：
+      trend_qhd5500_weekly.svg   (模态框趋势图)
+      spark_qhd5500.svg          (卡片内 mini sparkline)
+- 若需更新价格，请直接编辑 xlsx，再运行本脚本刷新图表即可。
 """
-import datetime as dt
-import numpy as np
-import pandas as pd
-from openpyxl import Workbook
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+import os
+import openpyxl
 
-OUT_XLSX = "数据源/秦皇岛5500现货价_周度.xlsx"
-OUT_SVG = "trend_qhd5500_weekly.svg"
+HERE = os.path.dirname(os.path.abspath(__file__))
+OUT_XLSX = os.path.join(HERE, "数据源", "中煤能源_价格和成本.xlsx")
+OUT_SVG = os.path.join(HERE, "trend_qhd5500_weekly.svg")
+OUT_SPARK = os.path.join(HERE, "spark_qhd5500.svg")
 
-# ---------- 1. 仅采用 CCTD 披露的锚点（2026年以来）----------
-# 其他来源（环渤海 BSPI / Wind / 同花顺 / 雪球 / 券商研报）一律剔除，仅保留 CCTD 口径。
-# (日期, 价格(元/吨), 来源说明)
-ANCHORS = [
-    ("2026-02-04", 685.0, "CCTD秦皇岛动力煤价格5500(2月4日)"),
-    ("2026-03-31", 760.0, "CCTD监测:3月底约760元/吨"),
-    ("2026-04-29", 804.0, "CCTD:4月底收于804元/吨"),
-    ("2026-05-21", 804.0, "CCTD秦皇岛5500(5月21日)"),
-    ("2026-07-31", 725.0, "CCTD综合交易价5500(7月31日)"),
-    ("2026-08-07", 739.0, "CCTD秦皇岛动力煤5500(启东发改委公告)"),
-]
 
-# ---------- 2. 构建周度序列（每周最后一个周五为观测点）----------
-def fridays(start, end):
-    d = start
-    # 找到 start 之后的第一个周五
-    while d.weekday() != 4:
-        d += dt.timedelta(days=1)
-    out = []
-    while d <= end:
-        out.append(d)
-        d += dt.timedelta(days=7)
-    return out
+def load_series(path):
+    """读取 xlsx，返回 (dates, vals)。
+    - 跳过表头行与底部汇总行（这些行价格列为 None 或非数值）；
+    - 价格列缺失/非数值 → 跳过；
+    - 价格 = 0 的行（文件中 1 月无 CCTD 披露的周）保留为 0 占位，绘图时跳过，
+      以保证 x 轴按真实周序连续。
+    """
+    wb = openpyxl.load_workbook(path, data_only=True)
+    ws = wb["秦皇岛5500周度"]
+    # 定位表头（周结束日）
+    hdr_row = None
+    for r in range(1, ws.max_row + 1):
+        if ws.cell(row=r, column=1).value == "周结束日":
+            hdr_row = r
+            break
+    if hdr_row is None:
+        raise RuntimeError("未在 xlsx 中找到表头行（周结束日）")
 
-start = dt.date(2026, 1, 2)
-end = dt.date(2026, 8, 7)
-week_ends = fridays(start, end)
+    dates, vals = [], []
+    for r in range(hdr_row + 1, ws.max_row + 1):
+        d = ws.cell(row=r, column=1).value
+        v = ws.cell(row=r, column=3).value
+        # 汇总行 / 空行：价格列为 None 或非数值 → 跳过
+        if v is None:
+            continue
+        try:
+            vf = float(v)
+        except (TypeError, ValueError):
+            continue
+        if not isinstance(d, str):
+            continue
+        dates.append(str(d)[:10])
+        vals.append(vf)
+    return dates, vals
 
-# 锚点转 datetime
-anchor_dt = [(dt.date.fromisoformat(a[0]), a[1], a[2]) for a in ANCHORS]
 
-rows = []
-for w in week_ends:
-    # 该周及之前最近的锚点
-    prior = [a for a in anchor_dt if a[0] <= w]
-    after = [a for a in anchor_dt if a[0] > w]
-    if prior and (not after or (w - prior[-1][0]).days <= (after[0][0] - w).days):
-        # 用最近的前置锚点（该周内披露的取当周）
-        price = prior[-1][1]
-        src = prior[-1][2]
-        src_type = "锚点(CCTD)"
-    elif prior and after:
-        # 周度缺失：用两端 CCTD 锚点线性插值（仍仅基于 CCTD）
-        p0, p1 = prior[-1], after[0]
-        span = (p1[0] - p0[0]).days
-        if span > 0:
-            frac = (w - p0[0]).days / span
-            price = p0[1] + (p1[1] - p0[1]) * frac
-        else:
-            price = p0[1]
-        src = f"CCTD插值({p0[2]}→{p1[2]})"
-        src_type = "CCTD插值(估算)"
-    else:
-        # 首个 CCTD 锚点之前（如1月）：无 CCTD 披露数据，留空
-        price = np.nan
-        src = "无CCTD披露"
-        src_type = "无数据"
-
-    rows.append({
-        "周结束日": w.isoformat(),
-        "年份-周": f"{w.isoformat()[:4]}-W{int(w.strftime('%W'))}",
-        "秦皇岛5500现货价(元/吨)": round(price, 1),
-        "数据性质": src_type,
-        "来源/说明": src,
-    })
-
-df = pd.DataFrame(rows)
-
-# ---------- 3. 写入新 Excel ----------
-wb = Workbook()
-ws = wb.active
-ws.title = "秦皇岛5500周度"
-title = "秦皇岛港5500大卡动力煤现货价（2026年以来·周度·仅CCTD口径）"
-ws.cell(row=1, column=1, value=title).font = Font(bold=True, size=13, color="1E3A5F")
-note = ("说明：本表【仅采用 CCTD 披露锚点】，剔除环渤海BSPI/Wind/同花顺/雪球等其他来源。"
-        "CCTD锚点之间周度缺失值用两端 CCTD 锚点线性插值补足（标注『CCTD插值(估算)』）；"
-        "首个 CCTD 锚点之前（如1月）无 CCTD 披露数据，留空。")
-ws.cell(row=2, column=1, value=note).font = Font(italic=True, size=9, color="6B7280")
-ws.cell(row=2, column=1, value=note).font = Font(italic=True, size=9, color="6B7280")
-hdr = ["周结束日", "年份-周", "秦皇岛5500现货价(元/吨)", "数据性质", "来源/说明"]
-for j, h in enumerate(hdr, 1):
-    c = ws.cell(row=4, column=j, value=h)
-    c.fill = PatternFill("solid", fgColor="1E3A5F")
-    c.font = Font(color="FFFFFF", bold=True)
-    c.alignment = Alignment(horizontal="center", wrap_text=True)
-
-thin = Side(style="thin", color="D1D5DB")
-border = Border(left=thin, right=thin, top=thin, bottom=thin)
-for i, r in enumerate(df.to_dict("records"), start=5):
-    for j, h in enumerate(hdr, 1):
-        c = ws.cell(row=i, column=j, value=r[h])
-        c.alignment = Alignment(horizontal="center")
-        c.border = border
-        if h == "数据性质" and r[h] == "插值(估算)":
-            c.font = Font(color="B45309")
-        if h == "数据性质" and r[h] == "锚点":
-            c.font = Font(color="047857")
-
-for j, wdt in zip(range(1, len(hdr)+1), [12, 12, 22, 14, 40]):
-    from openpyxl.utils import get_column_letter
-    ws.column_dimensions[get_column_letter(j)].width = wdt
-ws.freeze_panes = "A5"
-
-# 统计摘要
-n_anchor = (df["数据性质"] == "锚点(CCTD)").sum()
-n_interp = (df["数据性质"] == "CCTD插值(估算)").sum()
-n_none = (df["数据性质"] == "无数据").sum()
-valid = df.dropna(subset=["秦皇岛5500现货价(元/吨)"])
-last = valid.iloc[-1] if len(valid) else df.iloc[-1]
-summary = [
-    f"样本周数: {len(df)}（2026-01-02 至 {end.isoformat()}）",
-    f"CCTD锚点: {n_anchor} 周 | CCTD插值(估算): {n_interp} 周 | 无CCTD数据(留空): {n_none} 周",
-    f"最新价: {last['秦皇岛5500现货价(元/吨)']} 元/吨 @ {last['周结束日']}",
-    f"区间最低: {valid['秦皇岛5500现货价(元/吨)'].min()} | 最高: {valid['秦皇岛5500现货价(元/吨)'].max()} 元/吨",
-    "口径: 仅采用 CCTD 披露锚点，未混入环渤海BSPI/Wind/同花顺等其他来源",
-]
-sr = 5 + len(df) + 2
-for k, s in enumerate(summary):
-    ws.cell(row=sr+k, column=1, value=s).font = Font(size=10, color="374151")
-
-wb.save(OUT_XLSX)
-print(f"✅ 生成 Excel：{OUT_XLSX}（CCTD锚点 {n_anchor} / CCTD插值 {n_interp} / 留空 {n_none}）")
-
-# ---------- 4. 生成趋势图（纯 SVG）----------
 def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
     ml, mr, mt, mb = 60, 24, 42, 56
     pw, ph = W - ml - mr, H - mt - mb
     n = len(vals)
-    # 仅用有效点绘制（跳过 NaN，1月无CCTD数据段留空）
-    valid_idx = [i for i in range(n) if vals[i] == vals[i] and vals[i] is not None]
+    # 仅用有效点绘制（跳过无数据周的 0，1月段留空）
+    valid_idx = [i for i in range(n) if isinstance(vals[i], (int, float)) and vals[i] != 0]
+    if not valid_idx:
+        raise RuntimeError("无有效价格数据，无法绘制趋势图")
     xs_all = [ml + pw * i / (n - 1) for i in range(n)]
     vmin = min(vals[i] for i in valid_idx)
     vmax = max(vals[i] for i in valid_idx)
     pad = (vmax - vmin) * 0.12 or 10
     vmin, vmax = vmin - pad, vmax + pad
+
     def yp(v):
         return mt + ph - (v - vmin) / (vmax - vmin) * ph
+
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">']
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
     ttl = title or "秦皇岛港5500动力煤现货价（2026·周度·元/吨）"
@@ -172,7 +85,7 @@ def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
     # 轴
     svg.append(f'<line x1="{ml}" y1="{mt}" x2="{ml}" y2="{mt+ph}" stroke="#d1d5db"/>')
     svg.append(f'<line x1="{ml}" y1="{mt+ph}" x2="{ml+pw}" y2="{mt+ph}" stroke="#d1d5db"/>')
-    # 折线（仅有效点，按真实日期 x 坐标定位）
+    # 折线（仅有效点，按真实周序 x 坐标定位）
     pts = [f"{xs_all[i]:.1f} {yp(vals[i]):.1f}" for i in valid_idx]
     svg.append(f'<path d="M{" L".join(pts)}" fill="none" stroke="#c53030" stroke-width="2.5"/>')
     for i in valid_idx:
@@ -192,18 +105,21 @@ def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
         f.write("".join(svg))
     print(f"✅ 生成趋势图：{fname}")
 
-build_trend_svg(df["周结束日"].tolist(), df["秦皇岛5500现货价(元/吨)"].tolist(), OUT_SVG,
-                title="秦皇岛港5500动力煤现货价（2026·周度·仅CCTD口径）")
 
-# ---------- 5. 卡片内 mini sparkline ----------
 def build_spark(vals, fname, color="#c53030", W=62, H=28):
-    n = len(vals)
+    # 仅用有效点（跳过无数据周的 0），否则 min/max 取到 0 会让火花线比例失真
+    vseq = [v for v in vals if isinstance(v, (int, float)) and v != 0]
+    if not vseq:
+        raise RuntimeError("无有效价格数据，无法绘制火花线")
+    n = len(vseq)
     xs = [2 + (W - 4) * i / (n - 1) for i in range(n)]
-    vmin, vmax = min(vals), max(vals)
+    vmin, vmax = min(vseq), max(vseq)
     pad = (vmax - vmin) * 0.15 or 1
+
     def yp(v):
         return 4 + (H - 8) - (v - (vmin - pad)) / ((vmax + pad) - (vmin - pad)) * (H - 8)
-    pts = [f"{xs[i]:.1f} {yp(vals[i]):.1f}" for i in range(n)]
+
+    pts = [f"{xs[i]:.1f} {yp(vseq[i]):.1f}" for i in range(n)]
     svg = [f'<svg class="spark" viewBox="0 0 {W} {H}" xmlns="http://www.w3.org/2000/svg">']
     svg.append(f'<path d="M{" L".join(pts)}" fill="none" stroke="{color}" stroke-width="2"/>')
     svg.append('</svg>')
@@ -211,4 +127,14 @@ def build_spark(vals, fname, color="#c53030", W=62, H=28):
         f.write("".join(svg))
     print(f"✅ 生成 sparkline：{fname}")
 
-build_spark(df["秦皇岛5500现货价(元/吨)"].tolist(), "spark_qhd5500.svg")
+
+def main():
+    dates, vals = load_series(OUT_XLSX)
+    print(f"📊 从 xlsx 读取 {len(dates)} 个周度观测点（价格=0 为无数据占位，不绘制）")
+    build_trend_svg(dates, vals, OUT_SVG,
+                    title="秦皇岛港5500动力煤现货价（2026·周度·仅CCTD口径）")
+    build_spark(vals, OUT_SPARK)
+
+
+if __name__ == "__main__":
+    main()
