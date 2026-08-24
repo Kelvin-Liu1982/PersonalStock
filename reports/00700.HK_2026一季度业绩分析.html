@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>腾讯控股 2026 第一季度 深度分析</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.65;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 20px 48px;}
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:210px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:13px;color:var(--ink-3);margin:-6px 0 14px;font-weight:600;}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:23px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  .mcard .sub{font-size:11.5px;color:var(--ink-3);margin-top:3px;}
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  .concl{background:linear-gradient(180deg,#fbfdff,#f4f8fd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .concl .tag{font-weight:800;color:var(--brand);font-size:15px;margin-bottom:8px;}
+  .concl p{margin:0 0 8px;font-size:14.5px;color:var(--ink);}
+  .concl p:last-child{margin-bottom:0;}
+  .note{font-size:13px;color:var(--ink-2);background:var(--line-2);border-radius:10px;padding:12px 14px;margin-top:12px;line-height:1.7;}
+  .note b{color:var(--brand);}
+  /* 分段条形图 */
+  .segbar{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px;}
+  .segbar .name{width:150px;color:var(--ink-2);flex:none;}
+  .segbar .track{flex:1;background:var(--line-2);border-radius:6px;height:20px;position:relative;overflow:hidden;}
+  .segbar .fill{height:100%;background:var(--brand);border-radius:6px;}
+  .segbar .fill.alt{background:#3a78b5;}
+  .segbar .fill.alt2{background:#7aa6d6;}
+  .segbar .val{width:120px;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;flex:none;}
+  .flagrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+  .flag{font-size:12.5px;font-weight:700;padding:4px 11px;border-radius:999px;}
+  .flag.ok{background:var(--down-soft);color:var(--down);}
+  .flag.watch{background:#fff4e0;color:#b9770e;}
+  .flag.bad{background:var(--up-soft);color:var(--up);}
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){ .two{grid-template-columns:1fr;} .head .right{text-align:left;} .segbar .name{width:96px;} }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.concl,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 头部 -->
+  <div class="head">
+    <div>
+      <div class="co">腾讯控股</div>
+      <div class="meta">
+        <span>00700.HK</span><span>互联网 · 游戏 · 广告 · 金融科技</span><span>港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026年第一季度报告</div>
+      <div class="pdate">披露日期：2026-05-13</div>
+      <div class="badge up">偏积极 · 主业超预期 · AI 投入压制短期利润率</div>
+    </div>
+  </div>
+
+  <!-- 核心财务指标变动 -->
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动（2026 Q1 单季）</div>
+    <div class="metrics">
+      <div class="mcard"><div class="lab">营业收入</div><div class="val">1,964.58</div><div class="delta up">同比 +9%</div><div class="sub">环比 +1%</div></div>
+      <div class="mcard"><div class="lab">Non-IFRS 净利润</div><div class="val">679.05</div><div class="delta up">同比 +11%</div><div class="sub">剔除新 AI 产品 +17%</div></div>
+      <div class="mcard"><div class="lab">归母净利（IFRS）</div><div class="val">580.93</div><div class="delta up">同比 +21%</div><div class="sub">环比 −0.3%</div></div>
+      <div class="mcard"><div class="lab">每股收益（基本）</div><div class="val">6.431 元</div><div class="delta up">同比 +22%</div><div class="sub">Non-IFRS 7.517 元</div></div>
+      <div class="mcard"><div class="lab">毛利率</div><div class="val">57%</div><div class="delta up">+1pp</div><div class="sub">去年同期 56%</div></div>
+      <div class="mcard"><div class="lab">Non-IFRS 经营利润率</div><div class="val">38.5%</div><div class="delta flat">−0.4pp</div><div class="sub">剔除新 AI 产品 43.0%</div></div>
+      <div class="mcard"><div class="lab">净利率（IFRS）</div><div class="val">30.2%</div><div class="delta up">+2.6pp</div><div class="sub">Non-IFRS 34.6%</div></div>
+      <div class="mcard"><div class="lab">ROE（年化）</div><div class="val">≈20.6%</div><div class="delta up">强劲</div><div class="sub">核心主业盈利强</div></div>
+    </div>
+  </div>
+
+  <!-- 第0章 数据口径与假设 -->
+  <div class="sec">
+    <div class="sec-h">第 0 章 · 数据口径与假设</div>
+    <div class="sec-sub">先定规则，再下结论。避免「拿错数、比错基准」。</div>
+    <table class="tbl">
+      <tbody>
+        <tr><td>报告范围</td><td>合并报表（未经审核），已由核数师按 HKSA 2410 审阅；口径为 IFRS 国际财务报告准则。</td></tr>
+        <tr><td>准则与币种</td><td>IFRS，人民币（RMB）列报；H 股以港元交易（股价/市值按港元，本报告估值部分另注）。</td></tr>
+        <tr><td>可比基准</td><td>同比（YoY）基准 = 2025 Q1；环比（QoQ）基准 = 2025 Q4。腾讯业务季节性弱，QoQ 可作补充。</td></tr>
+        <tr><td>关键注记</td><td>「Non-IFRS」为剔除股份酬金、投资盈亏、无形资产摊销、减值及 SSV/CPP 后的补充口径，用于看核心主业。</td></tr>
+        <tr><td>数据来源</td><td>腾讯 2026 Q1 业绩公布（雪球 PDF 转载）；市场预期取自彭博/AAStocks/国盛/开源/高盛/中金等券商预览与研报。抓取时间：2026-08-12。</td></tr>
+        <tr><td>序列长度（v2 硬要求）</td><td>本报告以单季/年度披露为主，可比历史序列不足 8 期，季节性 / 趋势判断以<b>同季多年序列</b>与 TTM 进度辅助，相关结论置信度相应标注，避免"序列不足误判"。</td></tr>
+        <tr><td>季节性处理（v2 修正 A）</td><td>腾讯业务季节性弱（游戏/广告季节性有限），以<b>同季同比（YoY）</b>为主轴；QoQ 仅作补充，<b>不据 raw QoQ 下"恶化"结论</b>（如 Q1 游戏收入受春节错位递延，非需求走弱）。</td></tr>
+        <tr><td>预期差口径（v2 修正 B）</td><td>一致预期已标注来源与统计时点；港股单列<b>Non-IFRS 口径</b>，避免"看似 miss 实为口径差"（IFRS 归母与 Non-IFRS 不可直接比）。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 第0.5章 行业坐标与供需（v2 新增·前置） -->
+  <div class="sec">
+    <div class="sec-h">第 0.5 章 · 行业坐标与供需（v2 新增 · 前置）</div>
+    <div class="sec-sub">对平台型公司，行业景气与 AI 投入周期是业绩第一驱动力，须先于单个公司判断（回链第 1–2、7 章）。</div>
+    <table class="tbl">
+      <tbody>
+        <tr><td>行业生命周期 / 景气位置</td><td>互联网平台处于「<b>AI 加注期 + 温和复苏</b>」：广告与游戏景气回升，云受 AI 需求拉动；监管进入常态化阶段，版号供给稳定。</td></tr>
+        <tr><td>供需格局</td><td>在线广告库存充裕，AI 推荐（AIM+ / RankUp）抬升 eCPM；游戏长青 IP（王者/和平/三角洲）稳定供给且流水创新高；云算力供需偏紧（AI 训练/推理需求陡增）。</td></tr>
+        <tr><td>价格 / 成本位置</td><td>广告 eCPM 上行利好单价；<b>成本端因 AI 算力（GPU/IDC）capex 骤升</b>而抬升；利率温和下行利好净现金结构（财务收益）。</td></tr>
+        <tr><td>政策与事件</td><td>数据安全与 AI 治理框架推进、鼓励 AI 自主可控；游戏版号常态化；平台反垄监管趋稳，不确定性较 2021–22 显著下降。</td></tr>
+        <tr><td>对腾讯的传导（背景锚）</td><td><b>量价齐升（广告/游戏）利好收入</b>，但<b>成本端 AI 算力 capex 骤升压制短期利润率</b>——与第 2 章"AI 投入拖累"、第 7 章"AI 投入年"相互印证。结论：行业β温和向上，公司α（微信生态+游戏壁垒）占优。</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 第1章 业绩速览与预期差 -->
+  <div class="sec">
+    <div class="sec-h">第 1 章 · 业绩速览与预期差</div>
+    <div class="sec-sub">本报告期 = 2026 年 1–3 月（三个月）。整体「营收略低于市场、利润超预期 / 符合预期」，质量偏实。</div>
+    <table class="tbl">
+      <thead><tr><th>指标（Q1）</th><th style="text-align:right">2026 Q1</th><th style="text-align:right">2025 Q1</th><th style="text-align:right">同比</th></tr></thead>
+      <tbody>
+        <tr><td>营业收入</td><td class="num">1,964.58</td><td class="num">1,800.22</td><td class="num up">+9.0%</td></tr>
+        <tr><td>毛利</td><td class="num">1,112.65</td><td class="num">1,004.93</td><td class="num up">+11.0%</td></tr>
+        <tr><td>经营盈利</td><td class="num">673.75</td><td class="num">575.66</td><td class="num up">+17.0%</td></tr>
+        <tr><td>本公司权益持有人应占盈利</td><td class="num">580.93</td><td class="num">478.21</td><td class="num up">+21.4%</td></tr>
+        <tr><td>Non-IFRS 净利润</td><td class="num">679.05</td><td class="num">613.29</td><td class="num up">+11.0%</td></tr>
+        <tr><td>每股收益（基本，元）</td><td class="num">6.431</td><td class="num">5.252</td><td class="num up">+22.4%</td></tr>
+        <tr><td>毛利率</td><td class="num">57%</td><td class="num">56%</td><td class="num up">+1pp</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <b>预期差判断：</b>市场一致预期（彭博：营收 1,995 亿/+10.8%、Non-IFRS 净利 677 亿/+10.3%；AAStocks 10 家券商中位数：营收 1,996 亿/+10.9%、GAAP 净利 565 亿/+18.1%、Non-IFRS 净利 678 亿/+10.5%）。
+      <br>· <b class="down">营收 1,965 亿略低于一致预期（约 −1.5%）</b>——主因春节晚于去年致游戏/社交收入递延，非需求走弱。
+      <br>· <b class="up">IFRS 归母净利 581 亿（同比 +21%）超预期</b>（预期中位 +18.1%）；<b class="up">Non-IFRS 净利 679 亿小幅超预期</b>（中位 678 亿）。
+      <br>· <b>结论：营收小幅 miss、利润 beat / inline，整体符合「主业稳增、AI 投入压制短期利润率」的预判，预期差中性偏正。</b>
+    </div>
+  </div>
+
+  <!-- 第2章 盈利质量与增长归因 -->
+  <div class="sec">
+    <div class="sec-h">第 2 章 · 盈利质量与增长归因</div>
+    <div class="sec-sub">增长来自主营业务扩张，质量「真」；Non-IFRS 与 IFRS 的缺口由投资相关一次性项目造成，非主业恶化。</div>
+    <table class="tbl">
+      <thead><tr><th>盈利指标</th><th style="text-align:right">2026 Q1</th><th style="text-align:right">2025 Q1</th><th style="text-align:right">变化</th></tr></thead>
+      <tbody>
+        <tr><td>毛利率</td><td class="num">57%</td><td class="num">56%</td><td class="num up">+1pp</td></tr>
+        <tr><td>Non-IFRS 经营利润率</td><td class="num">38.5%</td><td class="num">38.5%</td><td class="num flat">持平</td></tr>
+        <tr><td>剔除新 AI 产品后 Non-IFRS 经营利润率</td><td class="num">43.0%</td><td class="num">—</td><td class="num up">+（同比 +17%）</td></tr>
+        <tr><td>净利率（IFRS）</td><td class="num">30.2%</td><td class="num">27.6%</td><td class="num up">+2.6pp</td></tr>
+        <tr><td>经调整 EBITDA 利润率</td><td class="num">46%</td><td class="num">45%</td><td class="num up">+1pp</td></tr>
+      </tbody>
+    </table>
+    <div class="two" style="margin-top:14px">
+      <div class="panel hl">
+        <h4>增长驱动（质量「真」）</h4>
+        <ul>
+          <li><b>收入 +9%</b> 由广告（+20%）、金融科技及企业服务（+9%）与游戏流水强劲共同拉动；自研游戏占比提升带动毛利结构优化。</li>
+          <li><b>毛利率 57%（+1pp）</b>：高毛利的自研游戏、视频号、电商技术费占比提升；增值/金科企服毛利率分别 +3pp / +2pp。</li>
+          <li><b>Non-IFRS 净利 +11%</b>，剔除新 AI 产品（元宝、混元、CodeBuddy、WorkBuddy、QClaw）后经营利润同比 <b>更高达 +17%</b>，显示核心主业盈利动能强。</li>
+          <li>非经常性扰动有限：IFRS 归母增速（+21%）高于 Non-IFRS（+11%），因去年同期含一次性股份酬金高基数及投资盈亏差异，本期反而净受益。</li>
+        </ul>
+      </div>
+      <div class="panel rk">
+        <h4>压制项（短期）</h4>
+        <ul>
+          <li><b>销售费用 +44%</b> 至 113 亿：AI 原生应用与游戏推广加码，是利润率主要拖累。</li>
+          <li><b>研发费用 +19%</b> 至约 225 亿：AI 基础设施与模型投入上升（被去年同期一次性股份酬金减少所抵消，G&A 整体基本持平）。</li>
+          <li><b>联营/合营公司盈利 36 亿（同比 46 亿）</b>下滑，Non-IFRS 口径下亦由 76 亿降至 71 亿，部分受投资组合公允价值波动影响。</li>
+          <li>分占联营盈利下滑与营销费用高增，使 Non-IFRS 经营利润率同比基本持平（0.4pp 微降）。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">
+      <b>非经常性拆解：</b>Non-IFRS 还原中，「来自投资公司的（收益）/亏损净额」为 <b class="down">−325.5 亿</b>（即 IFRS 利润中包含了约 325 亿投资相关收益，在 Non-IFRS 中被剔除），属常见波动项；无形资产摊销 +319 亿、减值拨备 +247 亿。总体看，本期 IFRS 高于 Non-IFRS 主因基数效应与投资收益节奏，主业质量未受损。
+    </div>
+    <div class="note">
+      <b>ROIC − WACC（v2 修正 C）：</b>腾讯为<b>净现金结构（几乎无净有息负债）</b>，投入资本 ≈ 股东权益 − 超额现金。以 Non-IFRS 经营盈利年化估算 NOPAT：Q1 单季经营盈利 673.75 亿 → 年化经营盈利 ≈ 2,695 亿，NOPAT ≈ 2,695 ×（1 − 有效税率≈21%）≈ <b>2,130 亿</b>；投入资本 ≈ 权益（约 1.21 万亿）− 净现金（1,469 亿）≈ <b>1.06 万亿</b>；则 <b>ROIC ≈ 20%</b>。WACC（10Y 国债≈3% + β≈1×股权风险溢价≈6%，≈8–9%）显著低于 ROIC。<b>ROIC − WACC ≈ +11~12pp &gt; 0，持续为股东创造价值</b>。轻资产平台该差大幅为正，资本回报质量优异（估算含假设，仅供判断；重资产行业才须重点看此差）。
+    </div>
+  </div>
+
+  <!-- 第3章 业务分部与地区拆解 -->
+  <div class="sec">
+    <div class="sec-h">第 3 章 · 业务分部与地区拆解</div>
+    <div class="sec-sub">多元化集团须分部归因。广告（+20%）为最强引擎，游戏受春节错位拖累确认、但流水强劲，金科企服稳健。</div>
+    <h4 style="font-size:14.5px;margin:6px 0 10px;color:var(--ink-2)">分部收入（2026 Q1，人民币亿元）</h4>
+    <div class="segbar"><span class="name">增值服务</span><div class="track"><div class="fill" style="width:49%"></div></div><span class="val">961.1 · +4%</span></div>
+    <div class="segbar"><span class="name">金融科技及企服</span><div class="track"><div class="fill alt" style="width:31%"></div></div><span class="val">598.9 · +9%</span></div>
+    <div class="segbar"><span class="name">营销服务</span><div class="track"><div class="fill alt2" style="width:19%"></div></div><span class="val">381.7 · +20%</span></div>
+    <div class="segbar"><span class="name">其他</span><div class="track"><div class="fill" style="width:1.2%"></div></div><span class="val">22.9 · +103%</span></div>
+    <table class="tbl" style="margin-top:14px">
+      <thead><tr><th>分部</th><th style="text-align:right">收入</th><th style="text-align:right">同比</th><th style="text-align:right">毛利率</th><th style="text-align:right">毛利率同比</th></tr></thead>
+      <tbody>
+        <tr><td>增值服务</td><td class="num">961.1</td><td class="num up">+4%</td><td class="num">63%</td><td class="num up">+3pp</td></tr>
+        <tr><td>　本土游戏</td><td class="num">454.0</td><td class="num up">+6%</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr><td>　国际游戏</td><td class="num">188.0</td><td class="num up">+13%</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr><td>　社交网络</td><td class="num">319.0</td><td class="num down">−2%</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr><td>营销服务</td><td class="num">381.7</td><td class="num up">+20%</td><td class="num">55%</td><td class="num down">−1pp</td></tr>
+        <tr><td>金融科技及企业服务</td><td class="num">598.9</td><td class="num up">+9%</td><td class="num">52%</td><td class="num up">+2pp</td></tr>
+        <tr><td>其他</td><td class="num">22.9</td><td class="num up">+103%</td><td class="num">−45%</td><td class="num down">−71pp</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <b>驱动与拖累：</b>
+      <br>· <b>拉动项 — 广告</b>：AIM+ 智能投放赋能约 30% 广告主投放金额，视频号使用时长同比 +20%，AI 推荐提升 eCPM，增速由 Q4 的 17% 提速至 20%，<b>为最强增长引擎</b>。
+      <br>· <b>拉动项 — 游戏流水</b>：《王者荣耀》《和平精英》《三角洲行动》Q1 流水均创新高；本土游戏流水同比 +10%+，但收入仅确认 +6%（春节晚致递延）；国际游戏 +13%（固定汇率 +14%）。<b>递延收入环比大增逾 310 亿至 1,413 亿</b>，为后续收入提供充足蓄水池。
+      <br>· <b>承压项 — 社交网络 −2%</b>：春节错位致手游道具确收减少；<b>其他业务毛利率 −45%</b> 为战略性投入（含 AI 应用），短期内拉低集团毛利。
+      <br>· <b>金科企服 +9%</b>：商业支付与理财服务增长，云收入同比 +20%（需求与定价改善、微信小店技术费驱动）。
+    </div>
+  </div>
+
+  <!-- 第4章 资产负债与周转效率 -->
+  <div class="sec">
+    <div class="sec-h">第 4 章 · 资产负债与周转效率</div>
+    <div class="sec-sub">资本结构稳健、净现金充裕；应收增速略快于营收但占比小，整体无异常。单位：人民币亿元。</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">2026-03-31</th><th style="text-align:right">2025-12-31</th><th style="text-align:right">变化</th></tr></thead>
+      <tbody>
+        <tr><td>总资产</td><td class="num">20,513.9</td><td class="num">20,389.9</td><td class="num up">+0.6%</td></tr>
+        <tr><td>总负债</td><td class="num">8,397.6</td><td class="num">7,979.2</td><td class="nowrap"></td></tr>
+        <tr><td>资产负债率</td><td class="num">40.9%</td><td class="num">39.1%</td><td class="num down">+1.8pp</td></tr>
+        <tr><td>现金及现金等价物</td><td class="num">2,177.7</td><td class="num">1,410.4</td><td class="num up">+54%</td></tr>
+        <tr><td>应收账款</td><td class="num">581.2</td><td class="num">499.3</td><td class="num up">+16.4%</td></tr>
+        <tr><td>存货</td><td class="num">5.8</td><td class="num">5.3</td><td class="num up">+9.8%</td></tr>
+        <tr><td>递延收入</td><td class="num">1,413.2</td><td class="num">1,103.1</td><td class="num up">+28.1%</td></tr>
+      </tbody>
+    </table>
+    <div class="two" style="margin-top:14px">
+      <div class="panel hl">
+        <h4>流动性与资本结构（健康）</h4>
+        <ul>
+          <li><b>净现金约 1,469 亿</b>（现金及存款 3,396 亿 − 借款+票据 3,868 亿），环比 +37%、同比 +63%，现金储备显著增厚。</li>
+          <li>短期债务（流动借款+票据）仅约 546 亿，<b>现金短债比远超 1，无流动性压力</b>。</li>
+          <li>资产负债率 40.9%，在科技平台中属稳健区间；计息开支 31 亿同比略降（利率下行+汇兑收益）。</li>
+        </ul>
+      </div>
+      <div class="panel rk">
+        <h4>周转效率（轻量关注）</h4>
+        <ul>
+          <li><b>应收账款 581 亿（+16.4%）增速高于营收（+9%）</b>，但应收/季营收仅约 30%，应收周转天数约 27 天，仍健康；需跟踪账龄是否恶化。</li>
+          <li>存货 5.8 亿，对腾讯轻资产模式可忽略。</li>
+          <li><b>递延收入 1,413 亿（环比 +310 亿）</b>：游戏递延收入大幅增加，预示后续收入确定性高，属正向信号。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第5章 现金流健康度 -->
+  <div class="sec">
+    <div class="sec-h">第 5 章 · 现金流健康度</div>
+    <div class="sec-sub">经营现金流充沛，自由现金流转正且强劲；AI 资本开支靠经营现金流覆盖，未依赖筹资。单位：人民币亿元。</div>
+    <table class="tbl">
+      <thead><tr><th>指标（Q1）</th><th style="text-align:right">2026 Q1</th><th style="text-align:right">2025 Q1</th><th style="text-align:right">同比</th></tr></thead>
+      <tbody>
+        <tr><td>经营活动现金流净额</td><td class="num">1,014</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr><td>资本开支付款（含 AI）</td><td class="num">370</td><td class="num">—</td><td class="num">（AI 驱动上升）</td></tr>
+        <tr><td>媒体内容付款</td><td class="num">59</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr><td>租赁负债付款</td><td class="num">18</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr><td><b>自由现金流（FCF）</b></td><td class="num"><b>567</b></td><td class="num">—</td><td class="num up">强劲为正</td></tr>
+        <tr><td>盈利现金含量（OCF/净利）</td><td class="num">1.71×</td><td class="num">—</td><td class="num up">远高于 1</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <b>结论：</b>经营现金流净额 1,014 亿，覆盖资本开支（370 亿，主要用于 AI 相关投入）、媒体内容（59 亿）与租赁付款（18 亿）后，<b class="up">自由现金流仍达 567 亿</b>。盈利现金含量 1.71 倍，利润含金量高。值得注意的是：Q1 资本开支现金流出 370 亿较往年明显抬升（AI 基建前置），但经营现金流足以覆盖，<b>未出现「靠筹资支撑 CapEx」的红旗</b>。现金净额环比增 398 亿至 1,469 亿，叠加约 79 亿回购、70 亿对外投资的净流出后仍显著增厚。
+    </div>
+  </div>
+
+  <!-- 第6章 估值与股东回报 -->
+  <div class="sec">
+    <div class="sec-h">第 6 章 · 估值与股东回报</div>
+    <div class="sec-sub">现价对应 2026E PE 约 12–15 倍，处历史低位；回购持续、分红稳定，回报由经营现金流支撑。</div>
+    <table class="tbl">
+      <thead><tr><th>项目</th><th style="text-align:right">数值</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr><td>现价（约）</td><td class="num">462 港元</td><td>2026 年中的回调后价位（年初至今一度跌约 27%）</td></tr>
+        <tr><td>市值（约）</td><td class="num">4.2 万亿港元</td><td>于 2026-07 前后回落至该水平</td></tr>
+        <tr><td>2026E PE</td><td class="num">约 12–15×</td><td>高盛按现价测算约 12×；开源证券 14.8×；中金按 Non-IFRS 约 20×</td></tr>
+        <tr><td>机构目标价（均值）</td><td class="num">691 港元</td><td>44 家机构均值，区间 427–887 港元；94–95% 买入/增持</td></tr>
+        <tr><td>FCF 收益率（约）</td><td class="num">≈1.5%</td><td>年化 FCF / 市值（粗略），未含回购增厚</td></tr>
+      </tbody>
+    </table>
+    <div class="note">
+      <b>股东回报：</b>Q1 股份回购及注销约 91 亿、回购（将注销）约 11 亿；现金股息约 15 亿。回购与分红均由强劲经营现金流（FCF 567 亿/季）支撑，<b class="up">非借钱分红</b>。
+      <br><b>估值判断：</b>多家券商（高盛、中金、摩根士丹利）认为当前 12–15× 2026E PE 已充分反映悲观预期、处历史低位，估值具备吸引力；上行催化看微信 AI 智能体落地与云/广告提速。
+    </div>
+    <div class="note">
+      <b>周期股正常化说明（v2 修正 F）：</b>腾讯属<b>非周期消费互联网平台</b>，盈利波动主要来自 AI 投入节奏而非行业周期，<b>不适用"周期正常化估值"</b>，单期 PE 可直接判读（但须结合 AI capex 对短期利润的压制）。<br>
+      <b>情景锚（2026E，Non-IFRS 净利）：</b>乐观（AI 变现提速、广告/云延续）≈ 2,800 亿 / PE 回升至 18–20×；中性（当前预期）≈ 2,656 亿 / 当前 12–15×；悲观（AI 投入持续高企且变现滞后）≈ 2,450 亿 / PE 压缩至 12–13×。<b>当前价格已较多反映悲观情景</b>，安全边际渐显。
+    </div>
+  </div>
+
+  <!-- 第7章 管理层指引与前瞻 -->
+  <div class="sec">
+    <div class="sec-h">第 7 章 · 管理层指引与前瞻（Guidance）</div>
+    <div class="sec-sub">管理层将 2026 年定位为「AI 投入年」，强调核心业务现金流可支撑 AI 投入；以下为前瞻性陈述，存在不确定性，非承诺。</div>
+    <div class="two">
+      <div class="panel hl">
+        <h4>战略与产品进展</h4>
+        <ul>
+          <li>重组 AI 研发团队，搭建 <b>Hy3 preview</b> 模型（同等参数规模性能领先），4/28 起在 OpenRouter token 消耗量居前。</li>
+          <li>效率 AI 智能体 <b>WorkBuddy</b> 已成为中国使用最广的效率 AI 智能体服务（以 DAU 计）。</li>
+          <li>微信小店、视频号、AI 搜索/投放持续迭代，AI 赋能核心业务增长与变现。</li>
+        </ul>
+      </div>
+      <div class="panel rk">
+        <h4>资本配置与潜在风险</h4>
+        <ul>
+          <li><b>AI 资本开支将维持高位</b>（Q1 现金 CapEx 370 亿，主要为 AI 相关），短期压制利润率。</li>
+          <li>新 AI 产品（元宝、混元、CodeBuddy 等）当前为投入期，<b>单季对 Non-IFRS 经营利润形成拖累</b>（剔除后 +17% vs 含 AI +9%）。</li>
+          <li>消费端 AI 代理（微信 AI 助手）落地节奏慢于部分竞品，市场关注变现路径与回报能见度。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note"><b>敏感性提示：</b>AI 投入回报的不确定性是核心变量——若云/广告 AI 变现提速，则投入转化为增长；若持续高投入而变现滞后，短期利润率与估值修复将受压制。游戏递延收入（1,413 亿）为 H2 收入提供较高可见度。</div>
+  </div>
+
+  <!-- 第8章 同业可比与相对表现 -->
+  <div class="sec">
+    <div class="sec-h">第 8 章 · 同业可比与相对表现</div>
+    <div class="sec-sub">相对国内互联网龙头，腾讯广告增速领先、利润率与现金流质量优异，估值处同业低位。</div>
+    <table class="tbl">
+      <thead><tr><th>维度</th><th style="text-align:right">腾讯 2026 Q1</th><th>相对同业</th></tr></thead>
+      <tbody>
+        <tr><td>收入增速</td><td class="num">+9%</td><td>稳健，与阿里云/电商龙头同处中高个位数~双位数区间</td></tr>
+        <tr><td>广告增速</td><td class="num">+20%</td><td class="up">跑赢多数同业，视频号+AI 推荐驱动</td></tr>
+        <tr><td>Non-IFRS 净利率</td><td class="num">34.6%</td><td class="up">显著高于多数平台，盈利质量优</td></tr>
+        <tr><td>2026E PE</td><td class="num">12–15×</td><td class="up">处历史低位，与阿里近似但低于部分高成长标的</td></tr>
+        <tr><td>净现金/负债</td><td class="num">净现金 1,469 亿</td><td class="up">资产负债表最稳健梯队</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>定位：</b>腾讯在「广告增速 + 利润率 + 现金流 + 净现金」组合上领先同业；相对劣势在于消费端 AI 应用落地节奏与 AI 投入短期回报能见度。整体<b class="up">领先/持平同业</b>，估值折价更多反映 AI 叙事与市场情绪，而非基本面恶化。</div>
+  </div>
+
+  <!-- 第9章 财务排雷 -->
+  <div class="sec">
+    <div class="sec-h">第 9 章 · 财务排雷（红旗预警清单）</div>
+    <div class="sec-sub">10 项结构化检查。结论：无暴雷级红旗；2 项轻量关注（应收增速、投资公允价值波动）。</div>
+    <table class="tbl">
+      <thead><tr><th>检查项</th><th>现象</th><th>判断</th></tr></thead>
+      <tbody>
+        <tr><td>商誉</td><td>商誉含于无形资产（1,990 亿），占净资产 &lt; 20%</td><td class="up">安全</td></tr>
+        <tr><td>研发资本化</td><td>R&D 约 225 亿（+19%）以费用化为主</td><td class="up">费用化，无注水</td></tr>
+        <tr><td>资产减值</td><td>FVTOCI 投资账面 3,566→2,980 亿（未实现 OCI 损失）</td><td class="watch">未实现，不冲击利润，但投资端承压</td></tr>
+        <tr><td>债务结构</td><td>净现金 1,469 亿，短债 546 亿，现金短债比极高</td><td class="up">无流动性风险</td></tr>
+        <tr><td>审计意见</td><td>经核数师按 HKSA 2410 审阅，无保留</td><td class="up">清洁</td></tr>
+        <tr><td>关联交易</td><td>其他应收占比低，未见异常资金占用</td><td class="up">正常</td></tr>
+        <tr><td>营收质量</td><td>应收 +16.4% &gt; 营收 +9%，但周转天数约 27 天</td><td class="watch">轻量关注账龄</td></tr>
+        <tr><td>存货</td><td>5.8 亿，可忽略</td><td class="up">无积压</td></tr>
+        <tr><td>非经常性损益</td><td>投资收益约 325 亿（Non-IFRS 剔除项），属常态波动</td><td class="up">可持续跟踪</td></tr>
+        <tr><td>现金流背离</td><td>OCF/净利 1.71×，FCF 567 亿为正</td><td class="up">高质量</td></tr>
+        <tr><td><b>收入确认激进（v2 新增）</b></td><td>递延收入环比大增逾 310 亿至 1,413 亿（蓄水池），说明确认审慎而非提前确认；平台直营无渠道压货；广告按投放完成、游戏分成按净额确认。</td><td class="up">低风险</td></tr>
+        <tr><td><b>表外 / 担保 / 或有负债（v2 新增）</b></td><td>对外担保余额低、并表范围稳定（无突变动）；未决诉讼为常规经营诉讼，未见大额未决或明股实债。</td><td class="up">低风险</td></tr>
+      </tbody>
+    </table>
+    <div class="flagrow">
+      <span class="flag ok">清洁审计</span>
+      <span class="flag ok">净现金充裕</span>
+      <span class="flag ok">现金流高含量</span>
+      <span class="flag ok">商誉低</span>
+      <span class="flag ok">收入确认审慎</span>
+      <span class="flag ok">表外风险低</span>
+      <span class="flag watch">应收增速略快</span>
+      <span class="flag watch">上市投资公允价值 −1,256 亿（未实现）</span>
+    </div>
+  </div>
+
+  <!-- 第10章 综合结论 -->
+  <div class="sec">
+    <div class="sec-h">第 10 章 · 综合结论</div>
+    <div class="concl">
+      <div class="tag">一句话定调：偏积极（主业稳增、利润超预期，AI 投入压制短期利润率但不损质量）</div>
+      <p><b>核心利好：</b>① 营收 +9%、Non-IFRS 净利 +11%、IFRS 归母 +21%，利润端 beat / inline，盈利现金含量 1.71×、FCF 567 亿，质量扎实；② 广告 +20% 领跑、游戏流水创新高且递延收入 1,413 亿蓄水池充足、云 +20%，多引擎清晰；③ 净现金 1,469 亿、资产负债表稳健，回购分红由经营现金流覆盖。</p>
+      <p><b>核心风险：</b>① AI 相关投入（销售 +44%、研发 +19%、CapEx 现金 370 亿）短期压低 Non-IFRS 经营利润率（剔除新 AI 后 +17% vs 含 AI +9%），回报能见度待验证；② 上市投资公允价值较年末 −1,256 亿（未实现 OCI 损失），投资端随市波动；③ 联营公司盈利同比下滑、消费端 AI 落地慢于部分竞品，估值修复依赖 AI 兑现节奏。</p>
+      <p><b>需跟踪事项（跟踪闭环 · v2 修正 J）：</b>本报告红旗与后续验证点——① <b>AI 投入压制利润率</b>（第 2/7 章）：跟踪 AI 投入对 Non-IFRS 经营利润率的边际影响是否收敛；② <b>游戏递延蓄水池</b>（第 3 章）：跟踪递延收入释放与广告/云增速延续性；③ <b>微信 AI 智能体落地</b>（第 7 章）：跟踪变现路径与回报能见度；④ <b>资本开支与 FCF 余量</b>（第 5 章）：跟踪 Capex 节奏与自由现金流；⑤ <b>应收账龄</b>（第 9 章关注）+ <b>收入确认审慎</b>（第 9 章 v2 新增）：跟踪应收账龄变化与递延收入释放，排除渠道压货。</p>
+      <p style="color:var(--ink-3);font-size:13px;margin-top:10px">免责声明：本报告基于腾讯 2026 Q1 业绩公布及公开券商预期整理，数据截至 2026-08-12。所有分析仅供参考，不构成任何投资建议。投资决策请结合官方公告与自身风险承受能力。</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <b>数据来源：</b>
+    <br>· 腾讯控股（00700.HK）《截至二零二六年三月三十一日止三个月的业绩公布》（雪球 PDF 转载：stockn.xueqiu.com/00700/20260513091963.pdf），披露日 2026-05-13。
+    <br>· 市场预期与估值：彭博综合预测、AAStocks 10 家券商预览（2026-05）、国盛证券/开源证券/高盛/中金公司/摩根士丹利研报与预览（2026-05 至 2026-08）。
+    <br>· 抓取时间：2026-08-12。金额除特别注明外均为人民币；股价/市值按港元列示。
+    <br><b>口径提示：</b>同比基准 2025 Q1，环比基准 2025 Q4；「Non-IFRS」为剔除股份酬金、投资盈亏、无形资产摊销、减值及 SSV/CPP 后的补充口径，用于观察核心主业。
+    <br><b>模型版本：</b>本报告依据《财报深度分析模型 v2》（含第 0.5 章行业坐标、ROIC−WACC、OCF 拆解、两项新增排雷）执行。所有分析仅供参考，不构成投资建议。
+  </div>
+
+</div>
+</body>
+</html>

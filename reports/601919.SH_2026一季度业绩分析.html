@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中远海控 2026 一季报 财报分析</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;
+    --down:#1f8a4c; --down-soft:#e9f6ee;
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div>
+      <div class="co">中远海控</div>
+      <div class="meta">
+        <span>601919.SH</span><span>航运（集装箱航运）</span><span>上交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026年第一季度报告</div>
+      <div class="pdate">披露日期：2026-04-29</div>
+      <div class="badge flat">中性</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性</span>
+      <p class="oneliner">2026 Q1 营收 517.97 亿（同比 -10.63%）、归母净利润 58.77 亿（同比 -49.75%，环比 +54.72%），业绩符合/小幅超出市场预期，但同比大幅下滑主因上年同期高基数 + 市场运价下行（CCFI 均值同比 -16.32%、单箱收入美元口径 -15.3%）；环比显著改善得益于红海绕航扰动 + 春节前抢出货 + 成本管控（单箱成本 -4.4%）。当前 PB≈1.0x、股息率 TTM≈6.5%、净现金约 1081 亿，龙头地位与防御分红价值凸显，但运价周期仍处回落段、年内红海复航与新增运力（净增 3.8%）为关键变量。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul>
+          <li>环比显著改善：归母净利 58.77 亿，环比上年 Q4（+54.72%），华泰证券称"大幅超过我们预期的 30.0 亿元"，业绩韧性超预期。</li>
+          <li>量稳本降：货运量 691.56 万 TEU（+6.70%），单箱成本同比 -4.4%，数字化供应链收入 115.33 亿（+6.25%）；码头吞吐量 3891.72 万 TEU（+8.86%）。</li>
+          <li>低估值高股息 + 净现金：PB≈1.0x（低于 1 倍净资产）、股息率 TTM≈6.5%、账面货币 1503 亿、净现金约 1081 亿；持续回购注销（A 股 5510 万股 + H 股 1.23 亿股已注销，7 月再启 7.7–15.4 亿回购）。</li>
+        </ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
+          <li>运价周期回落：CCFI 均值同比 -16.32%、国际航线单箱收入（美元）-15.3%，集运 EBIT margin 由 26.42% 降至 14.05%，盈利弹性高度依赖运价。</li>
+          <li>同比高基数致业绩"腰斩"：归母 -49.75%、扣非 -49.66%，若 2H 运价不及预期，全年净利或继续下探（机构 2026E 归母 235–289 亿，较 2025 的 308.68 亿再降）。</li>
+          <li>汇率与应收账款：Q1 汇率变动对现金影响 -17.14 亿（美元贬值，持有大量美元资产）；应收账款 104.08 亿（较年初 +29.16%），需跟踪回款。</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势（单季）</div><svg viewBox="0 0 640 250" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="18" font-size="12.5" font-weight="700" fill="#13406b">营业收入趋势（单季，亿元）</text>
+<line x1="40" y1="30.0" x2="620" y2="30.0" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="33.0" font-size="9.5" fill="#8a94a6" text-anchor="end">867</text>
+<line x1="40" y1="76.5" x2="620" y2="76.5" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="79.5" font-size="9.5" fill="#8a94a6" text-anchor="end">651</text>
+<line x1="40" y1="123.0" x2="620" y2="123.0" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="126.0" font-size="9.5" fill="#8a94a6" text-anchor="end">434</text>
+<line x1="40" y1="169.5" x2="620" y2="169.5" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="172.5" font-size="9.5" fill="#8a94a6" text-anchor="end">217</text>
+<line x1="40" y1="216.0" x2="620" y2="216.0" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="219.0" font-size="9.5" fill="#8a94a6" text-anchor="end">0</text>
+<rect x="54.5" y="112.5" width="35.4" height="103.5" rx="3" fill="#13406b"/>
+<text x="72.2" y="107.5" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">482.8</text>
+<text x="72.2" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q1</text>
+<rect x="118.9" y="102.5" width="35.4" height="113.5" rx="3" fill="#13406b"/>
+<text x="136.7" y="97.5" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">529.4</text>
+<text x="136.7" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q2</text>
+<rect x="183.4" y="58.4" width="35.4" height="157.6" rx="3" fill="#13406b"/>
+<text x="201.1" y="53.4" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">735.1</text>
+<text x="201.1" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q3</text>
+<rect x="247.8" y="89.2" width="35.4" height="126.8" rx="3" fill="#13406b"/>
+<text x="265.6" y="84.2" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">591.2</text>
+<text x="265.6" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q4</text>
+<rect x="312.3" y="91.7" width="35.4" height="124.3" rx="3" fill="#13406b"/>
+<text x="330.0" y="86.7" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">579.6</text>
+<text x="330.0" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q1</text>
+<rect x="376.7" y="106.3" width="35.4" height="109.7" rx="3" fill="#13406b"/>
+<text x="394.4" y="101.3" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">511.4</text>
+<text x="394.4" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q2</text>
+<rect x="441.2" y="90.6" width="35.4" height="125.4" rx="3" fill="#13406b"/>
+<text x="458.9" y="85.6" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">585.0</text>
+<text x="458.9" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q3</text>
+<rect x="505.6" y="104.7" width="35.4" height="111.3" rx="3" fill="#13406b"/>
+<text x="523.3" y="99.7" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">519.0</text>
+<text x="523.3" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q4</text>
+<rect x="570.1" y="104.9" width="35.4" height="111.1" rx="3" fill="#13406b"/>
+<text x="587.8" y="99.9" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">518.0</text>
+<text x="587.8" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">26Q1</text>
+</svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势（单季）</div><svg viewBox="0 0 640 250" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="18" font-size="12.5" font-weight="700" fill="#13406b">归母净利润趋势（单季，亿元）</text>
+<line x1="40" y1="30.0" x2="620" y2="30.0" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="33.0" font-size="9.5" fill="#8a94a6" text-anchor="end">251</text>
+<line x1="40" y1="76.5" x2="620" y2="76.5" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="79.5" font-size="9.5" fill="#8a94a6" text-anchor="end">188</text>
+<line x1="40" y1="123.0" x2="620" y2="123.0" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="126.0" font-size="9.5" fill="#8a94a6" text-anchor="end">125</text>
+<line x1="40" y1="169.5" x2="620" y2="169.5" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="172.5" font-size="9.5" fill="#8a94a6" text-anchor="end">63</text>
+<line x1="40" y1="216.0" x2="620" y2="216.0" stroke="#eef1f6" stroke-width="1"/>
+<text x="34" y="219.0" font-size="9.5" fill="#8a94a6" text-anchor="end">0</text>
+<rect x="54.5" y="165.9" width="35.4" height="50.1" rx="3" fill="#13406b"/>
+<text x="72.2" y="160.9" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">67.5</text>
+<text x="72.2" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q1</text>
+<rect x="118.9" y="141.0" width="35.4" height="75.0" rx="3" fill="#13406b"/>
+<text x="136.7" y="136.0" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">101.2</text>
+<text x="136.7" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q2</text>
+<rect x="183.4" y="58.4" width="35.4" height="157.6" rx="3" fill="#13406b"/>
+<text x="201.1" y="53.4" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">212.5</text>
+<text x="201.1" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q3</text>
+<rect x="247.8" y="134.6" width="35.4" height="81.4" rx="3" fill="#13406b"/>
+<text x="265.6" y="129.6" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">109.8</text>
+<text x="265.6" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q4</text>
+<rect x="312.3" y="129.3" width="35.4" height="86.7" rx="3" fill="#13406b"/>
+<text x="330.0" y="124.3" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">117.0</text>
+<text x="330.0" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q1</text>
+<rect x="376.7" y="172.7" width="35.4" height="43.3" rx="3" fill="#13406b"/>
+<text x="394.4" y="167.7" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">58.4</text>
+<text x="394.4" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q2</text>
+<rect x="441.2" y="145.3" width="35.4" height="70.7" rx="3" fill="#13406b"/>
+<text x="458.9" y="140.3" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">95.3</text>
+<text x="458.9" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q3</text>
+<rect x="505.6" y="187.8" width="35.4" height="28.2" rx="3" fill="#13406b"/>
+<text x="523.3" y="182.8" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">38.0</text>
+<text x="523.3" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q4</text>
+<rect x="570.1" y="172.4" width="35.4" height="43.6" rx="3" fill="#13406b"/>
+<text x="587.8" y="167.4" font-size="9.5" fill="#1f2733" text-anchor="middle" font-weight="700">58.8</text>
+<text x="587.8" y="230.0" font-size="9.5" fill="#5b6675" text-anchor="middle">26Q1</text>
+</svg></div>
+      <div class="chartbox"><div class="ct">单季同比增速</div><svg viewBox="0 0 640 260" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,PingFang SC,Microsoft YaHei,sans-serif">
+<text x="40" y="18" font-size="12.5" font-weight="700" fill="#13406b">单季同比增速（营收 vs 归母净利，%）</text>
+<line x1="40" y1="125.0" x2="620" y2="125.0" stroke="#c9d2de" stroke-width="1"/>
+<text x="34" y="33.0" font-size="9" fill="#8a94a6" text-anchor="end">+91%</text>
+<text x="34" y="80.5" font-size="9" fill="#8a94a6" text-anchor="end">+46%</text>
+<text x="34" y="170.5" font-size="9" fill="#8a94a6" text-anchor="end">-41%</text>
+<text x="34" y="213.0" font-size="9" fill="#8a94a6" text-anchor="end">-82%</text>
+<rect x="56.3" y="123.0" width="29.0" height="2.0" rx="2" fill="#c0392b"/>
+<text x="70.8" y="119.0" font-size="8.5" fill="#5b6675" text-anchor="middle">+2.0</text>
+<rect x="91.3" y="125.0" width="29.0" height="5.4" rx="2" fill="#a93226"/>
+<text x="105.8" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-5.2</text>
+<text x="88.3" y="226.0" font-size="9.5" fill="#5b6675" text-anchor="middle">24Q1</text>
+<rect x="153.0" y="104.2" width="29.0" height="20.8" rx="2" fill="#c0392b"/>
+<text x="167.5" y="100.2" font-size="8.5" fill="#5b6675" text-anchor="middle">+20.1</text>
+<rect x="188.0" y="49.0" width="29.0" height="76.0" rx="2" fill="#a93226"/>
+<text x="202.5" y="45.0" font-size="8.5" fill="#5b6675" text-anchor="middle">+73.1</text>
+<text x="185.0" y="226.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q1</text>
+<rect x="249.7" y="125.0" width="29.0" height="3.5" rx="2" fill="#c0392b"/>
+<text x="264.2" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-3.4</text>
+<rect x="284.7" y="125.0" width="29.0" height="43.9" rx="2" fill="#a93226"/>
+<text x="299.2" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-42.2</text>
+<text x="281.7" y="226.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q2</text>
+<rect x="346.3" y="125.0" width="29.0" height="21.3" rx="2" fill="#c0392b"/>
+<text x="360.8" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-20.4</text>
+<rect x="381.3" y="125.0" width="29.0" height="57.3" rx="2" fill="#a93226"/>
+<text x="395.8" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-55.1</text>
+<text x="378.3" y="226.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q3</text>
+<rect x="443.0" y="125.0" width="29.0" height="12.7" rx="2" fill="#c0392b"/>
+<text x="457.5" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-12.2</text>
+<rect x="478.0" y="125.0" width="29.0" height="68.0" rx="2" fill="#a93226"/>
+<text x="492.5" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-65.4</text>
+<text x="475.0" y="226.0" font-size="9.5" fill="#5b6675" text-anchor="middle">25Q4</text>
+<rect x="539.7" y="125.0" width="29.0" height="11.1" rx="2" fill="#c0392b"/>
+<text x="554.2" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-10.6</text>
+<rect x="574.7" y="125.0" width="29.0" height="51.7" rx="2" fill="#a93226"/>
+<text x="589.2" y="121.0" font-size="8.5" fill="#5b6675" text-anchor="middle">-49.8</text>
+<text x="571.7" y="226.0" font-size="9.5" fill="#5b6675" text-anchor="middle">26Q1</text>
+</svg></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+      <div class="mcard"><div class="lab">营业收入</div><div class="val">517.97 亿</div><div class="delta down">同比 -10.63%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">58.77 亿</div><div class="delta down">同比 -49.75%</div></div>
+      <div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">58.60 亿</div><div class="delta down">同比 -49.66%</div></div>
+      <div class="mcard"><div class="lab">基本每股收益</div><div class="val">0.38 元</div><div class="delta down">同比 -48.65%</div></div>
+      <div class="mcard"><div class="lab">毛利率</div><div class="val">17.25%</div><div class="delta down">同比 -9.8pp</div></div>
+      <div class="mcard"><div class="lab">加权 ROE</div><div class="val">2.51%</div><div class="delta down">同比 -2.37pp</div></div>
+      <div class="mcard"><div class="lab">经营现金净流入</div><div class="val">111.25 亿</div><div class="delta down">同比 -26.14%</div></div>
+      <div class="mcard"><div class="lab">集团 EBIT</div><div class="val">87.63 亿</div><div class="delta down">同比 -47.14%</div></div>
+      <div class="mcard"><div class="lab">资产负债率</div><div class="val">40.90%</div><div class="delta flat">较年初 -0.5pp</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期(2026Q1)</th><th style="text-align:right">去年同期(2025Q1)</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+        <tr><td>营业收入</td><td class="num">517.97 亿</td><td class="num">579.60 亿</td><td class="num down">-10.63%</td></tr>
+        <tr><td>营业成本</td><td class="num">428.67 亿</td><td class="num">422.83 亿</td><td class="num up">+1.38%</td></tr>
+        <tr><td>利润总额</td><td class="num">80.52 亿</td><td class="num">158.53 亿</td><td class="num down">-49.21%</td></tr>
+        <tr><td>归母净利润</td><td class="num">58.77 亿</td><td class="num">116.95 亿</td><td class="num down">-49.75%</td></tr>
+        <tr><td>扣非归母净利润</td><td class="num">58.60 亿</td><td class="num">116.42 亿</td><td class="num down">-49.66%</td></tr>
+        <tr><td>基本每股收益</td><td class="num">0.38 元</td><td class="num">0.74 元</td><td class="num down">-48.65%</td></tr>
+        <tr><td>经营现金净流入</td><td class="num">111.25 亿</td><td class="num">150.62 亿</td><td class="num down">-26.14%</td></tr>
+        <tr><td>总资产</td><td class="num">4,860.23 亿</td><td class="num">—</td><td class="num flat">较年初 +0.47%</td></tr>
+        <tr><td>归母净资产</td><td class="num">2,356.90 亿</td><td class="num">—</td><td class="num flat">较年初 +1.47%</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+        <tr><td>归母净利润（A 股口径）</td><td class="num">58.77 亿</td><td class="num">华泰原预期 30.0 亿；正式一致预期（港股口径净利）约 66.4 亿港币</td><td class="num up">大幅超预期</td><td class="num up">beat</td></tr>
+        <tr><td>营业收入</td><td class="num">517.97 亿</td><td class="num">一致预期约 601.9 亿港币（折合人民币口径）</td><td class="num down">-约 14%（口径差异）</td><td class="num flat">略低/基本符合</td></tr>
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：华泰证券点评（2026-05-05）称"大幅超过我们预期的 30.0 亿元"；格隆汇（2026-05）"1Q26 业绩符合预期"；机构一致预期（2 家）2026Q1 净利润预测 66.4 亿港币、实际 67.0 亿港币（港股口径含少数股东损益），统计时点 2026-04-29 披露前。A 股归母口径 58.77 亿，环比 +54.72% 显著改善，结论为"符合/小幅超预期"。</p>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>集装箱航运为典型强周期行业，当前处于"景气自 2024–2025 高点回落、但环比企稳"的阶段。2026 Q1 CCFI 均值 1130，同比 -16.32%、环比 +5.1%（红海绕航推迟 + 春节前抢出货支撑即期运价）；SCFI 美西/美东较年初 +16.6%/+14.1%。传导方向：运价（核心变量）同比下行 → 收入与利润承压；但红海复航预期推迟、2026 年行业净增运力仅约 3.8%、中国出口韧性（Q1 出口总额 +12%）使供需边际改善，量（货量 +6.7%）部分抵消价跌。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：Q1 货运量 691.56 万 TEU（+6.70%），亚欧（+14.2%）、亚洲区内（+6.1%）、中国大陆（+14.9%）亮眼；价：国际航线单箱收入（美元）1,110.36，同比 -15.31%（美线 -19.9%、欧线 -19.0%、东南亚 -3.9%）。价格位置：CCFI 处历史中低位（较 2024 高位显著回落，但高于 2019 中枢）。政策/事件：中东冲突致红海绕航常态化、美元贬值（汇率变动对现金 -17.14 亿）为外部扰动。结论：周期下行但环比筑底，龙头凭借成本管控与网络优势抗压。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>定性。公司净现金（账面货币 1503 亿、带息债以租赁负债+长短期借款为主，华泰估算净现金约 1081 亿），WACC 估算约 5–6%（低 β 航运龙头+低利率），ROIC 远高于 WACC（创造价值）。但需提示：集运 EBIT margin 由 26.42% 降至 14.05%、加权 ROE 由 4.88% 降至 2.51%，周期回落期资本回报收窄，仍显著高于资本成本。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b>收入 -10.63% 主因运价下行（价跌，单箱收入美元 -15.3%），货量 +6.7% 部分抵消；利润 -49.75% 主因：①运价同比大幅下滑（上年同期高基数，红海绕航推高即期运价）；②单箱成本同比 -4.4%（供应链优化+效率提升）部分对冲；③投资收益稳健（对联营合营 12.88 亿，同比 -1.3%）、码头利润增长贡献稳定。即：利润下滑主因周期性价格回落，非成本失控或主业恶化。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b>非经常性损益仅 1,660 万元（占净利 0.24%），扣非归母 58.60 亿 ≈ 归母 58.77 亿（99.7%），盈利高度"真"；OCF/净利≈1.62x，现金流印证利润质量，无"非经保利润"粉饰。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">
+      <p><b>集装箱航运（核心，占集团 EBIT 约 80%）：</b>集团航线收入合计 450.93 亿（同比 -12.79%），EBIT 69.73 亿（同比 -52.8%），EBIT margin 14.05%（-12.37pp）；净利润 54.96 亿（-53.2%）。分航线收入：跨太平洋 -23.35%、亚欧（含地中海）-10.32%、亚洲区内（含澳洲）-1.19%、其他国际 -22.20%、中国大陆 +7.49%。分航线货量：亚欧 +14.23%、中国大陆 +14.92%、亚洲区内 +6.07%，跨太平洋 -1.35%、其他国际 -1.62% → 量价背离，价格主导收入下滑。除海运外供应链收入 115.33 亿（+6.25%），数字化供应链逆势增长。</p>
+      <p><b>码头业务：</b>总吞吐量 3,891.72 万 TEU（+8.86%），控股 +2.90%、参股 +10.57%，海外地区 +19.83%，量增稳健、提供利润稳定器。</p>
+      <p><b>增量利润贡献（v2 修正 H）：</b>集团 EBIT 87.63 亿 vs 上年 144.78 亿（-57.15 亿），其中集运 EBIT 贡献约 79.6%、码头与投资收益贡献其余；本期利润下滑主源为集运运价回落，码头/投资收益为唯二稳健支撑，分部利润贡献占比与模型公式一致（集团增量利润≈各分部增量之和）。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card">资本结构：总资产 4,860.23 亿（较年初 +0.47%），资产负债率 40.90%（较年初 41.42% 再降），归母净资产 2,356.90 亿（+1.47%）。流动性：流动资产 1,747.61 亿、流动负债 1,151.09 亿，流动比率 1.52x、速动比率 1.46x；货币资金 1,503.34 亿，显著覆盖带息债务（短借 13.23 亿+一年内到期 167.68 亿+长期借款 241.60 亿+租赁负债 313.66 亿合计约 736 亿），净现金充裕（华泰估算约 1,081 亿）。周转与红旗：应收账款 104.08 亿（较年初 +29.16%，营收下降背景下应收上升，关注回款节奏但绝对周转快、约 16 天）；存货 66.04 亿（低，周转约 14 天）；商誉 62.44 亿（占净资产 2.6%，极低）；固定资产 1,460.60 亿、在建工程 195.76 亿（新船订单投入中）。整体杠杆低、安全垫厚。</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b>优质：OCF 111.25 亿（同比 -26.14%），OCF/净利≈1.62x（含高额折旧摊销加回），盈利现金含量高；自由现金流 FCF = OCF 111.25 − 购建长期资产 60.49 ≈ 50.76 亿（正）。现金流与利润无背离。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）：</b>间接法归因：净利润 68.82 + 折旧摊销/减值等非付现损益 + 营运资本变动（应收增加占用、应付节奏） + 递延税等 → OCF 111.25 亿。OCF 同比 -26.14% 主因：①净利润同比下降（核心）；②汇率变动对现金影响 -17.14 亿（2025Q1 仅 -0.25 亿），美元贬值致持有美元资产折算损失放大现金流出；③营收回款随收入略降。剔除汇率扰动后经营获现仍强劲。</p>
+      <p><b>自由现金流与覆盖能力：</b>FCF≈50.76 亿（正）；投资活动净额 -57.49 亿（capex 60.49 + 投资支付），筹资净额 -48.41 亿（回购注销+偿债）。OCF 111 亿 ≫ 资本开支 60 亿，内生现金流可覆盖 capex 与分红/回购，无筹资依赖；期末现金及等价物 1,497.02 亿。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>截至 2026-08-14，A 股 601919.SH 股价约 15.43 元、总市值约 2,356 亿，PE(TTM) 约 9.4x、PE(静) 约 7.6x、PB 约 1.0x、股息率 TTM 约 6.5%、每股净资产 15.39 元（PB≈1.0x 即接近破净）。纵向处历史偏低区间，横向低于东方海外国际等同业 PB。</p>
+      <p><b>周期正常化估值（v2 修正 F）：</b>强周期股，禁止单期 PE 直接判贵贱。盈利序列：2024 净利 491 亿（高）、2025 净利 308.68 亿（-37%）、2026E 235–289 亿（机构，华泰 288.7/格隆汇 235.1）、2027E 172–260 亿。正常化净利（周期中枢）约 250–300 亿，正常化 PE = 2,356 亿 / 270 亿 ≈ 8.7x，处历史偏低；当前 PE(TTM) 9.4x 实为"周期回落段利润下行致 PE 被动抬升"，PB 1.0x 接近破净反映市场对周期底部的谨慎定价。结论：绝对估值偏低、股息防御价值凸显。</p>
+      <p><b>股东回报可持续性：</b>2025 年分红 10 派 4.4 元、分红率约 50%（历史承诺 50%）；2026E 基于 50% 分红率假设，A 股/H 股股息率约 5.3%/5.9%（格隆汇）。回购：2026-01 注销 A 股 5,511 万股 + H 股 1.233 亿股，2026-07 再启 7.7–15.4 亿 A 股回购。分红+回购由 OCF（111 亿）+ 净现金（1,081 亿）支撑，可持续性高。</p>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">公司未给全年量化指引，但明确"围绕主业深耕、拓展新兴市场（东南亚/中东/南美）、数智化与绿色化双轮驱动"。运力：自营+在手订单合计约 484 万 TEU，2026 年拟斥资约 152 亿订造 12 艘 13,600TEU LNG 双燃料船（叠加年初 12 艘 18,000TEU+6 艘 3,000TEU），夯实长期竞争力。机构预测（华泰/格隆汇）2026 归母 235–289 亿、2027 172–260 亿，2Q 货量及运价同环比有望上行（红海复航推迟+供给有限）。敏感性：运价每 ±10% 对 EBIT 弹性极大（单箱收入 -15% 致 EBIT margin 由 26%→14%）。注：指引为前瞻性陈述，非承诺。</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">集装箱航运 A/H 龙头对比：中远海控（601919.SH/01919.HK）运力全球第一梯队（自营+订单 484 万 TEU）、2026Q1 营收/净利居行业首位，PB≈1.0x、股息率 TTM≈6.5%；东方海外国际（0316.HK）PB 通常 1.0–1.3x、股息率略低；海丰国际（1308.HK）聚焦亚洲区内、PB 更高。相对强弱：中远海控在"规模+网络+现金流+分红率 50%"三角中最均衡，周期下行中龙头抗风险与分红确定性优于中小船东；但增长弹性（单箱收入修复）弱于高 β 标的。机构多数"买入/增持"（华泰目标价 A 股 18.8 元、格隆汇 17.7 元，均较现价约 23% 上行空间）。结论：龙头防御属性+股息价值突出。</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+      <div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉 62.44 亿，占净资产仅 2.6%，并购整合风险极低，减值压力小。</div></div>
+      <div class="rf"><div class="k">应收账款</div><div class="v"><span class="verdict amber">关注</span>应收账款 104.08 亿（较年初 +29.16%，营收下降背景下应收上升），绝对周转快（约 16 天），但需跟踪回款与账龄，警惕放宽信用促收入。</div></div>
+      <div class="rf"><div class="k">收入确认激进</div><div class="v"><span class="verdict flat">合规</span>航运收入按航次/提单完工确认、码头按吞吐服务确认，符合准则；货量（691.56 万 TEU）与码头吞吐（3,891.72 万 TEU）真实可核，未见渠道压货或提前确认迹象。</div></div>
+      <div class="rf"><div class="k">表外/担保/或有负债</div><div class="v"><span class="verdict flat">可控</span>未披露重大对外担保；租赁负债 313.66 亿（使用权资产 414.84 亿相关，已完整入表）；无重大未决诉讼/或有负债披露。</div></div>
+      <div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict up">优秀</span>净现金（账面货币 1,503 亿 ≫ 带息债约 736 亿），资产负债率 40.90%，流动比率 1.52x，无流动性与偿债风险。</div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict up">干净</span>非经常性损益仅 1,660 万元（占净利 0.24%），扣非/归母=99.7%，利润质量未失真。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">待核</span>一季度报告未经审计（法定），以 2026 年报审计意见为准，本报告未独立核验签字意见。</div></div>
+      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict up">无</span>OCF 111.25 亿 ≫ 净利 68.82 亿，OCF/净利≈1.62x，现金流与利润无背离，盈利含金量高。</div></div>
+      <div class="rf"><div class="k">汇率风险</div><div class="v"><span class="verdict amber">关注</span>持有大量美元资产/负债，Q1 汇率变动对现金影响 -17.14 亿（2025Q1 仅 -0.25 亿），美元贬值直接侵蚀现金余额，需持续跟踪汇兑敞口。</div></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+        <li>环比 +54.72%、超华泰原预期，业绩韧性凸显。</li>
+        <li>量稳本降：货运量 +6.7%、单箱成本 -4.4%、供应链收入 +6.25%、码头吞吐 +8.86%。</li>
+        <li>PB≈1.0x、股息率≈6.5%、净现金约 1081 亿，持续回购注销。</li>
+      </ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+        <li>运价周期回落（CCFI -16.3%、单箱收入 -15.3%），盈利弹性依赖运价。</li>
+        <li>同比高基数致业绩"腰斩"（-49.75%），全年净利或继续下探。</li>
+        <li>汇率影响 -17.14 亿、应收账款 +29%，回款与汇兑敞口需跟踪。</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol>
+      <li>CCFI/SCFI 运价走势：红海复航节奏、美线长协价、2026 年净增运力 3.8% 对供需的边际影响。</li>
+      <li>Q2 净利是否如期环比上行（华泰/格隆汇预期 2Q 复苏，机构 2026Q2 净利环比回升）。</li>
+      <li>应收账款周转与回款（104.08 亿，较年初 +29.16%），关注账龄与信用政策是否放宽。</li>
+      <li>汇率敞口：美元资产负债结构下，汇率变动对现金的影响（Q1 -17.14 亿）是否持续。</li>
+      <li>回购与分红进展：7 月再启 7.7–15.4 亿 A 股回购、年度 50% 分红率兑现情况。</li>
+      <li>新船订单交付与资本开支节奏（约 152 亿 LNG 双燃料船订单），对供给与现金流的长期影响。</li>
+    </ol></div>
+  </div>
+
+</div>
+</body>
+</html>

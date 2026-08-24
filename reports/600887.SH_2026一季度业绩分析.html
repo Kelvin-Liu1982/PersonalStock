@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>伊利股份 2026 一季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  
+  <div class="head">
+    <div>
+      <div class="co">伊利股份</div>
+      <div class="meta">
+        <span>600887.SH</span><span>食品饮料（乳制品）</span><span>上交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 一季报</div>
+      <div class="pdate">披露日期：2026-04-29</div>
+      <div class="badge up">偏积极</div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone up">偏积极</span>
+      <p class="oneliner">2026 年一季度伊利股份实现营收 348.25 亿（同比 +5.47%）、归母净利润 53.95 亿（+10.68%）、扣非 53.29 亿（+15.11%），在 2024–2025 连续两年的增长波动后重回稳健扩张，且利润增速约为营收增速的两倍，盈利质量「真」。核心驱动是<b>原奶价格历史低位带来的成本红利</b>（毛利率升至 38.5%、同比 +0.7pp）叠加<b>产品结构升级</b>（奶粉及奶制品、冷饮高增）与<b>费用率优化</b>（销售费率 −0.2pp）。经营现金流净额 37.35 亿（+293.92%）大幅改善，净现比由 0.19x 升至 0.69x。资产质量稳健（资产负债率降至 59.5%、ROE 9.44%）。核心风险在于：应收账款 +19.3% 快于营收、短期借款 +29.4% 至 590 亿、合同负债腰斩、以及原奶价格 2026 下半年或回升将削弱成本红利——当前 A 股 25.49 元、PE(TTM) 20.1x、股息率 ~5.4%–6.7%，估值处历史中低位。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul>
+<li>2026Q1 营收 348.25 亿（+5.47%）、归母 53.95 亿（+10.68%）、扣非 53.29 亿（+15.11%），利润增速约为营收两倍，为 2024–2025 波动后<b>重回稳健扩张</b>。</li>
+<li><b>原奶成本红利 + 结构升级 + 费用优化</b>：毛利率升至 38.52%（+0.7pp）、净利率 15.49%（+0.73pp）、销售费率 −0.2pp，盈利质量「真」（非经仅占 1.2%）。</li>
+<li>经营现金流净额 37.35 亿（+293.92%），净现比由 0.19x 升至 0.69x；资产负债率降至 59.5%、ROE 9.44%，资产质量稳健。</li>
+<li>龙头领先优势稳固：营收规模与净利率远超蒙牛 / 光明 / 飞鹤，婴配粉市占率 18.3% 行业第一；估值处历史中低位（PE 20x）、股息率 ~5.4%–6.7%。</li>
+</ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
+<li><b>应收 / 债务信号</b>：应收账款 +19.3% 快于营收、短期借款 +29.4% 至 590 亿（现金短债比 0.33x）、合同负债腰斩，雪球质疑「借短拖款、资金面偏紧」。</li>
+<li><b>经营现金流改善可持续性</b>：OCF +293.92% 部分由应付拖款驱动，能否外推全年存疑。</li>
+<li><b>原奶价格回升风险</b>：当前利润含奶价低位红利，若 2026 下半年奶价企稳回升，毛利率或边际收窄、成本红利减弱。</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">营业收入（Q1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="67.4" y="60.0" width="88.2" height="146.0" rx="3" fill="#13406b" opacity="0.85"/><text x="111.5" y="56.0" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">333.3</text><text x="111.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><rect x="214.4" y="63.8" width="88.2" height="142.2" rx="3" fill="#13406b" opacity="0.85"/><text x="258.5" y="59.8" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">324.6</text><text x="258.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="361.4" y="61.7" width="88.2" height="144.3" rx="3" fill="#13406b" opacity="0.85"/><text x="405.5" y="57.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">329.4</text><text x="405.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><rect x="508.4" y="53.5" width="88.2" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="552.5" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">348.2</text><text x="552.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">Q1 同季多年序列；2026 为 2022 年以来最高 Q1 营收</text></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">归母净利润（Q1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="67.4" y="112.9" width="88.2" height="93.1" rx="3" fill="#13406b" opacity="0.85"/><text x="111.5" y="108.9" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">36.1</text><text x="111.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><rect x="214.4" y="53.5" width="88.2" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="258.5" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">59.2</text><text x="258.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="361.4" y="80.5" width="88.2" height="125.5" rx="3" fill="#13406b" opacity="0.85"/><text x="405.5" y="76.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">48.7</text><text x="405.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><rect x="508.4" y="67.1" width="88.2" height="138.9" rx="3" fill="#13406b" opacity="0.85"/><text x="552.5" y="63.1" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">54.0</text><text x="552.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">2024Q1 高基数含一次性投资收益；2026 回归常态后仍居次高</text></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="40" y="16" font-size="12" font-weight="700" fill="#13406b">Q1 同比增速（%）</text><line x1="40" y1="166.9" x2="626" y2="166.9" stroke="#c8d0db" stroke-dasharray="3 3"/><text x="113.2" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><text x="259.8" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><text x="406.2" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><text x="552.8" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><polyline points="113.2,151.9 259.8,171.9 406.2,164.1 552.8,156.4" fill="none" stroke="#c0392b" stroke-width="2.2"/><circle cx="113.2" cy="151.9" r="3" fill="#c0392b"/><text x="113.2" y="144.9" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+7.8</text><circle cx="259.8" cy="171.9" r="3" fill="#c0392b"/><text x="259.8" y="164.9" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">-2.6</text><circle cx="406.2" cy="164.1" r="3" fill="#c0392b"/><text x="406.2" y="157.1" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+1.5</text><circle cx="552.8" cy="156.4" r="3" fill="#c0392b"/><text x="552.8" y="149.4" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+5.5</text><polyline points="113.2,161.7 259.8,44.4 406.2,200.9 552.8,146.4" fill="none" stroke="#1f8a4c" stroke-width="2.2"/><circle cx="113.2" cy="161.7" r="3" fill="#1f8a4c"/><text x="113.2" y="174.7" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+2.7</text><circle cx="259.8" cy="44.4" r="3" fill="#1f8a4c"/><text x="259.8" y="57.4" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+63.8</text><circle cx="406.2" cy="200.9" r="3" fill="#1f8a4c"/><text x="406.2" y="213.9" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-17.7</text><circle cx="552.8" cy="146.4" r="3" fill="#1f8a4c"/><text x="552.8" y="159.4" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+10.7</text><rect x="40" y="20" width="10" height="10" rx="2" fill="#c0392b"/><text x="54" y="29" font-size="10" fill="#5b6675">营收YoY</text><rect x="150" y="20" width="10" height="10" rx="2" fill="#1f8a4c"/><text x="164" y="29" font-size="10" fill="#5b6675">归母YoY</text><text x="40" y="238" font-size="9.5" fill="#8a94a6">红=营收增速 绿=归母增速（A股习惯）；2024归母+63.8%为一次性投资收益高基数</text></svg></div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+      
+<div class="mcard"><div class="lab">营业收入</div><div class="val">348.25亿</div><div class="delta up">+5.47%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">53.95亿</div><div class="delta up">+10.68%</div></div>
+<div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">53.29亿</div><div class="delta up">+15.11%</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">0.85元</div><div class="delta up">+10.39%</div></div>
+<div class="mcard"><div class="lab">加权ROE</div><div class="val">9.44%</div><div class="delta up">+0.70pp</div></div>
+<div class="mcard"><div class="lab">毛利率(单季)</div><div class="val">38.52%</div><div class="delta up">+0.70pp</div></div>
+<div class="mcard"><div class="lab">经营现金流净额</div><div class="val">37.35亿</div><div class="delta up">+293.92%</div></div>
+<div class="mcard"><div class="lab">资产负债率</div><div class="val">59.50%</div><div class="delta down">−2.01pp</div></div>
+<div class="mcard"><div class="lab">总资产</div><div class="val">1,567.45亿</div><div class="delta up">+3.06%</div></div>
+<div class="mcard"><div class="lab">归母净资产</div><div class="val">595.88亿</div><div class="delta up">+9.02%</div></div>
+
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+        
+<tr><td>营业收入</td><td class="num">348.25亿</td><td class="num">329.38亿</td><td class="num up">+5.47%</td></tr>
+<tr><td>归母净利润</td><td class="num">53.95亿</td><td class="num">48.74亿</td><td class="num up">+10.68%</td></tr>
+<tr><td>扣非归母净利润</td><td class="num">53.29亿</td><td class="num">46.29亿</td><td class="num up">+15.11%</td></tr>
+<tr><td>基本每股收益</td><td class="num">0.85元</td><td class="num">0.77元</td><td class="num up">+10.39%</td></tr>
+<tr><td>加权ROE</td><td class="num">9.44%</td><td class="num">8.74%</td><td class="num up">+0.70pp</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">与市场预期对比<span class="sec-sub">（v2 须标注来源与口径）</span></div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+        
+<tr><td>营业收入</td><td class="num">348.25亿(+5.47%)</td><td class="num">板块+4.7%(华泰)</td><td class="num up">小幅超预期</td><td class="num up">收入恢复正增、超板块</td></tr>
+<tr><td>归母净利润</td><td class="num">53.95亿(+10.68%)</td><td class="num">板块+10.5%(华泰)</td><td class="num flat">基本符合</td><td class="num up">利润增速超营收、质量亮眼</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：无权威单季一致预期可逐项目比对（卖方以全年预测为主）。按 v2 修正 B 改用<b>同业板块 / 卖方点评进度校验</b>：① 华泰证券称 2026Q1 乳制品板块营收 / 归母 / 扣非同比 +4.7% / +10.5% / +11.8%，伊利营收 +5.5%、归母 +10.7%、扣非 +15.1%，<b>略超板块中枢</b>；② 开源证券称 2026Q1 伊利营收 +5.5%（液体乳 +2.3%），毛利率同比 +0.7pct 至 38.4%，扣非净利率 +2.7pct 至 16.8%；③ 雪球球友业绩预测 2026Q1 营收 ~344 亿、归母 ~52–53 亿，与实际 348.25 / 53.95 亿基本吻合。综合：Q1 业绩<b>小幅超预期至符合预期</b>，收入端恢复正增、利润端质量亮眼。</p>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>乳制品行业处于<b>原奶下行周期尾段 / 龙头复苏早期</b>：本轮原奶价格自 2023 下半年起持续低位（2026Q1 生鲜乳价格同比 −1.9%、GDT 全脂奶粉中标价同比 −14.5%），上游牧场（优然、现代牧业、圣牧）普遍亏损去产能，规模化牧场占比提升致周期底部拉长。对下游乳企（伊利）的传导：<b>成本（价）强正面</b>（奶价低位直接抬升毛利率）、<b>需求（量）中性偏弱</b>（终端大众乳品消费平淡、价格战延续）、<b>结构升级（品类）正面</b>（奶粉 / 冷饮 / 奶酪高毛利品类放量）。2026Q1 春节旺季龙头「开门红」，行业集中度进一步提升（中小品牌散奶成本优势消退后龙头回收份额）。风险点：原奶价格 2026 下半年大概率企稳回升，成本红利或边际减弱。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>① 行业总量：2025 年乳制品板块整体承压（终端需求弱、价格战），但 2026Q1 龙头开门红——板块营收 / 归母 / 扣非 +4.7% / +10.5% / +11.8%（华泰）。② 伊利自身：2025 全年营收 1,159.31 亿（+0.13%）、归母 115.65 亿（+36.82%，低基数修复）；2026Q1 营收 348.25 亿（+5.47%）、归母 53.95 亿（+10.68%）。③ 产品结构：2025 液体乳 704.22 亿（−6.1%，主动控货去库存、保品牌）；奶粉及奶制品 327.69 亿（+10.4%）、冷饮 98.22 亿（+12.6%）；婴幼儿配方奶粉市占率由 2021 的 7.3% 跃升至 18.3%（行业第一）。④ 竞争：龙头要求「保盈利基础上的收入增长」，促销费用理性化、费用投放品牌化，行业竞争趋缓。⑤ 政策 / 风险：原奶价格或于 2026 下半年回升、消费需求若进一步萎缩将削弱成本红利。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>伊利以<b>ROIC−WACC</b> 衡量价值创造（v2 修正 C）。以 2025 全年近似：NOPAT ≈ 归母 115.65 亿 ＋ 税后净利息（财务净收入为正）≈ 120 亿；投入资本 ≈ 归母净资产 570 亿 ＋ 有息负债 508 亿 − 超额现金（货币资金 275 亿 − 经营最低 ~100 亿）≈ 903 亿；<b>ROIC ≈ 13.3%</b>。WACC 估算 ~5.5%（10Y 国债 ~1.8% ＋ β~0.7 × 风险溢价 + 债务成本），<b>ROIC−WACC ≈ +7~8pp，显著创造价值</b>。轻资产快消属性下资本回报持续高于资本成本，2026Q1 ROE 9.44%（年化 ~38%？需谨慎——Q1 单季 ROE 不可年化，全年 ROE 历史 20%+），价值创造逻辑稳固。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：2026Q1 液体乳 +4.4%、奶粉及奶制品 +6.1%、冷饮 +7.1%（华泰 / 开源），全品类温和放量；婴配粉市占率 18.3% 行业第一，奶粉及奶制品成增量主源。<b>价</b>：原奶低位 + 结构升级（高端金典 / 安慕希 + 折扣促销收敛）推动毛利率 38.52%（+0.7pp）；但液体乳吨价仍承压、行业价格战未完全消除。<b>成本</b>：营业成本 214.09 亿（+4.27%，低于营收 +5.47%），奶价红利直接体现；期间费用率 ~19.9%（−0.3pp），销售费率 16.71%（−0.2pp）、管理 3.67%（−0.1pp），正运营杠杆。<b>非经常性</b>：非经常性损益仅 0.66 亿（占净利 1.2%），投资收益 1.36 亿（联营企业转正）贡献少量正向。<b>结论</b>：增长「靠原奶成本红利 + 结构升级 + 费用优化」，经营质量扎实、非经占比极低。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>偏「真」</b>。非经常性损益 0.66 亿，占净利润 1.2%；扣非归母 53.29 亿（+15.11%）高于归母 53.95 亿（+10.68%）的增速，核心经营利润增速更快、无水分。毛利率同比扩大 0.7pp、净利率 15.49%（+0.73pp）均由主业贡献。须提示：2024Q1 归母 +63.84% 含一次性投资收益高基数，2026Q1 的 +10.68% 是在正常经营口径下的真实改善，质量含金量高。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">伊利为全品类乳企，按<b>产品群</b>拆解（2026Q1 增速来自华泰 / 开源，2025 全年基数来自年报）：<br/>• <b>液体乳</b>：Q1 +4.4%（2025 全年 704.22 亿、−6.1%，主动控货去库存后重回正增）；基本盘，金典 / 安慕希稳住高端、常温基础乳稳大众市场。<br/>• <b>奶粉及奶制品</b>：Q1 +6.1%（2025 全年 327.69 亿、+10.4%），<b>增量主力</b>；婴配粉市占率 18.3% 行业第一、成人 / 儿童营养奶粉拓展。<br/>• <b>冷饮</b>：Q1 +7.1%（2025 全年 98.22 亿、+12.6%），高毛利、增速最快。<br/>• <b>酸奶 / 奶酪 / 饮用水</b>：低温酸奶（活性益生菌）放量、奶酪（妙可蓝多协同）与家庭大包装乳品培育新曲线。<br/><b>结论</b>：增长由「奶粉 + 冷饮」双高毛利品类驱动 + 液体乳企稳，结构持续优化、毛利中枢上移。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（稳健、杠杆略降）</b>：资产负债率 59.50%（−2.0pp vs 年末 61.51%）；有息负债（短期借款 590.51 ＋ 长期借款 4.50 ＋ 租赁 2.34 ＋ 一年内到期 ~24.05）≈ 621 亿；归母净资产 595.88 亿（+9.02%）。<br/><b>流动性（表面偏低但含理财错配）</b>：货币资金 197.55 亿，表面<b>现金短债比仅 0.33x</b>（590.51 亿短借），但公司另有<b>其他流动资产 225.74 亿 ＋ 一年内到期非流动资产 44.41 亿 ＋ 其他非流动资产 382.37 亿</b>（结构性存款 / 理财），且利息净收入为正（利息收入 5.27 亿 > 利息费用 2.66 亿）——属「借短投理」资金管理特征，非流动性危机，但杠杆结构需跟踪。<br/><b>周转效率</b>：存货 103.31 亿（−4.5%）、存货 / 营收 29.7% 健康；应收账款 35.63 亿（+19.3%，快于营收，详见排雷）；应收账款周转率 39 次（2025）仍高。<br/><b>资产质量</b>：商誉 21.73 亿（占净资产 3.65%）、生产性生物资产 17.26 亿（奶牛群）。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>大幅改善但低于净利（季节性）</b>。经营现金流净额 37.35 亿（+293.92%），OCF / 归母 = 37.35 / 53.95 ≈ <b>0.69x</b>（单季季节性偏低，较 2025Q1 的 0.19x 显著改善）；营收现金比（销售商品收到现金 / 营收）= 317.82 / 348.25 ≈ 91.3%，与收入基本同步。全年口径 OCF 通常远高于净利（2025 全年 OCF 143.44 亿 / 归母 115.65 亿 = 124%）。单季 0.69x 不构成背离，但 Q1 现金流改善部分由「应付供应商款项增加（拖款）」驱动，能否线性外推全年待观察。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）：</b>OCF 拆解（亿元，v2 修正 E）：净利润 54.39 ＋ 折旧摊销等非现损益（约 +10）− 营运资金变动。关键项：① <b>销售商品收到现金 317.82 亿</b>（+8.7%，收入增带动）；② <b>购买商品支付现金 220.91 亿</b>（−1.5%，应付供应商款项增加使现金流出减少，即「拖款」）；③ 支付税费 16.73 亿（−10.3%）；④ 应收账款 +5.66 亿、存货 −4.92 亿、应付账款 +14.54 亿（营运资金净变动小幅正贡献）。<b>归因</b>：OCF +293.92% 由「收入增 + 现金回款改善 + 应付拖款（占用上游资金）」共同驱动，经营获现质量提升，但拖款贡献的可持续性存疑（详见排雷 14）。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>余量充足</b>。资本开支（购建固定资产等）5.55 亿（同比 −9.1%）；FCF = OCF 37.35 − CapEx 5.55 ≈ <b>31.80 亿</b>（Q1）。投资活动净流出 64.72 亿（主要为金融理财投资支付 197.88 亿、收回 129.71 亿，净配置理财）；筹资活动净流入 22.53 亿（取得借款 701.91 亿、偿还 676.96 亿，借新还旧 + 净增）。<b>覆盖能力</b>：OCF 远超 CapEx，分红（2025 全年 10 派 13.8 元 ≈ 87 亿）由经营现金流充分支撑（2025 全年 OCF 143.44 亿），非借钱分红；FCF 余量充裕。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b><b>历史中低位、高股息</b>。A 股 600887 2026-04-28 收 25.49 元，PE(TTM) 20.1x、PE(动) 11.6x（基于 2026E）、PB(LF) 2.86x、股息率 TTM ~6.7%（2025 全年每股股利 1.38 元，按 25.49 元计约 5.4%）、总市值 ~1,612 亿。相对自身历史（2021 高点 PE 30x+）明显低估；52 周区间 25.13–29.50 元，当前接近底部。</p>
+      <p><b>周期正常化估值（v2 修正 F）：</b>乳业<b>非强周期但受原奶成本周期影响</b>（成本下行致盈利阶段性改善）。正常化盈利以<b>2025 归母 115.65 亿为锚</b>（盈利已修复、波动趋稳），对应正常化 PE ≈ 1,612 / 115.65 ≈ <b>13.9x</b>，处历史低位（v2 修正 F）。<b>但须提示</b>：当前利润含原奶成本红利，若 2026 下半年奶价回升、成本红利收窄，盈利或边际回落；PB 2.86x 高于食品饮料中枢但低于自身历史，高股息（~5.4%–6.7%）提供安全边际。综合：估值偏低、回报可持续。</p>
+      <p><b>股东回报可持续性：</b><b>高分红、可持续</b>。2025 全年拟 10 派 13.8 元（含税），分红率 ~70%–75%（分红总额 ~87 亿）；按 25.49 元计股息率约 5.4%（TTM 口径 ~6.7%）。分红由经营现金流（2025 全年 143.44 亿）充分覆盖，非借钱分红。公司连续多年稳定高分红，股东回报属性强。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card"><b>宏观 / 行业</b>：管理层判断原奶价格处于历史低位、2026 下半年或企稳回升；终端消费需求温和、行业竞争理性化（与第 0.5 章行业坐标一致）。<b>战略</b>：坚持「保盈利基础上的收入增长」，聚焦高端化（金典 / 安慕希）、奶粉及奶制品第二曲线、冷饮与奶酪拓展；持续推进渠道下沉与全域深耕。<b>资本配置</b>：维持 ~70% 分红率、审慎 CapEx、结构性存款理财优化资金收益。<b>风险应对</b>：关注原奶价格回升对毛利率的边际影响、液体乳基本盘持续性。<i>（前瞻性陈述，非承诺）</i></div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">乳制品同业对比（2026Q1 / 2025 全年）：<br/>• <b>伊利股份（600887）</b>：Q1 营收 348.25 亿（+5.5%）、归母 53.95 亿（+10.7%）、净利率 15.49%；2025 全年营收 1,159.31 亿、归母 115.65 亿 —— <b>规模与盈利质量绝对领先</b>。<br/>• <b>蒙牛乳业（2319.HK）</b>：2025 营收 822.4 亿（−7.25%）、归母 15.45 亿（+1378.7% 靠减值转回 / 资产处置，主业承压）；Q1 液态奶动销改善但基本面修复中。<br/>• <b>光明乳业（600597）</b>：Q1 营收 62.11 亿（−2.48%）、归母 0.67 亿（−52.74%）、净利率 1.07% —— <b>显著承压</b>，区域低温竞争 + 海外子公司拖累。<br/>• <b>中国飞鹤（6186.HK）</b>：2025 营收 181.1 亿（−12.7%）、归母 19.39 亿（−45.68%），婴配粉存量博弈。<br/>• <b>新乳业（002946）</b>：Q1 营收 28.43 亿（+8.31%）、归母 1.86 亿（+39.89%），低温 + 并购差异化。<br/><b>结论</b>：伊利呈「规模第一 + 净利率最高 + 盈利质量最稳」特征，相对同业处<b>领先且确定性更强</b>水平；唯一差距在估值溢价（PE 20x 高于光明 / 飞鹤亏损口径），但高股息与稳定性支撑溢价。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+      
+      
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉 21.73 亿，占净资产 3.65%、占年利润（2025 归母 115.65 亿）0.19x，远低于 v2 阈值（净资产 30% 或 年利 5x），无并购泡沫（2024 大额减值后已出清）。</div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">安全</span>研发费用 1.70 亿（−11.1%）全部费用化，无资本化率异常；快消品研发以产品迭代为主，无利润注水。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">安全</span>资产减值损失 −0.51 亿（vs −0.71 亿）、信用减值 +0.07 亿，金额小且无大额一次性减值，无「洗大澡 / 平滑利润」迹象。</div></div>
+<div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict amber">关注</span>短期借款 590.51 亿（+29.4%），表面现金短债比仅 0.33x；但其他流动资产 225.74 亿 + 一年内到期非流动 44.41 亿 + 其他非流动 382.37 亿（结构性存款 / 理财）可观，且利息净收入为正（利息收入 5.27 > 利息费用 2.66 亿）——属「借短投理」资金管理，非流动性危机，但杠杆结构偏激进需跟踪。</div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">标准</span>Q1 季报未经审计（监管允许），无保留意见前提；数据以管理层账目编制，待年报审计校验。</div></div>
+<div class="rf"><div class="k">关联交易 / 其他应收</div><div class="v"><span class="verdict flat">安全</span>其他应收款 1.58 亿（+31%），绝对额小、无畸高资金占用；关联交易披露合规。</div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span>应收账款 35.63 亿（+19.3%）增速显著快于营收 +5.47%（应收 / 营收升至 10.2%），存在放宽信用促收入迹象；需看下季回款与账龄（v2 重点）。应收账款周转率仍高（2025 约 39 次），暂未恶化。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">安全</span>存货 103.31 亿（−4.5%），存货 / 营收 29.7% 健康；液态乳主动去库存后水位合理，无积压滞销迹象。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">安全</span>非经常性损益 0.66 亿，占净利 1.2%；政府补助 1.78 亿（与经营相关、持续）、公允价值 −0.67 亿，核心经营未含水分，质量「真」。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">安全</span>单季 OCF / 归母 0.69x（季节性偏低，但较 2025Q1 0.19x 大幅改善）；全年口径 OCF / 归母通常 >120%（2025 全年 124%）。无长期背离。</div></div>
+<div class="rf"><div class="k">收入确认激进（v2 新增）</div><div class="v"><span class="verdict amber">关注</span>应收账款 +19.3% 快于营收、合同负债 −48.9%（季节性：年末经销商预付高峰后回落），渠道库存 Q1 健康（开源证券）；需跟踪应收回款与终端动销，警惕经销商压货 / 提前确认。当前收入与现金流同向、无显著背离。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 或有负债（v2 新增）</div><div class="v"><span class="verdict flat">安全</span>季报未披露重大对外担保 / 未决诉讼；生产性生物资产（奶牛）17.26 亿按成本法计量、减值充分；并表范围稳定，无利润搬移迹象。</div></div>
+<div class="rf"><div class="k">短期借款激增 + 合同负债腰斩（伊利特有）</div><div class="v"><span class="verdict amber">关注</span>短期借款 +134 亿（456→590）、合同负债 −52%（105.64→53.99 亿）、应付账款 +12.7%——雪球质疑「一边借钱一边拖款、资金面偏紧」。借短投理 + 季节性预付回落可部分解释，但需跟踪债务结构与资金成本。</div></div>
+<div class="rf"><div class="k">经营现金流改善可持续性（伊利特有）</div><div class="v"><span class="verdict amber">关注</span>OCF +293.92% 部分由「应付供应商款项增加（拖款）」驱动，而非纯经营回款；该贡献能否线性外推至全年存疑，需看后续应付账款周转与回款节奏。</div></div>
+
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+<li>2026Q1 营收 348.25 亿（+5.47%）、归母 53.95 亿（+10.68%）、扣非 53.29 亿（+15.11%），利润增速约为营收两倍，为 2024–2025 波动后<b>重回稳健扩张</b>。</li>
+<li><b>原奶成本红利 + 结构升级 + 费用优化</b>：毛利率升至 38.52%（+0.7pp）、净利率 15.49%（+0.73pp）、销售费率 −0.2pp，盈利质量「真」（非经仅占 1.2%）。</li>
+<li>经营现金流净额 37.35 亿（+293.92%），净现比由 0.19x 升至 0.69x；资产负债率降至 59.5%、ROE 9.44%，资产质量稳健。</li>
+<li>龙头领先优势稳固：营收规模与净利率远超蒙牛 / 光明 / 飞鹤，婴配粉市占率 18.3% 行业第一；估值处历史中低位（PE 20x）、股息率 ~5.4%–6.7%。</li>
+</ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+<li><b>应收 / 债务信号</b>：应收账款 +19.3% 快于营收、短期借款 +29.4% 至 590 亿（现金短债比 0.33x）、合同负债腰斩，雪球质疑「借短拖款、资金面偏紧」。</li>
+<li><b>经营现金流改善可持续性</b>：OCF +293.92% 部分由应付拖款驱动，能否外推全年存疑。</li>
+<li><b>原奶价格回升风险</b>：当前利润含奶价低位红利，若 2026 下半年奶价企稳回升，毛利率或边际收窄、成本红利减弱。</li>
+</ul></div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol>
+<li><b>应收账款增速快于营收（应收 +19.3% vs 营收 +5.47%）</b> → 下季看应收回款、账龄结构、营收现金比是否回落（§4/§9 红旗 7/11）。</li>
+<li><b>短期借款激增 + 资金面（短借 590 亿、现金短债比 0.33x）</b> → 下季看有息负债规模、利息净收入、理财配置与债务期限结构（§4/§9 红旗 4/13）。</li>
+<li><b>合同负债腰斩（−48.9% 至 53.99 亿）</b> → 下季看经销商预付 / 拿货意愿、渠道库存是否健康（§9 红旗 13）。</li>
+<li><b>经营现金流改善可持续性（应付拖款贡献）</b> → 下季看应付账款周转、OCF/归母 是否维持（§5/§9 红旗 14）。</li>
+<li><b>原奶价格回升风险（2026 下半年或企稳回升）</b> → 下季看生鲜乳价格、毛利率是否守住 38.5%（§0.5/§2/§6）。</li>
+<li><b>液体乳基本盘持续性（2025 主动控货 −6.1% 后 Q1 +4.4%）</b> → 下季看液奶量价、吨价是否改善（§3/§7）。</li>
+<li><b>奶粉及奶制品高增持续性（Q1 +6.1%、婴配粉市占 18.3%）</b> → 下季看婴配粉行业大盘、成人 / 儿童营养奶粉拓展（§3）。</li>
+</ol></div>
+  </div>
+
+  
+  <div class="foot">
+    <b>数据来源：</b>① 雪球 PDF <code>600887_20260430_61GU.pdf</code>（内蒙古伊利实业集团股份有限公司 2026 年第一季度报告，披露 2026-04-29，CAS 集团合并、未经审计）。② 多期序列：2022–2025 Q1 同季营收 / 归母取自公开财经数据（2022Q1 营收 309.13 亿 / 归母 35.19 亿、2023Q1 333.28 亿 / 36.15 亿、2024Q1 324.63 亿 / 59.23 亿、2025Q1 329.38 亿 / 48.74 亿、2026Q1 348.25 亿 / 53.95 亿；2024Q1 归母高基数含一次性投资收益）。③ 估值 / 同业 / 行业经 WebSearch（A 股行情 2026-04-28 收盘 25.49 元、PE 20.13 / PB 2.86 / 股息率 TTM 6.67%；华泰证券《必选消费》、开源证券食品饮料策略、雪球业绩解读、快消品 2025 乳业 TOP 榜）。<b>口径说明</b>：本报告采用 CAS 集团合并口径（归母 53.95 亿）；毛利率按单季营业成本 / 营业总收入 = 38.52%（vs 2025Q1 37.82%）；A 股 600887 与港股无对应主体。<br/>
+    <b>免责声明：</b>本报告依据《财报深度分析模型 v2》生成，仅供研究参考，不构成任何投资建议。财务数据以公司正式公告为准；市场预期数据须标注来源与统计时点，无一致预期时采用进度校验。港股须注明 IFRS / Non-IFRS 口径。股市有风险，投资需谨慎。
+  </div>
+
+</div>
+</body>
+</html>

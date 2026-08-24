@@ -1,0 +1,77 @@
+/* 行业分类配色（同一行业同色，新增行业在此追加） */
+:root{
+  --ind-telecom:#15616d;   /* 通信运营商：中国移动 / 中国电信 / 中国联通 */
+  --ind-coal:#2e9e6b;      /* 煤炭：中煤能源 */
+  --ind-shipping:#c8102e;  /* 航运：中远海控 */
+  --ind-internet:#5b3fa0;  /* 互联网：腾讯控股 */
+  --ind-oil:#3a7d44;       /* 石油：中国海洋石油 / 中国石油 */
+  --ind-consumer:#c98a00;  /* 消费：格力电器 / 伊利股份 */
+  --ind-finance:#1f6fb2;   /* 金融：招商银行 / 中国平安 */
+  --ind-power:#5a6b7d;     /* 电力：国电电力 */
+}
+
+/* ===== 卡片模块样式（由 card-module.js 渲染） ===== */
+.stock-card{
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-top:4px solid var(--cat, var(--acc2));
+  border-radius:14px;
+  padding:34px 24px;
+  box-shadow:0 2px 6px rgba(20,30,50,.05);
+  transition:transform .15s,box-shadow .15s,border-color .15s;
+}
+.stock-card:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(20,30,50,.1);border-color:var(--cat, var(--acc2))}
+/* 下拉展开时把当前卡片提到最上层，避免被下方卡片遮挡 */
+.stock-card.menu-open{z-index:50}
+
+.stock-card .cat-tag{
+  position:absolute;top:12px;right:14px;
+  font-size:11px;line-height:1;color:#fff;
+  background:var(--cat, var(--acc2));
+  padding:5px 10px;border-radius:12px;white-space:nowrap;
+}
+
+.stock-card .name{font-size:20px;font-weight:700;margin-bottom:6px}
+.stock-card .code{font-size:12px;color:var(--dim)}
+
+.stock-card .links{display:flex;gap:12px;margin-top:18px;width:100%;justify-content:center}
+.stock-card .links a{
+  flex:1;max-width:120px;padding:9px 14px;border-radius:8px;
+  background:var(--soft);border:1px solid var(--line);color:var(--ink);
+  text-decoration:none;font-size:13px;font-weight:600;text-align:center;
+  transition:background .15s,color .15s,border-color .15s,box-shadow .15s;
+}
+.stock-card .links a:hover{
+  background:var(--cat, var(--acc2));color:#fff;border-color:var(--cat, var(--acc2));
+  box-shadow:0 4px 12px rgba(21,97,109,.25);transform:none;
+}
+
+/* ===== 财报分析下拉菜单 ===== */
+.stock-card .links{position:relative;z-index:1}
+.report-menu{position:relative;flex:1;max-width:120px}
+.report-menu .rm-btn{
+  width:100%;padding:9px 14px;border-radius:8px;cursor:pointer;font:inherit;
+  background:var(--soft);border:1px solid var(--line);color:var(--ink);
+  font-size:13px;font-weight:600;text-align:center;
+  transition:background .15s,color .15s,border-color .15s,box-shadow .15s;
+}
+.report-menu .rm-btn:hover,.report-menu.open .rm-btn{
+  background:var(--cat, var(--acc2));color:#fff;border-color:var(--cat, var(--acc2));
+  box-shadow:0 4px 12px rgba(21,97,109,.25);
+}
+.report-menu .rm-list{
+  display:none;position:absolute;left:50%;transform:translateX(-50%);
+  top:calc(100% + 8px);min-width:max-content;max-width:220px;z-index:100;
+  background:#fff;border:1px solid var(--line);border-radius:10px;
+  box-shadow:0 8px 24px rgba(20,30,50,.16);padding:6px;flex-direction:column;
+  white-space:nowrap;
+}
+.report-menu.open .rm-list{display:flex}
+.report-menu .rm-list a{
+  display:block;padding:8px 14px;border-radius:7px;
+  color:var(--ink);text-decoration:none;font-size:12px;line-height:1.4;
+  transition:background .12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.report-menu .rm-list a:hover{background:var(--soft);color:var(--cat, var(--acc2))}

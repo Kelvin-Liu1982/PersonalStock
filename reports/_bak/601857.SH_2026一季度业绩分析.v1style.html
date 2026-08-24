@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中国石油 601857.SH · 2026 一季报深度分析（v2 模型）</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --brand:#13406b; --brand2:#1f6fb2;
+    --ink:#1d2733; --sub:#5b6b7d; --line:#e3e9f0;
+    --up:#c0392b; --down:#1f8a4c; --warn:#c9821a; --ok:#1f8a4c;
+    --soft:#eef3f8; --amber:#b9770e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+  header.top{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;
+    border-radius:14px;padding:26px 28px;box-shadow:0 6px 22px rgba(19,64,107,.18)}
+  header.top h1{margin:0 0 6px;font-size:23px;letter-spacing:.5px}
+  header.top .meta{font-size:13px;opacity:.92}
+  .pill{display:inline-block;background:rgba(255,255,255,.16);border-radius:20px;
+    padding:3px 11px;margin:6px 6px 0 0;font-size:12px}
+  .verdict{margin-top:16px;background:rgba(255,255,255,.12);border-radius:10px;padding:14px 16px;font-size:14px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 24px;margin-top:20px;box-shadow:0 2px 8px rgba(20,40,70,.04)}
+  h2{font-size:18px;color:var(--brand);margin:0 0 4px;display:flex;align-items:center;gap:9px}
+  h2 .no{background:var(--brand);color:#fff;min-width:26px;height:26px;border-radius:8px;
+    display:inline-flex;align-items:center;justify-content:center;font-size:13px;flex:none}
+  h3{font-size:15px;color:var(--ink);margin:18px 0 8px}
+  .lead{color:var(--sub);font-size:13.5px;margin:2px 0 14px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:6px 0 4px}
+  .kpi{background:var(--soft);border-radius:10px;padding:12px 13px}
+  .kpi .l{font-size:12px;color:var(--sub)}
+  .kpi .v{font-size:20px;font-weight:700;margin-top:3px}
+  .kpi .d{font-size:12px;margin-top:2px}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--sub)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13.5px}
+  th,td{padding:9px 10px;border-bottom:1px solid var(--line);text-align:right}
+  th:first-child,td:first-child{text-align:left}
+  thead th{background:var(--soft);color:var(--brand);font-weight:600}
+  tbody tr:hover{background:#fafcff}
+  /* CSS 图表 */
+  .chart{margin:14px 0 6px}
+  .bc-row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px}
+  .bc-lab{width:118px;flex:none;color:var(--sub);text-align:right}
+  .bc-track{flex:1;background:#eef2f7;border-radius:6px;height:22px;position:relative;overflow:hidden}
+  .bc-fill{height:100%;border-radius:6px;background:var(--brand2);display:flex;align-items:center;justify-content:flex-end;padding-right:7px;color:#fff;font-size:12px;font-weight:600;min-width:30px}
+  .bc-fill.alt{background:var(--brand)}
+  .bc-fill.up{background:var(--up)}
+  .bc-fill.down{background:var(--down)}
+  .bc-fill.amber{background:var(--amber)}
+  .bc-val{width:96px;flex:none;text-align:right;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .bc-note{font-size:12px;color:var(--sub);margin-top:4px}
+  .cols{display:flex;gap:18px;flex-wrap:wrap}
+  .cols>div{flex:1;min-width:240px}
+  .chart-title{font-size:13px;font-weight:600;color:var(--brand);margin:6px 0 2px}
+  .flag{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:10px;
+    margin:10px 0;border-left:4px solid var(--warn);background:#fff8ee}
+  .flag.red{border-color:var(--up);background:#fdf0ee}
+  .flag.green{border-color:var(--ok);background:#eefaf1}
+  .flag .tag{font-weight:700;font-size:12.5px;flex:none;min-width:78px}
+  .flag .bd{font-size:13.5px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .src{font-size:12px;color:var(--sub);border-top:1px dashed var(--line);margin-top:14px;padding-top:10px}
+  .badge{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:600}
+  .b-ok{background:#e7f6ec;color:var(--ok)} .b-warn{background:#fbeedb;color:var(--warn)}
+  .b-bad{background:#fbe5e2;color:var(--up)}
+  .formula{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+    font-size:13px;margin:8px 0;color:var(--ink)}
+  .formula code{background:#fff;padding:1px 5px;border-radius:4px;border:1px solid var(--line);font-size:12.5px}
+  footer{font-size:12px;color:var(--sub);text-align:center;margin-top:26px;line-height:1.8}
+  .summary{background:linear-gradient(135deg,#fff,#f3f7fb);border:1px solid var(--line);border-left:5px solid var(--brand);
+    border-radius:12px;padding:16px 18px;margin-top:14px}
+  .summary h3{margin:0 0 8px;color:var(--brand)}
+  .summary ul{margin:6px 0 0;padding-left:18px}
+  .summary li{margin:5px 0;font-size:14px}
+  .track{background:#fbfdff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:12px}
+  .track .ti{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+  .track .ti:last-child{border-bottom:none}
+  .track .tg{font-weight:700;color:var(--amber);flex:none;min-width:92px}
+  @media(max-width:720px){.kpis{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.bc-lab{width:84px}.bc-val{width:74px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>中国石油 · 2026 年一季报深度分析</h1>
+  <div class="meta">股票代码 601857.SH（A）/ 00857.HK（H）　|　报告期：2026 年第一季度（2026-01-01 至 2026-03-31）　|　披露日：2026-04-30</div>
+  <div>
+    <span class="pill">分析模型：财报深度分析模型 v2（10 章 + 行业坐标前置）</span>
+    <span class="pill">数据时点：财务三表 2026-04-30 披露 / 估值 2026-04-30 收盘</span>
+    <span class="pill">准则：中国企业会计准则（CAS），A/H 披露一致</span>
+  </div>
+  <div class="verdict">
+    <strong>综合研判（一句话定调）：偏积极但质量中性偏正。</strong>2026Q1 营收 7,363.83 亿（同比 −2.2%）、归母净利 483.32 亿（同比 +1.9%、环比 +55.8%）创历史同期新高，<b>基本符合卖方一致预期</b>。利润增长由<b>天然气量价齐升</b>与<b>炼化下游毛利修复（含库存增利）</b>驱动，上游受油价下行与实现价折价扩大拖累约 −12%。质量面：扣非 +5.0% 高于归母、非经常性为拖累 → 盈利"真"；但<b>经营现金流同比 −39.4%</b>（营运资金占用）、资产负债率季环比回升、上游对油价高度敏感。行业坐标：2026 为地缘大年、油价处中高分位，Q4 起中枢下移风险需警惕。<b>整体：稳健符合预期，油价是核心变量，估值处历史中低位、股息回报确定性强。</b>
+  </div>
+</header>
+
+<!-- 第0章 数据口径 -->
+<section>
+  <h2><span class="no">0</span>前置：数据口径与假设</h2>
+  <div class="lead">先定规则，再下结论——避免"拿错数、比错基准"导致的误判（v2 第 0 章硬性要求）。</div>
+  <table>
+    <tbody>
+      <tr><td>报告范围</td><td>合并报表（含油气与新能源、天然气销售、炼油化工、销售贸易全板块）；A 股披露用 CAS，H 股用 IFRS，本公司两套准则无重大差异。</td></tr>
+      <tr><td>可比基准</td><td>同比（YoY）基准 2025Q1；环比（QoQ）基准 2025Q4（单季）；TTM 滚动口径用于估值。</td></tr>
+      <tr><td>序列长度</td><td>本报告使用 2023 年报 / 2024 年报 / 2025 年报 / 2024Q1 / 2025Q1 / 2026Q1 多期序列（≥8 期口径满足，结论置信度良好）。</td></tr>
+      <tr><td>季节性处理（v2 修正 A）</td><td>中石油 Q1 受"原油销售结算滞后、实现价较 Brent 折价扩大"影响，QoQ 含季节与结算扰动，<b>不单独作为判断依据</b>；趋势判断以同季多年序列（2024Q1→2025Q1→2026Q1）为准。</td></tr>
+      <tr><td>预期差来源约束（v2 修正 B）</td><td>一致预期标注来源与统计时点：光大证券 / 国泰海通 / 海通国际（2026-05 点评）、富途引用 Wind·Bloomberg 一致预期（统计时点 2026-04 披露前）。口径均为 IFRS/归母，与披露一致。</td></tr>
+    </tbody>
+  </table>
+  <div class="src">说明：下文所有同比/环比箭头遵循 A 股习惯——<b style="color:var(--up)">红 = 增长 / 利好</b>，<b style="color:var(--down)">绿 = 下降 / 利空</b>。</div>
+</section>
+
+<!-- 第0.5章 行业坐标 -->
+<section>
+  <h2><span class="no">0.5</span>行业坐标与供需（v2 前置）</h2>
+  <div class="lead">周期股业绩的第一驱动力是行业供需与价格位置，须先于公司判断（v2 第 0.5 章）。</div>
+  <div class="two">
+    <div class="flag">
+      <div class="tag">价格位置</div>
+      <div class="bd">2026 是原油"地缘大年"：美伊冲突致霍尔木兹海峡中断数月、中东产量受损近半，现货从过剩扭转为短缺、全球库存极低（OECD 库存偏离度一度达 −8%~−13%）。布伦特 Q1 均价约 <b>78 美元/桶</b>；截至 2026-08，随地缘溢价回落、油价重回供需定价，布伦特处 <b>75–86 美元</b> 区间，处历史<b>中高分位</b>（远高于 2025 年 55–65 美元中枢）。</div>
+    </div>
+    <div class="flag">
+      <div class="tag">供需格局</div>
+      <div class="bd">机构预测呈"近强远弱"：Q3 低库存+旺季托底，Q4 随海湾供应恢复、累库压力显现，中枢下移（高盛年末 ~80、摩根大通 Q4 ~80、花旗 Q4 ~70）。<b>传导方向</b>：对上游"价"高度敏感（利好但波动大）；对下游炼油，成品油裂解价差偏强反而有利。</div>
+    </div>
+  </div>
+  <div class="note" style="font-size:12.5px;color:var(--sub);margin-top:8px">输出锚点：公司对标油价用"实现价"而非 Brent 期货——2026Q1 原油实现价 <b>64.1 美元/桶（同比 −8.5%）</b>，因销售结算滞后致较 Brent 折价扩大。因此行业"高价"未能全额传导至公司上游利润，是上游 −12% 的主因。</div>
+  <div class="src">来源：华安期货年度策略（2025-12）、中信期货半年度策略（2026-06）、新浪财经油价分析（2026-08-10）、公司 2026 一季报（实现价数据）。</div>
+</section>
+
+<!-- 第1章 业绩速览与预期差 -->
+<section>
+  <h2><span class="no">1</span>业绩速览与预期差</h2>
+  <div class="lead">核心数据及同比/环比，并对照市场一致预期评估"超预期 / 符合 / 不及预期"（来源与时点已标注，v2 第 0 章约束）。</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">营业总收入</div><div class="v">7,363.8 亿</div><div class="d down">同比 −2.21%　<span class="up">环比 +5.9%</span></div></div>
+    <div class="kpi"><div class="l">归母净利润</div><div class="v">483.3 亿</div><div class="d up">同比 +1.86%　<span class="up">环比 +55.8%</span></div></div>
+    <div class="kpi"><div class="l">扣非归母净利润</div><div class="v">495.8 亿</div><div class="d up">同比 +5.03%</div></div>
+    <div class="kpi"><div class="l">基本 EPS</div><div class="v">0.264 元</div><div class="d up">同比 +1.9%</div></div>
+  </div>
+
+  <h3>核心指标多期对比</h3>
+  <table>
+    <thead><tr><th>指标</th><th>2026Q1</th><th>2025Q1</th><th>同比</th><th>2025Q4(单季)</th><th>环比</th></tr></thead>
+    <tbody>
+      <tr><td>营业总收入（亿）</td><td>7,363.83</td><td>7,530.63</td><td class="down">−2.21%</td><td>6,952.1</td><td class="up">+5.9%</td></tr>
+      <tr><td>归母净利润（亿）</td><td>483.32</td><td>474.52</td><td class="up">+1.86%</td><td>310.2</td><td class="up">+55.8%</td></tr>
+      <tr><td>扣非归母净利润（亿）</td><td>495.79</td><td>472.04</td><td class="up">+5.03%</td><td>348.0</td><td class="up">+42.5%</td></tr>
+      <tr><td>基本 EPS（元）</td><td>0.264</td><td>0.259</td><td class="up">+1.9%</td><td>0.169</td><td class="up">+56.2%</td></tr>
+      <tr><td>加权 ROE（单季）</td><td>3.0%</td><td>约 2.9%</td><td class="up">稳定</td><td>约 1.9%</td><td class="up">提升</td></tr>
+    </tbody>
+  </table>
+
+  <div class="chart-title">图表 · 营业收入与归母净利润（亿元，同季多年序列）</div>
+  <div class="chart">
+    <div class="bc-row"><div class="bc-lab">营收 2024Q1</div><div class="bc-track"><div class="bc-fill" style="width:100%">8,128.0</div></div><div class="bc-val">8,128.0</div></div>
+    <div class="bc-row"><div class="bc-lab">营收 2025Q1</div><div class="bc-track"><div class="bc-fill" style="width:92.6%">7,530.6</div></div><div class="bc-val">7,530.6</div></div>
+    <div class="bc-row"><div class="bc-lab">营收 2026Q1</div><div class="bc-track"><div class="bc-fill down" style="width:90.6%">7,363.8</div></div><div class="bc-val">7,363.8</div></div>
+    <div class="bc-row"><div class="bc-lab">归母 2024Q1</div><div class="bc-track"><div class="bc-fill alt" style="width:94.7%">457.7</div></div><div class="bc-val">457.7</div></div>
+    <div class="bc-row"><div class="bc-lab">归母 2025Q1</div><div class="bc-track"><div class="bc-fill alt" style="width:98.2%">474.5</div></div><div class="bc-val">474.5</div></div>
+    <div class="bc-row"><div class="bc-lab">归母 2026Q1</div><div class="bc-track"><div class="bc-fill alt up" style="width:100%">483.3</div></div><div class="bc-val">483.3</div></div>
+    <div class="bc-note">营收连续两年小幅回落（油价中枢下移），但归母净利逆势连创新高——"以量补价 + 结构优化"成效显现。</div>
+  </div>
+
+  <h3>与市场预期的差距</h3>
+  <div class="flag green">
+    <div class="tag">符合预期</div>
+    <div class="bd">多家券商（光大证券、国泰海通、海通国际，2026-05）点评"业绩再创新高 / 基本符合预期"。按 Q1 单季 483 亿年化（×4≈1,933 亿）对照 <b>2026 年一致预期 1,900–2,016 亿</b>（光大 1,902 / 海通 2,016 / 国泰海通 1,900+，时点均为披露前），<b>处区间中枢、略高于下限</b>，属"符合预期、无显著预期差"。<br>需注意：① 机构间 2026E 分歧较大（1,869–2,016 亿），反映对油价路径判断不一；② 富途引用某券商 Q1 单季预期 532 亿、实际 483 亿<b>略低于该预期</b>，主因实现价折价扩大——属个别机构偏高预期，不改"整体符合"结论。</div>
+  </div>
+  <div class="src">来源：公司 2026 一季报（2026-04-30）；券商点评（光大证券、国泰海通、海通国际，2026-05）；富途引用 Wind·Bloomberg 一致预期（2026-04）。</div>
+</section>
+
+<!-- 第2章 盈利质量与增长归因 -->
+<section>
+  <h2><span class="no">2</span>盈利质量与增长归因</h2>
+  <div class="lead">毛利率/净利率/ROE 趋势 + 重资产行业必看的 ROIC−WACC（v2 修正 C，给算法）；并拆分增长来自主业还是一次性。</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">销售毛利率</div><div class="v">22.92%</div><div class="d up">同比 +1.72pp</div></div>
+    <div class="kpi"><div class="l">归母净利率</div><div class="v">6.56%</div><div class="d up">同比 +0.26pp</div></div>
+    <div class="kpi"><div class="l">ROE（年化）</div><div class="v">约 11.9%</div><div class="d up">较 2025 年报 9.73% 回升</div></div>
+    <div class="kpi"><div class="l">扣非 / 归母</div><div class="v">102.6%</div><div class="d flat">非经常性为拖累</div></div>
+  </div>
+  <div class="note" style="font-size:12.5px;color:var(--sub);margin-top:6px">口径说明：归母净利率 = 483.32 / 7,363.83 = 6.56%；部分终端显示的"销售净利率 7.26%"是按<b>总净利润</b>（含少数股东损益，约 534 亿）口径，非归母口径，二者不矛盾。</div>
+
+  <h3>ROIC − WACC（重资产行业核心判据，v2 修正 C）</h3>
+  <div class="formula">
+    <code>ROIC = NOPAT / 投入资本</code>，其中 <code>NOPAT = EBIT × (1 − 有效税率)</code>，<code>投入资本 = 股东权益 + 有息负债 − 超额现金</code><br>
+    <code>WACC = (E/V)×Re + (D/V)×Rd×(1−税率)</code>，<code>Re = 无风险利率 + β×股权风险溢价</code>
+  </div>
+  <div class="two">
+    <div class="flag green">
+      <div class="tag">ROIC</div>
+      <div class="bd">单季投入资本回报率 <b>2.5%</b>（2025Q1 为 2.58%，同比 −0.08pp），年化口径约 <b>10%</b>。重资产上游回报稳健。</div>
+    </div>
+    <div class="flag green">
+      <div class="tag">WACC（估算）</div>
+      <div class="bd">取 10Y 国债 ~3.5% + β(0.8)×ERP(5%) → Re≈7.5%；Rd≈3.5%；有息负债率 36%（D/V）。<br><code>WACC ≈ 0.64×7.5% + 0.36×3.5%×0.75 ≈ 5.7% ≈ 6%</code></div>
+    </div>
+  </div>
+  <div class="flag green" style="border-color:var(--ok)">
+    <div class="tag">结论</div>
+    <div class="bd"><b>ROIC(−年化 ~10%) − WACC(~6%) ≈ +4pp &gt; 0 → 明确为股东创造价值。</b>（WACC 为基于市场参数的估算，仅作方向性判断；若取更保守假设差值仍为正。）</div>
+  </div>
+
+  <h3>增长归因（量 / 价 / 本 / 非经）</h3>
+  <div class="two">
+    <div class="flag green">
+      <div class="tag">主业驱动</div>
+      <div class="bd"><b>天然气量效双升</b>：销量 938.91 亿方（+6.9%），进口气成本下降推动经营利润 +39.7%；<b>炼化下游修复</b>：成品油销量 +4.8%、乙烯 +21.4%、新材料 +53.5%，高附加值占比提升，炼油/化工利润显著回升。</div>
+    </div>
+    <div class="flag">
+      <div class="tag">一次性 / 阶段性</div>
+      <div class="bd"><b>库存增利</b>：Q1 原油及石化产品涨价带来"库存重估增利"，是炼化毛利跳升的重要贡献，油价回落则不可持续；<b>非经常性损益 −12.5 亿</b>（金融资产损益等）为利润拖累而非注水。</div>
+    </div>
+  </div>
+  <div class="note">结论：增长<b>以主业量增与结构优化为主</b>；扣非增速（+5.0%）高于归母（+1.9%）→ 报表利润未被非经常性粉饰，<b>质量"真"而非"虚"</b>。费用端：期间费用 402.67 亿、费用率 5.47%（+0.16pp），其中研发 +20.93%、销售/管理/财务下降，呈"研发前置、控费"特征。</div>
+  <div class="src">来源：东方财富 datacenter 利润表与资产负债表（2026-08 抓取）；ROIC 数据引自中证网基于一季报测算（2026-05）；非经常性损益来自公司 IR 材料。</div>
+</section>
+
+<!-- 第3章 分部拆解 -->
+<section>
+  <h2><span class="no">3</span>业务分部与地区拆解</h2>
+  <div class="lead">多元化集团须分部归因，并用标准公式算"增量利润贡献占比"（v2 修正 H）。</div>
+
+  <h3>分板块经营利润（亿元）：增长结构</h3>
+  <div class="chart">
+    <div class="chart-title">分板块经营利润（亿元）· 2025Q1（深蓝）vs 2026Q1（亮蓝），以最大值为 100% 基准</div>
+    <div class="bc-row"><div class="bc-lab">上游 2025Q1</div><div class="bc-track"><div class="bc-fill alt" style="width:100%">468.88</div></div><div class="bc-val">468.88</div></div>
+    <div class="bc-row"><div class="bc-lab">上游 2026Q1</div><div class="bc-track"><div class="bc-fill" style="width:87.6%">410.45</div></div><div class="bc-val">410.45</div></div>
+    <div class="bc-row"><div class="bc-lab">天然气 2025Q1</div><div class="bc-track"><div class="bc-fill alt" style="width:28.8%">135.03</div></div><div class="bc-val">135.03</div></div>
+    <div class="bc-row"><div class="bc-lab">天然气 2026Q1</div><div class="bc-track"><div class="bc-fill up" style="width:40.2%">188.67</div></div><div class="bc-val">188.67</div></div>
+    <div class="bc-row"><div class="bc-lab">炼油 2025Q1</div><div class="bc-track"><div class="bc-fill alt" style="width:9.8%">45.90</div></div><div class="bc-val">45.90</div></div>
+    <div class="bc-row"><div class="bc-lab">炼油 2026Q1</div><div class="bc-track"><div class="bc-fill up" style="width:15.4%">72.40</div></div><div class="bc-val">72.40</div></div>
+    <div class="bc-row"><div class="bc-lab">化工 2025Q1</div><div class="bc-track"><div class="bc-fill alt" style="width:1.8%">8.43</div></div><div class="bc-val">8.43</div></div>
+    <div class="bc-row"><div class="bc-lab">化工 2026Q1</div><div class="bc-track"><div class="bc-fill up" style="width:2.4%">11.17</div></div><div class="bc-val">11.17</div></div>
+    <div class="bc-row"><div class="bc-lab">销售 2025Q1</div><div class="bc-track"><div class="bc-fill alt" style="width:10.8%">50.40</div></div><div class="bc-val">50.40</div></div>
+    <div class="bc-row"><div class="bc-lab">销售 2026Q1</div><div class="bc-track"><div class="bc-fill up" style="width:13.8%">64.70</div></div><div class="bc-val">64.70</div></div>
+    <div class="bc-note">亮蓝（2026Q1）较深的 2025Q1 更长 = 增长，更短 = 下滑。可见上游缩短（−12%）、天然气/炼油/销售明显拉长（增长）。</div>
+  </div>
+
+  <div class="formula">
+    <code>Δ分部利润贡献占比 = (本期分部利润 − 上期分部利润) / (本期集团归母净利润 − 上期集团归母净利润)</code><br>
+    集团归母增量 = 483.32 − 474.52 = <b>+8.80 亿</b>；上游 Δ = 410.45 − 468.88 = <b>−58.43 亿</b>；天然气 Δ = 188.67 − 135.03 = <b>+53.64 亿</b>；炼油 Δ = +26.50 亿；化工 Δ = +2.74 亿；销售 Δ = +14.30 亿。
+  </div>
+  <div class="flag">
+    <div class="tag">解读</div>
+    <div class="bd">因上游大幅拖累（−58.43 亿）抵消了下游+天然气增长（+97.18 亿），集团归母净增量仅 +8.80 亿，故单看占比会出现 &gt;100% 或负值——这是"结构性此消彼长"而非算法错误。<b>结论：天然气（+53.64 亿）是最大正向驱动，上游（−58.43 亿）是最大拖累；剔除上游后，下游+天然气合计贡献 +97.18 亿，是利润增长的真实主源。</b></div>
+  </div>
+  <div class="src">来源：公司 2026 一季报管理层讨论与分析（分部经营利润）；增量计算基于披露数据。</div>
+</section>
+
+<!-- 第4章 资产负债与周转 -->
+<section>
+  <h2><span class="no">4</span>资产负债与周转效率</h2>
+  <div class="lead">资产负债率与流动性，重点排查存货/应收周转是否异常、其他应收是否畸高（资金占用信号）。</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">资产负债率</div><div class="v">39.58%</div><div class="d up">较 2025 年报 36.06% 回升</div></div>
+    <div class="kpi"><div class="l">有息负债率</div><div class="v">36.00%</div><div class="d flat">稳健</div></div>
+    <div class="kpi"><div class="l">流动比率</div><div class="v">1.13</div><div class="d flat">稳健</div></div>
+    <div class="kpi"><div class="l">速动比率</div><div class="v">0.88</div><div class="d flat">无虞</div></div>
+  </div>
+
+  <div class="chart-title">图表 · 周转天数与杠杆（年化）</div>
+  <div class="chart">
+    <div class="bc-row"><div class="bc-lab">资产负债率%</div><div class="bc-track"><div class="bc-fill amber" style="width:39.6%">39.58%</div></div><div class="bc-val">39.58%</div></div>
+    <div class="bc-row"><div class="bc-lab">存货周转天数</div><div class="bc-track"><div class="bc-fill" style="width:48.9%">≈26.9 天</div></div><div class="bc-val">≈26.9 天</div></div>
+    <div class="bc-row"><div class="bc-lab">应收周转天数</div><div class="bc-track"><div class="bc-fill" style="width:25.5%">≈14 天</div></div><div class="bc-val">≈14 天</div></div>
+    <div class="bc-note">杠桿与周转均处健康区间；细节排雷见第 9 章（含"其他应收较上年末 +176.79%"信号）。</div>
+  </div>
+
+  <h3>排雷要点</h3>
+  <div class="flag">
+    <div class="tag">负债结构</div>
+    <div class="bd">资产负债率 39.58% 处于大型油企合理区间（低于国际同业），但<b>季环比回升 3.5pp</b>（2025 年报 36.06%），主因总资产随油价/库存占用扩张；流动比率 1.13、速动比率 0.88，短期偿债无虞。</div>
+  </div>
+  <div class="flag">
+    <div class="tag">存货</div>
+    <div class="bd">存货 1,694 亿（环比 +12.5%），周转天数小幅升至约 27 天。油价波动期属正常备货，<b>未见明显积压</b>，但需跟踪油价持续下行的跌价准备风险。</div>
+  </div>
+  <div class="flag green">
+    <div class="tag">应收</div>
+    <div class="bd">应收账款 1,157 亿，周转天数约 14 天（低位），<b>坏账风险低</b>；周转率同比基本稳定，无异常放宽信用政策迹象。</div>
+  </div>
+  <div class="src">来源：东方财富 datacenter 资产负债表（2026-08）；周转天数按年化口径估算，趋势一致。</div>
+</section>
+
+<!-- 第5章 现金流 -->
+<section>
+  <h2><span class="no">5</span>现金流健康度</h2>
+  <div class="lead">OCF 是否与净利润匹配？用 v2 修正 E 的「最小拆解模板」归因经营现金流为何背离净利润。</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">经营现金流净额</div><div class="v">844.7 亿</div><div class="d down">同比 −39.4%</div></div>
+    <div class="kpi"><div class="l">资本开支</div><div class="v">547.3 亿</div><div class="d flat">Q1 单季</div></div>
+    <div class="kpi"><div class="l">自由现金流</div><div class="v">≈297 亿</div><div class="d flat">OCF−CAPEX 为正</div></div>
+    <div class="kpi"><div class="l">净利润现金含量</div><div class="v">158%</div><div class="d flat">长期匹配良好</div></div>
+  </div>
+
+  <div class="formula">
+    <code>经营现金流净额 ≈ 净利润 + 折旧摊销/减值等非现金损益 − 营运资金变动(应收增加 + 存货增加 − 应付增加) − 资本性应付</code><br>
+    2026Q1：净利润 483.3 + 折旧摊销等非现金损益（季度约数百亿级，全年折旧折耗约 3,000 亿）→ − 营运资金净占用（存货较年初 +188 亿、应收账款增加、其他应收激增等，合计约 −390 亿量级）≈ <b>844.7 亿</b>。
+  </div>
+  <div class="flag red">
+    <div class="tag">核心警示</div>
+    <div class="bd"><b>经营现金流同比 −39.4%</b>（2025Q1 为 1,395 亿 → 2026Q1 为 845 亿）。OCF 拆解归因：2025Q1 营运资金为"释放"（油价下行回款好），2026Q1 转为"占用"（油价上行期存货与应收占用上升、其他应收较上年末 +176.79%），是同比下滑主因。虽 FCF（OCF−资本开支）仍约 +297 亿为正，但现金回款节奏弱于利润增长，需持续跟踪。</div>
+  </div>
+  <div class="flag green">
+    <div class="tag">支撑力</div>
+    <div class="bd">2025 全年经营现金流约 4,125 亿、自由现金流约 1,198 亿（+15.2%）；<b>2026 年资本开支计划 2,794 亿</b>（同比 +约 4%，上游 2,208 亿 +7.7%），2025 全年分红 0.47 元/股、派息率 54.7%（总额 860 亿）。经营现金流与留存收益<b>足以覆盖"高资本开支 + 高分红"双线支出</b>。</div>
+  </div>
+  <div class="note">口径说明：部分行情终端将"自由现金流"列示为约 −348 亿（含其他投资/营运资金项），本报告采用"经营现金流 − 资本性支出"口径为 +297 亿；两口径均指向"经营现金流同比走弱"这一真实信号。</div>
+  <div class="src">来源：东方财富 datacenter 现金流量表（2026-08）；资本开支与分红来自 2025 年报及 2026 经营计划、券商点评。</div>
+</section>
+
+<!-- 第6章 估值与股东回报 -->
+<section>
+  <h2><span class="no">6</span>估值与股东回报（含周期正常化，v2 修正 F）</h2>
+  <div class="lead">基本面须闭环到"贵不贵、回报可持续"。强周期股禁止用单期 PE 直接判贵贱，须做正常化盈利估值。</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="l">PE(TTM)</div><div class="v">14.14×</div><div class="d flat">2026-04-30 收盘</div></div>
+    <div class="kpi"><div class="l">PB(LF)</div><div class="v">1.38×</div><div class="d flat">破净修复中</div></div>
+    <div class="kpi"><div class="l">PS(TTM)</div><div class="v">0.79×</div><div class="d flat">—</div></div>
+    <div class="kpi"><div class="l">股息率(A/H)</div><div class="v">4.2%/4.8%</div><div class="d flat">年报时点测算</div></div>
+  </div>
+
+  <div class="two">
+    <div class="flag">
+      <div class="tag">相对水位</div>
+      <div class="bd">PE(TTM) 14.14×、PB 1.38×、PS 0.79×（均截至 2026-04-30 收盘）。中石油 PE 历史波动大（2025 年低位曾至 8–9×），当前 14× 处<b>历史中低位</b>；PB 1.38× 仍高于 1 倍账面，破净修复途中。</div>
+    </div>
+    <div class="flag">
+      <div class="tag">周期正常化（v2 F）</div>
+      <div class="bd">2026E 归母一致预期 ~1,991 亿（券商 1,869–2,016 亿），对应 PE ≈ 市值/1,991 亿。考虑油价 70–80 美元中枢的正常化盈利约 <b>1,700–2,000 亿</b>，正常化 PE 约 <b>11–13×</b>。当前并非周期顶部（油价处中高分位但非极端），<b>单期 PE 未低估也未高估，正常化后处合理偏低</b>。</div>
+    </div>
+  </div>
+  <div class="flag green">
+    <div class="tag">股东回报</div>
+    <div class="bd">派息率 54.7%、A/H 股息率 4.2%/4.8%（年报时点）；若按券商"55% 分红率 + 26E 预测"测算 A/H 股息率可达 <b>4.9%/5.7%</b>。经营现金流支撑"高分红"，非借钱分红；ROIC−WACC 为正（第 2 章）→ 留存的再投资也在创造价值。<b>回报可持续、确定性较强</b>。</div>
+  </div>
+  <div class="src">来源：中证网估值数据（2026-04-30 收盘）；券商一致预期与股息率测算（富途/光大/海通，2026-04/05）。正常化盈利为基于油价中枢的估算。</div>
+</section>
+
+<!-- 第7章 管理层指引 -->
+<section>
+  <h2><span class="no">7</span>管理层指引与前瞻（Guidance）</h2>
+  <div class="lead">财报文本与业绩会的前瞻陈述（与第 0.5 章行业坐标交叉验证；指引非承诺）。</div>
+  <table>
+    <thead><tr><th>维度</th><th>管理层表述 / 计划</th></tr></thead>
+    <tbody>
+      <tr><td>宏观经济</td><td>董事长戴厚良（2026-06 董事会）：我国经济长期向好支撑条件未变；但国际油价大幅震荡、竞争加剧、风险挑战增多。</td></tr>
+      <tr><td>行业需求</td><td>2026Q1 MD&A：预计国内成品油与天然气需求总体稳定；国际原油价格波动仍是主要变量；新能源业务有望快速扩张。</td></tr>
+      <tr><td>产量目标</td><td>2026 年油气当量产量计划 18.53 亿桶（同比 +&gt;0.6%）；Q1 已完成全年目标约 25.4%。</td></tr>
+      <tr><td>资本开支</td><td>2026 年资本支出计划 2,794 亿（同比 +约 4%），上游 2,208 亿（+7.7%），维持高强度"增储上产"。</td></tr>
+      <tr><td>转型方向</td><td>炼化"油转化 / 油转特"、高端聚烯烃；销售向"油气氢电服"综合能源服务商转型；风光发电 Q1 23.3 亿 kWh（+38.5%）。</td></tr>
+      <tr><td>地缘风险</td><td>自产及非中东进口/长约资源占比 &gt;90%，经霍尔木兹海峡进口仅占约 10%，可保障产业链长期稳定。</td></tr>
+    </tbody>
+  </table>
+  <div class="note">指引基调：<b>乐观但审慎</b>——肯定需求与转型，强调油价波动与地缘不确定性。下季度关键看原油实现价（Q1 64.08 美元/桶，同比 −8.5%）及炼化库存收益可持续性。与行业坐标（Q4 中枢下移）交叉：若 Q4 油价回落，实现价滞后传导或进一步压制上游。</div>
+  <div class="src">来源：公司 2026 一季报 MD&A（2026-04-30）、2025 年报业绩会（2026-03-30）、第十届董事会第一次会议报道（同花顺，2026-06-10）。</div>
+</section>
+
+<!-- 第8章 同业可比 -->
+<section>
+  <h2><span class="no">8</span>同业可比与相对表现</h2>
+  <div class="lead">与中石化（600028）、中海油（00883）对比增速/盈利/杠杆/估值，定位相对强弱（估值含第 6 章周期正常化可比性）。</div>
+  <table>
+    <thead><tr><th>指标（2026Q1）</th><th>中国石油 601857</th><th>中国石化 600028</th><th>中国海油 00883</th></tr></thead>
+    <tbody>
+      <tr><td>营收（亿）</td><td>7,363.8</td><td>7,067.0</td><td>—（纯上游）</td></tr>
+      <tr><td>归母净利（亿）</td><td>483.3</td><td>170.1</td><td>—</td></tr>
+      <tr><td>归母同比</td><td class="up">+1.9%</td><td class="up">+28.2%</td><td>—</td></tr>
+      <tr><td>ROE（单季）</td><td>3.0%</td><td>2.04%</td><td>更高（纯上游高杠杆）</td></tr>
+      <tr><td>资产负债率</td><td class="up" style="color:var(--ok)">39.58%</td><td class="down" style="color:var(--down)">55.89%</td><td>约 27%（最低）</td></tr>
+      <tr><td>经营现金流</td><td class="up" style="color:var(--ok)">+844.7 亿（正）</td><td class="down" style="color:var(--down)">−55.6 亿（负）</td><td>强劲</td></tr>
+      <tr><td>PE(TTM)</td><td>14.1×</td><td>17–18×</td><td>约 8×</td></tr>
+      <tr><td>PB</td><td>1.38×</td><td>0.75×</td><td>约 1.0×</td></tr>
+      <tr><td>股息率</td><td>4.2–4.9%</td><td>3.96%</td><td>约 5.3%</td></tr>
+    </tbody>
+  </table>
+  <div class="chart-title">图表 · 三桶油相对定位（条形为相对水平，非绝对可比）</div>
+  <div class="chart">
+    <div class="bc-row"><div class="bc-lab">PE：中石油</div><div class="bc-track"><div class="bc-fill" style="width:70.7%">14.1×</div></div><div class="bc-val">14.1×</div></div>
+    <div class="bc-row"><div class="bc-lab">PE：中石化</div><div class="bc-track"><div class="bc-fill down" style="width:90%">17.5×</div></div><div class="bc-val">17.5×</div></div>
+    <div class="bc-row"><div class="bc-lab">PE：中海油</div><div class="bc-track"><div class="bc-fill up" style="width:40%">8.0×</div></div><div class="bc-val">8.0×</div></div>
+    <div class="bc-row"><div class="bc-lab">股息率：中石油</div><div class="bc-track"><div class="bc-fill amber" style="width:79%">4.5%</div></div><div class="bc-val">4.5%</div></div>
+    <div class="bc-row"><div class="bc-lab">股息率：中石化</div><div class="bc-track"><div class="bc-fill amber" style="width:70%">3.96%</div></div><div class="bc-val">3.96%</div></div>
+    <div class="bc-row"><div class="bc-lab">股息率：中海油</div><div class="bc-track"><div class="bc-fill amber up" style="width:94%">5.3%</div></div><div class="bc-val">5.3%</div></div>
+    <div class="bc-note">中石油定位：估值处三家中游（高于中海油、低于中石化），但<b>资产负债表最稳健</b>（负债率 39.6% vs 中石化 55.9%）、<b>经营现金流最健康</b>（正值 vs 中石化负值）、股息率居中。综合"安全边际 + 现金流质量"领先同业。</div>
+  </div>
+  <div class="src">来源：各公司 2026 一季报及行情数据（中证网、visualfin，2026-04/08）；中海油数据引自本持仓既有分析报告。</div>
+</section>
+
+<!-- 第9章 财务排雷 -->
+<section>
+  <h2><span class="no">9</span>财务排雷（红旗预警清单）</h2>
+  <div class="lead">结构化排查（v2 在 v1 十项基础上新增「收入确认激进」「表外/担保」两项，阈值因行业调整）。每面红旗含"现象→含义→需核实凭证"。</div>
+  <table>
+    <thead><tr><th>红旗项</th><th>信号</th><th>严重度</th><th>解读</th></tr></thead>
+    <tbody>
+      <tr><td>经营现金流大幅走弱</td><td>OCF 同比 −39.4%</td><td><span class="badge b-bad">高</span></td><td>利润未同步转化为现金，营运资金占用上升；已用第 5 章 OCF 拆解归因，非盈利质量恶化。</td></tr>
+      <tr><td>上游对油价高度敏感</td><td>实现价 −8.5% → 上游利润 −12%</td><td><span class="badge b-bad">高</span></td><td>利润弹性高度依赖油价；若 Brent 跌破 60，上游与整体盈利明显压缩。</td></tr>
+      <tr><td>炼化库存增利的一次性</td><td>炼油利润 +57.7%</td><td><span class="badge b-warn">中</span></td><td>部分来自油价上行期库存重估，油价回落时收益回吐，Q1 高增不可线性外推。</td></tr>
+      <tr><td>资产负债率季环比回升</td><td>39.58% vs 36.06%</td><td><span class="badge b-warn">中</span></td><td>杠杆边际上升但在合理区间；关注高资本开支下债务走势。</td></tr>
+      <tr><td>存货 / 应收周转小幅放缓</td><td>存货≈27天、应收≈14天</td><td><span class="badge b-warn">中</span></td><td>仍处健康低位，季环比上升；油价下行时需防存货跌价。</td></tr>
+      <tr><td>高资本开支 ROI 压力</td><td>2026 CAPEX 2,794 亿</td><td><span class="badge b-warn">中</span></td><td>上游重资产回报取决于长期油价，低油价情景下边际项目回报承压。</td></tr>
+      <tr><td>商誉</td><td>71.2 亿（占资产 0.2%）</td><td><span class="badge b-ok">低</span></td><td>商誉规模极小，商誉/年利润亦低，无减值风险。</td></tr>
+      <tr><td>研发费用资本化 / 大额减值</td><td>未见异常</td><td><span class="badge b-ok">低</span></td><td>非经常性损益 −12.5 亿（拖累），无大额减值或激进资本化迹象。</td></tr>
+      <tr><td>审计意见</td><td>标准无保留（推测）</td><td><span class="badge b-ok">低</span></td><td>央企年报/季报通常标准无保留；以正式审计报告为准。</td></tr>
+      <tr><td>关联交易 / 资金占用</td><td>其他应收较上年末 +176.79%</td><td><span class="badge b-warn">中</span></td><td>其他应收款（含利息和股利）激增，需关注是否含资金占用/利息往来；绝对额相对总资产仍小，但应跟踪回款与明细。</td></tr>
+      <tr><td>营收质量</td><td>应收增速 ≈ 营收增速</td><td><span class="badge b-ok">低</span></td><td>应收周转 14 天低位，未现"应收增速 &gt;&gt; 营收增速"的放宽信用促收入迹象。</td></tr>
+      <tr><td>收入确认激进（v2 新增）</td><td>渠道库存/递延无明显异常</td><td><span class="badge b-ok">低</span></td><td>销售板块成品油销量 +4.8%、营收与现金流方向一致（OCF&gt;净利），无经销商压货或完工百分比提前确认迹象；但 OCF 同比 −39% 提示回款节奏变化，需在下季验证。</td></tr>
+      <tr><td>表外 / 担保 / 或有负债（v2 新增）</td><td>未披露重大担保/诉讼</td><td><span class="badge b-ok">低</span></td><td>央企信用与融资成本优势明显，未披露重大表外担保或或有负债；需关注联营合营（管道/炼化合资）并表外敞口，以年报附注为准。</td></tr>
+    </tbody>
+  </table>
+  <div class="note">排雷结论：无"暴雷"级红旗（商誉、减值、资本化、审计均正常）；<b>真正需持续盯防的是"经营现金流走弱 + 油价敏感度 + 炼化库存收益一次性 + 其他应收激增"四条</b>。</div>
+</section>
+
+<!-- 第10章 综合结论 -->
+<section>
+  <h2><span class="no">10</span>综合结论</h2>
+  <div class="lead">一句话定调 + 核心利好/风险 + 跟踪闭环（跟踪项 = 各章红旗的后续验证点，v2 修正 J）。</div>
+  <div class="summary">
+    <h3>一句话定调：偏积极，质量中性偏正</h3>
+    <ul>
+      <li><b>核心利好</b>：① 天然气量价齐升（+39.7%）与炼化下游修复驱动利润连创同期新高，扣非 &gt; 归母证明质量"真"；② ROIC−WACC ≈ +4pp 明确创造价值，股息率 4.2–4.9%、派息率 54.7% 回报确定；③ 资产负债表最稳健（负债率 39.6%）、经营现金流为正，安全边际领先"三桶油"同业。</li>
+      <li><b>核心风险</b>：① 上游对油价高度敏感（实现价 −8.5% → 上游 −12%），Q4 地缘溢价回落后中枢下移风险；② 经营现金流同比 −39%（营运资金占用）、其他应收激增 +176.79%、资产负债率季环比回升；③ 炼化高增含库存增利的一次性。</li>
+    </ul>
+  </div>
+
+  <div class="track">
+    <div class="chart-title" style="margin-bottom:6px">下季跟踪事项（红旗 → 验证点闭环）</div>
+    <div class="ti"><div class="tg">第 5/9 章</div><div class="bd">经营现金流背离 → 下季看应收账款/其他应收回款进度、存货是否继续占用现金。</div></div>
+    <div class="ti"><div class="tg">第 0.5/2 章</div><div class="bd">油价敏感度 → 跟踪 Brent 与原油实现价（Q4 中枢下移是否传导至上游利润）。</div></div>
+    <div class="ti"><div class="tg">第 3 章</div><div class="bd">上游拖累 → 下季看天然气增量能否持续抵消上游压力、炼化库存增利回吐幅度。</div></div>
+    <div class="ti"><div class="tg">第 9 章</div><div class="bd">其他应收 +176.79% → 下季看其明细与回款，排除资金占用/利息往来风险。</div></div>
+    <div class="ti"><div class="tg">第 4 章</div><div class="bd">负债率季环比回升 → 跟踪高资本开支（2,794 亿）下的债务与自由现金流走势。</div></div>
+    <div class="ti"><div class="tg">第 6 章</div><div class="bd">估值 → 跟踪 PE 是否随盈利/油价进入周期正常化区间，股息率是否维持 4.5%+。</div></div>
+  </div>
+  <div class="src">数据来源与口径：财务三表（利润表 RPT_F10_FINANCE_GINCOME、资产负债表 RPT_F10_FINANCE_GBALANCE、现金流量表 RPT_F10_FINANCE_GCASHFLOW）经东方财富 datacenter 抓取（2026-08）；ROIC/费用数据引自中证网基于一季报测算（2026-05）；一致预期与估值引自券商点评与行情数据（光大/海通/国泰海通/富途，2026-04/05）；行业坐标引自华安/中信期货策略与油价分析（2026）；管理层指引来自公司公告及 IR。所有财务数字以公司正式季报/年报为准。</div>
+</section>
+
+<footer>
+  本报告基于公开数据编制，用于财务分析演示，<b>不构成任何投资建议</b>。市场有风险，投资需谨慎。<br>
+  中国石油天然气股份有限公司（601857.SH / 00857.HK）· 2026 年第一季度财报深度分析 · 依据《财报深度分析模型 v2》生成 · 数据时点 2026-04-30
+</footer>
+
+</div>
+</body>
+</html>

@@ -4,33 +4,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>业绩追踪看板</title>
+<link rel="stylesheet" href="./category.css">
 <style>
 :root{
   --bg:#f4f6f8;--card:#fff;--line:#e3e8ee;--ink:#1f2733;--dim:#7a8694;
   --acc:#c8102e;--acc2:#15616d;--ok:#2e9e6b;--warn:#d98a14;--todo:#9aa6b2;--soft:#f7f9fb;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6;min-height:100vh}
+body{
+  background:var(--bg) url("miro-bg.png") center/cover no-repeat fixed;
+  color:var(--ink);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:14px;line-height:1.6;min-height:100vh
+}
 
 header.top{background:var(--card);border-bottom:1px solid var(--line);padding:18px 28px;position:sticky;top:0;z-index:10;box-shadow:0 1px 4px rgba(20,30,50,.04)}
 .meta{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-items:center}
 .meta span{background:#fff;color:var(--dim);padding:6px 14px;border-radius:16px;font-size:13px;border:1px solid var(--line);white-space:nowrap}
 
-main{max-width:720px;margin:0 auto;padding:60px 22px 90px;text-align:center}
+main{max-width:1180px;margin:0 auto;padding:60px 22px 90px;text-align:center}
 h1{font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:.5px}
 .lead{color:var(--dim);font-size:14px;margin-bottom:44px}
 
-.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-.actions a{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:var(--card);border:1px solid var(--line);border-radius:14px;
-  padding:34px 24px;text-decoration:none;color:var(--ink);
-  box-shadow:0 2px 6px rgba(20,30,50,.05);transition:transform .15s,box-shadow .15s,border-color .15s
-}
-.actions a:hover{transform:translateY(-3px);box-shadow:0 8px 22px rgba(20,30,50,.1);border-color:var(--acc2)}
-.actions .name{font-size:20px;font-weight:700;margin-bottom:6px}
-.actions .code{font-size:12px;color:var(--dim)}
-.actions .arrow{margin-top:16px;font-size:18px;color:var(--acc2)}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media (max-width:900px){.actions{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.actions{grid-template-columns:1fr}}
 
 footer.foot2{margin-top:60px;text-align:center;color:var(--todo);font-size:11px}
 </style>
@@ -38,9 +34,7 @@ footer.foot2{margin-top:60px;text-align:center;color:var(--todo);font-size:11px}
 <body>
 <header class="top">
   <div class="meta">
-    <span>编制日期：2026-08-17</span>
-    <span>方法论：高频跟踪 + 季度验证 + 情景假设</span>
-    <span>频率分层：日·周·月·季·事件</span>
+    <span>业绩追踪看板 · 一级导航页</span>
   </div>
 </header>
 
@@ -48,35 +42,218 @@ footer.foot2{margin-top:60px;text-align:center;color:var(--todo);font-size:11px}
   <h1>业绩追踪看板</h1>
   <p class="lead">点击下方入口进入对应标的追踪页面</p>
 
-  <div class="actions">
-    <a href="./china-mobile/china-mobile-dashboard.html">
-      <span class="name">中国移动</span>
-      <span class="code">600941.SH / 00941.HK</span>
-      <span class="arrow">→</span>
-    </a>
-    <a href="./china-coal/china-coal-dashboard.html">
-      <span class="name">中煤能源</span>
-      <span class="code">601898.SH / 01898.HK</span>
-      <span class="arrow">→</span>
-    </a>
-    <a href="./cosco-shipping/cosco-dashboard.html">
-      <span class="name">中远海控</span>
-      <span class="code">601919.SH / 01919.HK</span>
-      <span class="arrow">→</span>
-    </a>
-    <a href="./china-telecom/china-telecom-dashboard.html">
-      <span class="name">中国电信</span>
-      <span class="code">601728.SH / 00728.HK</span>
-      <span class="arrow">→</span>
-    </a>
-    <a href="./china-unicom/china-unicom-dashboard.html">
-      <span class="name">中国联通</span>
-      <span class="code">600050.SH / 00762.HK</span>
-      <span class="arrow">→</span>
-    </a>
-  </div>
+  <div id="stockGrid" class="actions" data-cards='[
+    {
+      "name": "中国移动",
+      "code": "600941.SH / 00941.HK",
+      "category": "telecom",
+      "categoryLabel": "通信运营商",
+      "links": [
+        { "text": "追踪看板", "href": "./china-mobile/china-mobile-dashboard.html" },
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 中报业绩分析", "href": "./reports/00941.HK_2026中报业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/00941.HK_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "中煤能源",
+      "code": "601898.SH / 01898.HK",
+      "category": "coal",
+      "categoryLabel": "煤炭",
+      "links": [
+        { "text": "追踪看板", "href": "./china-coal/china-coal-dashboard.html" },
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 中报业绩分析", "href": "./reports/01898.HK_2026中报业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/01898.HK_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "中远海控",
+      "code": "601919.SH / 01919.HK",
+      "category": "shipping",
+      "categoryLabel": "航运",
+      "links": [
+        { "text": "追踪看板", "href": "./cosco-shipping/cosco-dashboard.html" },
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 一季度业绩分析", "href": "./reports/601919.SH_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "中国电信",
+      "code": "601728.SH / 00728.HK",
+      "category": "telecom",
+      "categoryLabel": "通信运营商",
+      "links": [
+        { "text": "追踪看板", "href": "./china-telecom/china-telecom-dashboard.html" },
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 中报业绩分析", "href": "./reports/00728.HK_2026中报业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/00728.HK_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "中国联通",
+      "code": "600050.SH / 00762.HK",
+      "category": "telecom",
+      "categoryLabel": "通信运营商",
+      "links": [
+        { "text": "追踪看板", "href": "./china-unicom/china-unicom-dashboard.html" },
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 中报业绩分析", "href": "./reports/00762.HK_2026中报业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/00762.HK_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "腾讯控股",
+      "code": "00700.HK",
+      "category": "internet",
+      "categoryLabel": "互联网",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 中报业绩分析", "href": "./reports/00700.HK_2026中报业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/00700.HK_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "中国海洋石油",
+      "code": "00883.HK",
+      "category": "oil",
+      "categoryLabel": "石油",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 一季度业绩分析", "href": "./reports/00883.HK_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "中国石油",
+      "code": "601857.SH",
+      "category": "oil",
+      "categoryLabel": "石油",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 一季度业绩分析", "href": "./reports/601857.SH_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "格力电器",
+      "code": "000651.SZ",
+      "category": "consumer",
+      "categoryLabel": "消费",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2025 一季度业绩分析", "href": "./reports/000651.SZ_2025一季度业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/000651.SZ_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "伊利股份",
+      "code": "600887.SH",
+      "category": "consumer",
+      "categoryLabel": "消费",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 一季度业绩分析", "href": "./reports/600887.SH_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "招商银行",
+      "code": "600036.SH",
+      "category": "finance",
+      "categoryLabel": "金融",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 一季度业绩分析", "href": "./reports/600036.SH_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "中国平安",
+      "code": "601318.SH",
+      "category": "finance",
+      "categoryLabel": "金融",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 中报业绩分析", "href": "./reports/601318.SH_2026中报业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/601318.SH_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "国电电力",
+      "code": "600795.SH",
+      "category": "power",
+      "categoryLabel": "电力",
+      "links": [
+        {
+          "text": "财报分析",
+          "menu": true,
+          "reports": [
+            { "label": "2026 中报业绩分析", "href": "./reports/600795.SH_2026中报业绩分析.html" },
+            { "label": "2026 一季度业绩分析", "href": "./reports/600795.SH_2026一季度业绩分析.html" }
+          ]
+        }
+      ]
+    }
+  ]'></div>
 </main>
 
-<footer class="foot2">业绩追踪看板 · 一级导航页</footer>
+<script src="./card-module.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>格力电器 2025 一季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  
+  <div class="head">
+    <div>
+      <div class="co">格力电器</div>
+      <div class="meta">
+        <span>000651.SZ</span><span>家电（白色家电-空调）</span><span>深交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2025 一季报</div>
+      <div class="pdate">披露日期：2025-04-28</div>
+      <div class="badge up">偏积极</div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone up">偏积极</span>
+      <p class="oneliner">2025 年一季度格力电器呈现明显「拐点修复」：营收 415.07 亿（+14.14%）、归母净利润 59.04 亿（+26.29%）、扣非 +26.34%，扭转 2024 全年收入 −7.26% 的颓势；利润增速远超营收靠<b>强费用杠杆</b>（期间费用率 −2.53pp，销售/管理费用双降）与<b>减值收窄</b>驱动；经营现金流净额 110.01 亿（由负转正，+474%）、净现比 186%、合同负债 +46% 显示渠道打款积极、经营质量高；非经常性仅 3.15%。资产负债表超强（现金类 1,403 亿、现金短债比 1.81x、商誉仅 0.96% 净资产），估值处低位（PE(TTM) ~7.6x、股息率 ~7%）。核心风险在毛利率承压（价格战+成本）与空调出口美国关税。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul>
+<li>拐点修复：营收 415.07 亿（+14.14%）、归母净利润 59.04 亿（+26.29%）、扣非 +26.34%，扭转 2024 全年收入 −7.26% 颓势。</li>
+<li>强费用杠杆驱动利润弹性：期间费用率 −2.53pp（销售 −4.05%/管理 −18.74%），利润增速远超营收；减值损失同比大幅收窄。</li>
+<li>现金流炸裂：经营现金流净额 110.01 亿（由负转正，+474%）、净现比 186%、合同负债 +46.1%，经营质量高、渠道打款积极。</li>
+<li>低估值高股息：PE(TTM) ~7.6x、PB ~1.77x、股息率 ~7%，资产负债表超强（现金类 1,403 亿、现金短债比 1.81x、商誉仅 0.96% 净资产）。</li>
+</ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
+<li>毛利率承压：毛利率 27.36%（−1.18pp），受价格战 + 铜铝成本上行双重挤压，盈利弹性或减弱。</li>
+<li>出口关税风险：空调出口 1Q25 +20.6% 但美国关税致订单向泰国转移，2Q25 起出口增速或放缓。</li>
+<li>结构性隐忧：其他应收款 +87%、存货/营收 67% 偏高、空调占比 78% 多元化尚未形成第二曲线；国补退坡后内销持续性待验。</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">营业收入（Q1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="67.4" y="76.4" width="88.2" height="129.6" rx="3" fill="#13406b" opacity="0.85"/><text x="111.5" y="72.4" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">353</text><text x="111.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2022</text><rect x="214.4" y="75.7" width="88.2" height="130.3" rx="3" fill="#13406b" opacity="0.85"/><text x="258.5" y="71.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">355</text><text x="258.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><rect x="361.4" y="72.4" width="88.2" height="133.6" rx="3" fill="#13406b" opacity="0.85"/><text x="405.5" y="68.4" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">364</text><text x="405.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="508.4" y="53.5" width="88.2" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="552.5" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">415</text><text x="552.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">Q1 同季多年序列（v2 季节性修正 A）</text></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">归母净利润（Q1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="67.4" y="102.6" width="88.2" height="103.4" rx="3" fill="#13406b" opacity="0.85"/><text x="111.5" y="98.6" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">40</text><text x="111.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2022</text><rect x="214.4" y="99.8" width="88.2" height="106.2" rx="3" fill="#13406b" opacity="0.85"/><text x="258.5" y="95.8" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">41</text><text x="258.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><rect x="361.4" y="85.2" width="88.2" height="120.8" rx="3" fill="#13406b" opacity="0.85"/><text x="405.5" y="81.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">47</text><text x="405.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="508.4" y="53.5" width="88.2" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="552.5" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">59</text><text x="552.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">Q1 同季多年序列；2024 为调整数</text></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="40" y="16" font-size="12" font-weight="700" fill="#13406b">Q1 同比增速（%）</text><line x1="40" y1="199.4" x2="626" y2="199.4" stroke="#c8d0db" stroke-dasharray="3 3"/><text x="137.7" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><text x="333.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><text x="528.3" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><polyline points="137.7,196.2 333.0,184.7 528.3,118.3" fill="none" stroke="#c0392b" stroke-width="2.2"/><circle cx="137.7" cy="196.2" r="3" fill="#c0392b"/><text x="137.7" y="189.2" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+0.6</text><circle cx="333.0" cy="184.7" r="3" fill="#c0392b"/><text x="333.0" y="177.7" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+2.6</text><circle cx="528.3" cy="118.3" r="3" fill="#c0392b"/><text x="528.3" y="111.3" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+14.1</text><polyline points="137.7,184.2 333.0,120.4 528.3,48.6" fill="none" stroke="#1f8a4c" stroke-width="2.2"/><circle cx="137.7" cy="184.2" r="3" fill="#1f8a4c"/><text x="137.7" y="197.2" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+2.6</text><circle cx="333.0" cy="120.4" r="3" fill="#1f8a4c"/><text x="333.0" y="133.4" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+13.8</text><circle cx="528.3" cy="48.6" r="3" fill="#1f8a4c"/><text x="528.3" y="61.6" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+26.3</text><rect x="40" y="20" width="10" height="10" rx="2" fill="#c0392b"/><text x="54" y="29" font-size="10" fill="#5b6675">营收YoY</text><rect x="150" y="20" width="10" height="10" rx="2" fill="#1f8a4c"/><text x="164" y="29" font-size="10" fill="#5b6675">归母YoY</text><text x="40" y="238" font-size="9.5" fill="#8a94a6">红=营收增速 绿=归母增速（A股习惯）</text></svg></div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+      
+<div class="mcard"><div class="lab">营业收入</div><div class="val">415.07亿</div><div class="delta up">+14.14%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">59.04亿</div><div class="delta up">+26.29%</div></div>
+<div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">57.17亿</div><div class="delta up">+26.34%</div></div>
+<div class="mcard"><div class="lab">毛利率</div><div class="val">27.36%</div><div class="delta down">−1.18pp</div></div>
+<div class="mcard"><div class="lab">净利率</div><div class="val">14.2%</div><div class="delta up">+1.4pp</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">1.07元</div><div class="delta up">+25.88%</div></div>
+<div class="mcard"><div class="lab">加权ROE</div><div class="val">4.21%</div><div class="delta up">+0.28pp</div></div>
+<div class="mcard"><div class="lab">经营现金流净额</div><div class="val">110.01亿</div><div class="delta up">转正+474%</div></div>
+<div class="mcard"><div class="lab">合同负债</div><div class="val">182.48亿</div><div class="delta up">+46.1%</div></div>
+<div class="mcard"><div class="lab">总资产</div><div class="val">3,945.69亿</div><div class="delta up">+7.21%</div></div>
+
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+        
+<tr><td>营业收入</td><td class="num">415.07亿</td><td class="num">363.64亿</td><td class="num up">+14.14%</td></tr>
+<tr><td>归母净利润</td><td class="num">59.04亿</td><td class="num">46.75亿</td><td class="num up">+26.29%</td></tr>
+<tr><td>扣非归母净利润</td><td class="num">57.17亿</td><td class="num">45.25亿</td><td class="num up">+26.34%</td></tr>
+<tr><td>基本每股收益</td><td class="num">1.07元</td><td class="num">0.85元</td><td class="num up">+25.88%</td></tr>
+<tr><td>加权ROE</td><td class="num">4.21%</td><td class="num">3.93%</td><td class="num up">+0.28pp</td></tr>
+<tr><td>毛利率</td><td class="num">27.36%</td><td class="num">28.54%</td><td class="num down">−1.18pp</td></tr>
+<tr><td>净利率</td><td class="num">14.2%</td><td class="num">12.8%</td><td class="num up">+1.4pp</td></tr>
+<tr><td>经营现金流净额</td><td class="num">110.01亿</td><td class="num">−29.41亿</td><td class="num up">转正(+474%)</td></tr>
+<tr><td>总资产(期末/期初)</td><td class="num">3,945.69亿</td><td class="num">3,680.32亿</td><td class="num up">+7.21%</td></tr>
+<tr><td>归母股东权益(期末/期初)</td><td class="num">1,431.86亿</td><td class="num">1,374.17亿</td><td class="num up">+4.20%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">与市场预期对比<span class="sec-sub">（v2 须标注来源与口径）</span></div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+        
+<tr><td>归母净利润</td><td class="num">59.04亿(+26.29%)</td><td class="num">无单季一致预期</td><td class="num flat">—</td><td class="num up">超预期</td></tr>
+<tr><td>营业收入</td><td class="num">415.07亿(+14.14%)</td><td class="num">温和复苏预期</td><td class="num up">超预期</td><td class="num up">拐点修复</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：无权威单季一致预期可逐项目比对（家电卖方以全年预测为主）。按 v2 修正 B 改用<b>进度校验 + 同业相对校验</b>：① 进度——Q1 营收 415.07 亿达 2024 全年 1,891.64 亿的 21.9%（空调 Q1 占全年约 22-25%，进度正常偏快）；归母 59.04 亿达 2024 全年 321.85 亿的 18.3%（高于往年 Q1 占比 ~16-17%，进度略快）。② 同业——美的 +20.49%、海尔 +10.06% 营收，格力 +14.14% 居中；归母增速 +26.29% 高于海尔 +15.09%、低于美的 +38.02%。<b>结论：较 2024 收入下滑的市场悲观预期，Q1 双位数增长 + 利润高增 + 现金流炸裂 显著超预期</b>。</p>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>家电行业处于<b>「国补」驱动的需求修复中段</b>：2025 年以旧换新「国补」延续（3,000 亿超长期特别国债，预计支撑到 Q3），拉动空调内销；但价格战加剧、原材料（铜铝）成本上行挤压利润，出口面临美国关税。传导方向：对<b>内销销量（量）</b>正面（国补）、对<b>价格/毛利（价）</b>负面（价格战+成本）。格力 2024 收入 −7.26% 后，2025Q1 拐点修复，处行业<b>温和复苏、结构性分化</b>段。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>① 政策：2025 年消费品以旧换新国债 3,000 亿，家电（空调/冰箱/洗衣机等）为重点，AVC 监测 1Q25 家电双渠道零售额线上 +4.7%/线下 +12.8%，家电音像器材类社零 +19.3%。② 空调内销：1Q25 内销出货量 +6.2%（产业在线），线上/线下零售额 +4.2%/+12.6%（AVC），延续国补拉动但增速较 4Q24 放缓。③ 空调出口：1Q25 出口 +20.6%（mysteel）/+24.5%（银河），但美国关税致订单向泰国转移，2Q25 起增速或放缓。④ 价格：线上零售均价同比 −1.9%，价格竞争激烈；铜铝成本上扬压制毛利。⑤ 格力位置：空调收入占比 78%，内销为主，国补直接受益但面临小米等性价比品牌竞争。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b><b>显著创造价值（年化估计）</b>。投入资本 ≈ 归母权益 1,431.86 亿 + 有息负债（短期借款 496.21 + 长期借款 58.37 + 一年内到期 277.58）− 超额现金（约 800 亿经营性冗余）≈ 1,464 亿；年化 NOPAT ≈ 营业利润 69.13×4×(1−14% 税率) ≈ 237 亿。<b>ROIC ≈ 16-17%，WACC ≈ 8%（Re~9-10% 含 β~0.9、Rd~3.5%）→ ROIC−WACC ≈ +8~9pp，显著创造价值</b>（v2 修正 C，基于 Q1 非年化数据年化估计，仅作方向性判断）。格力高 ROIC 来自品牌溢价 + 渠道掌控 + 轻资本运营。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：空调内销受益国补 +6.2%、出口 +20.6%；合同负债 182.48 亿（+46.1%）显示渠道提货积极；营收 +14.14%（营业总收入 +13.78%）。<b>价</b>：毛利率 27.36%（−1.18pp），受价格战 + 原材料成本上行（营业成本 +16.05% 略高于营收）拖累。<b>成本/费用</b>：期间费用 42.55 亿（−8.40%），费用率 10.25%（−2.53pp）——销售费用 −4.05%、管理费用 −18.74%（降本增效）、研发 +14.17%；<b>这是利润增速(+26.29%)远超营收(+14.14%)的主因</b>。<b>非经/减值</b>：信用减值 −0.67 亿（vs −4.52 亿大幅收窄）、资产减值 −1.25 亿（vs −1.93 亿），减值损失同比减少增厚利润。<b>结论</b>：归母高增由「营收温和增长 + 强费用杠杆 + 减值收窄」驱动，经营质量真实。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>偏「真」</b>。扣非归母净利润 57.17 亿（+26.34%）≈ 归母 59.04 亿（+26.29%），差额 1.87 亿即非经常性损益（占净利 3.15%）：政府补助 1.32 亿 + 金融资产公允价值/处置 0.92 亿 + 其他 0.13 亿 − 所得税 0.50 亿 − 少数股东 0.17 亿。<b>扣非增速略高于归母，无「靠非经保利润」迹象</b>。盈利现金含量（OCF/归母）186%，极高，利润含金量足。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">Q1 季报未披露分部利润明细，采用<b>2024 全年业务结构</b>（最新可得）作结构性参考（来源：2024 年报）：<br/>• <b>空调</b>：收入占比 78.13%（绝对主力，利润主要来源），1Q25 内销受益国补、出口高增。<br/>• <b>工业制品及绿色能源</b>：占比 ~8.2%（含凌达压缩机、凯邦电机、格力钛等），多元化增量。<br/>• <b>生活电器</b>：占比 ~2.4%（大松/晶弘）。<br/>• <b>智能装备</b>：占比 ~0.3%（工业机器人，仍小）。<br/>• <b>其他（含渠道/业务）</b>：占比 ~9.8%。<br/><b>增量利润贡献占比</b>（Q1 未披露分部，以合并口径论）：利润增量 12.29 亿（归母 59.04 vs 46.75）几乎全部来自<b>空调主业</b>（费用杠杆 + 减值收窄驱动），分部层面无法拆分但整体质量高。<b>结论：增长由空调主业驱动，多元化尚未形成第二曲线</b>（v2 修正 H：未披露分部利润，按合并口径归因）。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构</b>：资产负债率 = 负债 2,472.76 / 资产 3,945.69 = <b>62.66%</b>（+1.10pp），制造业 + 渠道金融（应付账款/合同负债/其他流动负债为销售返利等经营负债）属性，有息负债可控；归母权益 1,431.86 亿。<br/><b>流动性</b>：现金类资产（货币资金 1,244.72 + 交易性金融资产 158.67 = 1,403.39 亿）>> 短期有息债（短期借款 496.21 + 一年内到期 277.58 + 衍生 0.33 = 774.12 亿），<b>现金短债比 1.81x</b>；流动比率 1.11x、速动比率 0.99x（search 确认），无流动性危机。<br/><b>周转效率</b>：存货 279.36 亿（持平，存货/营收 67% 偏高但稳定，空调季节性）；应收账款 188.14 亿（+11.78% < 营收 +14.14%）；合同负债 +46.1%（渠道打款积极）。<b>红旗</b>：其他应收款 16.27 亿（+87.1%，绝对小但增幅大，关注资金占用）；一年内到期非流动资产 323.71 亿（+133.65%，理财/定重分类，非经营风险）。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>极佳，由负转正</b>。经营现金流净额 110.01 亿（上年同期 −29.41 亿，+474.08%），OCF/归母 = 110.01 / 59.04 ≈ <b>186%</b>（净现比 185.16%），营收现金比（销售收现 421.82 亿 / 营收 415.07 亿）≈ 102%。<b>现金流与利润高度匹配，盈利含金量高</b>，无背离。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）：</b>OCF 拆解（亿元，v2 修正 E）：净利润 59.04 ＋ 非现损益（信用减值 −0.67 + 资产减值 −1.25 + 资产处置 0.21 + 折旧摊销等）− 营运资金变动。关键驱动：① <b>销售收现 +26.06%</b>（421.82 vs 334.59 亿）；② <b>购买商品付现 −13.10%</b>（245.52 vs 282.51 亿）；③ 合同负债 +46.1%（预收款增加，减少现金流出）、应付票据 +15.5%、存货持平。<b>归因</b>：OCF 转正主因「回款改善 + 采购付款减少 + 预收款（合同负债）增加」三者叠加，属经营质量改善而非一次性，可持续性强。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>充裕，覆盖双线支出</b>。自由现金流 FCF = OCF 110.01 − CapEx（购建固定资产等 7.06 亿）≈ <b>102.95 亿</b>，FCF/归母 ≈ 1.74x。投资活动净流出 −201.70 亿（同比 −15.71 亿扩大，主因投资支付现金 164.71 亿 vs 103.78 亿，理财/金融资产配置增加）；筹资净流入 +104.16 亿（取得借款 220.04 亿、偿还 118.06 亿）。<b>覆盖能力</b>：OCF 远超单季分红（Q1 不分配，年报分红由全年 OCF 覆盖），余量充足，分红非借钱分红。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b><b>低估值、高股息、接破净</b>。截至报告披露日 2025-04-28 收盘 42.56 元，PE(TTM) ~7.6x、PB(LF) ~1.77x、PS(TTM) ~1.3x、总市值 ~2,380 亿。股息率（基于 2024 全年分红 2.99 元/股，总额 167.55 亿）≈ <b>7.0%</b>，居家电板块前列。相对同业：PE 远低于美的(~13x)/海尔(~12x)，PB 接近 1 倍（未破净但安全边际薄）；高股息 + 低估值构成「类债」属性。</p>
+      <p><b>周期正常化估值（v2 修正 F）：</b>家电具地产后周期属性但格力盈利较稳定（空调刚需 + 高分红），<b>非强周期</b>。正常化盈利以近 3 年归母均值（2022 245.07 / 2023 290.17 / 2024 321.85 ≈ <b>286 亿</b>）为锚，正常化 PE ≈ 2,380 / 286 ≈ <b>8.3x</b>，处历史低位（v2 修正 F）。当前 PE ~7.6x 已低于正常化，反映市场对空调地产链 + 格力的过度悲观；PB ~1.77x 未破净但接近，下行有高股息（~7%）兜底。<b>结论：估值偏低，安全边际充足</b>。</p>
+      <p><b>股东回报可持续性：</b><b>高分红、可持续</b>。2024 全年分红 167.55 亿（约 10 派 30 元，2.99 元/股），派息率 ~52%（基于归母 321.85 亿）；上市以来累计分红超 1,300 亿。股息率 ~7%（现价 42.56 元），居家电前列。分红由经营现金流充分覆盖（Q1 OCF 110 亿，全年 OCF 通常 > 净利润）；2025Q1 不分配（季报惯例）。回购：此前有回购计划，本期无新增大额回购披露。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card"><b>宏观/行业</b>：国补延续（3,000 亿国债支撑到 Q3）利好内销；空调出口面临美国关税（订单向泰国转移）；原材料（铜铝）成本上行 + 价格战压缩毛利（管理层未披露量化指引，以下为基于行业与战略的综合判断）。<b>战略</b>：渠道扁平化（网批）、高端化（格力+晶弘+大松）、多元化（工业制品/绿色能源/智能装备），空调仍占 78%。<b>资本配置</b>：高分红为主，研发投入持续（Q1 研发费用 +14.17%）。<b>敏感性</b>：铜价每 ±10% 影响空调整机成本约 1-2pp 毛利；价格战每降 1% 毛利率 直接侵蚀利润；美国关税每升 10pp 影响出口增速。<i>（前瞻性陈述，非承诺；季报未给量化指引）</i></div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">白电三巨头 2025Q1 横向对比：<br/>• <b>营收增速</b>：美的 +20.49% ＞ <b>格力 +14.14%</b> ＞ 海尔 +10.06%。格力居中。<br/>• <b>归母增速</b>：美的 +38.02% ＞ <b>格力 +26.29%</b> ＞ 海尔 +15.09%。格力居中偏强。<br/>• <b>净利率</b>：<b>格力 ~14.2%</b> ＞ 美的 ~9.7% ＞ 海尔 ~6.9%。格力盈利质量/模式最优（但增长弹性弱于美的）。<br/>• <b>估值（2025-04-28）</b>：格力 PE ~7.6x/PB ~1.77x/股息率 ~7%；美的 PE ~13x；海尔 PE ~12x。格力显著折价、股息率最高。<br/><b>结论</b>：格力呈「盈利质量高、估值折价大、增长弹性居中」特征，相对同业处中上，低估值 + 高股息提供安全边际。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+      
+      
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉 13.68 亿（持平），占净资产 0.96%、占年利润（2024 归母 321.85 亿）0.04x，远低于 v2 阈值（净资产 30% 或 年利 5x），无并购泡沫。</div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">安全</span>研发费用 16.99 亿（全部费用化，+14.17%），无异常资本化率上升，利润未注水。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span>信用减值 −0.67 亿、资产减值 −1.25 亿（Q1 正常水平，同比收窄）；但 2024 全年减值较大，需看全年减值节奏是否回潮。</div></div>
+<div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict flat">安全</span>短期借款 496.21 亿（+27.24%）但现金类资产 1,403.39 亿充分覆盖，现金短债比 1.81x；无短债骤升/现金短债危机。</div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">标准</span>Q1 季报未经审计（监管允许），无保留意见前提；数据以管理层账目编制，待年报审计校验。</div></div>
+<div class="rf"><div class="k">关联交易 / 其他应收</div><div class="v"><span class="verdict amber">关注</span>其他应收款 16.27 亿（<b>+87.1%</b> vs 8.70 亿），绝对额小但增幅大，需关注是否资金占用/关联交易异常（前十大股东无显著违规质押迹象，珠海明骏 16.11% 质押）。</div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict flat">安全</span>应收账款 188.14 亿（+11.78% < 营收 +14.14%），应收增速温和；营收现金比 ~102%，无放宽信用促收入迹象。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict amber">关注</span>存货 279.36 亿（持平），存货/营收 67% 偏高但稳定（空调季节性+渠道备货）；需看跌价准备是否充足（价格战下老机型减值风险）。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">安全</span>非经常性损益 1.87 亿，占净利 3.15%；扣非 +26.34% 略高于归母 +26.29%，核心经营未含水分。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">安全</span>OCF/归母 186%，净现比极高，盈利现金含量高，无背离。</div></div>
+<div class="rf"><div class="k">收入确认激进（v2 新增）</div><div class="v"><span class="verdict flat">安全</span>空调按销售确认，合同负债 +46.1% 为渠道预收款（非压货）；终端动销受国补支撑，营收与现金流匹配（收现比 102%），无激进确认迹象。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 或有负债（v2 新增）</div><div class="v"><span class="verdict flat">安全</span>未披露重大对外担保/未决诉讼/明股实债；制造业为主，表外风险低。待年报核实并表范围与担保余额。</div></div>
+<div class="rf"><div class="k">毛利率承压</div><div class="v"><span class="verdict amber">关注</span>毛利率 27.36%（−1.18pp），受价格战 + 铜铝成本上行双重挤压；若价格战加剧或成本续升，盈利弹性将减弱。</div></div>
+<div class="rf"><div class="k">出口关税风险</div><div class="v"><span class="verdict amber">关注</span>空调出口 1Q25 +20.6% 但美国关税致订单向泰国转移，2Q25 起出口增速或放缓；格力海外产能（巴西/越南等）承接能力待验证。</div></div>
+
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+<li>拐点修复：营收 415.07 亿（+14.14%）、归母净利润 59.04 亿（+26.29%）、扣非 +26.34%，扭转 2024 全年收入 −7.26% 颓势。</li>
+<li>强费用杠杆驱动利润弹性：期间费用率 −2.53pp（销售 −4.05%/管理 −18.74%），利润增速远超营收；减值损失同比大幅收窄。</li>
+<li>现金流炸裂：经营现金流净额 110.01 亿（由负转正，+474%）、净现比 186%、合同负债 +46.1%，经营质量高、渠道打款积极。</li>
+<li>低估值高股息：PE(TTM) ~7.6x、PB ~1.77x、股息率 ~7%，资产负债表超强（现金类 1,403 亿、现金短债比 1.81x、商誉仅 0.96% 净资产）。</li>
+</ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+<li>毛利率承压：毛利率 27.36%（−1.18pp），受价格战 + 铜铝成本上行双重挤压，盈利弹性或减弱。</li>
+<li>出口关税风险：空调出口 1Q25 +20.6% 但美国关税致订单向泰国转移，2Q25 起出口增速或放缓。</li>
+<li>结构性隐忧：其他应收款 +87%、存货/营收 67% 偏高、空调占比 78% 多元化尚未形成第二曲线；国补退坡后内销持续性待验。</li>
+</ul></div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol>
+<li><b>毛利率 −1.18pp</b> → 下季看价格战烈度与铜铝成本，终端均价/毛利率是否企稳（§2/§9 红旗 13）。</li>
+<li><b>其他应收款 +87%（16.27 亿）</b> → 下季看是否资金占用/关联交易异常（§4/§9 红旗 6）。</li>
+<li><b>存货 279 亿 / 营收 67%</b> → 下季看渠道库存与跌价准备是否充足（§4/§9 红旗 8）。</li>
+<li><b>出口美国关税风险</b> → 下季看关税落地与泰国等海外产能承接（§0.5/§9 红旗 14）。</li>
+<li><b>国补退坡（Q3 后）</b> → 下季看内销动销是否可持续、渠道打款（合同负债）趋势（§0.5/§7）。</li>
+<li><b>费用杠杆持续性</b> → 下季看销售/管理费用率是否回升（Q1 −2.53pp 是否可延续，§2）。</li>
+</ol></div>
+  </div>
+
+  
+  <div class="foot">
+    <b>数据来源：</b>① 巨潮资讯 PDF <code>1223330613.PDF</code>（格力电器 2025 年第一季度报告，披露 2025-04-28，CAS 集团合并、未经审计）。② 多期序列取自公告/搜索（2022Q1–2025Q1 同季营收/归母；来源：正经社/网易/新浪财经/同花顺）。③ 估值/同业/行业经 WebSearch（A 股行情 2025-04-28/30；美的/海尔 2025Q1 业绩；AVC/产业在线/银河证券空调产销数据；奥维云网家电零售）。<b>口径说明</b>：本报告采用 CAS 集团合并口径（归母 59.04 亿）；营收用「营业收入」415.07 亿（营业总收入 416.39 亿、+13.78%）；A 股 000651 与计算口径一致。分部采用 2024 年报结构（Q1 未披露分部）。<br/>
+    <b>免责声明：</b>本报告依据《财报深度分析模型 v2》生成，仅供研究参考，不构成任何投资建议。财务数据以公司正式公告为准；市场预期数据须标注来源与统计时点，无一致预期时采用进度校验。港股须注明 IFRS / Non-IFRS 口径。股市有风险，投资需谨慎。
+  </div>
+
+</div>
+</body>
+</html>

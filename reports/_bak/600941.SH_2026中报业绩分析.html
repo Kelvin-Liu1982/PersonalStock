@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中国移动 2026 中期业绩深度分析（v2 模型）</title>
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#9a6a00; --amber-soft:#fdf3e0;
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.66;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1000px;margin:0 auto;padding:28px 20px 56px;}
+
+  /* 核心结论摘要 */
+  .esum{background:linear-gradient(180deg,#fbfdff,#f1f6fc);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:var(--radius);padding:20px 22px;box-shadow:var(--shadow);}
+  .esum .etag{display:inline-block;font-size:13px;font-weight:800;color:#fff;background:var(--brand);
+    padding:5px 14px;border-radius:999px;letter-spacing:.4px;}
+  .esum .eone{margin:14px 0 16px;font-size:15px;color:var(--ink);font-weight:600;line-height:1.7;}
+  .esum .eone b{color:var(--brand);}
+  .e2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  .ecol{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .ecol h4{margin:0 0 10px;font-size:14.5px;display:flex;align-items:center;gap:7px;}
+  .ecol.good h4{color:var(--up);} .ecol.risk h4{color:var(--down);}
+  .ecol ul{margin:0;padding-left:18px;} .ecol li{margin:7px 0;font-size:13.5px;color:var(--ink);}
+  .ecol li b{color:var(--brand);}
+
+  /* 关键指标可视化 */
+  .viz{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px 20px;box-shadow:var(--shadow);margin-top:20px;}
+  .viz .vcap{font-size:12.5px;color:var(--ink-3);margin:10px 2px 0;}
+  .split{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;margin-top:6px;}
+  .sub{font-size:13px;font-weight:700;color:var(--brand);margin:2px 2px 10px;display:flex;align-items:center;gap:7px;}
+  .sub::before{content:"";width:4px;height:15px;border-radius:3px;background:var(--brand);}
+  .legend{display:flex;gap:18px;font-size:12px;color:var(--ink-2);margin:2px 2px 6px;}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px;}
+  .sbar{display:flex;height:26px;border-radius:7px;overflow:hidden;font-size:12px;font-weight:700;color:#fff;margin:6px 0 4px;}
+  .sbar span{display:flex;align-items:center;padding:0 9px;white-space:nowrap;}
+  .sbar .a{background:var(--brand);} .sbar .b{background:#9fb6cf;}
+  .slab{font-size:12px;color:var(--ink-2);display:flex;justify-content:space-between;margin-bottom:14px;}
+  .vcap{font-size:12.5px;color:var(--ink-3);margin:10px 2px 0;}
+
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:210px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  .badge.amber{background:var(--amber-soft);color:var(--amber);}
+  /* 章节 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:600;margin:-8px 0 12px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:24px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;font-variant-numeric:tabular-nums;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;margin:6px 0;}
+  .tbl th,.tbl td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line-2);vertical-align:top;}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:12.5px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;}
+  .tbl .flat{color:var(--flat);} .tbl .amber{color:var(--amber);font-weight:700;}
+  .tbl .muted{color:var(--ink-3);font-weight:500;}
+  /* 双栏 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 结论 */
+  .concl{background:linear-gradient(180deg,#fbfdff,#f4f8fd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .concl .tag{font-weight:800;color:var(--brand);font-size:15px;margin-bottom:8px;}
+  .concl p{margin:0 0 8px;font-size:14.5px;color:var(--ink);}
+  .concl p:last-child{margin-bottom:0;}
+  /* 文本块 */
+  .note{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .note p{margin:0 0 10px;} .note p:last-child{margin-bottom:0;}
+  .note b{color:var(--brand);}
+  .flag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:6px;margin-right:6px;vertical-align:1px;}
+  .flag.red{background:var(--down-soft);color:var(--down);}   /* 风险红旗=绿 */
+  .flag.amber{background:var(--amber-soft);color:var(--amber);}
+  .flag.ok{background:var(--up-soft);color:var(--up);}
+  /* 排雷清单 */
+  .redbook{background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);}
+  .rb{display:flex;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line-2);font-size:14px;}
+  .rb:last-child{border-bottom:none;}
+  .rb .k{flex:0 0 150px;font-weight:700;color:var(--ink-2);}
+  .rb .v{flex:1;color:var(--ink);}
+  .rb .v .verdict{font-weight:700;}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+  .toc a{font-size:12.5px;color:var(--brand);text-decoration:none;background:var(--brand-soft);
+    border:1px solid var(--line);border-radius:999px;padding:4px 12px;}
+  .toc a:hover{background:var(--brand);color:#fff;}
+  @media(max-width:640px){ .two{grid-template-columns:1fr;} .e2{grid-template-columns:1fr;} .split{grid-template-columns:1fr;} .head .right{text-align:left;} .rb{flex-direction:column;gap:4px;} .rb .k{flex:none;} }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.concl,.note,.redbook,.head,.esum,.viz{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- 头部 -->
+  <div class="head">
+    <div>
+      <div class="co">中国移动</div>
+      <div class="meta">
+        <span>00941.HK / 600941.SH</span><span>通信运营商</span><span>港交所 / 上交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 中期业绩</div>
+      <div class="pdate">披露日期：2026-08-13</div>
+      <div class="badge amber">转型承压 · 现金流与派息亮眼</div>
+    </div>
+  </div>
+
+  <!-- 核心结论摘要（v2 第 10 章提炼 · 结论置顶） -->
+  <div class="esum">
+    <span class="etag">核心结论 · 摘要</span>
+    <div class="eone">2026 上半年中国移动<b>表观营收/利润双降（营收 −1.1%、归母 −6.3%）</b>，但主因是<b>增值税税目政策一次性调整</b>与通信服务新旧动能转换，<b>剔除影响后同口径均正增长</b>；算力服务（AIDC +486%、智算 +130%）成为新增长引擎，<b>经营现金流 +37%、自由现金流 +111.6%</b>，中期股息稳中有升（每股 2.51 元，+0.3%）。整体<b>偏积极</b>——短期盈利承压、长期科技服务转型加速。</div>
+    <div class="e2">
+      <div class="ecol good"><h4>▲ 核心利好</h4><ul>
+        <li><b>算力爆发</b>：算力服务 +14%，AIDC 收入 +486%、智算 +130%，占主营比升至 22.6%</li>
+        <li><b>现金流强劲</b>：经营现金净流入 1,149 亿（+37%）、自由现金流 539 亿（+111.6%）</li>
+        <li><b>高派息防御</b>：中期息 2.51 元（+0.3%），股息率 TTM 约 6.5%，派息率稳中有升</li>
+        <li><b>用户基本盘稳</b>：移动客户 10.11 亿、5G 客户 6.87 亿、物联网卡 15.11 亿，流量 +16%</li>
+      </ul></div>
+      <div class="ecol risk"><h4>▼ 核心风险</h4><ul>
+        <li><b>传统通信承压</b>：通信服务收入 −5.7%，语音/短彩信/无线上网全线下滑</li>
+        <li><b>增值税政策</b>：税率 6%→9% 一次性压制收入与利润，影响延续至下半年</li>
+        <li><b>应收攀升</b>：应收账款较年初 +22.5%（至 1,222 亿），增速远高于营收</li>
+        <li><b>资本开支上行</b>：H1 capex 约 592 亿（+34 亿），算力投入持续消耗现金</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- ★ 关键指标可视化（展示层 · 图表化呈现既有指标，单位：人民币百万元） -->
+  <div class="viz">
+    <div class="sub">关键财务指标 · 2026H1 vs 2025H1</div>
+    <div class="legend">
+      <span><i style="background:#13406b"></i>2026H1 本期</span>
+      <span><i style="background:#9fb6cf"></i>2025H1 去年同期</span>
+    </div>
+    <svg viewBox="0 0 720 200" width="100%" style="display:block;max-width:720px;margin:0 auto" role="img" aria-label="营运收入、股东应占利润、经营现金净流入 本期与去年同期对比柱状图">
+      <!-- 面板1 营运收入 -->
+      <text x="20" y="22" font-size="13" font-weight="700" fill="#13406b">营运收入</text>
+      <rect x="20" y="44" width="147" height="16" rx="4" fill="#9fb6cf"></rect>
+      <rect x="20" y="68" width="145" height="16" rx="4" fill="#13406b"></rect>
+      <text x="170" y="56" font-size="12" fill="#5b6675">543,769</text>
+      <text x="168" y="80" font-size="12" font-weight="700" fill="#1f2733">538,035</text>
+      <text x="20" y="112" font-size="12.5" font-weight="700" fill="#1f8a4c">同比 −1.1% ↓</text>
+      <!-- 面板2 股东应占利润 -->
+      <text x="260" y="22" font-size="13" font-weight="700" fill="#13406b">股东应占利润</text>
+      <rect x="260" y="44" width="147" height="16" rx="4" fill="#9fb6cf"></rect>
+      <rect x="260" y="68" width="138" height="16" rx="4" fill="#13406b"></rect>
+      <text x="410" y="56" font-size="12" fill="#5b6675">84,235</text>
+      <text x="400" y="80" font-size="12" font-weight="700" fill="#1f2733">78,934</text>
+      <text x="260" y="112" font-size="12.5" font-weight="700" fill="#1f8a4c">同比 −6.3% ↓</text>
+      <!-- 面板3 经营现金净流入 -->
+      <text x="500" y="22" font-size="13" font-weight="700" fill="#13406b">经营现金净流入</text>
+      <rect x="500" y="44" width="107" height="16" rx="4" fill="#9fb6cf"></rect>
+      <rect x="500" y="68" width="147" height="16" rx="4" fill="#13406b"></rect>
+      <text x="609" y="56" font-size="12" fill="#5b6675">83,832</text>
+      <text x="650" y="80" font-size="12" font-weight="700" fill="#1f2733">114,854</text>
+      <text x="500" y="112" font-size="12.5" font-weight="700" fill="#c0392b">同比 +37.0% ↑</text>
+    </svg>
+    <div class="vcap">注：各面板按自身最大值归一化展示，数值标签为人民币百万元（绝对额）；经营现金流高增源于利息收入与营运资金节奏，详见第 5 章。</div>
+
+    <div class="split">
+      <div>
+        <div class="sub">收入结构 · 主营 vs 其他</div>
+        <div class="sbar"><span class="a" style="width:84.1%">主营业务收入 84.1%</span><span class="b" style="width:15.9%">其他 15.9%</span></div>
+        <div class="slab"><span>主营业务 452,663（−3.1%）</span><span>其他业务 85,372（+11.2%）</span></div>
+        <div class="sub">算力+智能服务占主营比</div>
+        <div class="sbar"><span class="a" style="width:22.6%">算力+智能 22.6%</span><span class="b" style="width:77.4%">其他主营 77.4%</span></div>
+        <div class="slab"><span>算力+智能 ≈102,200</span><span>其他主营 ≈350,400</span></div>
+      </div>
+      <div>
+        <div class="sub">盈利与回报速览</div>
+        <div class="metrics" style="grid-template-columns:1fr 1fr;gap:10px">
+          <div class="mcard"><div class="lab">股息率(TTM)</div><div class="val" style="font-size:20px">6.48%</div><div class="delta flat">高分红 →</div></div>
+          <div class="mcard"><div class="lab">PE(TTM)</div><div class="val" style="font-size:20px">11.45×</div><div class="delta flat">历史偏低 →</div></div>
+          <div class="mcard"><div class="lab">自由现金流</div><div class="val" style="font-size:20px">+111.6%</div><div class="delta up">同比 ↑</div></div>
+          <div class="mcard"><div class="lab">盈利现金含量</div><div class="val" style="font-size:20px">1.45×</div><div class="delta up">高质量 ↑</div></div>
+        </div>
+        <div class="vcap">ROIC−WACC 显著为正、持续创造价值（第 2 章）；盈利现金含量 1.45× 体现利润质量扎实。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 目录 -->
+  <div class="toc">
+    <a href="#c0">第0章 口径</a><a href="#c05">行业坐标</a><a href="#c1">业绩速览</a>
+    <a href="#c2">盈利质量</a><a href="#c3">分部拆解</a><a href="#c4">资产负债</a>
+    <a href="#c5">现金流</a><a href="#c6">估值回报</a><a href="#c7">指引前瞻</a>
+    <a href="#c8">同业可比</a><a href="#c9">财务排雷</a><a href="#c10">综合结论</a>
+  </div>
+
+  <!-- 第 0 章 数据口径 -->
+  <div class="sec" id="c0">
+    <div class="sec-h">第 0 章 · 前置：数据口径与假设</div>
+    <div class="note">
+      <p><b>报告范围与准则</b>：中国移动有限公司（00941.HK / 600941.SH）截至 2026-06-30 的未经审核简明合并中期业绩，按<b>国际财务报告准则 / 香港会计准则第 34 号</b>编制，已由毕马威审阅（无重大修订），审计委员会已审阅。</p>
+      <p><b>币种与口径</b>：全文人民币列示（百万元）。本集团仅一个经营分部（通信及信息相关服务），绝大部分业务位于中国内地（境外资产/收入占比 &lt;5%），故未列示地区分部。</p>
+      <p><b>可比基准</b>：同比（YoY）为 2026H1 vs 2025H1；港股以 IFRS 口径披露，与 A 股一致（无境内外准则差异）。</p>
+      <p><b>序列长度声明</b>：本期仅披露 H1 同比两期，<b>序列不足 8 期</b>，季节性/趋势判断置信度有限，结论以同比为主。</p>
+      <p><b>关键口径调整（影响重大）</b>：自 2026-01-01 起，财政部/税务总局公告 2026 年第 9 号将<b>手机流量、短信彩信、互联网宽带接入</b>的增值税税目由"增值电信服务"调整为"基础电信服务"，对应<b>增值税率由 6% 升至 9%</b>。该政策一次性压低收入与利润表观增速，公司统一以"<b>同口径</b>"（剔除该政策影响）表述真实经营趋势。</p>
+    </div>
+  </div>
+
+  <!-- 第 0.5 章 行业坐标 -->
+  <div class="sec" id="c05">
+    <div class="sec-h">第 0.5 章 · 行业坐标与供需</div>
+    <div class="note">
+      <p><b>行业所处阶段与传导方向</b>：信息通信行业正从"移动互联网时代"迈入"<b>移动智能（Mobile AI）时代</b>"，处于<b>新旧动能转换关键期</b>。对传统业务（通信服务）是<b>量价承压</b>（用户饱和、流量资费下行、增值税率上调），对新兴业务（算力/智能服务）是<b>量价齐升的扩张期</b>。传导：传统业务→收入/利润负向；算力/AI→收入正向、但资本开支（capex）与能源成本上行。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策</b>：① 传统通信：移动用户 10.11 亿已近天花板，靠 ARPU 与融合运营维稳；② 算力：AIDC 需求爆发（训练/推理），公司智算规模 11.27 万 PFLOPS、在网利用率 &gt;90%，处于<b>供给偏紧、需求高增</b>；③ 政策：增值税税目调整（2026-01-01）短期压制表观业绩，为一次性因素；"AI+"、数据要素、算力网络为国家战略方向，长期利好。</p>
+    </div>
+  </div>
+
+  <!-- 第 1 章 业绩速览与预期差 -->
+  <div class="sec" id="c1">
+    <div class="sec-h">第 1 章 · 业绩速览与预期差</div>
+    <div class="metrics">
+      <div class="mcard"><div class="lab">营运收入</div><div class="val">5,380亿</div><div class="delta down">同比 −1.1%</div></div>
+      <div class="mcard"><div class="lab">主营业务收入</div><div class="val">4,527亿</div><div class="delta down">同比 −3.1%</div></div>
+      <div class="mcard"><div class="lab">股东应占利润</div><div class="val">789亿</div><div class="delta down">同比 −6.3%</div></div>
+      <div class="mcard"><div class="lab">EPS（基本）</div><div class="val">3.64元</div><div class="delta down">同比 −6.7%</div></div>
+      <div class="mcard"><div class="lab">EBITDA</div><div class="val">1,736亿</div><div class="delta down">同比 −6.6%</div></div>
+      <div class="mcard"><div class="lab">经营现金净流入</div><div class="val">1,149亿</div><div class="delta up">同比 +37.0%</div></div>
+      <div class="mcard"><div class="lab">自由现金流</div><div class="val">539亿</div><div class="delta up">同比 +111.6%</div></div>
+    </div>
+    <div class="sec-sub">历史同期对比（合并收益表核心项 · 人民币百万元）</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">2026H1</th><th style="text-align:right">2025H1</th><th style="text-align:right">同比</th></tr></thead>
+      <tbody>
+        <tr><td>营运收入</td><td class="num">538,035</td><td class="num">543,769</td><td class="num down">−1.1%</td></tr>
+        <tr><td>　主营业务收入</td><td class="num">452,663</td><td class="num">466,989</td><td class="num down">−3.1%</td></tr>
+        <tr><td>　其他业务收入（终端等）</td><td class="num">85,372</td><td class="num">76,780</td><td class="num up">+11.2%</td></tr>
+        <tr><td>营运支出</td><td class="num">459,779</td><td class="num">453,224</td><td class="num flat">+1.4%</td></tr>
+        <tr><td>营运利润</td><td class="num">78,256</td><td class="num">90,545</td><td class="num down">−13.6%</td></tr>
+        <tr><td>除税前利润</td><td class="num">99,084</td><td class="num">107,073</td><td class="num down">−7.4%</td></tr>
+        <tr><td>股东应占利润</td><td class="num">78,934</td><td class="num">84,235</td><td class="num down">−6.3%</td></tr>
+      </tbody>
+    </table>
+    <div class="sec-sub">与市场预期对比</div>
+    <div class="note">
+      <p><b>预期差评估</b>：<span class="flag amber">无权威一致预期数值</span> 公开渠道未披露可复核的港股 IFRS 口径一致预期中位数。采用进度校验：公司口径"<b>同口径（剔除增值税政策影响）营收与利润均实现正增长</b>"，且利润表观 −6.3% 中约 1–2pct 由税率上调贡献；结合经营现金流高增与派息稳健，市场普遍解读为<b>符合预期、经营韧性强</b>。按 v2 第 0 章约束，此处不引用搜索碎值冒充预期差。</p>
+      <p class="muted">预期来源与统计时点：公司中期业绩公告（2026-08-13 港交所）；券商点评（证券时报/新华网/东方财富，2026-08-13）一致描述为"符合预期、同口径正增长"。</p>
+    </div>
+  </div>
+
+  <!-- 第 2 章 盈利质量与增长归因 -->
+  <div class="sec" id="c2">
+    <div class="sec-h">第 2 章 · 盈利质量与增长归因</div>
+    <div class="note">
+      <p><b>ROIC − WACC（创造价值判据，v2 修正 C）</b>：<span class="flag ok">定性：显著为正</span> 电信网络具强壁垒，经营资产回报率稳定高于资本成本。但因账面<b>现金及金融资产充裕（现金 1,024 亿 + 金融资产约 4,400 亿）</b>稀释会计 ROIC，精确净额口径下 ROIC 被拉低；核心经营资产（网络/算力）回报仍显著高于 WACC。结论：<b>持续创造价值</b>，但自由现金流需扣除大额现金池影响后再评估。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）</b>：① <b>价（负）</b>：增值税率 6%→9% 直接压低收入与利润；② <b>量（结构分化）</b>：传统通信量（流量 +16%）增但价跌，算力量价齐升；③ <b>成本</b>：折旧摊销持平、雇员薪酬 −2.8%、销售费用 −1.6%（精益管理见效），但销售产品成本 +12.6%（终端销售增）；④ <b>非经</b>：无大额非经常性损益，利润质量"<b>真</b>"。</p>
+      <p><b>盈利质量</b>：营运利润 −13.6% 但股东应占利润仅 −6.3%，差额来自<b>利息收入 +36.4%（现金池收益）</b>与<b>税项 −12%</b>（税前利润下降+税收优惠），非靠非经保利润 → 质量扎实。</p>
+    </div>
+  </div>
+
+  <!-- 第 3 章 业务分部 -->
+  <div class="sec" id="c3">
+    <div class="sec-h">第 3 章 · 业务分部与地区拆解</div>
+    <div class="sec-sub">主营业务收入按业务线（人民币百万元）</div>
+    <table class="tbl">
+      <thead><tr><th>业务线</th><th style="text-align:right">2026H1</th><th style="text-align:right">2025H1</th><th style="text-align:right">同比</th></tr></thead>
+      <tbody>
+        <tr><td>语音业务</td><td class="num">30,937</td><td class="num">34,195</td><td class="num down">−9.5%</td></tr>
+        <tr><td>短彩信业务</td><td class="num">14,128</td><td class="num">16,111</td><td class="num down">−12.3%</td></tr>
+        <tr><td>无线上网业务</td><td class="num">174,342</td><td class="num">195,489</td><td class="num down">−10.8%</td></tr>
+        <tr><td>有线宽带业务</td><td class="num">72,069</td><td class="num">68,568</td><td class="num up">+5.1%</td></tr>
+        <tr><td>应用及信息服务</td><td class="num">145,650</td><td class="num">136,674</td><td class="num up">+6.5%</td></tr>
+        <tr><td>其他主营</td><td class="num">15,537</td><td class="num">15,952</td><td class="num down">−2.6%</td></tr>
+        <tr style="background:var(--line-2)"><td><b>算力+智能服务（占主营比）</b></td><td class="num"><b>≈102,200</b></td><td class="num"><b>≈90,300</b></td><td class="num up"><b>22.6%（+2.2pp）</b></td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:12px">
+      <p><b>驱动与拖累</b>：<span class="flag ok">拉动</span> 算力服务（+14%）、应用及信息服务（+6.5%）、有线宽带（+5.1%）；<span class="flag red">拖累</span> 无线上网（−10.8%）、语音（−9.5%）、短彩信（−12.3%）——传统业务全线收缩，印证新旧动能转换。算力+智能服务占主营比升至 <b>22.6%（+2.2pp）</b>，结构优化明显。</p>
+      <p><b>客户规模（基本盘）</b>：移动客户 10.11 亿（净增 588 万）、5G 客户 6.87 亿（净增 4,474 万）、宽带联网 3.37 亿（净增 770 万）、物联网卡 15.11 亿（净增 2,958 万）、手机上网流量 +16.0%、移动 ARPU 45.1 元、家庭综合 ARPU 46.8 元。</p>
+    </div>
+  </div>
+
+  <!-- 第 4 章 资产负债与周转 -->
+  <div class="sec" id="c4">
+    <div class="sec-h">第 4 章 · 资产负债与周转效率</div>
+    <div class="note">
+      <p><b>资本结构</b>：总资产 21,568 亿，总负债 6,956 亿，<b>资产负债率 32.2%</b>（极低）；有息负债极小（银行借款 94 亿 + 租赁负债 894 亿），净现金头寸庞大，<b>无流动性风险</b>。</p>
+      <p><b>重点排查</b>：① <span class="flag amber">关注</span> <b>应收账款 1,222 亿，较年初（998 亿）+22.5%</b>，增速远高于营收（−1.1%）——主因政企/算力大客户账期，需下季跟踪回款；② <b>在建工程 894 亿，较年初 +44.5%</b>（算力基础设施建设进行中）；③ <b>合同负债 396 亿，较年初 −20.3%</b>（预付费服务下降，与增值税政策及套餐结构相关）；④ 商誉 391 亿（占净资产 2.7%，极低，无减值风险）。</p>
+      <p><b>周转</b>：未单列周转天数；从应收增速看，营运资金占用上升，但经营现金净流入仍 +37%，说明回款与预收管理总体可控。</p>
+    </div>
+  </div>
+
+  <!-- 第 5 章 现金流 -->
+  <div class="sec" id="c5">
+    <div class="sec-h">第 5 章 · 现金流健康度</div>
+    <div class="note">
+      <p><b>现金流匹配度</b>：<span class="flag ok">优秀</span> 经营现金净流入 1,149 亿（≠ 净利润 790 亿，盈利现金含量 <b>1.45×</b>），自由现金流 539 亿（+111.6%）。现金流显著好于净利润，质量高。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）</b>：OCF 高增主因——① 净利润基数稳；② <b>营运资金变动正向</b>（合同负债/预收及应付账款管理，部分抵消应收增加）；③ <b>利息收入 +36.4%</b>（现金池扩大）；④ 同比基数受上年同期经营性流出较高影响。经营现金流与利润背离（OCF↑ &amp; 净利↓）主因<b>非现损益与营运资金节奏</b>，非盈利质量恶化。</p>
+      <p><b>自由现金流与覆盖能力</b>：FCF 539 亿（≈ OCF 1,149 − capex ~592 − 其他投资）。FCF 可充分覆盖中期派息（约 540 亿级）与资本开支，<b>分红由经营现金流支撑，非借钱分红</b>。投资活动现金流出净额 −646 亿（同比 −51.9%），主因上年同期含较多金融投资支出，capex 本身小幅上升。</p>
+    </div>
+  </div>
+
+  <!-- 第 6 章 估值与回报 -->
+  <div class="sec" id="c6">
+    <div class="sec-h">第 6 章 · 估值与股东回报</div>
+    <div class="note">
+      <p><b>相对估值水位</b>（2026-08-13，港股）：股价 <b>HK$81.20</b>，<b>PE(TTM) 11.45×</b>、PE(动) 13.25×、<b>PB 1.07×</b>、<b>股息率 TTM 6.48%</b>。电信为稳定公用事业型行业，历史 PE 中枢约 10–15×，当前处<b>历史偏低区间</b>。</p>
+      <p><b>周期正常化估值（v2 修正 F）</b>：<span class="flag ok">不适用强周期</span> 电信非大宗商品周期股，无需正常化盈利还原；以稳态 PE 看，11.45× 对应股息率 6.5%，<b>估值偏低、防御属性强</b>。若按 2026E 归母 ~1,580 亿、股息率承诺稳中有升，当前价位隐含回报具吸引力。</p>
+      <p><b>股东回报可持续性</b>：中期股息每股 2.51 元（+0.3%），H1 派息率 = 2.51 / 3.64 = <b>69.0%</b>；公司明确"<b>2026 年派息率将稳中有升</b>"。自 2026 中期起股息改以<b>人民币计值宣派</b>（港股股东可选港/人民币收取），回报确定性高、由经营现金流支撑。</p>
+    </div>
+  </div>
+
+  <!-- 第 7 章 指引与前瞻 -->
+  <div class="sec" id="c7">
+    <div class="sec-h">第 7 章 · 管理层指引与前瞻</div>
+    <div class="note">
+      <p><b>战略与前瞻</b>：公司锚定"世界一流科技服务企业"，从通信运营向科技服务提能升级，一体推进<b>通信网、算力网、智能网</b>。组建 <b>Token 办公室</b>、<b>算力办公室</b>，布局 AI 原生应用（MoMA 平台、九天 4.1 大模型、MobileClaw）。</p>
+      <p><b>资本配置</b>：H1 capex 约 <b>592 亿（+34 亿）</b>，主要投向网络扩容与算力基础设施；算力总规模 11.27 万 PFLOPS、利用率 &gt;90%。资本开支中期仍偏强，但现金流足以覆盖。</p>
+      <p><b>敏感性</b>：增值税政策影响延续至下半年；AI/算力投入回报兑现节奏、算力价格竞争为关键变量。指引为前瞻性陈述，非承诺。</p>
+    </div>
+  </div>
+
+  <!-- 第 8 章 同业可比 -->
+  <div class="sec" id="c8">
+    <div class="sec-h">第 8 章 · 同业可比与相对表现</div>
+    <div class="note">
+      <p><b>相对定位</b>：中国移动在三大运营商中<b>盈利能力与现金流领跑</b>（EBITDA 率 38.4%、自由现金流 539 亿居首），算力布局（移动云公有云国内前三、AIDC +486%）领先。估值（PE 11.45×、股息率 6.5%）与电信、联通相近，处行业共同的历史低位，反映市场对传统通信见顶的折价；其算力转型进展决定相对溢价。</p>
+      <p><b>份额</b>：移动客户/5G 客户/物联网连接数均居国内第一，基本盘稳固。</p>
+    </div>
+  </div>
+
+  <!-- 第 9 章 排雷 -->
+  <div class="sec" id="c9">
+    <div class="sec-h">第 9 章 · 财务排雷（红旗预警清单）</div>
+    <div class="redbook">
+      <div class="rb"><div class="k">商誉</div><div class="v"><span class="verdict" style="color:var(--up)">安全</span> · 391 亿，占净资产仅 2.7%，无减值迹象。</div></div>
+      <div class="rb"><div class="k">研发资本化</div><div class="v"><span class="verdict" style="color:var(--flat)">未披露分项</span> · 开发支出 32 亿（较年初 36 亿略降），资本化率未见异常。</div></div>
+      <div class="rb"><div class="k">资产减值</div><div class="v"><span class="verdict" style="color:var(--up)">正常</span> · 预期信用减值损失 113 亿（同比下降），存货减值 1.9 亿，无大额洗大澡。</div></div>
+      <div class="rb"><div class="k">债务结构</div><div class="v"><span class="verdict" style="color:var(--up)">极安全</span> · 资产负债率 32.2%，净现金头寸庞大，无流动性危机。</div></div>
+      <div class="rb"><div class="k">审计意见</div><div class="v"><span class="verdict" style="color:var(--up)">无保留</span> · 毕马威审阅（无重大修订），审计委员会已审阅；H1 未经审计但程序合规。</div></div>
+      <div class="rb"><div class="k">关联交易</div><div class="v"><span class="verdict" style="color:var(--up)">正常</span> · 其他应收 203 亿（较年初 159 亿升，但属集团内往来与垫款），无畸高资金占用。</div></div>
+      <div class="rb"><div class="k">营收质量</div><div class="v"><span class="verdict" style="color:var(--amber)">关注</span> · <b>应收账款较年初 +22.5%（至 1,222 亿）</b>，增速远高于营收；主因政企/算力大客户账期，需跟踪回款，暂未恶化。</div></div>
+      <div class="rb"><div class="k">存货</div><div class="v"><span class="verdict" style="color:var(--up)">正常</span> · 存货 156 亿（较年初 166 亿降），终端库存可控。</div></div>
+      <div class="rb"><div class="k">非经常性损益</div><div class="v"><span class="verdict" style="color:var(--up)">干净</span> · 利润主要来自经营，无靠卖资产/补助保利润。</div></div>
+      <div class="rb"><div class="k">现金流背离</div><div class="v"><span class="verdict" style="color:var(--up)">正向</span> · 盈利现金含量 1.45×，OCF 高于净利润，无背离风险（详见第 5 章）。</div></div>
+      <div class="rb"><div class="k">收入确认激进<span style="color:var(--amber)">（v2 新增）</span></div><div class="v"><span class="verdict" style="color:var(--up)">低风险</span> · 运营商按服务期递延确认，渠道压货风险低；算力/智算多为项目制，无异常提前确认迹象。</div></div>
+      <div class="rb"><div class="k">表外/担保/或有负债<span style="color:var(--amber)">（v2 新增）</span></div><div class="v"><span class="verdict" style="color:var(--up)">低风险</span> · 国企背景，未披露重大对外担保/未决诉讼；租赁负债（894 亿）已入表，无表外风险。</div></div>
+      <div class="rb"><div class="k">外币折算</div><div class="v"><span class="verdict" style="color:var(--flat)">影响小</span> · 外币报表折算差额 −24 亿（同比扩大），占净资产 &lt;2%，影响不大。</div></div>
+    </div>
+  </div>
+
+  <!-- 业务亮点与风险（B 类提炼） -->
+  <div class="sec" id="biz">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+        <li>算力服务高增：收入 +14%，AIDC +486%、智算 +130%，占主营比升至 22.6%</li>
+        <li>现金流强劲：经营现金净流入 +37%、自由现金流 +111.6%</li>
+        <li>高派息防御：中期息 2.51 元（+0.3%），股息率 TTM 约 6.5%，派息率稳中有升</li>
+        <li>用户基本盘稳固：移动 10.11 亿、5G 6.87 亿、物联网 15.11 亿，流量 +16%</li>
+        <li>盈利质量扎实：无大额非经，利息收入与税收优惠支撑净利韧性</li>
+      </ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+        <li>传统通信承压：通信服务 −5.7%，语音/短彩信/无线上网全线下滑</li>
+        <li>增值税政策：税率 6%→9% 一次性压制，影响延续至下半年</li>
+        <li>应收攀升：应收账款较年初 +22.5% 至 1,222 亿，关注回款</li>
+        <li>资本开支上行：H1 capex 约 592 亿（+34 亿），算力投入持续耗现金</li>
+        <li>AI 投入兑现节奏与算力价格竞争存在不确定性</li>
+      </ul></div>
+    </div>
+  </div>
+
+  <!-- 第 10 章 结论 + 下季跟踪 -->
+  <div class="sec" id="c10">
+    <div class="sec-h">第 10 章 · 综合结论</div>
+    <div class="concl">
+      <div class="tag">偏积极 · 转型承压但现金流与派息亮眼</div>
+      <p><b>一句话定调</b>：表观业绩受增值税政策与通信新旧动能转换拖累而双降，但<b>同口径正增长、算力爆发、现金流与派息强劲</b>，长期科技服务转型逻辑清晰，防御价值突出。</p>
+      <p><b>核心利好</b>：① 算力成新引擎（AIDC +486%/智算 +130%）；② 自由现金流 +111.6%、盈利现金含量 1.45×；③ 股息率 6.5%、派息率稳中有升；④ 用户基本盘与网络壁垒稳固。</p>
+      <p><b>核心风险</b>：① 传统通信服务持续承压；② 增值税政策一次性影响延续；③ 应收账款较年初 +22.5%；④ capex 上行消耗现金。</p>
+      <p><b>需跟踪事项（v2 修正 J · 红旗→跟踪闭环）：</b>
+        <br>1. <b>应收账款回款</b>（第 4/9 章红旗）：下季看应收增速是否回落至营收附近、账龄是否恶化；
+        <br>2. <b>通信服务拐点</b>（第 0.5/1/3 章）：增值税政策影响淡化后，通信服务收入能否企稳；
+        <br>3. <b>算力兑现</b>（第 3/7 章）：AIDC/智算收入增速与智算利用率（&gt;90%）可否维持，capex 转化效率；
+        <br>4. <b>资本开支与自由现金流</b>（第 5/7 章）：H2 capex 节奏、FCF 是否维持高位以支撑派息；
+        <br>5. <b>派息率</b>（第 6 章）：全年派息率是否如承诺"稳中有升"，股息率能否维持 6%+。</p>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="foot">
+    <b>数据来源：</b>中国移动 2026 年中期业绩公告（港交所，2026-08-13，股份代号 941 / 80941；原文 PDF：
+    <a href="https://stockn.xueqiu.com/00941/20260813455349.pdf" target="_blank" rel="noopener">https://stockn.xueqiu.com/00941/20260813455349.pdf</a>）；
+    行情与估值数据来自腾讯财经/公开行情（2026-08-13，HK$81.20，PE(TTM) 11.45×，股息率 TTM 6.48%）；券商点评来自证券时报、新华网、东方财富（2026-08-13）。
+    财报口径为 IFRS / 香港会计准则，与 A 股一致。<br/>
+    <b>免责声明：</b>本报告依据《财报深度分析模型 v2》生成，仅供研究参考，不构成任何投资建议。财务数据以公司正式公告为准；市场预期数据须标注来源与统计时点，无一致预期时采用进度校验。股市有风险，投资需谨慎。
+  </div>
+
+</div>
+</body>
+</html>

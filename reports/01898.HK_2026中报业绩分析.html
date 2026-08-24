@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中煤能源 2026 中报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  
+  <div class="head">
+    <div>
+      <div class="co">中煤能源</div>
+      <div class="meta">
+        <span>01898.HK</span><span>煤炭</span><span>港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 中报</div>
+      <div class="pdate">披露日期：2026-08-21</div>
+      <div class="badge up">偏积极</div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone up">偏积极</span>
+      <p class="oneliner">2026 年上半年中煤能源实现营收 731.36 亿（同比 −1.8%）、归母净利润 81.49 亿（+5.8%）、扣非归母 85.44 亿（+11.7%），在 2025H1 煤价大跌致利润下滑 21% 的低基数上企稳回升。核心逻辑是<b>「价涨量缩、利润稳增、质量真」</b>：行业煤价中枢大幅上移（动力煤 Q5500 现货 +14%、焦煤 +28%）带动自产煤综合售价 +54 元/吨（+11.5%）、化工品量价齐升（化工毛利 +62%）；但受安全监管政策调整、地质条件复杂及周边矿井事故停产影响，自产商品煤产量 6,195 万吨（−8.0%），叠加公司主动收缩低毛利的买断贸易煤（销量 −24%），营收微降。盈利质量优：扣非 > 归母（非经常性 −3.94 亿，主因资产报废/滞纳金），经营现金流 98.64 亿（+28.6%）、净现比 121%，资本开支收缩使自由现金流转正 30.65 亿。资产负债表极强（货币资金 951.53 亿、短借仅 9.97 亿、现金短债比 ~5.8x、资产负债率 46.5%、商誉 0.61 亿）。当前 H 股 11.19 港元、PB 0.80（破净）、股息率 TTM 3.86%，破净 + 高分红提供安全边际；核心风险在自产煤产量扰动、应收账款 +39.1%（vs 年初）回款、及煤价周期若回落削弱弹性。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul>
+<li>2026H1 归母 81.49 亿（+5.8%）、扣非 85.44 亿（+11.7%），在 2025H1 煤价大跌（−21.3%）低基数上企稳回升，盈利质量「真」（扣非>归母、OCF/归母 1.21x）。</li>
+<li>行业煤价中枢大幅上移（动力煤 +14%、焦煤 +28%）驱动自产煤综合售价 +54 元/吨（+11.5%）；化工业务毛利 22.94 亿（+62.0%）成最大亮点。</li>
+<li>资产负债表极强：货币资金 951.53 亿、短借仅 9.97 亿、现金短债比 ~5.8x、资产负债率 46.5%、商誉 0.61 亿；资本开支收缩使 FCF +30.65 亿转正。</li>
+<li>破净 + 高分红：H 股 PB 0.80、股息率 TTM 3.86%，中期每股派 0.184 元（30% 派息率），分红由经营现金流充分覆盖。</li>
+</ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
+<li>自产商品煤产量 −8.0%（安全监管/事故停产），量缩抵消部分价涨，是公司增速低于行业均值（+19%）的核心原因，产量恢复是关键变量。</li>
+<li>应收账款 100.87 亿较年初 +39.1%（营收仅 −1.8%），回款节奏需跟踪；贸易煤主动收缩（销量 −24%）虽优化结构但压低营收。</li>
+<li>煤价处回升中段，若下半年水电发力/库存高位致煤价回落，自产煤售价与化工毛利弹性减弱，盈利环比承压（周期股特性）。</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">营业收入（H1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="77.2" y="53.5" width="117.6" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="136.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">930</text><text x="136.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="273.2" y="83.9" width="117.6" height="122.1" rx="3" fill="#13406b" opacity="0.85"/><text x="332.0" y="79.9" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">744</text><text x="332.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><rect x="469.2" y="86.0" width="117.6" height="120.0" rx="3" fill="#13406b" opacity="0.85"/><text x="528.0" y="82.0" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">731</text><text x="528.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">H1 同季序列；2024 为 IFRS 口径、2025-2026 为 CAS 口径；2024 为煤价高位、2025-2026 煤价回落后企稳</text></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">归母净利润（H1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="77.2" y="53.5" width="117.6" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="136.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">107</text><text x="136.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="273.2" y="96.2" width="117.6" height="109.8" rx="3" fill="#13406b" opacity="0.85"/><text x="332.0" y="92.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">77</text><text x="332.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><rect x="469.2" y="89.8" width="117.6" height="116.2" rx="3" fill="#13406b" opacity="0.85"/><text x="528.0" y="85.8" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">81</text><text x="528.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">H1 同季序列；归母 2025 触底(-28%)后 2026 回升(+5.8%)，扣非 +11.7% 更高</text></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="40" y="16" font-size="12" font-weight="700" fill="#13406b">H1 同比增速（%）</text><line x1="40" y1="56.9" x2="626" y2="56.9" stroke="#c8d0db" stroke-dasharray="3 3"/><text x="186.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><text x="479.5" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><polyline points="186.5,149.0 479.5,65.2" fill="none" stroke="#c0392b" stroke-width="2.2"/><circle cx="186.5" cy="149.0" r="3" fill="#c0392b"/><text x="186.5" y="142.0" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">-19.9</text><circle cx="479.5" cy="65.2" r="3" fill="#c0392b"/><text x="479.5" y="58.2" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">-1.8</text><polyline points="186.5,186.6 479.5,30.0" fill="none" stroke="#1f8a4c" stroke-width="2.2"/><circle cx="186.5" cy="186.6" r="3" fill="#1f8a4c"/><text x="186.5" y="199.6" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-28.0</text><circle cx="479.5" cy="30.0" r="3" fill="#1f8a4c"/><text x="479.5" y="43.0" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+5.8</text><rect x="40" y="20" width="10" height="10" rx="2" fill="#c0392b"/><text x="54" y="29" font-size="10" fill="#5b6675">营收YoY</text><rect x="150" y="20" width="10" height="10" rx="2" fill="#1f8a4c"/><text x="164" y="29" font-size="10" fill="#5b6675">归母YoY</text><text x="40" y="238" font-size="9.5" fill="#8a94a6">红=营收增速 绿=归母增速（A股习惯）；2026 归母转正、营收降幅收窄</text></svg></div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+      
+<div class="mcard"><div class="lab">营业收入</div><div class="val">731.36亿</div><div class="delta down">−1.8%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">81.49亿</div><div class="delta up">+5.8%</div></div>
+<div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">85.44亿</div><div class="delta up">+11.7%</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">0.61元</div><div class="delta up">+5.2%</div></div>
+<div class="mcard"><div class="lab">加权ROE</div><div class="val">4.95%</div><div class="delta flat">持平</div></div>
+<div class="mcard"><div class="lab">综合毛利率</div><div class="val">26.9%</div><div class="delta up">+2.3pp</div></div>
+<div class="mcard"><div class="lab">经营现金流净额</div><div class="val">98.64亿</div><div class="delta up">+28.6%</div></div>
+<div class="mcard"><div class="lab">自产煤产量</div><div class="val">6195万吨</div><div class="delta down">−8.0%</div></div>
+<div class="mcard"><div class="lab">资产负债率</div><div class="val">46.5%</div><div class="delta up">+0.7pp</div></div>
+<div class="mcard"><div class="lab">货币资金</div><div class="val">951.53亿</div><div class="delta up">+7.3%</div></div>
+
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+        
+<tr><td>营业收入</td><td class="num">731.36亿</td><td class="num">744.47亿</td><td class="num down">−1.8%</td></tr>
+<tr><td>归母净利润</td><td class="num">81.49亿</td><td class="num">77.01亿</td><td class="num up">+5.8%</td></tr>
+<tr><td>扣非归母净利润</td><td class="num">85.44亿</td><td class="num">76.50亿</td><td class="num up">+11.7%</td></tr>
+<tr><td>基本每股收益</td><td class="num">0.61元</td><td class="num">0.58元</td><td class="num up">+5.2%</td></tr>
+<tr><td>加权ROE</td><td class="num">4.95%</td><td class="num">4.95%</td><td class="num flat">持平</td></tr>
+<tr><td>综合毛利率</td><td class="num">26.9%</td><td class="num">24.6%</td><td class="num up">+2.3pp</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">与市场预期对比<span class="sec-sub">（v2 须标注来源与口径）</span></div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+        
+<tr><td>营业收入</td><td class="num">731.36亿(−1.8%)</td><td class="num">行业煤价+但产量−8%</td><td class="num flat">基本符合</td><td class="num flat">量缩价涨对冲，贸易煤主动收缩</td></tr>
+<tr><td>归母净利润</td><td class="num">81.49亿(+5.8%)</td><td class="num">行业H1同比+19%(中信样本)</td><td class="num down">低于行业均值</td><td class="num up">扣非+11.7%/OCF+28.6%质量优</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：无权威单公司 H1 一致预期可逐项目比对（卖方以全年预测为主）。按 v2 修正 B 改用<b>行业/同业相对校验</b>：① 中信证券跟踪样本显示 2026Q2 煤炭上市公司净利环比均值 +31%、上半年同比 +19%，中煤归母 +5.8%（扣非 +11.7%）<b>低于行业均值</b>，主因自产煤产量 −8% 拖累量；② 同业预告：中国神华 263-298 亿（+6.9%~+21.1%）、陕西煤业 112-117 亿（+47%~53%）、兖矿能源 ~72 亿（+53%），中煤增速靠后但质量（扣非/OCF）更优；③ 公司自身：扭转 2025H1 归母 −21.3% 的下滑趋势，符合「煤价回升 + 成本管控」预期。综合：业绩<b>符合至略低于行业预期，但盈利质量优于表观</b>。</p>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>煤炭行业 2026H1 处于<b>「价格中枢上移、结构分化」的回升中段</b>——在 2023-2025 三年下行后，受 3-4 月中东冲突推升能源价格 + 大秦线春季检修 + 5 月山西煤矿事故后安全督查升级致供给收缩 + 夏季高温提前补库多重影响，煤价震荡上行。截至 2026 年 6 月底，动力煤（秦皇岛末煤）825 元/吨、主焦煤 1,680 元/吨，较 2025 年底分别 +21.7%/+21.5%；上半年动力煤 Q5500 现货均价 768 元/吨（+14%）、焦煤 1,766 元/吨（+28%）。传导方向：对<b>自产煤售价（价）</b>强正面、对<b>化工品价格（价）</b>正面（煤化工受益）、对<b>产量（量）</b>负面（安全监管致部分矿井停产）。全国规上煤炭企业利润总额 2,107 亿（+41.1%），但结构分化——资源禀赋/成本管控强的龙头盈利增，尾部及焦化企业亏损。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>① 供需：2026H1 全国原煤产量 23.7 亿吨（−1.7%）、进口 2.25 亿吨（+1.7%），供给收缩；需求端电力用煤稳中有升、化工用煤较快增长、钢铁用煤平稳、建材用煤回落。② 价格：长协价秦皇岛 Q5500 686 元/吨（+1%，长协平滑）、现货弹性更大；焦煤受钢铁需求回暖 + 优质焦煤矿复产慢，涨幅更猛（+28%）。③ 政策：安全监管趋严（事故后督查）、环保限产、保供稳价长效机制；产能释放在优质矿区受限。④ 对中煤：长协占比高，自产煤售价 +11.5% 低于市场 +14%，价弹性被长协部分平滑；但成本端（自产煤单位销售成本 285.69 元/吨）管控良好，毛利仍增。⑤ 下半年：供需边际改善、迎峰度夏/冬储支撑，但水电出力与港口库存高位为潜在压制。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>重资产能源企业以 <b>ROIC−WACC</b> 衡量价值创造（v2 修正 C）。估算：投入资本 ≈ 归母净资产 1,661.86 亿 + 有息负债 ~773 亿 − 超额现金（货币资金 951.53 亿远超经营所需，估超额 ~650 亿）≈ 1,785 亿；NOPAT（H1 年化）≈ 归母年化 163 亿 ×(1−有效税率 23.1%) ≈ 125 亿。<b>含冗余现金口径 ROIC ≈ 7.0%，与 WACC（6–7%）基本持平至略正</b>；剔除超额现金后经营性 ROIC 显著高于 WACC（TipRanks TTM ROIC 20.25% 即反映剔除冗余现金后的高回报）。结论：价值创造为正但边际——高现金冗余拉低表观 ROIC，主业回报率仍优于多数同业，属「现金牛 + 低杠杆」型。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>价</b>：自产商品煤综合售价 524 元/吨（+54 元/吨，+11.5%；动力煤 494 元/吨 +13.3%、焦煤 1,017 元/吨 +14.9%）；化工品量价齐升（尿素/聚烯烃涨价），化工毛利 22.94 亿（+62.0%）。<b>量</b>：自产商品煤产量 6,195 万吨（−539 万吨，−8.0%）、销量 6,142 万吨（−569 万吨），受安全监管/地质/事故停产拖累；买断贸易煤销量 4,631 万吨（−1,460 万吨，−24.0%，主动收缩低毛利贸易）；化工产品产量 302 万吨（+3 万吨）、发电量 86.2 亿千瓦时（+8.3 亿）。<b>成本</b>：自产煤单位销售成本 285.69 元/吨（同比略降），期间费用率下降（财务费 −14.0% 融资成本降、销售费 −13.4%）；税金及附加 +15.7%（资源税随价）。<b>非经常性</b>：非经常性损益 −3.94 亿（营业外支出 5.51 亿：资产报废/滞纳金），扣非 > 归母。<b>结论</b>：营收 −1.8% 主因「量缩（自产−8% + 贸易煤主动收缩−24%）+ 价涨（自产+11.5%）」对冲，利润 +5.8% 由价涨 + 化工亮眼 + 成本管控驱动，质量「真」。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>偏「真」</b>。扣非归母净利润 85.44 亿（+11.7%）> 归母净利润 81.49 亿（+5.8%），非经常性损益 −3.94 亿（占净利 −4.8%），主要源于营业外支出（资产报废损失 + 滞纳金 5.51 亿），非经营性质、非注水。归母/扣非均增、且经营现金流净额 98.64 亿（+28.6%，净现比 121%）与利润同向，核心经营无水分、现金含量高。少数股东损益 14.36 亿（−16.3%），归母增速快于合并净利，价值更多回流母公司。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">按业务分部拆解（2026H1，扣除分部间交易前，单位亿元）：<br/>• <b>煤炭业务</b>：营收 579.46（−4.3%），毛利 150.00（+4.6%），毛利率 25.9%（+2.2pp）——绝对主力。<br/>　− 自产商品煤：营收 321.90（+2.1%），毛利 146.43（+5.4%），毛利率 45.5%（+1.5pp），量减价增、结构优化；<br/>　− 买断贸易煤：营收 254.23（−11.6%），毛利 2.31（−38.4%），毛利率仅 0.9%（−0.4pp），主动收缩低毛利贸易。<br/>• <b>化工业务</b>：营收 104.31（+11.4%），毛利 22.94（+62.0%），毛利率 22.0%（+6.9pp）——最大亮点，量价齐升 + 成本管控。<br/>• <b>煤矿装备</b>：营收 39.60（−16.9%），毛利 7.33（−22.9%），毛利率 18.5%（−1.4pp），承压。<br/>• <b>金融</b>：营收 9.25（−20.8%），毛利 5.40（−31.7%），利率下行致利润降。<br/>• <b>其他（发电/铝加工/铁路等）</b>：营收 48.81（+6.6%），毛利 11.62（+19.2%）。<br/><b>增量利润贡献</b>：集团毛利 +13.65 亿，主要由煤炭自产（+7.5 亿）+ 化工（+8.8 亿）贡献，煤矿装备/金融拖累被其他业务抵消。<b>结论</b>：增长由「自产煤价涨 + 化工亮眼」双轮驱动，贸易煤收缩、装备/金融承压。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（极强）</b>：资产负债率 46.5%（+0.7pp vs 45.8%），在重资产能源企业中偏低；有息负债 ≈ 短期借款 9.97 + 一年内到期 153.40 + 长期借款 506.40 + 应付债券 97.94 + 租赁/长期应付 ~5.26 ≈ 773 亿；带息债务/净资产 ≈ 46.5%，财务杠杆稳健。<br/><b>流动性（极强）</b>：货币资金 951.53 亿（+7.3%），短期借款仅 9.97 亿，<b>现金短债比 ≈ 951.53 / (9.97+153.40) ≈ 5.8x</b>；流动比率 1.22（+14%）、速动比率 1.15（+15%），无偿债压力。<br/><b>周转效率</b>：存货 72.29 亿（+3.3%），存货/营收 9.9%（低，无积压）；应收账款 100.87 亿（<b>+39.1% vs 年初 72.51 亿</b>，营收仅 −1.8%，应收增速偏快，需跟踪回款）；应付账款 272.50 亿（+21.8%）体现对上游议价能力。<br/><b>资产质量</b>：固定资产 1,221.68 亿、在建工程 304.88 亿（+16.1%，项目扩张）、无形资产 510.80 亿（采矿权）、商誉仅 0.61 亿（几乎可忽略）。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>强劲且匹配</b>。经营现金流净额 98.64 亿（+28.6%），OCF/归母 ≈ <b>1.21x</b>（净现比 121%），营收现金比（OCF/营收）≈ 134.8%；剔除财务公司吸收存款影响后，生产销售活动现金流净额 126.14 亿（+51.13 亿）。投资活动净流出 143.62 亿（资本开支 67.99 亿，同比 112.57 亿大幅收缩）；筹资活动净流入 28.24 亿（借款增加、偿还到期债务 203.87 亿、分红 25.11 亿）。现金及现金等价物净增 −16.84 亿（财务公司存款波动）。现金流与盈利匹配良好，分红由经营现金流充分支撑。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）：</b>OCF 拆解（亿元，v2 修正 E）：净利润 95.85 ＋ 折旧摊销/减值等非现损益 ~37 亿 − 营运资金变动。关键项：① <b>购买商品/劳务支付现金 451.86 亿</b>（同比 552.96 亿减少 101 亿，主因贸易煤采购缩减 + 煤价结算节奏）；② <b>支付各项税费 114.02 亿</b>（+6.7 亿，资源税随价）；③ <b>支付其他与经营有关现金 39.46 亿</b>（同比 15.20 亿大增，含资产报废等相关支出）；④ 应收账款较年初 +28.36 亿（结算期内应收款增加）占用部分现金。<b>归因</b>：OCF +28.6% 主因贸易煤采购现金支出大降 + 煤炭/化工涨价回款改善，经营获现质量提升；应收增加为唯一需跟踪的占用项。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>余量充足</b>。资本开支（购建固定资产等）67.99 亿（同比 −39.6%，项目节奏性放缓），FCF = OCF 98.64 − CapEx 67.99 = <b>+30.65 亿</b>（转正）。<b>覆盖能力</b>：OCF 98.64 亿远超资本开支 + 中期分红 24.45 亿（每股 0.184 元，归母 30% 派息率），FCF 余量 ~6.2 亿；若含 2025 全年已分分红 28.77 亿，全年分红仍由经营现金流充分覆盖，<b>非借钱分红</b>。在建项目（榆林煤化工二期 90 万吨聚烯烃、液态阳光等）资本开支可控。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b><b>破净、低估值、高股息</b>。H 股 01898 2026-08-21 收 11.19 港元，PE(TTM) 9.12x、PB(LF) 0.80x（破净）、股息率 TTM 3.86%、总市值 ~1,493 亿港元（≈1,368 亿人民币）。A 股 601898 收 14.34 元、A/H 溢价 48.21%。相对同业：PE 低于中国神华（~11x）/陕西煤业（~9-10x）、高于兖矿能源；PB 0.80 处煤炭板块中低位（神华 ~1.0-1.1、陕煤 ~1.0）。</p>
+      <p><b>周期正常化估值（v2 修正 F）：</b>煤炭为<b>强周期行业</b>，须用正常化盈利而非单期 PE 判贵贱（v2 修正 F）。当前煤价处 2023-2025 下行后回升中段（非顶非底），正常化盈利以 TTM 归母 ~141-158 亿（公开口径）为锚，<b>正常化 PE ≈ 9x</b>，处历史中低位；<b>PB 0.80 破净提供资产安全边际</b>（每股净资产 ~14 元人民币 ≫ 股价 11.19 港元）。情景：乐观（煤价维持高位 + 产量恢复）PE 可降至 7-8x、PB 回归 1x；中性 PE 9x、PB 0.8-1.0；悲观（煤价回落至 2025 低位）盈利下滑、PE 被动抬升但 PB 破净已反映部分悲观。当前「破净 + 高分红」下行保护充分。</p>
+      <p><b>股东回报可持续性：</b><b>高分红、可持续、节奏优化</b>。2026 中期拟每 10 股派 1.84 元（含税，每股 0.184 元），按归母 81.49 亿的 30% 派息率计 24.45 亿；叠加 2025 全年已派（10 派 2.17 元 ≈ 28.77 亿），全年分红率约 35%。股息率 TTM（H 股）3.86%、A 股更高（~5%）。分红由经营现金流（98.64 亿/半年）充分覆盖，非借钱分红；公司持续「提升分红比例 + 实施中期分红」优化节奏。</p>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card"><b>宏观/行业</b>：管理层判断煤炭市场供需边际改善、价格震荡走强（与行业坐标一致）；安全生产为重中之重（2026 上半年受事故停产影响产量）。<b>产量</b>：力争全年产销目标，里必/韦子沟煤矿、乌审旗 2×660MW 煤电一体化项目推进；陕北榆林煤化工二期 90 万吨聚烯烃已中交、液态阳光示范加快。<b>成本</b>：持续精益管理、对标降本，自产煤单位成本管控目标延续。<b>资本配置</b>：加快「煤-电-化-新」产业链（煤电、新能源光伏、煤化工），资本开支节奏性可控；维持 ~30-35% 分红率。<b>风险应对</b>：穿透式监管、司库系统防范重大风险。<i>（前瞻性陈述，非承诺）</i></div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">上市煤企 2026H1 业绩与估值比较（截至 2026-08-21）：<br/>• <b>归母净利润（H1）</b>：中国神华 263-298 亿（+6.9%~+21.1%）＞ 中煤能源 81.49 亿（+5.8%）＞ 陕西煤业 112-117 亿（+47%~53%）＞ 兖矿能源 ~72 亿（+53%）。<br/>• <b>增速特征</b>：中煤增速靠后，主因自产煤产量 −8%（安全监管）拖累量；但扣非 +11.7%、OCF +28.6% 质量优。<br/>• <b>盈利效率</b>：中煤综合毛利率 26.9%（+2.3pp），自产煤毛利率 45.5%；ROIC（TTM）~20%（剔除冗余现金），处行业前列。<br/>• <b>资产负债表</b>：中煤资产负债率 46.5%、现金短债比 ~5.8x，优于兖矿能源（62.1% 高杠杆），稳健度接近神华（28.9% 更低）。<br/>• <b>估值</b>：中煤 PB 0.80 破净、PE(TTM) 9.12x；神华 PB ~1.0-1.1、陕煤 PB ~1.0、兖矿 PB 更低但高杠杆。<br/><b>结论</b>：中煤呈「<b>盈利质量优 + 资产负债表极强 + 估值破净折价</b>」特征，相对同业处<b>防御价值突出、弹性偏弱</b>定位；产量恢复与煤价是后续重估关键。</div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+      
+      
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉仅 0.61 亿，占净资产 0.04%、占年利润（归母年化 ~163 亿）0.004x，远低于 v2 阈值（净资产 30% 或 年利 5x），无并购泡沫。</div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">安全</span>制造业/能源以费用化为主，煤矿装备业务研发计入管理费用（23.34 亿，+6.5%），无研发资本化率异常或突然上升。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">安全</span>资产减值损失 0.33 亿（同比 −0.80 亿），主要是存货可变现净值低于成本的减值同比减少，无大额一次性洗大澡。</div></div>
+<div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict flat">安全</span>短期借款仅 9.97 亿，现金短债比 ≈ 5.8x，资产负债率 46.5%（+0.7pp 仍低），流动比率 1.22/速动比率 1.15 均升，无偿债危机。</div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">标准</span>中报未经审计（监管允许），无保留意见前提；数据以管理层账目编制，待年报审计校验。</div></div>
+<div class="rf"><div class="k">关联交易 / 其他应收</div><div class="v"><span class="verdict flat">安全</span>其他应收款 22.80 亿（+5.5%），无畸高资金占用；关联交易（财务公司、合营联营）披露合规。</div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span>营收 −1.8% 与 OCF +28.6% 同向、净现比 121% 优；但<b>应收账款 100.87 亿较年初 +39.1%</b>（营收仅 −1.8%），回款节奏需跟踪，无证据显示放宽信用促收入。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">安全</span>存货 72.29 亿（+3.3%），存货/营收 9.9%、周转健康，无积压滞销；跌价准备随市价计提充分。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">安全</span>非经常性损益 −3.94 亿（占净利 −4.8%），扣非归母 85.44 亿 > 归母 81.49 亿，核心经营无水分、质量「真」。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">安全</span>OCF/归母 1.21x（净现比 121%），OCF +28.6%、现金及现金等价物净增随财务公司波动，无长期背离；FCF +30.65 亿转正。</div></div>
+<div class="rf"><div class="k">收入确认激进（v2 新增）</div><div class="v"><span class="verdict amber">关注</span>煤炭按发货/风险转移确认收入、化工按交货确认，符合 CAS；贸易煤主动收缩（销量 −24%）非压货。但应收账款 +39.1% vs 年初为唯一需监控项，下季看回款与渠道库存。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 或有负债（v2 新增）</div><div class="v"><span class="verdict flat">安全</span>担保总额 10.14 亿（占净资产 0.6%），全部为按股比向参股企业提供担保；无对股东/实控人担保、无对资产负债率>70% 对象担保，表外风险极低。</div></div>
+<div class="rf"><div class="k">自产煤产量下滑（煤炭特有）</div><div class="v"><span class="verdict amber">关注</span>自产商品煤产量 6,195 万吨（−8.0%），受安全监管政策调整、地质条件复杂及周边矿井事故停产影响；产量恢复是后续盈利弹性的核心变量。</div></div>
+<div class="rf"><div class="k">煤价周期回落（周期股特有）</div><div class="v"><span class="verdict amber">关注</span>当前煤价处 2023-2025 下行后回升中段（动力煤 +14%/焦煤 +28%），若下半年水电出力超预期、港口库存高位致煤价回落，自产煤售价与化工毛利弹性将减弱，盈利环比承压。</div></div>
+
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+<li>2026H1 归母 81.49 亿（+5.8%）、扣非 85.44 亿（+11.7%），在 2025H1 煤价大跌（−21.3%）低基数上企稳回升，盈利质量「真」（扣非>归母、OCF/归母 1.21x）。</li>
+<li>行业煤价中枢大幅上移（动力煤 +14%、焦煤 +28%）驱动自产煤综合售价 +54 元/吨（+11.5%）；化工业务毛利 22.94 亿（+62.0%）成最大亮点。</li>
+<li>资产负债表极强：货币资金 951.53 亿、短借仅 9.97 亿、现金短债比 ~5.8x、资产负债率 46.5%、商誉 0.61 亿；资本开支收缩使 FCF +30.65 亿转正。</li>
+<li>破净 + 高分红：H 股 PB 0.80、股息率 TTM 3.86%，中期每股派 0.184 元（30% 派息率），分红由经营现金流充分覆盖。</li>
+</ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+<li>自产商品煤产量 −8.0%（安全监管/事故停产），量缩抵消部分价涨，是公司增速低于行业均值（+19%）的核心原因，产量恢复是关键变量。</li>
+<li>应收账款 100.87 亿较年初 +39.1%（营收仅 −1.8%），回款节奏需跟踪；贸易煤主动收缩（销量 −24%）虽优化结构但压低营收。</li>
+<li>煤价处回升中段，若下半年水电发力/库存高位致煤价回落，自产煤售价与化工毛利弹性减弱，盈利环比承压（周期股特性）。</li>
+</ul></div>
+    </div>
+  </div>
+
+  
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol>
+<li><b>应收账款 +39.1%（vs 年初 100.87 亿）</b> → 下季看回款节奏、账龄与渠道库存，确认是否放宽信用促收入（§4/§9 红旗 7/11）。</li>
+<li><b>自产煤产量 −8%（安全监管/事故停产）</b> → 下季看矿井复产进度、商品煤产量是否恢复至 6,700 万吨+ 水平（§3/§9 红旗 13）。</li>
+<li><b>煤价周期位置（动力煤/焦煤）</b> → 下季看秦皇岛 Q5500、主焦煤现货价与长协价，判断盈利弹性是否延续（§0.5/§9 红旗 14）。</li>
+<li><b>化工业务持续性（毛利 +62%、毛利率 22%）</b> → 下季看化工品价格（尿素/聚烯烃）、榆林煤化工二期投产贡献（§3/§1）。</li>
+<li><b>资本开支与分红（CapEx 67.99 亿、中期派 0.184 元/股）</b> → 下季看在建项目投放、FCF 与 ~35% 分红率可持续性（§5/§6）。</li>
+<li><b>债务结构（长期借款 +34.8%、应付债券 +34.3%）</b> → 下季看有息负债规模、融资成本与现金短债比稳定性（§4）。</li>
+</ol></div>
+  </div>
+
+  
+  <div class="foot">
+    <b>数据来源：</b>① 雪球 PDF <code>01898_20260821_6C1J.pdf</code>（中国中煤能源股份有限公司 2026 年半年度报告，披露 2026-08-21，CAS 集团合并、未经审计）。② 多期序列：2024H1（IFRS，港交所 2025 中期报告）营收 929.84 亿/归母 106.95 亿；2025H1（CAS 重述）营收 744.47 亿/归母 77.01 亿/扣非 76.50 亿；2026H1（CAS）营收 731.36 亿/归母 81.49 亿/扣非 85.44 亿。③ 估值/同业/行业经 WebSearch（01898.HK 2026-08-21 收 11.19 港元、PE 9.12/PB 0.80/股息率 3.86%；中信证券样本 Q2 净利环比 +31%/上半年同比 +19%；神华/陕煤/兖矿 2026H1 预告；中泰/新浪煤炭行业 2026H1 价格与信用风险展望）。<b>口径说明</b>：本报告采用 CAS 集团合并口径（归母 81.49 亿）；A 股 601898 与 H 股 01898 为同一合并主体、同源披露，H 股列示港元、财务数据为人民币。<br/>
+    <b>免责声明：</b>本报告依据《财报深度分析模型 v2》生成，仅供研究参考，不构成任何投资建议。财务数据以公司正式公告为准；市场预期数据须标注来源与统计时点，无一致预期时采用进度校验。港股须注明 IFRS / Non-IFRS 口径。股市有风险，投资需谨慎。
+  </div>
+
+</div>
+</body>
+</html>

@@ -38,11 +38,12 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:16
 .quotebar .qv{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25}
 .quotebar .qv.up{color:var(--acc)} .quotebar .qv.down{color:var(--ok)} .quotebar .qv.flat{color:var(--dim)}
 .quotebar .qv small{font-size:11px;font-weight:400;color:var(--dim);margin-left:2px}
-/* 维度总览说明 */
-.intro{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:18px}
-.intro h2{font-size:16px;font-weight:700;margin-bottom:6px}
-.intro p{font-size:12.5px;color:var(--dim);line-height:1.8}
-.intro b{color:var(--ink)}
+/* 分区标题（红竖杠） */
+.sec-title{display:flex;align-items:center;gap:12px;margin:8px 0 18px}
+.sec-bar{width:4px;height:38px;background:var(--acc);border-radius:2px;flex:none}
+.sec-text{display:flex;flex-direction:column;gap:2px}
+.sec-label{font-size:12px;color:var(--dim);font-weight:600}
+.sec-name{font-size:17px;font-weight:700;color:var(--ink);letter-spacing:.3px}
 /* 卡片网格 */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;align-items:start}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(20,30,50,.04);display:flex;flex-direction:column}
@@ -63,12 +64,26 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:16
 .metric .chg{font-size:11px;color:var(--dim);margin-left:4px}
 .note{font-size:11px;color:var(--dim);background:var(--soft);border-left:3px solid var(--acc);padding:7px 10px;border-radius:0 6px 6px 0;margin-top:10px;line-height:1.7}
 .note b{color:var(--ink)}
+
+/* 指标行 sparkline 右侧「趋势」按钮 */
+.trend-btn{font-size:11px;color:var(--acc);background:#fff;border:1px solid var(--acc);border-radius:12px;padding:2px 8px;cursor:pointer;margin-left:6px;line-height:1;white-space:nowrap;transition:background .15s,color .15s}
+.trend-btn:hover{background:var(--acc);color:#fff}
+/* 趋势弹窗（lightbox） */
+.trend-modal{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center}
+.trend-modal.open{display:flex}
+.trend-mask{position:absolute;inset:0;background:rgba(20,32,44,.55);backdrop-filter:blur(2px)}
+.trend-box{position:relative;background:#fff;border-radius:14px;padding:16px 16px 12px;max-width:94vw;max-height:92vh;overflow:auto;box-shadow:0 12px 44px rgba(0,0,0,.32)}
+.trend-box .trend-title{font-size:13px;font-weight:600;color:#15616d;margin:0 0 8px;padding-right:24px}
+.trend-box .trend-x{position:absolute;top:6px;right:10px;border:none;background:none;font-size:22px;line-height:1;cursor:pointer;color:#9aa6b2}
+.trend-box .trend-x:hover{color:#c8102e}
+.trend-box img{display:block;width:520px;max-width:84vw;height:auto}
+
 /* 指标行内联 sparkline */
 .spark-mini{display:inline-block;width:58px;height:18px;min-width:48px;vertical-align:middle;margin-left:6px;flex:none}
 .spark-mini svg{display:block;width:100%;height:100%}
 /* 趋势专区 */
 .trend-zone{margin-top:30px;border-top:2px solid var(--line);padding-top:20px}
-.trend-zone h2{font-size:17px;margin-bottom:12px}
+.trend-zone h2.sec-title{margin:4px 0 14px}.trend-zone h2.sec-title .sec-name{font-size:17px}
 .trend-zone details{margin-bottom:10px;border:1px solid var(--line);border-radius:8px;background:#fff}
 .trend-zone summary{padding:12px 16px;cursor:pointer;font-weight:600;font-size:14px}
 .trend-zone summary:hover{background:var(--soft)}
@@ -79,6 +94,11 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:16
 .chart .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
 .chart .legend b{color:var(--ink);font-weight:600}
 .chart .caption{text-align:center;font-size:10.5px;color:var(--todo);margin-top:4px}
+/* 趋势区 SVG 组（卡片1 指标图，纯 SVG 文件嵌入） */
+.svg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:8px 0 6px}
+.svgi{margin:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden}
+.svgi img{width:100%;height:auto;display:block}
+.svgi figcaption{text-align:center;font-size:12px;color:var(--ink);font-weight:600;margin-top:4px}
 .gline{stroke:var(--line);stroke-width:1}
 .ytick{fill:var(--dim);font-size:10px;text-anchor:end}
 .xtick{fill:var(--dim);font-size:10px;text-anchor:middle}
@@ -131,164 +151,163 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     </div>
   </div>
 
-  <!-- 总览说明 -->
-  <div class="intro">
-    <h2>中国移动业绩追踪框架</h2>
-    <p>中国移动主业已明确划分为<b>通信服务、算力服务、智能服务</b>三大板块，正从"通信运营商"向"科技服务企业"转型。本看板按五大维度拆解，每个维度均给出<b>量化指标、数据来源与跟踪频率</b>：以财报与月度运营数据为底，跟踪"压舱石"（通信服务）的稳固度与"第二增长曲线"（算力+智能，占主营收入已突破 20%）的动能，同时盯住资本开支拐点带来的现金释放，以及高股息承诺的兑现。</p>
-  </div>
+  <h2 class="sec-title">五大维度监测看板</h2>
 
   <div class="grid">
 
     <!-- 1 财务健康与盈利质量 -->
     <div class="card">
-      <div class="hd"><div class="idx">1</div><h3>财务健康与盈利质量</h3><span class="chip ok">年度为主</span></div>
+      <div class="hd"><div class="idx">1</div><h3>财务健康与盈利质量</h3></div>
       <div class="desc">评估基本面底座，对重资产通信企业尤为关键。</div>
-      <div class="metric"><span class="k">营业收入</span><span class="right"><span class="v">1.05万亿</span><span class="chg">+0.9%</span><span class="spark-mini" id="sk1_rev"></span></span></div>
-      <div class="metric"><span class="k">归母净利润</span><span class="right"><span class="v down">1371亿</span><span class="chg">-0.9%<span style="color:var(--todo)">(同口径+2.0%)</span></span><span class="spark-mini" id="sk1_np"></span></span></div>
-      <div class="metric"><span class="k">EBITDA率</span><span class="right"><span class="v up">32.3%</span><span class="chg">+0.2pp</span><span class="spark-mini" id="sk1_eb"></span></span></div>
-      <div class="metric"><span class="k">ROE（摊薄）</span><span class="right"><span class="v">9.84%</span><span class="chg">-0.36pp</span><span class="spark-mini" id="sk1_roe"></span></span></div>
-      <div class="metric"><span class="k">自由现金流</span><span class="right"><span class="v">820.2亿</span><span class="chg">-45.9%</span><span class="spark-mini" id="sk1_fcf"></span></span></div>
-      <div class="metric"><span class="k">应收账款增速差</span><span class="right"><span class="v up">+23.3pp</span><span class="chg">2025</span><span class="spark-mini" id="sk1_gap"></span></span></div>
-      <div class="note">传导逻辑：<b>EBITDA率 32.3%（+0.2pp）</b>逆势提升，说明通信主业"造血"能力稳健；但<b>归母净利 -0.9%</b>（同口径+2.0%）表观下滑主因口径与一次性因素。<b>自由现金流 2025 年 820.2 亿</b>（较 2024 年 1,517 亿回落，主因资本开支节奏与营运资金变动）需持续跟踪；<b>ROE 9.84%</b> 仍在央企考核合意区间。风险排查点：<b>应收账款增速差 2025 年达 +23.3pp</b>——广义应收账款增速（约 +24%）持续大幅跑赢营收增速（约 +1%），暗含政企/to B 扩张下的赊销敞口与回款恶化，纸面利润向自由现金流的转化已受拖累（2025 自由现金流回落至 820 亿）。</div>
+      <div class="metric"><span class="k">营业收入</span><span class="right"><span class="v">1.05万亿</span><span class="chg">+0.9%</span><span class="spark-mini" id="sk1_rev"></span><button class="trend-btn" data-svg="svg 图/s1/s1_rev_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">归母净利润</span><span class="right"><span class="v down">1371亿</span><span class="chg">-0.9%</span><span class="spark-mini" id="sk1_np"></span><button class="trend-btn" data-svg="svg 图/s1/s1_np_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">EBITDA率</span><span class="right"><span class="v up">32.3%</span><span class="chg">+0.2pp</span><span class="spark-mini" id="sk1_eb"></span><button class="trend-btn" data-svg="svg 图/s1/s1_eb_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">ROE（摊薄）</span><span class="right"><span class="v">9.84%</span><span class="chg">-0.36pp</span><span class="spark-mini" id="sk1_roe"></span><button class="trend-btn" data-svg="svg 图/s1/s1_roe_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">自由现金流</span><span class="right"><span class="v">820.2亿</span><span class="chg">-45.9%</span><span class="spark-mini" id="sk1_fcf"></span><button class="trend-btn" data-svg="svg 图/s1/s1_fcf_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">应收账款增速差</span><span class="right"><span class="v up">+23.3pp</span><span class="spark-mini" id="sk1_gap"></span><button class="trend-btn" data-svg="svg 图/s1/s1_gap_annual.svg">趋势</button></span></div>
+      <div class="note"><b>EBITDA率 32.3%（+0.2pp）</b>保持韧性；<b>归母净利 -0.9%</b>表观承压。自由现金流 820.2 亿较 2024 年 1517 亿回落，主因资本开支节奏与营运资金变动。风险点：<b>应收账款增速差 +23.3pp</b>，政企/toB 扩张下赊销敞口扩大，利润向现金转化受拖累。</div>
     </div>
 
     <!-- 2 核心业务运营与结构转型 -->
     <div class="card">
-      <div class="hd"><div class="idx">2</div><h3>核心业务运营与结构转型</h3><span class="chip part">动能转换</span></div>
+      <div class="hd"><div class="idx">2</div><h3>核心业务运营与结构转型</h3></div>
       <div class="desc">通信服务为"压舱石"，算力+智能服务为"第二增长曲线"。</div>
-      <div class="metric"><span class="k">通信服务收入</span><span class="right"><span class="v">7149亿</span><span class="chg">2025新口径(原口径8895)</span><span class="spark-mini" id="sk2_csr"></span></span></div>
-      <div class="metric"><span class="k">算力+智能占主营收入比</span><span class="right"><span class="v up">20.2%</span><span class="chg">2025 +1.4pp</span><span class="spark-mini" id="sk2_ratio"></span></span></div>
-      <div class="metric"><span class="k">5G网络客户</span><span class="right"><span class="v up">6.42亿户</span><span class="chg">2025 净增0.90亿</span><span class="spark-mini" id="sk2_5g"></span></span></div>
-      <div class="metric"><span class="k">移动ARPU</span><span class="right"><span class="v down">47.0元</span><span class="chg">2025；2026H1 45.1元</span><span class="spark-mini" id="sk2_marpu"></span></span></div>
-      <div class="metric"><span class="k">家庭综合ARPU</span><span class="right"><span class="v up">44.5元</span><span class="chg">2025；2026H1 46.8元</span><span class="spark-mini" id="sk2_harpu"></span></span></div>
-      <div class="note">传导逻辑：<b>通信服务</b>（基本盘）2025 年收入 7149 亿（新口径；原口径约 8895 亿），新旧动能转换与资费下行下短期承压但底盘稳固。<b>算力+智能占主营收入比升至 20.2%（+1.4pp）</b>，是"科技服务企业"转型的核心进度指标。<b>5G 网络客户</b>2025 年达 6.42 亿户（净增 0.90 亿），质量底座持续抬升。<b>ARPU</b> 是价值经营核心：移动 ARPU 2025 年 47.0 元（较 2024 年 48.5 元继续下行，需紧盯降幅是否趋缓），家庭综合 ARPU 升至 44.5 元（2026H1 46.8 元）成为新亮点——家庭市场正成为存量博弈中的增值突破口。</div>
+      <div class="metric"><span class="k">通信服务收入</span><span class="right"><span class="v">7149亿</span><span class="chg">新口径</span><span class="spark-mini" id="sk2_csr"></span><button class="trend-btn" data-svg="svg 图/s2/s2_csr_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">算力智能占主营收入比</span><span class="right"><span class="v up">20.2%</span><span class="chg">+1.4pp</span><span class="spark-mini" id="sk2_ratio"></span><button class="trend-btn" data-svg="svg 图/s2/s2_ratio_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">5G网络客户</span><span class="right"><span class="v up">6.42亿户</span><span class="chg">+16.3%</span><span class="spark-mini" id="sk2_5g"></span><button class="trend-btn" data-svg="svg 图/s2/s2_5g_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">移动ARPU</span><span class="right"><span class="v down">47.0元</span><span class="chg">-3.1%</span><span class="spark-mini" id="sk2_marpu"></span><button class="trend-btn" data-svg="svg 图/s2/s2_marpu_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">家庭综合ARPU</span><span class="right"><span class="v up">44.5元</span><span class="chg">+1.6%</span><span class="spark-mini" id="sk2_harpu"></span><button class="trend-btn" data-svg="svg 图/s2/s2_harpu_annual.svg">趋势</button></span></div>
+      <div class="note">通信服务 7149 亿（新口径）为基本盘；<b>算力+智能占主营比 20.2%（+1.4pp）</b>是转型核心指标。5G 客户 6.42 亿户（+16.3%）托底。<b>移动 ARPU 47.0 元（-3.1%）</b>仍承压，家庭 ARPU 44.5 元（+1.6%）是存量突破点。</div>
     </div>
 
     <!-- 3 资本开支与基础设施 -->
     <div class="card">
-      <div class="hd"><div class="idx">3</div><h3>资本开支与基础设施</h3><span class="chip ok">拐点释放</span></div>
+      <div class="hd"><div class="idx">3</div><h3>资本开支与基础设施</h3></div>
       <div class="desc">重资产行业，CAPEX 走向决定折旧摊销与自由现金流池。</div>
-      <div class="metric"><span class="k">资本开支总额</span><span class="right"><span class="v down">1509亿（25）</span><span class="chg">1366（26F）</span><span class="spark-mini" id="sk3_capex"></span></span></div>      <div class="metric"><span class="k">通信网络投资</span><span class="right"><span class="v">994亿（25≈）</span><span class="chg">792（26F）</span></span></div>
-      <div class="metric"><span class="k">算力网络投资</span><span class="right"><span class="v up">233亿（25≈）</span><span class="chg">378（26F）</span></span></div>
-      <div class="metric"><span class="k">智能网络投资</span><span class="right"><span class="v up">74亿（25≈）</span><span class="chg">89（26F）</span></span></div>
-      <div class="metric"><span class="k">智算总规模（FP16）</span><span class="right"><span class="v up">92.5 EFLOPS（25末）</span><span class="spark-mini" id="sk3_ai"></span></span></div>
-      <div class="metric"><span class="k">5G基站累计开通</span><span class="right"><span class="v up">277万站（25末）</span><span class="spark-mini" id="sk3_5g"></span></span></div>
-      <div class="note">传导逻辑：<b>5G 大规模建设期步入尾声</b>，资本开支总额连续下降（2023 1810 → 2024 1640 → 2025 1509 → 2026计划 1366 亿），意味着折旧摊销压力见顶回落、更多利润与现金释放。<b>结构倾斜</b>是更关键的信号：传统通信网络投资 -20.3%，而<b>算力网络 +62.4%、智能网络 +19.8%</b>，资金加速涌向智算网络（智算总规模 2024 29.2 → 2025 92.5 EFLOPS）、5G-A、万兆光网与 AI 大模型等新型基础设施。投资"减量提质" + 结构"由连接转向算力"，是自由现金流改善（2026H1 +111.6%）与估值重估的底层逻辑。</div>
+      <div class="metric"><span class="k">资本开支总额</span><span class="right"><span class="v down">1366亿</span><span class="chg">-9.5%</span><span class="spark-mini" id="sk3_capex"></span><button class="trend-btn" data-svg="svg 图/s3/s3_capex_annual.svg">趋势</button></span></div>      <div class="metric"><span class="k">通信网络投资</span><span class="right"><span class="v down">792亿</span><span class="chg">-20.3%</span><span class="spark-mini" id="sk3_net"></span><button class="trend-btn" data-svg="svg 图/s3/s3_net_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">算力网络投资</span><span class="right"><span class="v up">378亿</span><span class="chg">+62.4%</span><span class="spark-mini" id="sk3_compute"></span><button class="trend-btn" data-svg="svg 图/s3/s3_compute_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">智能网络投资</span><span class="right"><span class="v up">89亿</span><span class="chg">+19.8%</span><span class="spark-mini" id="sk3_aiinv"></span><button class="trend-btn" data-svg="svg 图/s3/s3_aiinv_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">智算总规模（FP16）</span><span class="right"><span class="v up">112.7 EFLOPS</span><span class="spark-mini" id="sk3_ai"></span><button class="trend-btn" data-svg="svg 图/s3/s3_ai_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">5G基站累计开通</span><span class="right"><span class="v up">294万站</span><span class="spark-mini" id="sk3_5g"></span><button class="trend-btn" data-svg="svg 图/s3/s3_5g_annual.svg">趋势</button></span></div>
+      <div class="note">5G 建设尾声，资本开支连续三年下降（2023 1810→2026F 1366 亿），折旧压力见顶。投资结构向算力倾斜：通信网络 -20.3%，算力网络 +62.4%、智能网络 +19.8%；智算规模 112.7 EFLOPS。CAPEX 减量提质是现金流改善与估值重估的底层逻辑。</div>
     </div>
 
     <!-- 4 客户生态 CHBN 战略协同 -->
     <div class="card">
-      <div class="hd"><div class="idx">4</div><h3>客户生态（CHBN）战略协同</h3><span class="chip part">B/N 拉动</span></div>
+      <div class="hd"><div class="idx">4</div><h3>客户生态（CHBN）战略协同</h3></div>
       <div class="desc">个人(C)、家庭(H)、政企(B)、新兴(N)四大市场全向发力。</div>
-      <div class="metric"><span class="k">个人市场收入 (C)</span><span class="right"><span class="v">4837亿</span><span class="chg">2024</span><span class="spark-mini" id="sk4_c"></span></span></div>
-      <div class="metric"><span class="k">家庭市场收入 (H)</span><span class="right"><span class="v up">1431亿</span><span class="chg">+8.5%</span><span class="spark-mini" id="sk4_h"></span></span></div>
-      <div class="metric"><span class="k">政企市场收入 (B)</span><span class="right"><span class="v up">2091亿</span><span class="chg">+8.8%</span><span class="spark-mini" id="sk4_b"></span></span></div>
-      <div class="metric"><span class="k">新兴市场收入 (N)</span><span class="right"><span class="v up">536亿</span><span class="chg">+8.7%</span><span class="spark-mini" id="sk4_n"></span></span></div>
-      <div class="metric"><span class="k">HBN 收入占通信服务比</span><span class="right"><span class="v up">45.6%</span><span class="chg">+2.4pp</span></span></div>
-      <div class="metric"><span class="k">政企客户数</span><span class="right"><span class="v up">3382万家</span><span class="chg">要客80.8万</span></span></div>
-      <div class="metric"><span class="k">移动云收入</span><span class="right"><span class="v up">1004亿</span><span class="chg">+20.4%</span><span class="spark-mini" id="sk4_cloud"></span></span></div>
-      <div class="note">传导逻辑：<b>C+H</b> 属存量博弈，防守看增值服务渗透（智慧家庭、智能家居），家庭市场 +8.5% 逆势高增；<b>B（政企）</b>是近年收入增长核心引擎，政企客户 3,382 万家、要客 80.8 万家，移动云 +20.4% 破千亿、DICT 持续放量；<b>N（新兴）</b>中咪咕视频等数字内容贡献边际增量与生态协同。整体看，HBN 占通信服务收入比升至 45.6%，个人市场"单一压舱"格局正被"四轮驱动"取代。</div>
+      <div class="metric"><span class="k">个人市场收入 (C)</span><span class="right"><span class="v down">4837亿</span><span class="chg">-1.3%</span><span class="spark-mini" id="sk4_c"></span><button class="trend-btn" data-svg="svg 图/s4/s4_c_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">家庭市场收入 (H)</span><span class="right"><span class="v up">1431亿</span><span class="chg">+8.5%</span><span class="spark-mini" id="sk4_h"></span><button class="trend-btn" data-svg="svg 图/s4/s4_h_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">政企市场收入 (B)</span><span class="right"><span class="v up">2404亿</span><span class="chg">+15.0%</span><span class="spark-mini" id="sk4_b"></span><button class="trend-btn" data-svg="svg 图/s4/s4_b_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">新兴市场收入 (N)</span><span class="right"><span class="v up">536亿</span><span class="chg">+8.7%</span><span class="spark-mini" id="sk4_n"></span><button class="trend-btn" data-svg="svg 图/s4/s4_n_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">HBN收入占通信服务比</span><span class="right"><span class="v up">45.6%</span><span class="chg">+2.4pp</span><span class="spark-mini" id="sk4_hbn"></span><button class="trend-btn" data-svg="svg 图/s4/s4_hbn_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">政企客户数</span><span class="right"><span class="v up">3617万家</span><span class="chg">+11.0%</span><span class="spark-mini" id="sk4_corp"></span><button class="trend-btn" data-svg="svg 图/s4/s4_corp_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">移动云收入</span><span class="right"><span class="v up">1004亿</span><span class="chg">+20.4%</span><span class="spark-mini" id="sk4_cloud"></span><button class="trend-btn" data-svg="svg 图/s4/s4_cloud_annual.svg">趋势</button></span></div>
+      <div class="note">C+H 存量防守，家庭市场 +8.5% 高增。<b>B 端是增长引擎</b>：政企客户 3617 万家，移动云 +20.4% 破千亿。N 端贡献生态协同。HBN 占通服比 45.6%，四轮驱动格局强化。</div>
     </div>
 
     <!-- 5 宏观政策与股东回报 -->
     <div class="card">
-      <div class="hd"><div class="idx">5</div><h3>宏观政策与股东回报</h3><span class="chip ok">高股息</span></div>
+      <div class="hd"><div class="idx">5</div><h3>宏观政策与股东回报</h3></div>
       <div class="desc">决定长线资金胜率与安全垫的维度。</div>
-      <div class="metric"><span class="k">派息率</span><span class="right"><span class="v up">75%</span><span class="chg">2024 73%</span><span class="spark-mini" id="sk5_payout"></span></span></div>
-      <div class="metric"><span class="k">每股股息</span><span class="right"><span class="v up">5.27港元</span><span class="chg">+3.5%</span><span class="spark-mini" id="sk5_dps"></span></span></div>
-      <div class="metric"><span class="k">股息率</span><span class="right"><span class="v">6.45%</span><span class="spark-mini" id="sk5_yield"></span></span></div>
-      <div class="metric"><span class="k">股息利差</span><span class="right"><span class="v up">4.60pp</span><span class="chg">6.45% − 1.85%</span><span class="spark-mini" id="sk5_spread"></span></span></div>
-      <div class="metric"><span class="k">服务增值税<span class="chip risk" style="margin-left:6px">事件驱动</span></span><span class="right"><span class="v">9%</span><span class="chg">原6% · 基础电信服务</span></span></div>
-      <div class="note">传导逻辑：中国移动是典型<b>高股息防御性标的</b>。派息率已由 2021 年 60% 稳步升至 2025 年 75%，兑现"利润 70% 以上派息"承诺，且公司明确 2026 年派息率<b>稳中有升</b>；全年股息连续增长（4.06 → 5.27 港元），H 股股息率 6.45%（年末收盘价口径），在高股息板块中仍有吸引力。政策端，国资委"<b>一利五率</b>"考核驱动降本增效与市值管理，叠加资本开支下降释放自由现金流，为高分红提供可持续支撑——这是长线资金的安全垫所在。<b>股息利差</b>（H股股息率 − 10年期国债收益率）2025 年达 <b>4.60pp</b>，处于历史高位，是险资与机构衡量"资产荒下高股息性价比"的最核心宏观量化指标，直接联动宏观货币政策走向。近期基础电信服务增值税率由 6% 上调至 9%，属重大盈利压制性宏观政策：销项税提高直接挤压净收入与利润率，虽可经进项抵扣与含税定价部分对冲，仍构成对 2026 年及以后盈利的<b>明显压力</b>。</div>
+      <div class="metric"><span class="k">派息率</span><span class="right"><span class="v up">75%</span><span class="chg">+2pp</span><span class="spark-mini" id="sk5_payout"></span><button class="trend-btn" data-svg="svg 图/s5/s5_payout_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">每股股息</span><span class="right"><span class="v up">5.27港元</span><span class="chg">+3.5%</span><span class="spark-mini" id="sk5_dps"></span><button class="trend-btn" data-svg="svg 图/s5/s5_dps_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">股息率</span><span class="right"><span class="v down">6.45%</span><span class="chg">-0.19pp</span><span class="spark-mini" id="sk5_yield"></span><button class="trend-btn" data-svg="svg 图/s5/s5_yield_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">股息利差</span><span class="right"><span class="v down">4.60pp</span><span class="chg">-0.35pp</span><span class="spark-mini" id="sk5_spread"></span><button class="trend-btn" data-svg="svg 图/s5/s5_spread_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">服务增值税</span><span class="right"><span class="v">9%</span><span class="chg">原6% · 基础电信服务</span></span></div>
+      <div class="note">派息率 75%（2024 73%），兑现高分红承诺；全年股息连续增长至 5.27 港元（+3.5%），H 股股息率 6.45%，股息利差 4.60pp，高股息性价比突出。基础电信服务增值税由 6% 上调至 9%，构成 2026 年及以后盈利压力。</div>
     </div>
 
   </div>
 
   <!-- 长期趋势专区 -->
   <div class="trend-zone">
-    <h2>长期趋势专区（多年序列，点击展开）</h2>
+    <h2 class="sec-title">长期趋势专区</h2>
 
-    <details open>
-      <summary>① 营业收入 &amp; 归母净利润（2021–2025）</summary>
+<details open>
+      <summary>1. 财务数据</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_rev"></div>
-        <p class="fin-note">口径说明：2021–2025 为全年累计。归母净利润 2025 年表观 -0.9%，同口径（剔除套餐收入分拆纳税影响）+2.0%。</p>
-        <h4>核心财务数据（亿元）</h4>
-        <table class="ftab">
-          <tr><th>指标</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr>
-          <tr><td>营业收入</td><td>8483</td><td>9373</td><td>10093</td><td>10408</td><td>10502</td></tr>
-          <tr><td>营收同比</td><td>+10.4%</td><td>+10.5%</td><td>+7.7%</td><td>+3.1%</td><td>+0.9%</td></tr>
-          <tr><td>归母净利润</td><td>1159</td><td>1255</td><td>1318</td><td>1384</td><td>1371</td></tr>
-          <tr><td>净利同比</td><td>+7.7%</td><td>+8.3%</td><td>+5.0%</td><td>+5.0%</td><td>-0.9%</td></tr>
-          <tr><td>EBITDA</td><td>3110</td><td>3292</td><td>3415</td><td>3337</td><td>3389</td></tr>
-          <tr><td>EBITDA率(占营收)</td><td>36.7%</td><td>35.1%</td><td>33.8%</td><td>32.1%</td><td>32.3%</td></tr>
-        </table>
-        <p class="fin-note">* EBITDA率 = EBITDA/营运收入，为计算值。</p>
+        <h4>年度（2020–）</h4>
+        <div class="svg-grid">
+          <figure class="svgi" id="s1_rev_annual"><img src="svg 图/s1/s1_rev_annual.svg" alt="营业收入 年度趋势"></figure>
+          <figure class="svgi" id="s1_np_annual"><img src="svg 图/s1/s1_np_annual.svg" alt="归母净利润 年度趋势"></figure>
+          <figure class="svgi" id="s1_eb_annual"><img src="svg 图/s1/s1_eb_annual.svg" alt="EBITDA率 年度趋势"></figure>
+          <figure class="svgi" id="s1_roe_annual"><img src="svg 图/s1/s1_roe_annual.svg" alt="ROE 年度趋势"></figure>
+          <figure class="svgi" id="s1_fcf_annual"><img src="svg 图/s1/s1_fcf_annual.svg" alt="自由现金流 年度趋势"></figure>
+          <figure class="svgi" id="s1_gap_annual"><img src="svg 图/s1/s1_gap_annual.svg" alt="应收账款增速差 年度趋势"></figure>
+        </div>
+        <h4>季度（2020Q1-）</h4>
+        <div class="svg-grid">
+          <figure class="svgi" id="s1_rev_q"><img src="svg 图/s1/s1_rev_q.svg" alt="营业收入 季度趋势"></figure>
+          <figure class="svgi" id="s1_np_q"><img src="svg 图/s1/s1_np_q.svg" alt="归母净利润 季度趋势"></figure>
+          <figure class="svgi" id="s1_eb_q"><img src="svg 图/s1/s1_eb_q.svg" alt="EBITDA率 季度趋势"></figure>
+        </div>
+        <p class="fin-note">口径说明：年度为全年累计（2020–，取自《中国移动_财务健康与盈利质量.xlsx》年报数据表）；季度为单季（非累计，2020Q1–，取自季报数据表）。营业收入、归母净利润、EBITDA率 有季度序列；ROE、自由现金流、应收账款增速差仅年报披露，故仅有年度图。</p>
       </div>
     </details>
 
     <details>
-      <summary>② 资本开支总额及结构（2021–2026F）</summary>
+      <summary>2. 核心业务运营</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_capex"></div>
-        <p class="fin-note">口径说明：2026 为<b>公司资本开支计划</b>（1366 亿），分项为通信网络 792 亿（-20.3%）、算力网络 378 亿（+62.4%）、智能网络 89 亿（+19.8%），其余为感知/科创等。5G 建设期尾声叠加投资结构"由连接转向算力"，是资本开支逐年下降 + 现金释放的核心。</p>
-        <h4>资本开支（亿元）</h4>
-        <table class="ftab">
-          <tr><th>年份</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>2026F</th></tr>
-          <tr><td>资本开支</td><td>1840</td><td>1860</td><td>1810</td><td>1640</td><td>1509</td><td>1366</td></tr>
-          <tr><td>同比</td><td>-</td><td>+1.1%</td><td>-2.7%</td><td>-9.4%</td><td>-8.0%</td><td>-9.5%</td></tr>
-        </table>
+        <div class="svg-grid">
+          <figure class="svgi" id="s2_csr_annual"><img src="svg 图/s2/s2_csr_annual.svg" alt="通信服务收入 年度趋势"></figure>
+          <figure class="svgi" id="s2_ratio_annual"><img src="svg 图/s2/s2_ratio_annual.svg" alt="算力+智能占主营比 年度趋势"></figure>
+          <figure class="svgi" id="s2_5g_annual"><img src="svg 图/s2/s2_5g_annual.svg" alt="5G网络客户 年度趋势"></figure>
+          <figure class="svgi" id="s2_marpu_annual"><img src="svg 图/s2/s2_marpu_annual.svg" alt="移动ARPU 年度趋势"></figure>
+          <figure class="svgi" id="s2_harpu_annual"><img src="svg 图/s2/s2_harpu_annual.svg" alt="家庭综合ARPU 年度趋势"></figure>
+        </div>
+        <p class="fin-note">口径说明：年度为全年累计（2020–2025，取自《中国移动_核心业务运营与结构转型.xlsx》年报数据表）。通信服务收入 2025 起调整为纯通信服务新口径（7149 亿），原含算力+智能口径为 8955 亿，故 2025 呈口径性回落；算力+智能占主营比自 2024 年起披露；5G 网络客户 2020 年"5G套餐客户"1.65 亿为不同口径、未纳入序列。点击卡片②内对应指标的 sparkline 可跳转至本区对应年度图。</p>
       </div>
     </details>
 
     <details>
-      <summary>③ 派息率与每股股息（2021–2025）</summary>
+      <summary>3. 资本开支</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_payout"></div>
-        <p class="fin-note">口径说明：公司承诺"从 2024 年起三年内现金分红逐步提升至当年股东应占利润的 75% 以上"，2025 年已兑现 75%。每股股息为 A+H 全体股东全年（中期+末期）合计，港元计价。</p>
-        <h4>股东回报数据</h4>
-        <table class="ftab">
-          <tr><th>指标</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr>
-          <tr><td>派息率</td><td>60.0%</td><td>67.0%</td><td>71.0%</td><td>73.0%</td><td>75.0%</td></tr>
-          <tr><td>每股股息(港元)</td><td>4.06</td><td>4.41</td><td>4.83</td><td>5.09</td><td>5.27</td></tr>
-          <tr><td>股息同比</td><td>-</td><td>+8.6%</td><td>+9.5%</td><td>+5.4%</td><td>+3.5%</td></tr>
-        </table>
+        <div class="svg-grid">
+          <figure class="svgi" id="s3_capex_annual"><img src="svg 图/s3/s3_capex_annual.svg" alt="资本开支总额 年度趋势"></figure>
+          <figure class="svgi" id="s3_net_annual"><img src="svg 图/s3/s3_net_annual.svg" alt="通信网络投资 年度趋势"></figure>
+          <figure class="svgi" id="s3_compute_annual"><img src="svg 图/s3/s3_compute_annual.svg" alt="算力网络投资 年度趋势"></figure>
+          <figure class="svgi" id="s3_aiinv_annual"><img src="svg 图/s3/s3_aiinv_annual.svg" alt="智能网络投资 年度趋势"></figure>
+          <figure class="svgi" id="s3_ai_annual"><img src="svg 图/s3/s3_ai_annual.svg" alt="智算总规模 年度趋势"></figure>
+          <figure class="svgi" id="s3_5g_annual"><img src="svg 图/s3/s3_5g_annual.svg" alt="5G基站累计 年度趋势"></figure>
+        </div>
+        <p class="fin-note">口径说明：资本开支总额 2020–2025 为实际、2026 为公司计划（1366 亿，-9.5%），进入下降通道。通信网络/算力网络/智能网络 2025 年起启用新"三大网络"口径（2025 值为按 2026 计划同比倒推的约数），2021–2024 无可比历史值，故仅列 2025 与 2026F 两点。智算总规模与 5G基站累计 2026 列为 2026H1 实际（112.7 EFLOPS / 294 万站）。投资结构"由连接转向算力"：传统通信网络 -20.3%，算力网络 +62.4%、智能网络 +19.8%。</p>
       </div>
     </details>
 
     <details>
-      <summary>④ 移动 / 家庭 ARPU（2021–2025，元/户/月）</summary>
+      <summary>4. 客户生态 CHBN</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_arpu"></div>
-        <p class="fin-note">口径说明：移动 ARPU 2021–2023 年企稳回升，2024 起受资费下行与流量经营转型重新承压；家庭综合 ARPU 因千兆宽带+智家增值服务升级而稳步走高。ARPU 是衡量"价值经营"的核心指标，须紧盯移动 ARPU 降幅是否趋缓。</p>
-        <h4>ARPU 数据（元/户/月）</h4>
-        <table class="ftab">
-          <tr><th>指标</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr>
-          <tr><td>移动ARPU</td><td>49.0</td><td>49.2</td><td>49.3</td><td>48.5</td><td>47.0</td></tr>
-          <tr><td>家庭综合ARPU</td><td>40.0</td><td>42.0</td><td>43.0</td><td>43.8</td><td>44.5</td></tr>
-        </table>
+        <div class="svg-grid">
+          <figure class="svgi" id="s4_c_annual"><img src="svg 图/s4/s4_c_annual.svg" alt="个人市场C 年度趋势"></figure>
+          <figure class="svgi" id="s4_h_annual"><img src="svg 图/s4/s4_h_annual.svg" alt="家庭市场H 年度趋势"></figure>
+          <figure class="svgi" id="s4_b_annual"><img src="svg 图/s4/s4_b_annual.svg" alt="政企市场B 年度趋势"></figure>
+          <figure class="svgi" id="s4_n_annual"><img src="svg 图/s4/s4_n_annual.svg" alt="新兴市场N 年度趋势"></figure>
+          <figure class="svgi" id="s4_hbn_annual"><img src="svg 图/s4/s4_hbn_annual.svg" alt="HBN占通服比 年度趋势"></figure>
+          <figure class="svgi" id="s4_corp_annual"><img src="svg 图/s4/s4_corp_annual.svg" alt="政企客户数 年度趋势"></figure>
+          <figure class="svgi" id="s4_cloud_annual"><img src="svg 图/s4/s4_cloud_annual.svg" alt="移动云收入 年度趋势"></figure>
+        </div>
+        <p class="fin-note">口径说明：CHBN = 个人(C)+家庭(H)+政企(B)+新兴(N)。2025 年起公司改按"公众客群/政企客群"口径披露，C/H/N 个人/家庭/新兴市场不再单独披露、移动云全年亦未单列（官方改披"算力服务收入"898 亿，口径不可比），故 2025 年 C/H/N/移动云/ HBN 占比列为空（仅政企 B 与政企客户数有 2025 续披露值）。HBN 占通信服务比由 2021 的 35.7% 升至 2024 的 45.6%；政企客户数 2025 达 3617 万。点击卡片④内对应指标的 sparkline 可跳转至本区对应年度图。</p>
       </div>
     </details>
 
     <details>
-      <summary>⑤ 客户规模：移动 / 5G / 宽带（2021–2025）</summary>
+      <summary>5. 股东回报</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_cust"></div>
-        <p class="fin-note">口径说明：宽带客户 2025 年起口径由"家庭宽带客户"调整为"宽带联网客户"（含政企），故 2025 后跳升；5G 网络客户自 2021 年起连续披露（2020 年"5G 套餐客户"1.65 亿为不同口径、未纳入）。移动客户规模始终为行业第一、全球最大。</p>
-        <h4>客户规模（亿户）</h4>
-        <table class="ftab">
-          <tr><th>指标</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr>
-          <tr><td>移动客户</td><td>9.57</td><td>9.75</td><td>9.91</td><td>10.00</td><td>10.05</td></tr>
-          <tr><td>5G网络客户</td><td>2.07</td><td>3.27</td><td>4.65</td><td>5.52</td><td>6.42</td></tr>
-          <tr><td>宽带(联网)客户</td><td>2.40</td><td>2.72</td><td>2.64</td><td>2.78</td><td>3.29</td></tr>
-        </table>
+        <div class="svg-grid">
+          <figure class="svgi" id="s5_payout_annual"><img src="svg 图/s5/s5_payout_annual.svg" alt="派息率 年度趋势"></figure>
+          <figure class="svgi" id="s5_dps_annual"><img src="svg 图/s5/s5_dps_annual.svg" alt="每股股息 年度趋势"></figure>
+          <figure class="svgi" id="s5_yield_annual"><img src="svg 图/s5/s5_yield_annual.svg" alt="H股股息率 年度趋势"></figure>
+          <figure class="svgi" id="s5_spread_annual"><img src="svg 图/s5/s5_spread_annual.svg" alt="股息利差 年度趋势"></figure>
+        </div>
+        <p class="fin-note">口径说明：派息率＝全年现金分红÷股东应占利润（人民币口径），2025 年已兑现"三年内提升至 75% 以上"承诺，2026 年"稳中有升"；每股股息为 A+H 全体股东全年（中期+末期）合计，港元计价，连续 6 年增长（3.29 → 5.27 港元）。H 股股息率＝全年每股股息÷年末 H 股收盘价（未复权），2020–2025 末收盘价 44.20→81.70 港元；股息利差＝H 股股息率 − 10 年期国债收益率（年末口径），2025 年达 4.60pp，处历史高位，是机构衡量"资产荒下高股息性价比"的核心量化指标。点击卡片⑤内对应指标 sparkline 可跳转至本区对应年度图。</p>
       </div>
     </details>
   </div>
 
   <footer class="foot2">
     中国移动业绩追踪看板 · 五大维度（财务健康 / 核心业务与结构转型 / 资本开支与基础设施 / CHBN生态协同 / 宏观政策与股东回报）· 单文件交付 ·
-    数据主源：公司 2025 年报 + 2026 中报 + 月度运营数据（公开披露），编制日期 2026-08-15
+    数据主源：公司 2025 年报 + 2026 中报 + 月度运营数据（公开披露）
   </footer>
 </div>
 
@@ -386,6 +405,7 @@ function sparkMini(id, values, color){
   if(!pts.length){ box.innerHTML=''; return; }
   let min=Math.min.apply(null,pts);
   let max=Math.max.apply(null,pts);
+  if(min>=0){ min=0; } // 与年度 SVG 图统一基准（从 0 开始），避免小波动被过度放大
   if(min===max){ const d=Math.abs(max)||1; min-=d*0.15; max+=d*0.15; }
   const W=100,H=24,pad=3, n=pts.length;
   const X=i=> n<=1?W/2:pad+i*(W-2*pad)/(n-1);
@@ -400,45 +420,10 @@ function sparkMini(id, values, color){
 }
 
 // ===== 图表数据 =====
-// ① 营收与净利
-lineChart('ch_rev',
-  ['2021','2022','2023','2024','2025'],
-  [
-    {name:'营业收入（亿元）',color:'#c8102e',data:[8483,9373,10093,10408,10502]},
-    {name:'归母净利润（亿元）',color:'#15616d',data:[1159,1255,1318,1384,1371]}
-  ],
-  {caption:'营业收入稳步站上万亿、归母净利润维持千亿级，盈利底盘稳固'});
-// ② 资本开支
-barChart('ch_capex',
-  ['2021','2022','2023','2024','2025','2026F'],
-  [{name:'资本开支（亿元）',color:'#15616d',data:[1840,1860,1810,1640,1509,1366]}],
-  {showVal:true, caption:'2026F 为公司计划值（-9.5%），资本开支进入下降通道'});
-// ③ 派息率与股息
-lineChart('ch_payout',
-  ['2021','2022','2023','2024','2025'],
-  [
-    {name:'派息率（%）',color:'#2e9e6b',data:[60,67,71,73,75]},
-    {name:'每股股息（港元）',color:'#c8102e',data:[4.06,4.41,4.83,5.09,5.27]}
-  ],
-  {caption:'派息率兑现"三年提升至75%以上"承诺；每股股息连续5年增长'});
-// ④ ARPU
-lineChart('ch_arpu',
-  ['2021','2022','2023','2024','2025'],
-  [
-    {name:'移动ARPU（元）',color:'#c8102e',data:[49.0,49.2,49.3,48.5,47.0]},
-    {name:'家庭综合ARPU（元）',color:'#15616d',data:[40.0,42.0,43.0,43.8,44.5]}
-  ],
-  {caption:'移动ARPU 下行、家庭ARPU 上行，价值重心由个人转向家庭'});
-// ⑤ 客户规模
-lineChart('ch_cust',
-  ['2021','2022','2023','2024','2025'],
-  [
-    {name:'移动客户（亿户）',color:'#c8102e',data:[9.57,9.75,9.91,10.00,10.05]},
-    {name:'5G网络客户（亿户）',color:'#d98a14',data:[2.07,3.27,4.65,5.52,6.42]},
-    {name:'宽带客户（亿户）',color:'#15616d',data:[2.40,2.72,2.64,2.78,3.29]}
-  ],
-  {caption:'宽带口径 2025 起调整为"联网客户"；5G 网络客户 2021 年起连续披露'});
-
+// ① 营收与净利：已改为纯 SVG 文件嵌入（见趋势区「1.财务数据」），不再由 JS 渲染
+// ② 资本开支：已改为纯 SVG 文件嵌入（见趋势区「② 资本开支总额及结构」），不再由 JS 渲染
+// ③ 派息率与股息：已改为纯 SVG 文件嵌入（见趋势区「③ 派息率 / 每股股息 / 股息率 / 利差」），不再由 JS 渲染
+// ④ ARPU：已改为纯 SVG 文件嵌入（见趋势区「④ 客户生态 CHBN」），不再由 JS 渲染
 // ===== 指标行内联 sparkline 数据（取自各维度 Excel）=====
 // ① 财务健康
 sparkMini('sk1_rev',[7680.7,8482.6,9372.6,10093.1,10407.6,10501.9],'#c8102e');
@@ -446,27 +431,71 @@ sparkMini('sk1_np',[1078.4,1159.4,1254.6,1317.7,1383.7,1371.0],'#15616d');
 sparkMini('sk1_eb',[37.1,36.7,35.1,33.8,32.1,32.3],'#2e9e6b');
 sparkMini('sk1_roe',[9.9,9.90,9.94,10.09,10.20,9.84],'#15616d');
 sparkMini('sk1_fcf',[1271,1311.6,955.5,1234.8,1517.4,820.2],'#15616d');
-sparkMini('sk1_gap',[-9.32,19.07,24.31,26.05,23.31],'#c8102e');
+sparkMini('sk1_gap',[null,-9.32,19.07,24.31,26.05,23.31],'#d98a14');
 // ② 核心业务
 sparkMini('sk2_csr',[6957,7514,8121,8635,8895,7149],'#15616d');
 sparkMini('sk2_ratio',[null,null,null,null,18.8,20.2],'#c8102e');
 sparkMini('sk2_5g',[null,2.07,3.27,4.65,5.52,6.42],'#d98a14');
 sparkMini('sk2_marpu',[47.4,49.0,49.2,49.3,48.5,47.0],'#c8102e');
 sparkMini('sk2_harpu',[37.7,40.0,42.0,43.0,43.8,44.5],'#2e9e6b');
-// ③ 资本开支与基础设施
-sparkMini('sk3_capex',[1806,1840,1860,1810,1640,1509,1366],'#15616d');   // 2020-2025 + 2026FsparkMini('sk3_ai',[null,null,null,10.1,29.2,92.5],'#d98a14');            // 智算FP16(2023-2025)
-sparkMini('sk3_5g',[39,73,128.5,194,240,277],'#7a8694');                  // 5G基站累计(万站)
-// ④ CHBN 客户生态
-sparkMini('sk4_c',[4834,4888,4902,4837,null],'#c8102e');
-sparkMini('sk4_h',[1005,1166,1318,1431,null],'#2e9e6b');
-sparkMini('sk4_b',[1372,1682,1922,2091,2404],'#15616d');
-sparkMini('sk4_n',[303,385,493,536,null],'#d98a14');
-sparkMini('sk4_cloud',[null,503,834,1004,null],'#2e9e6b');
+// ③ 资本开支与基础设施（2021–2026F，与趋势区 SVG 对齐）
+sparkMini('sk3_capex',[1840,1860,1810,1640,1509,1366],'#15616d');   // 资本开支总额（亿元）
+sparkMini('sk3_net',[null,null,null,null,994,792],'#7a8694');       // 通信网络投资（亿元）
+sparkMini('sk3_compute',[null,null,null,null,233,378],'#2e9e6b');   // 算力网络投资（亿元）
+sparkMini('sk3_aiinv',[null,null,null,null,74,89],'#d98a14');       // 智能网络投资（亿元）
+sparkMini('sk3_ai',[null,null,10.1,29.2,92.5,112.7],'#c8102e');     // 智算总规模 FP16（2023-2026H1）
+sparkMini('sk3_5g',[73,128.5,194,240,277,294],'#15616d');           // 5G基站累计（万站）
+// ④ CHBN 客户生态（2021–2025，与趋势区 SVG 对齐；2025 多数为空口径切换）
+sparkMini('sk4_c',[4834,4888,4902,4837],'#c8102e');        // 个人市场C（亿元，2025无数据，展示至2024）
+sparkMini('sk4_h',[1005,1166,1318,1431],'#2e9e6b');        // 家庭市场H（亿元，2025无数据，展示至2024）
+sparkMini('sk4_b',[1372,1682,1922,2091,2404],'#15616d');        // 政企市场B（亿元）
+sparkMini('sk4_n',[303,385,493,536],'#d98a14');                // 新兴市场N（亿元，2025无数据，展示至2024）
+sparkMini('sk4_hbn',[35.7,39.8,42.5,45.6],'#c8102e');          // HBN占通服比（%，2025无数据，展示至2024）
+sparkMini('sk4_corp',[1883,2320,2837,3259,3617],'#15616d');     // 政企客户数（万家）
+sparkMini('sk4_cloud',[242,503,834,1004],'#2e9e6b');           // 移动云收入（亿元，2025无数据，展示至2024）
 // ⑤ 宏观政策与股东回报
 sparkMini('sk5_payout',[52.6,60,67,71,73,75],'#2e9e6b');
 sparkMini('sk5_dps',[3.29,4.06,4.41,4.83,5.09,5.27],'#c8102e');
 sparkMini('sk5_yield',[7.44,8.68,8.52,7.45,6.64,6.45],'#d98a14');
 sparkMini('sk5_spread',[4.24,5.89,5.64,4.86,4.95,4.60],'#15616d');
+
+// ===== 趋势按钮：点击直接弹窗对应的年度 SVG 图（sparkline 不再绑定跳转）=====
+function openTrend(src, title){
+  var m=document.getElementById('trendModal');
+  m.querySelector('.trend-title').textContent=title||'年度趋势图';
+  m.querySelector('.trend-body').innerHTML='<img src="'+src+'" alt="年度趋势图">';
+  m.classList.add('open');
+}
+function closeTrend(){
+  var m=document.getElementById('trendModal');
+  m.classList.remove('open');
+  m.querySelector('.trend-body').innerHTML='';
+}
+document.querySelectorAll('.trend-btn[data-svg]').forEach(function(b){
+  b.style.cursor='pointer';
+  b.title='点击弹出年度趋势图';
+  b.addEventListener('click',function(){
+    var src=b.getAttribute('data-svg');
+    var metric=b.closest('.metric');
+    var name=metric ? metric.querySelector('.k').textContent.trim() : '';
+    openTrend(src, name);
+  });
+});
+// 关闭：用事件委托（不受弹窗 DOM 解析顺序影响），遮罩、×、Esc 均可关闭
+document.addEventListener('click', function(e){
+  if (e.target.closest('[data-close]')) { closeTrend(); }
+});
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeTrend(); } });
 </script>
+
+<!-- 趋势弹窗（点击「趋势」按钮弹出对应年度 SVG 图） -->
+<div class="trend-modal" id="trendModal">
+  <div class="trend-mask" data-close></div>
+  <div class="trend-box">
+    <button class="trend-x" data-close aria-label="关闭">×</button>
+    <p class="trend-title">年度趋势图</p>
+    <div class="trend-body"></div>
+  </div>
+</div>
 </body>
 </html>
