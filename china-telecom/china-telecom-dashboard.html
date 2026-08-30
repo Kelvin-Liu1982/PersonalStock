@@ -66,6 +66,21 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:16
 /* 指标行内联 sparkline */
 .spark-mini{display:inline-block;width:58px;height:18px;min-width:48px;vertical-align:middle;margin-left:6px;flex:none}
 .spark-mini svg{display:block;width:100%;height:100%}
+/* 趋势按钮 + 弹窗（与 china-mobile 看板一致） */
+.trend-btn{font-size:11px;color:var(--acc);background:#fff;border:1px solid var(--acc);border-radius:12px;padding:2px 8px;cursor:pointer;margin-left:6px;line-height:1;white-space:nowrap;transition:background .15s,color .15s}
+.trend-btn:hover{background:var(--acc);color:#fff}
+.trend-modal{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center}
+.trend-modal.open{display:flex}
+.trend-mask{position:absolute;inset:0;background:rgba(20,32,44,.55);backdrop-filter:blur(2px)}
+.trend-box{position:relative;background:#fff;border-radius:14px;padding:16px 16px 12px;max-width:94vw;max-height:92vh;overflow:auto;box-shadow:0 12px 44px rgba(0,0,0,.32)}
+.trend-box .trend-title{font-size:13px;font-weight:600;color:var(--acc2);margin:0 0 8px;padding-right:24px}
+.trend-box .trend-x{position:absolute;top:6px;right:10px;border:none;background:none;font-size:22px;line-height:1;cursor:pointer;color:#9aa6b2}
+.trend-box .trend-x:hover{color:var(--acc)}
+.trend-box img{display:block;width:520px;max-width:84vw;height:auto}
+/* 趋势区 SVG 组（纯 SVG 文件嵌入，分年度/季度） */
+.svg-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:8px 0 6px}
+.svgi{margin:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:0;overflow:hidden}
+.svgi img{width:100%;height:auto;display:block}
 /* 趋势专区 */
 .trend-zone{margin-top:30px;border-top:2px solid var(--line);padding-top:20px}
 .trend-zone h2{font-size:17px;margin-bottom:12px}
@@ -138,26 +153,26 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <div class="card">
       <div class="hd"><div class="idx">1</div><h3>财务健康与盈利质量</h3><span class="chip ok">年度为主</span></div>
       <div class="desc">评估基本面底座，对重资产通信企业尤为关键。</div>
-      <div class="metric"><span class="k">营业收入(营业额)</span><span class="right"><span class="v">5,295.6亿</span><span class="chg">+0.0%</span><span class="spark-mini" id="sk1_rev"></span></span></div>
-      <div class="metric"><span class="k">归母净利润</span><span class="right"><span class="v">331.9亿</span><span class="chg">+0.5%</span><span class="spark-mini" id="sk1_np"></span></span></div>
-      <div class="metric"><span class="k">EBITDA率</span><span class="right"><span class="v up">27.2%</span><span class="chg">+0.6pp</span><span class="spark-mini" id="sk1_eb"></span></span></div>
-      <div class="metric"><span class="k">ROE(摊薄)</span><span class="right"><span class="v">7.27%</span><span class="chg">-0.1pp</span><span class="spark-mini" id="sk1_roe"></span></span></div>
-      <div class="metric"><span class="k">自由现金流</span><span class="right"><span class="v up">447亿</span><span class="chg">2025</span><span class="spark-mini" id="sk1_fcf"></span></span></div>
-      <div class="metric"><span class="k">资产负债率</span><span class="right"><span class="v">46.22%</span><span class="chg">-1.1pp</span><span class="spark-mini" id="sk1_db"></span></span></div>
-      <div class="metric"><span class="k">应收账款</span><span class="right"><span class="v down">531.5亿</span><span class="chg">-11.2%</span><span class="spark-mini" id="sk1_ar"></span></span></div>
+      <div class="metric"><span class="k">营业收入(营业额)</span><span class="right"><span class="v">5,295.6亿</span><span class="chg">+0.0%</span><span class="spark-mini" id="sk1_rev"></span><button class="trend-btn" data-svg="svg/s1/s1_revenue_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">归母净利润</span><span class="right"><span class="v">331.9亿</span><span class="chg">+0.5%</span><span class="spark-mini" id="sk1_np"></span><button class="trend-btn" data-svg="svg/s1/s1_net_profit_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">EBITDA率</span><span class="right"><span class="v up">27.17%</span><span class="chg">+0.6pp</span><span class="spark-mini" id="sk1_eb"></span><button class="trend-btn" data-svg="svg/s1/s1_ebitda_rate_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">ROE(摊薄)</span><span class="right"><span class="v">7.27%</span><span class="chg">-0.1pp</span><span class="spark-mini" id="sk1_roe"></span><button class="trend-btn" data-svg="svg/s1/s1_roe_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">自由现金流</span><span class="right"><span class="v up">447亿</span><span class="chg">2025</span><span class="spark-mini" id="sk1_fcf"></span><button class="trend-btn" data-svg="svg/s1/s1_fcf_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">资产负债率</span><span class="right"><span class="v">46.22%</span><span class="chg">-1.1pp</span><span class="spark-mini" id="sk1_db"></span><button class="trend-btn" data-svg="svg/s1/s1_debt_ratio_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">应收账款</span><span class="right"><span class="v down">531.5亿</span><span class="chg">-11.2%</span><span class="spark-mini" id="sk1_ar"></span><button class="trend-btn" data-svg="svg/s1/s1_ar_annual.svg">趋势</button></span></div>
       <div class="note">传导逻辑：<b>EBITDA 率 27.2%（+2.1%）</b>逆势提升，说明通信主业"造血"能力稳健；<b>归母净利 +0.5%</b>在低基数下微增，营收/利润增速均处近五年低位，行业进入平台期。<b>自由现金流 2025 年 447 亿</b>保持充裕，是分红与再投资的安全垫；<b>ROE 7.27%</b> 仍在央企考核合意区间。风险排查点：<b>应收账款 2025 年 531.5 亿（同比 -11.2%）</b>——广义应收账款较 2024 年（598.5 亿）实际收窄，政企/产数业务赊销敞口与回款周期边际改善，纸面利润向自由现金流转化的掣肘有所缓解，但仍需跟踪。（口径：H 股"营业额"，与港交所年报一致）</div>
     </div>
 
     <div class="card">
       <div class="hd"><div class="idx">2</div><h3>核心业务运营与结构转型</h3><span class="chip part">动能转换</span></div>
       <div class="desc">基础业务为“压舱石”，产业数字化为“第二增长曲线”。</div>
-      <div class="metric"><span class="k">服务收入</span><span class="right"><span class="v">4,854亿</span><span class="chg">+0.7%</span><span class="spark-mini" id="sk2_sr"></span></span></div>
-      <div class="metric"><span class="k">产业数字化占服务收入比</span><span class="right"><span class="v up">30.3%</span><span class="chg">-0.1pp</span><span class="spark-mini" id="sk2_ind"></span></span></div>
-      <div class="metric"><span class="k">天翼云收入</span><span class="right"><span class="v up">1,207亿</span><span class="chg">+6.0%</span><span class="spark-mini" id="sk2_cloud"></span></span></div>
-      <div class="metric"><span class="k">产业数字化收入</span><span class="right"><span class="v up">1,473亿</span><span class="chg">+0.5%</span><span class="spark-mini" id="sk2_ind2"></span></span></div>
-      <div class="metric"><span class="k">移动ARPU</span><span class="right"><span class="v">45.6元</span><span class="chg">2024·25待补</span><span class="spark-mini" id="sk2_marpu"></span></span></div>
-      <div class="metric"><span class="k">宽带综合ARPU</span><span class="right"><span class="v up">47.6元</span><span class="chg">2024·25待补</span><span class="spark-mini" id="sk2_harpu"></span></span></div>
-      <div class="note">传导逻辑：<b>服务收入</b>2025 年 4,854 亿（+0.7%）底盘稳固。<b>产业数字化占服务收入比升至 30.3%</b>，是"双轮驱动"中第二曲线的核心进度指标——公司战略已从"云改数转"升级为"云改数转智惠"，全面拥抱 AI。<b>天翼云收入 1,207 亿</b>（+6.0%，公有云 IaaS 国内第二）是算力服务放量的旗舰，安全收入 166 亿、AI/智算等战新业务均高速增长。<b>ARPU</b>看价值经营：移动 ARPU 45.6 元、宽带综合 ARPU 47.6 元（2025 待补），资费下行下需紧盯降幅是否趋缓、智慧家庭增值能否对冲。</div>
+      <div class="metric"><span class="k">服务收入</span><span class="right"><span class="v">4,854.2亿</span><span class="chg">+0.7%</span><span class="spark-mini" id="sk2_service_rev"></span><button class="trend-btn" data-svg="svg/s2/s2_service_rev_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">产业数字化收入</span><span class="right"><span class="v up">1,473.0亿</span><span class="chg">+0.5%</span><span class="spark-mini" id="sk2_ind_digital"></span><button class="trend-btn" data-svg="svg/s2/s2_ind_digital_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">天翼云收入</span><span class="right"><span class="v up">1,207.0亿</span><span class="chg">+6.0%</span><span class="spark-mini" id="sk2_tianyi_cloud"></span><button class="trend-btn" data-svg="svg/s2/s2_tianyi_cloud_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">IDC收入</span><span class="right"><span class="v up">345.0亿</span><span class="chg">+4.5%</span><span class="spark-mini" id="sk2_idc"></span><button class="trend-btn" data-svg="svg/s2/s2_idc_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">智能(AI)收入</span><span class="right"><span class="v up">123.0亿</span><span class="chg">+38.2%</span><span class="spark-mini" id="sk2_ai"></span><button class="trend-btn" data-svg="svg/s2/s2_ai_annual.svg">趋势</button></span></div>
+      <div class="metric"><span class="k">安全收入</span><span class="right"><span class="v up">166.0亿</span><span class="chg">+2.5%</span><span class="spark-mini" id="sk2_security"></span><button class="trend-btn" data-svg="svg/s2/s2_security_annual.svg">趋势</button></span></div>
+      <div class="note">传导逻辑：<b>服务收入</b>2025 年 4,854.2 亿（+0.7%）底盘稳固。<b>产业数字化收入 1,473 亿</b>（+0.5%，占服务收入约 30.3%）是"双轮驱动"中第二曲线的核心进度指标，公司战略已从"云改数转"升级为"云改数转智惠"，全面拥抱 AI。<b>天翼云收入 1,207 亿</b>（+6.0%，公有云 IaaS 国内第二）是算力服务放量的旗舰，<b>IDC 收入 345 亿</b>、<b>智能(AI)收入 123 亿</b>（+38.2%，2023 年起披露后高速增）、<b>安全收入 166 亿</b>持续放量，共同构成战新业务矩阵。整体看，收入结构由"连接"向"算力 + AI + 安全"升级，是自由现金流改善与估值重估的底层逻辑。</div>
     </div>
 
     <div class="card">
@@ -200,10 +215,44 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
   <!-- 长期趋势专区 -->
   <div class="trend-zone">
     <h2>长期趋势专区（多年序列，点击展开）</h2>
-<details open><summary>① 营业收入 &amp; 归母净利润（2020–2025）</summary><div class="body fin-sec"><div class="chart" id="ch_rev"></div><p class="fin-note">口径说明：2020–2025 为全年累计，采用 H 股"营业额"口径（与港交所年报一致）。营收/净利增速均为近五年低位，行业进入新旧动能转换的平台期；公司利润增速高于营收，主因降本增效与结构优化。</p><h4>核心财务数据（亿元）</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr><tr><td>营业收入</td><td>3,935.6</td><td>4,395.5</td><td>4,814.5</td><td>5,135.5</td><td>5,294.2</td><td>5,295.6</td></tr><tr><td>营收同比</td><td>—</td><td>+11.7%</td><td>+9.5%</td><td>+6.7%</td><td>+3.1%</td><td>+0.0%</td></tr><tr><td>归母净利润</td><td>208.5</td><td>259.5</td><td>275.9</td><td>304.5</td><td>330.1</td><td>331.9</td></tr><tr><td>净利同比</td><td>—</td><td>+24.5%</td><td>+6.3%</td><td>+10.3%</td><td>+8.4%</td><td>+0.5%</td></tr><tr><td>EBITDA</td><td>1,189.0</td><td class="muted">—</td><td>1,304.0</td><td>1,368.3</td><td>1,408.5</td><td>1,438.7</td></tr><tr><td>EBITDA率(占营收)</td><td class="muted">—</td><td class="muted">—</td><td>27.1%</td><td>26.6%</td><td>26.6%</td><td>27.2%</td></tr></table><p class="fin-note">* EBITDA率 = EBITDA/营业收入，为计算值；2020–2021 因 EBITDA 口径待核未列。</p></div></details>
+<details open><summary>① 财务健康与盈利质量（2020–2025 / 季度 2020Q1–2026Q2）</summary><div class="body fin-sec">
+      <h4>年度趋势（2020–2025）</h4>
+      <div class="svg-grid">
+        <figure class="svgi"><img src="svg/s1/s1_revenue_annual.svg" alt="营业收入 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_net_profit_annual.svg" alt="归母净利润 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_ebitda_annual.svg" alt="EBITDA 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_ebitda_rate_annual.svg" alt="EBITDA率 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_roe_annual.svg" alt="ROE 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_net_margin_annual.svg" alt="净利率 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_fcf_annual.svg" alt="自由现金流 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_debt_ratio_annual.svg" alt="资产负债率 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_ar_annual.svg" alt="应收账款 年度趋势"></figure>
+      </div>
+      <p class="fin-note">口径说明：2020–2025 为全年累计，采用 H 股"营业额"口径（与港交所年报一致）。营收/净利增速均为近五年低位，行业进入新旧动能转换的平台期；EBITDA 率逆势提升、自由现金流充裕，盈利质量稳健。</p>
+      <h4>季度趋势（单季，2020Q1–2026Q2）</h4>
+      <div class="svg-grid">
+        <figure class="svgi"><img src="svg/s1/s1_revenue_q.svg" alt="营业收入 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_net_profit_q.svg" alt="归母净利润 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_ebitda_q.svg" alt="EBITDA 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_ebitda_rate_q.svg" alt="EBITDA率 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_roe_q.svg" alt="ROE 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_net_margin_q.svg" alt="净利率 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_fcf_q.svg" alt="自由现金流 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_debt_ratio_q.svg" alt="资产负债率 单季趋势"></figure>
+        <figure class="svgi"><img src="svg/s1/s1_ar_q.svg" alt="应收账款 单季趋势"></figure>
+      </div>
+      <p class="fin-note">单季口径：营收/净利为当季值（非累计），可观察季节性波动与逐季动能；2026Q1/Q2 已含最新披露。自由现金流仅披露年度数据，季度图以说明占位。</p>
+      </div></details>
 <details><summary>② 资本开支总额及结构（2020–2026F）</summary><div class="body fin-sec"><div class="chart" id="ch_capex"></div><p class="fin-note">口径说明：2026 为<b>公司资本开支计划</b>（约 730 亿）。投资结构"由连接转向算力"：2025 算力基础设施投资 202 亿、2026 计划 255 亿（+26%，占总投资 35%），网络基础设施投资约 407 亿同步收缩。</p><h4>资本开支（亿元）</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th>2026F</th></tr><tr><td>资本开支</td><td>848</td><td>870</td><td>925</td><td>988</td><td>935</td><td>804</td><td>730</td></tr><tr><td>同比</td><td>—</td><td>+2.6%</td><td>+6.3%</td><td>+6.8%</td><td>-5.4%</td><td>-14.0%</td><td>-9.2%</td></tr></table></div></details>
 <details><summary>③ 派息率与每股股息（2022–2025）</summary><div class="body fin-sec"><div class="chart" id="ch_payout"></div><p class="fin-note">口径说明：公司承诺"自 2024 年起三年内现金分红逐步提升至当年股东应占利润的 75% 以上"，2025 年已兑现 75%。每股股息为 A 股全年（中期 + 末期）合计，人民币计价。</p><h4>股东回报数据</h4><table class="ftab"><tr><th>指标</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr><tr><td>派息率</td><td>65%</td><td>70%</td><td>72%</td><td>75%</td></tr><tr><td>每股股息(元)</td><td>0.1960</td><td>0.2332</td><td>0.2598</td><td>0.2720</td></tr><tr><td>股息同比</td><td>—</td><td>+19.0%</td><td>+11.4%</td><td>+4.7%</td></tr></table></div></details>
-<details><summary>④ 移动 / 宽带 ARPU（2020–2024，元/户/月）</summary><div class="body fin-sec"><div class="chart" id="ch_arpu"></div><p class="fin-note">口径说明：移动 ARPU 受资费下行与流量经营转型承压但趋稳；宽带综合 ARPU 因智慧家庭 + FTTR 增值服务升级而稳步走高。ARPU 是衡量"价值经营"的核心指标。（2021、2025 待补）</p><h4>ARPU 数据（元/户/月）</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th></tr><tr><td>移动ARPU</td><td>44.1</td><td class="muted">—</td><td>45.2</td><td>45.4</td><td>45.6</td></tr><tr><td>宽带综合ARPU</td><td>44.4</td><td class="muted">—</td><td>46.3</td><td>47.6</td><td>47.6</td></tr></table></div></details>
+<details><summary>2. 核心业务运营与结构转型（2020–2025）</summary><div class="body fin-sec"><div class="svg-grid">
+        <figure class="svgi"><img src="svg/s2/s2_service_rev_annual.svg" alt="服务收入 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s2/s2_ind_digital_annual.svg" alt="产业数字化收入 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s2/s2_tianyi_cloud_annual.svg" alt="天翼云收入 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s2/s2_idc_annual.svg" alt="IDC收入 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s2/s2_ai_annual.svg" alt="智能(AI)收入 年度趋势"></figure>
+        <figure class="svgi"><img src="svg/s2/s2_security_annual.svg" alt="安全收入 年度趋势"></figure>
+      </div><p class="fin-note">口径说明：2020–2025 为全年累计（亿元）。服务收入底盘稳固；产业数字化、天翼云、IDC、AI、安全等战新业务高速增长，收入结构由"连接"向"算力 + AI + 安全"升级，是第二增长曲线的核心进度指标。</p></div></details>
 <details><summary>⑤ 客户规模：移动 / 宽带 / 5G渗透（2020–2025）</summary><div class="body fin-sec"><div class="chart" id="ch_cust"></div><p class="fin-note">口径说明：5G 网络用户渗透率为公司披露口径（2025 年约 68.8%）；移动/宽带用户为规模口径，移动用户净增 2025 年约 1,400 万户，规模稳居国内第二。</p><h4>客户规模</h4><table class="ftab"><tr><th>指标</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr><tr><td>移动客户(亿户)</td><td>3.51</td><td class="muted">—</td><td>3.91</td><td>4.08</td><td>4.25</td><td>4.39</td></tr><tr><td>宽带客户(亿户)</td><td>1.59</td><td class="muted">—</td><td>1.81</td><td>1.90</td><td>1.97</td><td>2.01</td></tr><tr><td>5G网络用户渗透率(%)</td><td class="muted">—</td><td>38.0</td><td>48.0</td><td>53.0</td><td>61.0</td><td>68.8</td></tr></table></div></details>
   </div>
 
@@ -304,6 +353,7 @@ function sparkMini(id, values, color){
   if(!pts.length){ box.innerHTML=''; return; }
   let min=Math.min.apply(null,pts);
   let max=Math.max.apply(null,pts);
+  if(min>=0){ min=0; }            // 与年度 SVG 的 0 基准一致，走势方可对应
   if(min===max){ const d=Math.abs(max)||1; min-=d*0.15; max+=d*0.15; }
   const W=100,H=24,pad=3, n=pts.length;
   const X=i=> n<=1?W/2:pad+i*(W-2*pad)/(n-1);
@@ -320,26 +370,26 @@ function sparkMini(id, values, color){
 
 
 // ===== 图表数据（由 annual_report_data.METRICS 生成）=====
-lineChart('ch_rev', ["2020", "2021", "2022", "2023", "2024", "2025"], [{"name": "\u8425\u4e1a\u6536\u5165\uff08\u4ebf\u5143\uff09", "color": "#c8102e", "data": [3935.61, 4395.53, 4814.48, 5135.51, 5294.17, 5295.59]}, {"name": "\u5f52\u6bcd\u51c0\u5229\u6da6\uff08\u4ebf\u5143\uff09", "color": "#15616d", "data": [208.5, 259.49, 275.93, 304.46, 330.12, 331.85]}], {"caption": "\u8425\u4e1a\u6536\u5165\u7ad9\u4e0a5000\u4ebf\u3001\u5f52\u6bcd\u51c0\u5229\u6da6\u7a33\u6b65\u589e\u81f3330\u4ebf\u7ea7\uff1b\u589e\u901f\u8fdb\u5165\u5e73\u53f0\u671f\uff08H\u80a1\u8425\u4e1a\u989d\u53e3\u5f84\uff09"});
+// ① 财务健康与盈利质量 已改为纯 SVG 嵌入（svg/s1/），不再用 JS 渲染
 barChart('ch_capex', ["2020", "2021", "2022", "2023", "2024", "2025", "2026F"], [{"name": "\u8d44\u672c\u5f00\u652f\uff08\u4ebf\u5143\uff09", "color": "#15616d", "data": [848.0, 870.0, 925.0, 988.0, 935.0, 804.0, 730]}], {"showVal": true, "caption": "2026F \u4e3a\u516c\u53f8\u8ba1\u5212\u503c\uff08\u7ea6730\u4ebf\uff09\uff0c\u8d44\u672c\u5f00\u652f\u8fdb\u5165\u4e0b\u964d\u901a\u9053"});
 lineChart('ch_payout', ["2022", "2023", "2024", "2025"], [{"name": "\u6d3e\u606f\u7387\uff08%\uff09", "color": "#2e9e6b", "data": [65.0, 70.0, 72.0, 75.0]}, {"name": "\u6bcf\u80a1\u80a1\u606f\uff08\u5143\uff09", "color": "#c8102e", "data": [0.196, 0.2332, 0.2598, 0.272]}], {"caption": "\u6d3e\u606f\u7387\u5151\u73b0\"\u4e09\u5e74\u63d0\u5347\u81f375%\u4ee5\u4e0a\"\u627f\u8bfa\uff1b\u6bcf\u80a1\u80a1\u606f\u8fde\u7eed\u589e\u957f"});
-lineChart('ch_arpu', ["2020", "2021", "2022", "2023", "2024"], [{"name": "\u79fb\u52a8ARPU\uff08\u5143\uff09", "color": "#c8102e", "data": [44.1, null, 45.2, 45.4, 45.6]}, {"name": "\u5bbd\u5e26\u7efc\u5408ARPU\uff08\u5143\uff09", "color": "#15616d", "data": [44.4, null, 46.3, 47.6, 47.6]}], {"caption": "\u79fb\u52a8ARPU \u8d8b\u7a33\u3001\u5bbd\u5e26ARPU \u4e0a\u884c\uff082021/2025 \u5f85\u8865\uff09"});
+      // 原 ARPU 折线已移除：模块④更名为「2. 核心业务运营与结构转型」，改为纯 SVG 嵌入（svg/s2/）
 lineChart('ch_cust', ["2020", "2021", "2022", "2023", "2024", "2025"], [{"name": "\u79fb\u52a8\u5ba2\u6237\uff08\u4ebf\u6237\uff09", "color": "#c8102e", "data": [3.51, null, 3.91, 4.08, 4.25, 4.39]}, {"name": "\u5bbd\u5e26\u5ba2\u6237\uff08\u4ebf\u6237\uff09", "color": "#15616d", "data": [1.59, null, 1.81, 1.9, 1.97, 2.01]}], {"caption": "\u79fb\u52a8/\u5bbd\u5e26\u89c4\u6a21\u7a33\u6b65\u589e\u957f\uff082021 \u5f85\u8865\uff09"});
 
 // ===== 指标行内联 sparkline（由 METRICS 生成）=====
 sparkMini('sk1_rev', [3935.61, 4395.53, 4814.48, 5135.51, 5294.17, 5295.59], '#c8102e');
 sparkMini('sk1_np', [208.5, 259.49, 275.93, 304.46, 330.12, 331.85], '#15616d');
-sparkMini('sk1_eb', [30.211326833705577, 27.08496036955185, 26.6438971007748, 26.604170247649773, 27.168266425459674], '#2e9e6b');
+sparkMini('sk1_eb', [30.211326833705577, 28.19091213118782, 27.07644439274855, 26.6438971007748, 26.60417024764977, 27.16826642545967], '#2e9e6b');
 sparkMini('sk1_roe', [5.82, 6.55, 6.41, 6.9, 7.37, 7.27], '#15616d');
-sparkMini('sk1_fcf', [143.0, 132.0, 130.0, 447.0], '#15616d');
+sparkMini('sk1_fcf', [143, 151, 132, 130, 222, 447], '#15616d');
 sparkMini('sk1_db', [48.79, 43.43, 45.97, 46.5, 47.32, 46.22], '#15616d');
-sparkMini('sk1_ar', [598.51, 531.46], '#c8102e');
-sparkMini('sk2_sr', [3738.0, 4349.0, 4649.65, 4820.0, 4854.0], '#15616d');
-sparkMini('sk2_ind', [840.0, 989.45, 1178.0, 1389.0, 1466.0, 1473.0], '#c8102e');
-sparkMini('sk2_cloud', [138.19, 279.03, 579.03, 972.3, 1139.0, 1207.0], '#c8102e');
-sparkMini('sk2_ind2', [840.0, 989.45, 1178.0, 1389.0, 1466.0, 1473.0], '#c8102e');
-sparkMini('sk2_marpu', [44.1, 45.2, 45.4, 45.6], '#c8102e');
-sparkMini('sk2_harpu', [44.4, 46.3, 47.6, 47.6], '#2e9e6b');
+sparkMini('sk1_ar', [215.02, 223.89, 243.12, 322.1, 428.67, 531.46], '#c8102e');
+sparkMini('sk2_service_rev', [3737.98, 4028.28, 4349.28, 4649.65, 4820.33, 4854.24], '#c8102e');
+sparkMini('sk2_ind_digital', [840.0, 989.0, 1178.0, 1388.9, 1465.88, 1473.0], '#15616d');
+sparkMini('sk2_tianyi_cloud', [138.0, 279.0, 579.0, 972.0, 1139.0, 1207.0], '#c8102e');
+sparkMini('sk2_idc', [279.75, 316.0, 305.0, 307.5, 330.0, 345.0], '#2e9e6b');
+sparkMini('sk2_ai', [null, null, null, 30.1, 89.0, 123.0], '#d98a14');
+sparkMini('sk2_security', [null, null, 47.0, 58.0, 162.0, 166.0], '#2e9e6b');
 sparkMini('sk3_capex', [848.0, 870.0, 925.0, 988.0, 935.0, 804.0], '#15616d');
 sparkMini('sk3_compute', [95, 120, 150, 180, 202, 255], '#c8102e');
 sparkMini('sk3_ai', [11.0, 62.0], '#d98a14');
@@ -355,6 +405,43 @@ sparkMini('sk5_dps', [0.196, 0.2332, 0.2598, 0.272], '#c8102e');
 sparkMini('sk5_eps', [0.3, 0.33, 0.36, 0.36], '#15616d');
 sparkMini('sk5_div', [179.35, 213.39, 237.74, 248.9], '#2e9e6b');
 sparkMini('sk5_spread', [2.8, 3.2, 2.6, 3.0, 2.95], '#15616d');
+
+// ===== 趋势按钮：点击直接弹窗对应的年度 SVG 图（sparkline 不再绑定跳转）=====
+function openTrend(src, title){
+  var m=document.getElementById('trendModal');
+  m.querySelector('.trend-title').textContent=title||'年度趋势图';
+  m.querySelector('.trend-body').innerHTML='<img src="'+src+'" alt="年度趋势图">';
+  m.classList.add('open');
+}
+function closeTrend(){
+  var m=document.getElementById('trendModal');
+  m.classList.remove('open');
+  m.querySelector('.trend-body').innerHTML='';
+}
+document.querySelectorAll('.trend-btn[data-svg]').forEach(function(b){
+  b.style.cursor='pointer';
+  b.title='点击弹出年度趋势图';
+  b.addEventListener('click',function(){
+    var src=b.getAttribute('data-svg');
+    var metric=b.closest('.metric');
+    var name=metric ? metric.querySelector('.k').textContent.trim() : '';
+    openTrend(src, name);
+  });
+});
+// 关闭：用事件委托（不受弹窗 DOM 解析顺序影响），遮罩、×、Esc 均可关闭
+document.addEventListener('click', function(e){
+  if (e.target.closest('[data-close]')) { closeTrend(); }
+});
+document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeTrend(); } });
 </script>
+<!-- 趋势弹窗（点击「趋势」按钮弹出对应年度 SVG 图） -->
+<div class="trend-modal" id="trendModal">
+  <div class="trend-mask" data-close></div>
+  <div class="trend-box">
+    <button class="trend-x" data-close aria-label="关闭">×</button>
+    <p class="trend-title">年度趋势图</p>
+    <div class="trend-body"></div>
+  </div>
+</div>
 </body>
 </html>

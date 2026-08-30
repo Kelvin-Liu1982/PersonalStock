@@ -15,7 +15,10 @@
     oil: "var(--ind-oil)",
     consumer: "var(--ind-consumer)",
     finance: "var(--ind-finance)",
-    power: "var(--ind-power)"
+    power: "var(--ind-power)",
+    machinery: "var(--ind-machinery)",
+    logistics: "var(--ind-logistics)",
+    rail: "var(--ind-rail)"
   };
 
   function buildCard(cfg) {

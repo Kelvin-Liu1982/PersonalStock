@@ -144,7 +144,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
       <div class="desc">2021-至今年报季报。</div>
       <div class="metric"><span class="k">营业收入(2025)</span><span class="right"><span class="v" data-val="fin_rev25"></span><span class="spark" data-spark="fin_rev_a" data-color="#15616d"></span><button class="tbtn" onclick="openChart('fin_annual','年度营收 & 归母净利润')">趋势</button></span></div>
       <div class="metric"><span class="k">归母净利润(2025)</span><span class="right"><span class="v" data-val="fin_np25"></span><span class="chg" data-val="fin_np25_chg"></span><span class="spark" data-spark="fin_np_a" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('fin_annual','年度营收 & 归母净利润')">趋势</button></span></div>
-      <div class="metric"><span class="k">归母净利润(2026Q1)</span><span class="right"><span class="v" data-val="fin_np_q1"></span><span class="chg" data-val="fin_np_q1_chg"></span><button class="tbtn" onclick="openChart('fin_quarterly','季度营收 & 归母净利润')">趋势</button></span></div>
+      <div class="metric"><span class="k">归母净利润(2026Q2)</span><span class="right"><span class="v" data-val="fin_np_q1"></span><span class="chg" data-val="fin_np_q1_chg"></span><button class="tbtn" onclick="openChart('fin_quarterly','季度营收 & 归母净利润')">趋势</button></span></div>
       <div class="metric"><span class="k">毛利率(2025)</span><span class="right"><span class="v" data-val="fin_gm25"></span></div>
       <div class="metric"><span class="k">经营现金流(2025)</span><span class="right"><span class="v" data-val="fin_ocf25"></span></div>
       <div class="metric"><span class="k">资产负债率(2025)</span><span class="right"><span class="v" data-val="fin_dar25"></span></div>
@@ -181,9 +181,9 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <div class="card" style="display:none">
       <div class="hd"><div class="idx">6</div><h3>股东回报与资本运作</h3></div>
       <div class="desc">分红与回购是估值锚；分红来源财报核心数据.xlsx，回购来源中远海控_回购明细.xlsx。</div>
-      <div class="metric"><span class="k">分红比例(2025)</span><span class="right"><span class="v up" data-val="div_payout25"></span><span class="spark" data-spark="div_payout" data-color="#2e9e6b"></span><button class="tbtn" onclick="openChart('dividend','全年每股分红 & 分红比例')">趋势</button></span></div>
-      <div class="metric"><span class="k">全年每股分红(2025)</span><span class="right"><span class="v" data-val="div_ps25"></span></span></div>
-      <div class="metric"><span class="k">现金分红总额(2025,A+H)</span><span class="right"><span class="v" data-val="div_amt25"></span></span></div>
+      <div class="metric"><span class="k">分红比例(最新)</span><span class="right"><span class="v up" data-val="div_payout25"></span><span class="spark" data-spark="div_payout" data-color="#2e9e6b"></span><button class="tbtn" onclick="openChart('dividend','全年每股分红 & 分红比例')">趋势</button></span></div>
+      <div class="metric"><span class="k">全年每股分红(最新)</span><span class="right"><span class="v" data-val="div_ps25"></span></span></div>
+      <div class="metric"><span class="k">现金分红总额(最新,A+H)</span><span class="right"><span class="v" data-val="div_amt25"></span></span></div>
       <div class="metric"><span class="k">A股回购(截至08-14)</span><span class="right"><span class="v" data-val="bb_a5_shares"></span><span class="chg" data-val="bb_a5_amt"></span><span class="chg">/上限<span data-val="bb_a5_cap"></span></span></div>
       <div class="metric"><span class="k">H股回购(2026年内)</span><span class="right"><span class="v" data-val="bb_h_ytd"></span><span class="chg" data-val="bb_h_ytd_amt"></span></span></div>
       <div class="note" id="note-div"></div>
@@ -209,7 +209,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <h2>长期趋势专区（点击展开，数据同源）</h2>
     <details open><summary>① SCFI / CCFI 综合指数（周度）</summary><div class="body imgbox" data-img="freight"></div></details>
     <details><summary>② 主力航线即期运价（周度）</summary><div class="body imgbox" data-img="routes"></div></details>
-    <details open><summary>③ 季度航运货运量（单季，2021Q1–2026Q1）</summary><div class="body imgbox" data-img="qvol"></div></details>
+    <details open><summary>③ 季度航运货运量（单季，2021Q1–2026Q2）</summary><div class="body imgbox" data-img="qvol"></div></details>
     <details><summary>④ 舱位利用率（周度）</summary><div class="body imgbox" data-img="util"></div></details>
     <details><summary>⑤ 全国港口吞吐量 & 出口总额（月频）</summary><div class="body imgbox" data-img="demand"></div></details>
     <details><summary>⑥ 分区域出口同比增速（月频）</summary><div class="body imgbox" data-img="demand_yoy"></div></details>
@@ -223,7 +223,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
         <p class="fin-note">口径说明：季报原始披露为<b>累计值</b>（Q2=Q1+Q2，Q3=Q1+Q2+Q3，Q4=全年）。为便于横向对比各季真实经营表现，下方季度表已按公式 <b>当季ₙ = 本季累计ₙ − 上季累计ₙ</b>（Q1当季=Q1累计）还原为<b>单季(当季)</b>数据；同比亦为当季同比。</p>
         <h4>年度核心数据（2021–2025，全年累计）</h4>
         <div id="fin-annual-table"></div>
-        <h4>季度核心数据（2021Q1–2026Q1，已还原单季）</h4>
+        <h4>季度核心数据（2021Q1–2026Q2，已还原单季）</h4>
         <div id="fin-quarterly-table"></div>
       </div>
     </details>
@@ -232,7 +232,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
       <div class="body fin-sec">
         <div class="imgbox" data-img="dividend"></div>
         <p class="fin-note">口径说明：分红为<b>年报+中报合计</b>（A+H 全体股东现金分红）；2021 年中报仅转增股本不派现，故当年分红比例仅 15.6%。回购数据来源：公司回购公告（A股第4/5轮、H股2026年内逐日及第4轮），完整明细见 <b>中远海控_回购明细.xlsx</b>。</p>
-        <h4>分红数据（2021–2025）</h4>
+        <h4>分红数据（2021–2026）</h4>
         <div id="div-table"></div>
         <h4>回购汇总（A股 + H股）</h4>
         <div id="bb-table"></div>

@@ -397,7 +397,7 @@ ax.set_xticks(list(x)); ax.set_xticklabels(fin_q_lbl, rotation=45, ha="right", f
 ax2=ax.twinx()
 ax2.plot(x, fin_np_q, color="#c8102e", lw=2.2, marker="o", ms=4, label="季度归母净利润")
 ax2.set_ylabel("季度归母净利润(亿元)", color="#c8102e"); ax2.tick_params(axis="y", colors="#c8102e")
-style_ax(ax); ax.set_title("季度营收(当季) & 归母净利润(当季)（2021Q1–2026Q1）", fontsize=12, weight="bold")
+style_ax(ax); ax.set_title("季度营收(当季) & 归母净利润(当季)（2021Q1–2026Q2）", fontsize=12, weight="bold")
 l1,la1=ax.get_legend_handles_labels(); l2,la2=ax2.get_legend_handles_labels()
 ax.legend(l1+l2, la1+la2, loc="upper left", frameon=False, fontsize=9)
 CHARTS["fin_quarterly"]=fig_to_b64(fig)
@@ -413,7 +413,7 @@ ax2=ax.twinx()
 ax2.plot(x, div_payout, color="#c8102e", lw=2.6, marker="o", ms=6, label="分红比例")
 for i,v in enumerate(div_payout): ax2.text(i, v+1.2, f"{v:.0f}%", ha="center", fontsize=8, color="#c8102e")
 ax2.set_ylabel("分红比例(%)", color="#c8102e"); ax2.tick_params(axis="y", colors="#c8102e")
-style_ax(ax); ax.set_title("全年每股分红 & 分红比例（2021–2025）", fontsize=12, weight="bold")
+style_ax(ax); ax.set_title("全年每股分红 & 分红比例（2021–2026）", fontsize=12, weight="bold")
 l1,la1=ax.get_legend_handles_labels(); l2,la2=ax2.get_legend_handles_labels()
 ax.legend(l1+l2, la1+la2, loc="upper right", frameon=False, fontsize=9)
 CHARTS["dividend"]=fig_to_b64(fig)
@@ -518,7 +518,7 @@ for i,v in enumerate(qvol):
                  fontsize=7, ha="center", color="#c8102e")
 ax.set_xticks(_x); ax.set_xticklabels(qvol_dates, rotation=90, fontsize=6.5)
 ax.set_ylabel("货运量同比 %"); ax2.set_ylabel("单季货运量(万TEU)")
-ax.set_title("季度航运货运量（单季，2021Q1–2026Q1）", fontsize=12, weight="bold")
+ax.set_title("季度航运货运量（单季，2021Q1–2026Q2）", fontsize=12, weight="bold")
 ax.legend(loc="upper left", fontsize=8, frameon=False)
 ax2.legend(loc="upper right", fontsize=8, frameon=False)
 style_ax(ax)
@@ -544,7 +544,7 @@ NOTES = {
     "supply": "",
     "control": notes_co[-1],
     "demand": f"2026年1/2月合并吞吐量{de[1][1]}万TEU、出口{de[1][3]}亿美元为区间峰值，随后回归约3300万TEU常态平台；对东盟出口增速持续领跑，对美国增速波动最大。",
-    "fin": "2021–2022 为周期峰值（净利 893 / 1097 亿），2023 谷底（239 亿，-78%），2024–2025 修复至 491 / 309 亿；2026Q1 受运价回落净利 58.8 亿（-49.75%）。资产负债率由 56.8% 降至 41.4%，财务结构持续优化。",
+    "fin": "2021–2022 为周期峰值（净利 893 / 1097 亿），2023 谷底（239 亿，-78%），2024–2025 修复至 491 / 309 亿；2026H1 归母 134.19 亿（-23.48%，运价/成本/汇率三重挤压），其中 Q2 单季约 75.4 亿（H1−Q1 推算，受 Q2 运价强反弹驱动、环比 H1 显著改善）。资产负债率由 56.8% 降至 41.0%，财务结构持续优化。",
     "div": "2022–2025 分红比例稳定在 ~50%（年报+中报合计）；2021 中报仅转增不派现，比例仅 15.6%。2025 全年每股分红 1.00 元、现金分红 154 亿元（A+H）。",
     "cost": "2021–2022 周期高位单箱成本 1000/1205 美元，2023 运价腰斩降至 786 美元，2024–2025 红海绕行+成本管控趋稳于约 863/866 美元。成本结构中设备及货物运输占比约 48–59%（随运价同向涨跌），航程成本(含燃油)约 17–22%，船舶成本(含租船/折旧)约 16–21%。年报未单列燃油费、租船费明细行；现按 航程成本×70%、船舶成本×30% 估算 2025 年燃油费≈260.6 亿、租船费≈107.9 亿（估算值，非官方披露）。",
 }

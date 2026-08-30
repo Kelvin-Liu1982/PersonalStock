@@ -7,7 +7,10 @@
   --ind-oil:#3a7d44;       /* 石油：中国海洋石油 / 中国石油 */
   --ind-consumer:#c98a00;  /* 消费：格力电器 / 伊利股份 */
   --ind-finance:#1f6fb2;   /* 金融：招商银行 / 中国平安 */
-  --ind-power:#5a6b7d;     /* 电力：国电电力 */
+  --ind-power:#5a6b7d;     /* 电力：国电电力 / 华润电力 / 长江电力 */
+  --ind-machinery:#8a6d3b; /* 工程机械：中联重科 */
+  --ind-logistics:#b5651d; /* 物流：顺丰控股 */
+  --ind-rail:#4a6572;      /* 铁路：大秦铁路 */
 }
 
 /* ===== 卡片模块样式（由 card-module.js 渲染） ===== */

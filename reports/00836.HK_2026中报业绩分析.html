@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>华润电力 2026 中报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">华润电力</div>
+      <div class="meta">
+        <span>00836.HK</span><span>电力</span><span>港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026年半年度报告</div>
+      <div class="pdate">披露日期：2026-08-26</div>
+      <div class="badge flat">中性偏谨慎</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性偏谨慎</span>
+      <p class="oneliner">华润电力 2026 中报营业额 549.77 亿港元（+9.4%，人民币口径 484.73 亿、+4.6%）、归母净利润 66.49 亿港元（−15.5%）、核心业务利润 69.72 亿港元（−15.8%）、每股基本盈利 1.28 港元（−15.8%）。业绩呈现典型「营收增、利润降、结构分化」：售电量 +12.8%（光伏 +42.8%、火电 +16.9%）驱动营收增长，但综合上网电价同比 −7.2%（燃煤 −7.0%、风电 −6.3%、光伏 −9.2%）、风电利用小时 −19.0%（风速下降）致可再生能源核心利润 −30.7%；火电核心利润逆势 +16.1%（煤价温和、利用小时 +0.5%、市场化让利有限）。亮点在财务端：现金及等价物 331.53 亿港元（较年初 +184%）、净负债/总权益由 150.8% 降至 115.5%、华润新能源分拆 A 股上市募资；应占联营/合营业绩分别 +141%/+71%（山西中润铝业、甘肃常乐、英国海上风电等）与出售附属公司收益 +223.8% 部分对冲主业下滑。需关注：煤电发电量占比历史性跌破 50%、电价市场化持续下行、风电气候依赖、流动负债净额 270 亿港元与净负债率仍偏高。估值偏低（收 18.66 港元、PE(TTM) 7.27x、PB 0.87x 破净、股息率 TTM 6.04%），具高股息+破净防御价值，但盈利趋势承压。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul>
+<li>营收增、利润降、结构分化：H1 营业额 549.77 亿港元（+9.4%，人民币口径 +4.6%）、归母 66.49 亿港元（−15.5%）、核心业务利润 69.72 亿（−15.8%）、EPS 1.28 港元（−15.8%）。售电量 +12.8%（光伏 +42.8%、火电 +16.9%）驱动营收，但综合电价 −7.2% + 风电利用小时 −19% 致利润下滑。</li>
+<li>火电改善对冲可再生下滑：火电核心利润 30.65 亿港元（+16.1%，煤价温和、利用小时 +0.5%），可再生能源核心利润 39.07 亿（−30.7%，风电 −19% 利用小时 + 电价下行）；联营合营业绩分别 +141%/+71%（山西中润铝业、甘肃常乐、英国海上风电）与出售附属公司收益 +223.8% 部分缓冲主业。</li>
+<li>财务端显著去杠杆：现金及等价物 331.53 亿港元（较年初 +184%）、净负债/总权益由 150.8% 降至 115.5%、总负债/总资本 57.6%；华润新能源分拆 A 股上市募资优化资本结构（控股权益 83.80%→81.81%）。</li>
+<li>低估值破净高股息：收 18.66 港元、PE(TTM) 7.27x、PB 0.87x（破净）、股息率 TTM 6.04%、派息率 25.0%（逆势 +1.6pp）；机构平均目标价约 20.81 港元（+11.5%），具防御配置价值。</li>
+</ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
+<li>电价市场化持续下行（核心红旗）：2026H1 综合上网电价 −7.2%（燃煤/风电/光伏 −7.0%/−6.3%/−9.2%），煤电发电量占比历史性跌破 50%（49.7%），清洁能源优先消纳 + 市场化交易压低结算电价，盈利趋势承压。</li>
+<li>风电利用小时骤降 / 气候依赖（核心红旗）：风电利用小时 −19.0%（风速下降）直接致可再生核心利润 −30.7%；气候不可控，短期波动显著，H2 风资源回归程度决定修复幅度。</li>
+<li>债务结构与流动性偏弱：净负债/权益 115.5%、流动比率 0.76、流动负债净额 270 亿港元，存在短债缺口依赖再融资；煤价阶段性反弹（标煤 +1.0%）压缩火电点火价差；减值（郑州气电项目 4.17 亿）+ 应收 +12.3% 需跟踪。</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">营业额（H1 同半年度，亿港元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="57.6" y="88.8" width="58.8" height="117.2" rx="3" fill="#13406b" opacity="0.85"/><text x="87.0" y="84.8" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">422</text><text x="87.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">21</text><rect x="155.6" y="66.1" width="58.8" height="139.9" rx="3" fill="#13406b" opacity="0.85"/><text x="185.0" y="62.1" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">504</text><text x="185.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">22</text><rect x="253.6" y="63.2" width="58.8" height="142.8" rx="3" fill="#13406b" opacity="0.85"/><text x="283.0" y="59.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">515</text><text x="283.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">23</text><rect x="351.6" y="64.2" width="58.8" height="141.8" rx="3" fill="#13406b" opacity="0.85"/><text x="381.0" y="60.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">511</text><text x="381.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">24</text><rect x="449.6" y="66.5" width="58.8" height="139.5" rx="3" fill="#13406b" opacity="0.85"/><text x="479.0" y="62.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">503</text><text x="479.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">25</text><rect x="547.6" y="53.5" width="58.8" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="577.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">550</text><text x="577.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">26</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">H1 同半年度多年序列（港元）；2026 营业额 549.77 亿(+9.4%)，创 2021 以来新高，售电量+12.8% 驱动、抵消电价-7.2%</text></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">归母净利润（H1 同半年度，亿港元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="57.6" y="122.7" width="58.8" height="83.3" rx="3" fill="#13406b" opacity="0.85"/><text x="87.0" y="118.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">51</text><text x="87.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">21</text><rect x="155.6" y="134.8" width="58.8" height="71.2" rx="3" fill="#13406b" opacity="0.85"/><text x="185.0" y="130.8" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">44</text><text x="185.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">22</text><rect x="253.6" y="96.2" width="58.8" height="109.8" rx="3" fill="#13406b" opacity="0.85"/><text x="283.0" y="92.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">67</text><text x="283.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">23</text><rect x="351.6" y="53.5" width="58.8" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="381.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">94</text><text x="381.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">24</text><rect x="449.6" y="77.7" width="58.8" height="128.3" rx="3" fill="#13406b" opacity="0.85"/><text x="479.0" y="73.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">79</text><text x="479.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">25</text><rect x="547.6" y="97.6" width="58.8" height="108.4" rx="3" fill="#13406b" opacity="0.85"/><text x="577.0" y="93.6" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">66</text><text x="577.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">26</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">H1 同半年度；2026 归母 66.49 亿(-15.5%)，低于 2024 峰值 93.6 亿、仍高于 2021-23；风电利用小时骤降+电价下行双杀</text></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="40" y="16" font-size="12" font-weight="700" fill="#13406b">H1 同比增速（%）</text><line x1="40" y1="153.8" x2="626" y2="153.8" stroke="#c8d0db" stroke-dasharray="3 3"/><text x="137.7" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">24</text><text x="333.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">25</text><text x="528.3" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">26</text><polyline points="137.7,155.8 333.0,158.6 528.3,126.9" fill="none" stroke="#c0392b" stroke-width="2.2"/><circle cx="137.7" cy="155.8" r="3" fill="#c0392b"/><text x="137.7" y="148.8" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">-0.7</text><circle cx="333.0" cy="158.6" r="3" fill="#c0392b"/><text x="333.0" y="151.6" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">-1.7</text><circle cx="528.3" cy="126.9" r="3" fill="#c0392b"/><text x="528.3" y="119.9" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+9.4</text><polyline points="137.7,42.7 333.0,199.2 528.3,198.0" fill="none" stroke="#1f8a4c" stroke-width="2.2"/><circle cx="137.7" cy="42.7" r="3" fill="#1f8a4c"/><text x="137.7" y="55.7" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+38.9</text><circle cx="333.0" cy="199.2" r="3" fill="#1f8a4c"/><text x="333.0" y="212.2" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-15.9</text><circle cx="528.3" cy="198.0" r="3" fill="#1f8a4c"/><text x="528.3" y="211.0" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-15.5</text><rect x="40" y="20" width="10" height="10" rx="2" fill="#c0392b"/><text x="54" y="29" font-size="10" fill="#5b6675">营收YoY</text><rect x="150" y="20" width="10" height="10" rx="2" fill="#1f8a4c"/><text x="164" y="29" font-size="10" fill="#5b6675">归母YoY</text><text x="40" y="238" font-size="9.5" fill="#8a94a6">红=营收增速 绿=归母增速（A股习惯）；2026 营收强劲转正、归母连降两年，结构分化（火电+16.1% vs 可再生-30.7%）</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+
+<div class="mcard"><div class="lab">营业额</div><div class="val">549.77亿</div><div class="delta up">+9.4%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">66.49亿</div><div class="delta down">-15.5%</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">1.28港元</div><div class="delta down">-15.8%</div></div>
+<div class="mcard"><div class="lab">核心业务利润</div><div class="val">69.72亿</div><div class="delta down">-15.8%</div></div>
+<div class="mcard"><div class="lab">经营利润</div><div class="val">97.63亿</div><div class="delta down">-19.6%</div></div>
+<div class="mcard"><div class="lab">可再生核心利润</div><div class="val">39.07亿</div><div class="delta down">-30.7%</div></div>
+<div class="mcard"><div class="lab">火电核心利润</div><div class="val">30.65亿</div><div class="delta up">+16.1%</div></div>
+<div class="mcard"><div class="lab">净负债/权益</div><div class="val">115.5%</div><div class="delta up">-35.3pp</div></div>
+<div class="mcard"><div class="lab">现金及等价物</div><div class="val">331.53亿</div><div class="delta up">+184%</div></div>
+<div class="mcard"><div class="lab">中期股息</div><div class="val">0.321港元</div><div class="delta down">-9.8%</div></div>
+<div class="mcard"><div class="lab">附属售电量</div><div class="val">120.4TWh</div><div class="delta up">+12.8%</div></div>
+<div class="mcard"><div class="lab">总负债/总资本</div><div class="val">57.6%</div><div class="delta flat">合理</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+
+<tr><td>营业额</td><td class="num">549.77亿</td><td class="num">502.67亿</td><td class="num up">+9.4%</td></tr>
+<tr><td>归母净利润</td><td class="num">66.49亿</td><td class="num">78.72亿</td><td class="num down">-15.5%</td></tr>
+<tr><td>基本每股收益</td><td class="num">1.28港元</td><td class="num">1.52港元</td><td class="num down">-15.8%</td></tr>
+<tr><td>核心业务利润</td><td class="num">69.72亿</td><td class="num">82.78亿</td><td class="num down">-15.8%</td></tr>
+<tr><td>经营利润</td><td class="num">97.63亿</td><td class="num">121.46亿</td><td class="num down">-19.6%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比<span class="sec-sub">（v2 须标注来源与口径）</span></div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+
+<tr><td>营业额</td><td class="num">549.77亿(+9.4%)</td><td class="num">2026E营收~1,050-1,100亿(H1占~50%)</td><td class="num flat">符合预期</td><td class="num flat">售电量+12.8%驱动</td></tr>
+<tr><td>归母净利润</td><td class="num">66.49亿(-15.5%)</td><td class="num">2026E归母~130-150亿(H1占~46-51%)</td><td class="num up">优于预期</td><td class="num up">火电改善+联营合营对冲</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：无单季一致预期（港股卖方以全年预测为主，统计时点 2026-08-26 中报后）。按 v2 修正 B 全年进度校验：① 2025 全年营收 1,020 亿港元、归母 145.19 亿港元；市场对 2026E 营收预期约 1,050–1,100 亿港元、归母约 130–150 亿港元；H1 营收 549.77 亿约占全年 50%、归母 66.49 亿约占 46%–51%，符合季节性（H2 通常略弱于 H1 因冬季风资源波动、电价淡季）。② 长桥证券评述「业绩优于预期（came in ahead of expectations）」——尽管归母 −15.5%，但火电改善 + 联营合营大增抵消了可再生下滑，市场反应正面（公告日股价 +2.1%）；机构 16 家评级 7 强买/7 买入/2 卖出，平均目标价约 20.81 港元（+11.5%）。<b>H1 业绩处预期上沿，结构优于同业（华能 −28.9%、中国电力 −50.8%）</b>。</p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>电力行业处于<b>「能源转型阵痛、煤电历史性拐点」阶段</b>：2026 上半年煤电发电量占全国总发电量比重降至 <b>49.7%，自有统计以来首次跌破 50%</b>，清洁能源优先消纳挤占煤电出力空间；同时市场化交易电量占比快速扩围（华润电力已达 96.2%，同比 +11.8pp），新能源边际成本低，持续压低结算电价（燃煤 −7.0%、风电 −6.3%、光伏 −9.2%）。煤价 2026H1 阶段性反弹（标煤单价 +1.0%），「电价降 + 煤价升」压缩火电点火价差（华润 −30.4 元/MWh 至 119.5 元）。行业主线：煤电从「卖电量」转向「容量 + 灵活性 + 调节服务」多元盈利；新能源「量增价跌」回归理性投资（国电电力风光归母 −25%/−62%）；水电受益来水与集中投产。华润电力以「火电压舱石 + 风光成长 + 联营合营」组合应对。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>① 装机：2026-06 管理并网 105,700 MW、附属并网 88,944 MW；火电 42,970 MW（占 48.3%）、风+光+水 45,974 MW（占 51.7%，较年初 +0.9pp）；风电 29,495 MW（在建 6,647）、光伏 16,008 MW（在建 5,830）；H1 新增新能源并网 1,583 MW（风 808 + 光 775），获可再生能源开发指标 4,410 MW。② 电量：附属售电量 120,436,401 MWh（+12.8%），光伏 +42.8%、火电 +16.9%、风电 −3.2%（风速下降）；风电利用小时 1,027（−19.0%）、光伏 581（−14.1%）、燃煤 2,081（+0.5%）；市场化定价占比 96.2%（+11.8pp）。③ 电价：燃煤 364.0 元/MWh（−7.0%）、风电 371.8 元/MWh（−6.3%）、光伏 276.7 元/MWh（−9.2%）；燃煤点火价差 119.5 元/MWh（−30.4 元）。④ 燃料：标煤单价 832.3 元/吨（+1.0%）、单位售电燃料成本 244.5 元/MWh（+1.3%）、供电煤耗 287.73 g/kWh（−0.8%）。⑤ 资本开支：H1 现金资本开支 144.47 亿港元（可再生 111.66 + 火电 20.60 + 技改 6.47 + 煤矿尾款 1.19 + 综合能源 4.55），全年预计约 472 亿港元。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>重资产、高杠杆公用事业，以<b>ROIC−WACC</b> 衡量价值创造（v2 修正 C，允许定性）。估算（H1 半年口径年化）：NOPAT ≈ 归母净利 66.49 亿×2 ≈ 133 亿（财务费用净与少数股东调整小）；投入资本 IC = 总权益 1,664 亿 ＋ 净负债（借贷 2,257 − 现金 331 − 受限存款 3 ≈ 1,923 亿）≈ 3,587 亿；<b>ROIC（年化）≈ 133 / 3,587 ≈ 3.7%</b>（半年口径约 1.85%）。WACC ≈ 6.5%（电力 β 偏低、债权占 57%、股权 43%、税后加权）。<b>ROIC−WACC ≈ −2.8pp，价值创造偏弱</b>——这是受监管公用事业的普遍特征：回报靠「监管允许的合理资本回报 + 规模扩张 + 新能源成长」驱动，而非超额资本回报；当前电价下行 + 风电利用小时骤降进一步压制 ROIC。投资逻辑更偏「高股息 + 破净 + 资产重估（华润新能源分拆）」而非 ROIC 扩张（v2 修正 C 允许定性）。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：营业额 549.77 亿港元（+9.4%，人民币口径 +4.6%），主因附属售电量 +12.8%（光伏 +42.8%、火电 +16.9%）抵消综合上网电价 −7.2%；其中火电分部收入 403.06 亿（+12.7%）、可再生能源分部收入 146.71 亿（+1.2%）。<b>价</b>：净利率 12.87%（−3.8pp，归母 66.49/营业额 549.77）、经营利润率 17.76%（−6.6pp），电价下行 + 风电利用小时骤降拖累 margin；但火电点火价差仍维持 119.5 元/MWh 为正。<b>成本</b>：总经营成本 459.30 亿港元（+17.9%，快于营收 +9.4%）：燃料 260.30 亿（+19.9%，售电量增 + 标煤单价 +1.0%）、折旧摊销 105.96 亿（+21.8%，新项目投产）、员工 +2.3%、减值 +15.7%（郑州航空港气电项目计提 4.17 亿）。<b>投资/其他</b>：应占联营企业业绩 15.93 亿（+141%，山西中润铝业、甘肃常乐电厂、重庆能源）、应占合营 +71%（英国海上风电、锦州电厂）、其他损益 +223.8%（出售附属公司收益 2.30 亿），合计增厚利润约 +12 亿港元，部分对冲主业下滑。<b>结论</b>：归母 −15.5% = 可再生 −30.7%（风电 −19% 利用小时 + 电价 −6.3%）− 电价市场化下行 − 政府补助减少（其他收入 −39.7%）＋ 火电 +16.1% ＋ 联营合营 +141%/+71% ＋ 出售收益；经营基本盘承压但被多元收益部分缓冲。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「真」、无会计粉饰</b>。核心业务利润 69.72 亿港元（−15.8%）与归母 66.49 亿（−15.5%）降幅一致，差额仅 3.23 亿为永久资本证券持有人（93.7 百万）与少量非经常性；非经常性损益小：其他损益 +2.59 亿（含出售附属公司收益 2.30 亿、属偶发）、减值 4.72 亿（含郑州气电项目 4.17 亿一次性，非洗大澡）。<b>现金验证</b>：经营现金流净额 102.14 亿港元（−27.6%，主因应收增加、税费支付），OCF/归母 ≈ 154%（仍 >100%）；现金及等价物较年初 +184% 至 331.53 亿（含华润新能源分拆募资），盈利有现金支撑、无背离。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">华润电力按<b>运营及可呈报分部</b>披露（2026 中报，港元）：<br/>• <b>火力发电（含燃煤/燃气/煤炭生产）</b> 外部收入 403.06 亿（+12.7%）、分部税前利润 40.62 亿（−0.2%）、本公司拥有人应占核心业务利润 <b>30.65 亿（+16.1%）</b>——压舱石，受益煤价温和、利用小时 +0.5%、市场化让利有限；纯火电（不含煤炭）核心利润 27.97 亿（+0.3%）。<br/>• <b>可再生能源（风/光/水）</b> 外部收入 146.71 亿（+1.2%）、分部税前利润 52.41 亿（−24.5%）、本公司拥有人应占核心业务利润 <b>39.07 亿（−30.7%）</b>——主拖累，风电利用小时 −19.0%（风速下降）、风电电价 −6.3%、光伏电价 −9.2%。<br/><b>增量利润归因</b>：火电 +4.24 亿 vs 可再生 −17.30 亿，结构分化显著；联营合营 +12 亿、出售收益 +1.79 亿为边际增量缓冲。<b>地域</b>：绝大部分资产与运营位于中国（人民币），呈列货币为港元，存在功能/呈列货币折算差异。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（高杠杆、较年初显著去化）</b>：总负债/总资本 57.6%、<b>净负债/总权益 115.5%（较年初 150.8% −35.3pp，大幅改善）</b>；借贷 2,256.63 亿港元（较年初 2,135.08 亿 +5.7%），但现金及等价物 331.53 亿（+184%）、受限存款 3.26 亿，净债显著下降（华润新能源分拆募资 + 经营积累）。<br/><b>流动性（偏弱、需关注）</b>：流动比率 0.76（年初 0.52）、速动比率 0.72（年初 0.47），<b>流动负债净额 270.03 亿港元</b>（公司说明可持续经营、银行授信充足）；现金短债比（现金 331.53 / 短期借贷 648.52）≈ 0.51x，短期偿债依赖再融资与经营回流。<br/><b>资产质量与周转</b>：应收账款、其他应收及预付款项 478.64 亿（年初 426.02 亿，+12.3%，快于营收 +9.4%），账龄 60 日以上占 70.8%（新能源补贴结算周期长，行业特性）；存货 53.88 亿（+4.6%，稳定）；<b>商誉 11.08 亿（年初 10.75 亿，占净资产 0.91%，无泡沫）</b>；固定资产（PPE）2,909 亿（+4.4%，新项目投产）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>回落但仍健康</b>。经营现金流净额 102.14 亿港元（−27.6%，去年同期 141.16 亿），主因应收增加（新能源补贴回款周期）、税费支付增加、存货微增；<b>OCF/归母 ≈ 154%</b>，现金含量仍 >100%，盈利有真金白银支撑。现金及等价物较年初 +184% 至 331.53 亿（含华润新能源分拆上市募资净额 243.47 亿港元 + 经营净流入 102 亿 + 借贷净增）。<b>盈利现金含量</b>：经营现金流虽降，但远高于归母净利，无借钱分红迹象。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）：</b>OCF 拆解（亿港元）：经营流入净额 102.14（−27.6%）。关键项：① <b>收款端</b>：应收账款账龄 0–30 日 98.83 亿、31–60 日 9.51 亿、60 日以上 261.93 亿（合计 370.27 亿应收，新能源补贴结算周期长）；电费一般 30 日内到账，但风光超出火电标杆价部分需待政府补贴目录拨付、周期长。② <b>资本开支</b>：H1 现金 CapEx 144.47 亿（可再生 111.66 为主），投资活动净流出 140.26 亿（去年同期 −207.64 亿，同比下降因部分由募资覆盖）。③ <b>税费支付</b>：所得税 + 其他税费随利润与产量增；④ <b>华润新能源分拆</b>：募资净额 243.47 亿港元显著改善现金。<b>归因</b>：OCF 回落主因营运资金（应收 + 补贴回款慢）占用，非盈利质量恶化。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>由经营现金流与募资共同覆盖</b>。H1 CapEx（现金）144.47 亿港元，FCF = OCF 102.14 − CapEx 144.47 ≈ −42 亿（半年口径为负，因新能源建设高峰）；但融资活动净流入 246.62 亿（含华润新能源分拆募资 243.47 亿 + 借贷净增 100 亿 − 偿债 412.74 亿 − 利息 24.52 亿），充分覆盖投资与分红。<b>覆盖能力</b>：净负债/权益降至 115.5%、现金 331.53 亿，中期分红 16.62 亿港元（占 H1 归母 25.0%）由经营现金流充分覆盖，<b>分红可持续、非借钱分红</b>；全年 CapEx 约 472 亿由经营 + 债务 + 权益融资组合支撑。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b><b>低估值、破净、高股息</b>。以 2026-08-26 收盘价 18.66 港元计：总市值约 966 亿港元，PE(TTM) 7.27x、PB(LF) 0.87x（<b>破净</b>）、股息率 TTM 6.04%。A 股 2025 全年 EPS 2.80 港元、每股净资产约 21.5–23.5 港元（PB 0.79–0.87x）。相对同业（华能国际 PE ~8x、国电电力 PE ~13x、中国电力 PB ~0.6x），华润电力估值处历史低位、PB 破净反映对电价下行与盈利趋势的悲观预期；机构 16 家评级 7 强买/7 买入/2 卖出，平均目标价约 20.81 港元（+11.5%），部分来源目标价区间 21–27 港元。</p>
+      <p><b>周期正常化估值（v2 修正 F）：</b>电力公用事业<b>受监管、盈利波动主要来自电价/来水/风速</b>，利润正常化以<b>中性电价 + 正常风资源</b>还原（v2 修正 F）。当前 2026H1 风电利用小时 −19%（气候异常偏低）、若回归正常（约 1,200 小时）可再生利润可修复 +20%–30%；中性电价假设下 2026E 归母约 135–150 亿港元。<b>正常化 PE</b> = 966 亿港元 / 140 亿（中性年化归母）≈ <b>6.9x</b>；若按 2025 全年 145 亿则 ~6.7x。<b>结论</b>：PE(TTM) 7.27x + PB 0.87x（破净）+ 股息率 6% + 华润新能源分拆资产重估，估值<b>偏低</b>；当前低价已反映电价下行与风电气候风险，下行有破净+高股息托底，上行取决于电价企稳、风资源正常化与新能源补贴回款加速。</p>
+      <p><b>股东回报可持续性：</b><b>高股息、派息率提升</b>。2026 中期股息每股 0.321 港元（含税，同比 −9.8%，因归母下滑），按已发行股份 51.77 亿股合计约 16.62 亿港元，<b>派息率 25.0%（同比 +1.6pp，逆势提升）</b>；2025 全年合计派息 1.127 港元/股（中期 0.356＋末期 0.771），2026 全年若按 2× 中期则约 0.642 港元、股息率 TTM 约 3.4%，但加 2025 末期后 TTM 股息率约 6.04%。<b>可持续性</b>：经营现金流 102 亿 + 现金 331 亿充分覆盖，非借钱分红；华润集团控股、分红政策稳定。<b>回购</b>：本期无普通股回购（资产负债表明确「无购买、出售或赎回上市证券」）。资本配置以「高分红 + 新能源 CapEx + 华润新能源分拆」为主。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card"><b>「十五五」开局、转型与回报并重</b>：2026 年现金资本开支预计约 472 亿港元，聚焦沙戈荒大型风光基地、海上风电、中东部优质项目，并做优煤电基本盘（「一厂一策」提质增效）。<b>电量/电价</b>：随新能源装机增长售电量续增，但市场化电价承压（长协电价下降）；煤电点火价差维持 119.5 元/MWh。<b>股东回报</b>：维持约 25%–40% 派息率区间、高股息政策；华润新能源（A 股 2026-07-02 深交所上市）分拆募资优化资本结构（控股权益由 83.80% 摊薄至 81.81%）。<b>风险敏感</b>：煤电发电量占比跌破 50%、电价市场化、风电利用小时波动、煤价反弹、人民币/港元汇率。<i>（前瞻性陈述，非承诺）</i></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">电力板块可比（2026 中报/最新）：<br/>• <b>华润电力</b>：归母 66.49 亿（−15.5%）、PB 0.87x（破净）、PE(TTM) 7.27x、股息率 6.04%、净负债/权益 115.5%——<b>火电+可再生综合、结构分化（火电+16.1% vs 可再生−30.7%）、去杠杆显著</b>。<br/>• <b>国电电力（A）</b>：归母 30.14 亿（−18.25%）、营收 790 亿（+1.77%）、股息率 4.82%、长协煤 99% 平抑成本、水电集中投产高增——盈利承压但成本优势突出。<br/>• <b>华能国际</b>：归母 65.86 亿（−28.89%）、营收 1069 亿（−4.57%）——电价+煤价+发电量三杀，跌幅最大。<br/>• <b>中国电力</b>：纯利 −50.8%——新能源+煤电双承压。<br/>• <b>长江电力</b>：水电稳健、来水驱动，与华润电力电源结构差异大。<br/><b>结论</b>：华润电力在火电股中跌幅相对可控（−15.5% vs 华能 −28.9%、中国电力 −50.8%），靠火电改善+联营合营+分拆募资缓冲；估值破净+高股息具防御价值，但盈利趋势仍受电价与风资源压制。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉 11.08 亿港元（年初 10.75 亿，占净资产 0.91%），远低于 v2 阈值；电力资产以 PPE（2,909 亿）为主，无并购泡沫，资产质量干净。</div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">安全（不适用）</span>电力行业研发支出少，以费用化运维/技改为主（维修维护 11.93 亿、材料 5.19 亿），无研发资本化率异常；科技创新（智慧电厂、数智化）计入当期费用。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span>确认减值损失 4.72 亿港元（+15.7%），其中郑州航空港气电项目计提 4.17 亿（计划处置）、其余为项目退出/技改拆除设备减值；属一次性、非洗大澡，但需关注存量气电/低效资产后续减值风险（§4/§9）。</div></div>
+<div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict amber">关注（红旗）</span>净负债/总权益 115.5%（虽较年初 150.8% 大幅改善）、总负债/总资本 57.6%；但<b>流动比率 0.76、速动比率 0.72、流动负债净额 270.03 亿港元</b>，存在短债缺口，依赖银行授信与再融资；现金短债比（现金 331.53 / 短期借贷 648.52）≈ 0.51x，需持续关注再融资能力与利率走势（§2/§9）。</div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">标准（审阅）</span>中报未经审计，德勤按 HKSA 2410 审阅（无保留结论）；数据以管理层账目编制，待年报审计校验。</div></div>
+<div class="rf"><div class="k">关联交易 / 其他应收</div><div class="v"><span class="verdict amber">关注</span>存在华润集团内关联交易（应付联营/合营/其他关联公司款项、关联公司垫款利息 0.40 亿）；应收联营企业款项 8.03 亿（年初 0.38 亿，+2015%）、应付其他关联公司款项结构复杂，需关注关联资金往来合理性，但非经营风险（§4/§9）。</div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span>营业收入 +9.4% 由售电量 +12.8% 真实驱动（光伏 +42.8%、火电 +16.9%），但综合上网电价 −7.2% 拖累；应收账款、其他应收及预付款项 478.64 亿（年初 426.02 亿，+12.3%，快于营收 +9.4%），其中 60 日以上账龄占 70.8%（新能源补贴结算周期长，行业特性非放宽信用）。下季跟踪周转与补贴回款（§4/§9）。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">安全</span>存货 53.88 亿港元（+4.6%，稳定），占营收低、无滞销积压；电力行业无库存商品积压风险（电即产即售、煤炭库存随发电需求）。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">安全</span>其他损益 +2.59 亿（含出售附属公司收益 2.30 亿、属偶发），减值 4.72 亿（含一次性郑州气电项目）；核心业务利润 69.72 亿（−15.8%）与归母降幅一致，盈利质量干净、无依赖政府补助/资产处置粉饰（其他收入反而 −39.7%）。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict amber">关注</span>经营现金流净额 102.14 亿港元（−27.6%，去年同期 141.16 亿），主因应收增加（新能源补贴回款慢）、税费支付；但 OCF/归母 ≈ 154%（仍 >100%），现金含量未恶化，无借钱分红；现金及等价物 +184% 至 331.53 亿（含分拆募资）。需下季跟踪 OCF 回落持续性（§2/§5）。</div></div>
+<div class="rf"><div class="k">收入确认激进（v2 新增）</div><div class="v"><span class="verdict flat">安全</span>电力收入于发电并网、客户取得控制权且公司拥有收款权时确认（电费一般 30 日内到账），标准控制权转移模型；营收 +9.4% 与售电量 +12.8% 匹配，无提前确认/渠道压货迹象（风光超出标杆价部分待政府补贴目录拨付、周期长但非提前确认）。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 外币折算（v2 新增）</div><div class="v"><span class="verdict amber">关注</span>① 表外/担保：存在若干未决诉讼及索赔，董事咨询法律顾问后认为不大可能重大财务影响、无拨备；报告明确无违规对外担保；华润新能源分拆后控股权益由 83.80% 摊薄至 81.81%（权益法调整）。② 外币折算：功能货币人民币、呈列货币港元，期内其他全面收入汇兑差异 +54.98 亿（人民币升值使以港元呈列净资产增加）为正面的综合收益贡献（54.98 亿 vs 期内利润 70.76 亿）；海外（英国海上风电合营）收入以英镑，汇率双向波动影响账面（§2/§9）。</div></div>
+<div class="rf"><div class="k">电价市场化下行 / 煤价反弹（行业特有，核心红旗）</div><div class="v"><span class="verdict amber">关注（红旗）</span>2026H1 市场化定价售电量占比 96.2%（+11.8pp），综合上网电价同比 −7.2%：燃煤 364.0 元/MWh（−7.0%）、风电 371.8 元/MWh（−6.3%）、光伏 276.7 元/MWh（−9.2%）；燃煤点火价差 119.5 元/MWh（−30.4 元）。煤电发电量占比历史性跌破 50%（49.7%），清洁能源优先消纳 + 市场化交易持续压低结算电价；叠加 2026H1 煤价阶段性反弹（标煤单价 832.3 元/吨、+1.0%），「电价降 + 煤价升」双杀压缩点火价差，盈利趋势承压（§0.5/§3/§9）。</div></div>
+<div class="rf"><div class="k">风电利用小时骤降 / 气候依赖（行业特有，红旗）</div><div class="v"><span class="verdict amber">关注（红旗）</span>风电平均利用小时 1,027（−19.0%，风速下降）、光伏 581（−14.1%），直接致可再生能源核心利润 −30.7%（−17.30 亿）；气候/来风为不可控外部因素，若 H2 风资源回归正常（约 1,200 小时）则可修复，但短期波动显著。需跟踪风资源与来水（§0.5/§3/§9）。</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+<li>营收增、利润降、结构分化：H1 营业额 549.77 亿港元（+9.4%，人民币口径 +4.6%）、归母 66.49 亿港元（−15.5%）、核心业务利润 69.72 亿（−15.8%）、EPS 1.28 港元（−15.8%）。售电量 +12.8%（光伏 +42.8%、火电 +16.9%）驱动营收，但综合电价 −7.2% + 风电利用小时 −19% 致利润下滑。</li>
+<li>火电改善对冲可再生下滑：火电核心利润 30.65 亿港元（+16.1%，煤价温和、利用小时 +0.5%），可再生能源核心利润 39.07 亿（−30.7%，风电 −19% 利用小时 + 电价下行）；联营合营业绩分别 +141%/+71%（山西中润铝业、甘肃常乐、英国海上风电）与出售附属公司收益 +223.8% 部分缓冲主业。</li>
+<li>财务端显著去杠杆：现金及等价物 331.53 亿港元（较年初 +184%）、净负债/总权益由 150.8% 降至 115.5%、总负债/总资本 57.6%；华润新能源分拆 A 股上市募资优化资本结构（控股权益 83.80%→81.81%）。</li>
+<li>低估值破净高股息：收 18.66 港元、PE(TTM) 7.27x、PB 0.87x（破净）、股息率 TTM 6.04%、派息率 25.0%（逆势 +1.6pp）；机构平均目标价约 20.81 港元（+11.5%），具防御配置价值。</li>
+</ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+<li>电价市场化持续下行（核心红旗）：2026H1 综合上网电价 −7.2%（燃煤/风电/光伏 −7.0%/−6.3%/−9.2%），煤电发电量占比历史性跌破 50%（49.7%），清洁能源优先消纳 + 市场化交易压低结算电价，盈利趋势承压。</li>
+<li>风电利用小时骤降 / 气候依赖（核心红旗）：风电利用小时 −19.0%（风速下降）直接致可再生核心利润 −30.7%；气候不可控，短期波动显著，H2 风资源回归程度决定修复幅度。</li>
+<li>债务结构与流动性偏弱：净负债/权益 115.5%、流动比率 0.76、流动负债净额 270 亿港元，存在短债缺口依赖再融资；煤价阶段性反弹（标煤 +1.0%）压缩火电点火价差；减值（郑州气电项目 4.17 亿）+ 应收 +12.3% 需跟踪。</li>
+</ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol>
+<li><b>电价与市场化（综合上网电价 −7.2%、燃煤/风电/光伏分别 −7.0%/−6.3%/−9.2%、市场化占比 96.2%）</b> → 下季看长协电价走势、煤电发电量占比（已跌破 50%）、结算电价企稳信号（§0.5/§3/§9 红旗 13）。</li>
+<li><b>风资源与可再生利润（风电利用小时 −19.0%、可再生核心利润 −30.7%）</b> → 下季看 H2 风速/来水回归、光伏出力、可再生利润修复幅度（§0.5/§3/§9 红旗 14）。</li>
+<li><b>债务结构与流动性（净负债/权益 115.5%、流动比率 0.76、流动负债净额 270 亿）</b> → 下季看再融资进展、现金短债比、利率走势与华润新能源分拆后资本结构优化（§2/§4/§9 红旗 4）。</li>
+<li><b>联营合营与出售收益（应占联营 +141%、合营 +71%、出售附属公司 +223.8%）</b> → 下季看山西中润铝业、甘肃常乐、英国海上风电等联营合营盈利持续性、是否可持续对冲主业（§3/§6）。</li>
+<li><b>新能源补贴回款与现金流（OCF −27.6%、应收 +12.3%、60 日以上账龄占 70.8%）</b> → 下季看补贴目录拨付进度、应收周转、OCF 回落是否持续（§2/§5/§9 红旗 7/10）。</li>
+</ol></div>
+  </div>
+
+
+</div>
+</body>
+</html>

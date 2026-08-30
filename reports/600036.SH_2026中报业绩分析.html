@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="IxXcJsEA1OGUKQwtDyhy6v">
+<head data-page-node-id="2I5wkKs6HwCoF9zmFp7xki">
+<meta charset="UTF-8" data-page-node-id="6klnf5lptN9dh1xYECRK7U" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="8FawFwk76nNbPXJEaqlHuh" />
+<title>招商银行 2026 中报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body data-page-node-id="nsCOV1sSRHgDaEOmnepRKD">
+<div class="wrap" data-page-node-id="FBHcxz4iCBc2Bjhj0DqJnC">
+
+
+  <div class="head" data-page-node-id="eTP6wPdzci1K91ryIVYmiw">
+    <div data-page-node-id="UhIctGcC9OFj9vLSF75FWg">
+      <div class="co" data-page-node-id="7MjGsBx9Ld5d4G4wgYvBkF">招商银行</div>
+      <div class="meta" data-page-node-id="EkQUf1eYGLPFpxl1b0ZBj0">
+        <span data-page-node-id="DpkHH6Njz2UhzHFAup02eH">600036.SH</span><span data-page-node-id="bf1CHj0vWeLHLc6F4xOTYn">银行</span><span data-page-node-id="AYOCZV0kpCh1N330C0AA1B">上交所 / 港交所（A+H，03968.HK）</span>
+      </div>
+    </div>
+    <div class="right" data-page-node-id="WNBCGNG7FcupL0CPQG4oem">
+      <div class="period" data-page-node-id="cmtf2lTb1rEckDJNVYItQe">2026年半年度报告</div>
+      <div class="pdate" data-page-node-id="MsNCJDxzL6MLcaiN4pt5p4">披露日期：2026-08-29</div>
+      <div class="badge up" data-page-node-id="jyiOWrr8FnW96HzPCHvmu8">中性偏正面</div>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="5XnVvCjwtHIjJbCO8UsDCx">
+    <div class="sec-h" data-page-node-id="CrtF24S8vrrr6JIqybiFJr">核心结论摘要</div>
+    <div class="summary" data-page-node-id="A5Uhz48aaEQicWcFjq9NOP">
+      <span class="tone up" data-page-node-id="pzDer9ASgnaycinfJoJRvc">中性偏正面</span>
+      <p class="oneliner" data-page-node-id="uDE1RGA96IS2bzJEX8IElz">招商银行（600036.SH）2026 中报营业收入 1,781.81 亿元（+4.83%）、归母净利润 764.45 亿元（+2.02%）、扣非归母 763.39 亿元（+2.03%）、基本 EPS 2.98 元（+3.11%）、年化 ROAE 13.42%（−0.43pp）。业绩呈现「营收净利双增、增速较 Q1 改善（Q1 +3.81%/+1.52% → H1 +4.83%/+2.02%）、但利润增速显著落后营收」的结构：营收端以量补价（净利息收入 1,120.22 亿、+5.60%，NIM 1.83%、−5BP）叠加财富管理回暖（大财富管理收入 247.04 亿、+18.44%；零售财富管理手续费 140.69 亿、+24.81%）；利润端被信用减值多提 45.54 亿（291.77 亿、+18.49%）与业务及管理费 +17.41 亿吃掉 77% 的营收增量。最剧烈的结构变化在分部：零售金融税前利润 428.88 亿（<b data-page-node-id="wFptYGOP29gz2z7Y4EwYPW">−17.58%</b>）被批发金融 457.03 亿（<b data-page-node-id="V50i3McHfhhLNsezBHVb6t">+23.33%</b>）反超，批发首次成为第一利润支柱。资产质量表观稳定（不良率 0.94% 持平、拨备覆盖率 385.10% 仍为行业最高梯队），但次级类迁徙率 135.05%（同比 +12.34pp）、信用成本 0.69%（+0.02pp）显示零售端不良生成压力上升。估值 A 股 39.35 元、PB 0.87–0.90x 破净、PE(TTM) 6.58x、股息率 TTM 5.12%，隐含 COE 约 14.9% 显著高于合理水平，但需对「增速落后同业 + 不派中期股息 + 零售风险」给予折价。</p>
+      <div class="grid" data-page-node-id="FtlHTtMIInOQRmWzQsrpAn">
+        <div class="col hl" data-page-node-id="kgU9tfiBIDAzAalz6pTgBV"><h5 data-page-node-id="Ae7w0PjMr0Qt91VCFLHS5B">✓ 核心利好</h5><ul data-page-node-id="exkWijHz7KllVWZ9zrYW4A">
+<li data-page-node-id="mcEjlk9x0OB5spdsngc3Pg"><b data-page-node-id="9dbhfaDwKJvDNDfF8DEuCU">营收净利双增、增速较 Q1 改善</b>：H1 营收 1,781.81 亿（+4.83%，结束 2023–2025 连续三年下滑）、归母 764.45 亿（+2.02%，创历史同期新高）、扣非 763.39 亿（+2.03%）、基本 EPS 2.98 元（+3.11%）。节奏上 Q1 营收 +3.81%/归母 +1.52% → Q2 单季营收 912.41 亿/归母 385.93 亿（+2.52%），逐季提速。</li>
+<li data-page-node-id="zkBHRiSxdSJ9UhYmyUkh4T"><b data-page-node-id="fpHGJTmcIT5kgJKmbDuKzV">以量补价 + 财富管理回暖驱动营收</b>：净利息收入 1,120.22 亿（+5.60%），在 NIM 1.83%（−5BP）下靠总资产 +5.47%、贷款 +2.69%、存款 +3.32% 以量补价；净手续费收入 398.55 亿（+5.99%），大财富管理收入 247.04 亿（+18.44%）、零售财富管理手续费 140.69 亿（+24.81%）、代理基金 +61.40%。成本收入比降至 29.70%（−0.41pp）。</li>
+<li data-page-node-id="L0dJnHm6fsSjHHNOEGEWVr"><b data-page-node-id="AouNuG3HuW6Daa0Aszc8Jm">利润增速落后营收 = 主动多提拨备</b>：信用减值损失 291.77 亿（+18.49%）、信用成本 0.69%（+0.02pp），吃掉 55.5% 的营收增量。<b data-page-node-id="goonIS12eO0OLTFT4IkvUi">未释放拨备反哺利润，拨备覆盖率 385.10% 仍为上市银行最高梯队</b>（大行 200%–290%），利润含金量高。</li>
+<li data-page-node-id="2jhExUGU5NtNZKYyLRQ4Sp"><b data-page-node-id="zLoFECuxYmpkedPw9jvax1">分部结构剧烈切换：批发反超零售</b>：零售金融税前利润 428.88 亿（−17.58%）、营收 968.20 亿（+0.65%）；批发金融税前利润 457.03 亿（+23.33%）、营收 755.36 亿（+7.42%）——<b data-page-node-id="2HSG4XSz7HDEEcaoLzH33x">批发首次成为第一利润支柱</b>，两者几乎完全对冲。</li>
+<li data-page-node-id="AHfSp90L8KropfjPBa7k8k"><b data-page-node-id="wuUGFjgwqyVo2mrPQyWIzK">资产质量表观最优、估值深度破净</b>：不良率 0.94%（持平，大行 1.00%–1.30%）、核心一级 14.07%、LCR 202.04%、AUM 18.44 万亿（+7.96%）。A 股 39.35 元、PB 0.87–0.90x（破净）、PE(TTM) 6.58x、股息率 TTM 5.12%，隐含 COE 约 14.9%（合理值 10%–11%）。</li>
+</ul></div>
+        <div class="col rk" data-page-node-id="Q2nsbN3l9RRgEWotHsiv8G"><h5 data-page-node-id="wnGrVdhqxMpAFFmDz4h7V3">⚠ 核心风险</h5><ul data-page-node-id="ZpMC1HuIZ8E7Lg98BcHjpK">
+<li data-page-node-id="pdx8QPcnAJiGrkHigxZDUJ"><b data-page-node-id="VrBz1ezlRfUnx8NP9P62ta">零售资产质量与迁徙率（核心红旗）</b>：不良率 0.94% 持平的平静表象下，次级类迁徙率 135.05%（同比 +12.34pp）、信用成本 0.69%（+0.02pp）、零售金融税前利润 −17.58%，共同指向零售端不良生成压力上升；若迁徙继续加速，拨备释放空间将被侵蚀。</li>
+<li data-page-node-id="nNGBYzFR8SNPyGCtJf1sqJ"><b data-page-node-id="3Ebi1Zm9BT0EphNDcYMLhR">息差收窄与增速落后同业（核心红旗）</b>：NIM 1.83%（−5BP）连续三年下行（2.00%→1.88%→1.83%）；营收 +4.83%、归母 +2.02% 均落后六大行（+6.7%~+11.2% / +3.3%~+5.1%）——大行存款成本大幅改善（−29~−35BP）推动息差反弹，招行低存款成本优势反成「改善空间小」的劣势。</li>
+<li data-page-node-id="VckWy3Ry7DEGW4t5tZz1CV"><b data-page-node-id="7VVNpCA5N5f90b9Emv82vr">零售主业疲弱与结构依赖</b>：零售净利息收入 −3.23%、银行卡手续费 −11.71%，零售护城河的盈利转化弱化；利润增长越来越依赖批发金融（+23.33%，受对公信贷与债券投资驱动，周期性更强）与财富管理（+26.53%，受资本市场活跃度影响），稳定性下降。</li>
+<li data-page-node-id="nz7FHV4xYiSFZZJ3AdEDSP"><b data-page-node-id="ZElouY4l2FRsMQA7TBRFWj">表外敞口与中期不派息</b>：FPA 中非传统融资 29,265.92 亿（占比 40.24%）大于表内公司贷款 32,013.86 亿的对应体量，表外承担信用风险需持续跟踪；2026 年不派中期股息（六大行中期分红比例已全部提升至 31%），虽属年度分红惯例，但对偏好中期现金流的资金阶段性不利。</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="JcQpg6jPTSGTojftzkVAVc">
+    <div class="sec-h" data-page-node-id="JBYgHCC2BTCfrsXZ5u4Tvd">关键指标可视化</div>
+    <div class="charts" data-page-node-id="wHcORf2J2srUSu15OUIT9l">
+      <div class="chartbox" data-page-node-id="0wy9DfNowpWmWoeSJK4oey"><div class="ct" data-page-node-id="lHpi099FgQnDjBZsI2igZU">营业收入趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif" data-page-node-id="LeCFvNvxfEXjvODpNiP3jv"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b" data-page-node-id="M3avcm7rx8fayotfcJHoNv">营业收入（H1 同半年度，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1" data-page-node-id="aG8YEAc7F0l78RaqB1ztUl"/><rect x="57.6" y="62.3" width="58.8" height="143.7" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="x6tWAgVhamW5TEiqxgmyU4"/><text x="87.0" y="58.3" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="6Y2ih8qRR8CmnGB40DzviE">1,687</text><text x="87.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="mxjnJZ0p3Q9m6c930osyJ8">21</text><rect x="155.6" y="53.5" width="58.8" height="152.5" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="n2HyEBD8aMegELp6gO1SfS"/><text x="185.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="IBiJiCWREdDFfs9Rm9Yz26">1,791</text><text x="185.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="ntLjHW4wlFUcFdeJInXqKP">22</text><rect x="253.6" y="54.0" width="58.8" height="152.0" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="FIrYDpYeHqmMnCKznFqZME"/><text x="283.0" y="50.0" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="Qk32EV1vBjFAFUyUvkc5eS">1,785</text><text x="283.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="iqs7ZoO3ahVp2WNtvfGm8J">23</text><rect x="351.6" y="58.7" width="58.8" height="147.3" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="r13bGZCQCWOOVdxRwwp05x"/><text x="381.0" y="54.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="AG9rtkKOKV4lwKFGJCCARM">1,729</text><text x="381.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="wPd8Yluf45a202y1blL7W0">24</text><rect x="449.6" y="61.2" width="58.8" height="144.8" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="VK5VBE0qZDitq0yIXBF7I0"/><text x="479.0" y="57.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="8MQvgO9PNHbvFJA8GyUHgi">1,700</text><text x="479.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="6ow9OBM1ILzbEse7SfPDkc">25</text><rect x="547.6" y="54.2" width="58.8" height="151.8" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="Ih6dF2LUCB8yzjv11OIAks"/><text x="577.0" y="50.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="KmBYuY0aeDGVsLAsqVgPOz">1,782</text><text x="577.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="4FECHe4mpcE4RWshIyxJVq">26</text><text x="38" y="238" font-size="9.5" fill="#8a94a6" data-page-node-id="RwhOLEmxVfkJtJtZwMya3z">H1 同半年度序列；2026 营收 1,781.81 亿(+4.83%)，扭转 2023-2025 连续三年下滑，但仍略低于 2022 峰值 1,790.91 亿</text></svg></div>
+      <div class="chartbox" data-page-node-id="lwvAXOlsPX0ivH5e8yqNip"><div class="ct" data-page-node-id="BRgyEEF0QCXhEydTtgmLgy">归母净利润趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif" data-page-node-id="ympokjhTHr4KFEWmBO7MEf"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b" data-page-node-id="96mMpRZj8gUDgwQwJlXWBf">归母净利润（H1 同半年度，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1" data-page-node-id="psbFJblFliKRCEfD0kT8Qp"/><rect x="57.6" y="84.0" width="58.8" height="122.0" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="AmzMUY7b4dTE2zTGdEklC2"/><text x="87.0" y="80.0" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="q2BW0XjsNMzEhtuVduci13">612</text><text x="87.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="SXW4LtgCD9AYOWaL02wHx1">21</text><rect x="155.6" y="67.5" width="58.8" height="138.5" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="lwDGm7C1BmMHqsb73WDORO"/><text x="185.0" y="63.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="hbEY7UuclYxsslPnMxCzuA">694</text><text x="185.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="1qHVvQCSAdDgd2TMkZ9npv">22</text><rect x="253.6" y="54.8" width="58.8" height="151.2" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="XCKLUjEKiq7SdIW53Vjm6S"/><text x="283.0" y="50.8" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="GHdj4tof9ehaejQGXXQdBo">758</text><text x="283.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="4aq1HQeSobxuZpdcAbNWqE">23</text><rect x="351.6" y="56.9" width="58.8" height="149.1" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="OgoqGUtFQQjy3rjy2IqqNy"/><text x="381.0" y="52.9" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="BGu3ERod97KvZkxicDrwyf">747</text><text x="381.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="je1PTD6pnRUc1CbsCk9kxC">24</text><rect x="449.6" y="56.5" width="58.8" height="149.5" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="4iLf2LT503e3gvZIEXcgKB"/><text x="479.0" y="52.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="GE4wE635qsSSB6DXxTk9wf">749</text><text x="479.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="OEk1qNRAbX11jsXB9zHUDF">25</text><rect x="547.6" y="53.5" width="58.8" height="152.5" rx="3" fill="#13406b" opacity="0.85" data-page-node-id="jvIr7iTfO6UxoN4kRRkiod"/><text x="577.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle" data-page-node-id="dj20aqXbIxrhTEnUtMB4B7">764</text><text x="577.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="Ta1npCMAUn9aosuqK9D49D">26</text><text x="38" y="238" font-size="9.5" fill="#8a94a6" data-page-node-id="vgmD668WBF5kLACCt4WFV0">H1 同半年度；2026 归母 764.45 亿(+2.02%)创历史新高，但增速仅 +2.02%，低于六大行(+3.3%~+5.1%)</text></svg></div>
+      <div class="chartbox" data-page-node-id="QqEj9iFzRooqOgVfgDwH9C"><div class="ct" data-page-node-id="2PQkWSFSRImTVNwtgjjw1v">同比增速</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif" data-page-node-id="9Vf0t8NFb90L24iiJ8GHxK"><text x="40" y="16" font-size="12" font-weight="700" fill="#13406b" data-page-node-id="1QJpolkFgpQY6s726ifakR">H1 同比增速（%）</text><line x1="40" y1="172.5" x2="626" y2="172.5" stroke="#c8d0db" stroke-dasharray="3 3" data-page-node-id="lDKrFe1d4e4RC7KYHWyMfB"/><text x="98.6" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="SDWNZ2rtEUaRJWti1jj8GQ">22</text><text x="215.8" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="w9KUHqAOVDYsWyihT85kr6">23</text><text x="333.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="kGgvCuVjQaOuyMUNHeeT16">24</text><text x="450.2" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="PcA3kAGRKFMu3fBopeZwq7">25</text><text x="567.4" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle" data-page-node-id="bYmMlXFHffodm2GqSru7BJ">26</text><polyline points="98.6,114.7 215.8,175.8 333.0,201.6 450.2,188.7 567.4,127.0" fill="none" stroke="#c0392b" stroke-width="2.2" data-page-node-id="RzmHMLtVVWK1h7bmvtDFoh"/><circle cx="98.6" cy="114.7" r="3" fill="#c0392b" data-page-node-id="vmJumAwZSNBWhFy3m3HQQH"/><text x="98.6" y="107.7" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle" data-page-node-id="HsUtKfiVyJ0KEdkBoLCCFQ">+6.13</text><circle cx="215.8" cy="175.8" r="3" fill="#c0392b" data-page-node-id="ytbneWUM1ZC64V7ks0xJ8H"/><text x="215.8" y="168.8" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle" data-page-node-id="mEAIrDMARYtwAcWfmkO2VF">-0.35</text><circle cx="333.0" cy="201.6" r="3" fill="#c0392b" data-page-node-id="11GLbnSCLhkm7iDAWHjVt3"/><text x="333.0" y="194.6" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle" data-page-node-id="O0uD1z3RO679ta5xKs9ukn">-3.09</text><circle cx="450.2" cy="188.7" r="3" fill="#c0392b" data-page-node-id="7VpM76HB3lLXrdku0FTGEV"/><text x="450.2" y="181.7" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle" data-page-node-id="pYJYk8DGiaUO97cpx1iYZN">-1.72</text><circle cx="567.4" cy="127.0" r="3" fill="#c0392b" data-page-node-id="LlAWayziATOrBhBB7EJdda"/><text x="567.4" y="120.0" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle" data-page-node-id="Xh4syuu8ThBwJnxsr3qiJy">+4.83</text><polyline points="98.6,45.1 215.8,86.6 333.0,185.0 450.2,170.2 567.4,153.5" fill="none" stroke="#1f8a4c" stroke-width="2.2" data-page-node-id="v57IWxHiL2t9BOr5IXo26O"/><circle cx="98.6" cy="45.1" r="3" fill="#1f8a4c" data-page-node-id="CLcuh1yBnkbMkx1Cxb3JEA"/><text x="98.6" y="58.1" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle" data-page-node-id="vrRgA50zMgXHslrjcSCo6e">+13.52</text><circle cx="215.8" cy="86.6" r="3" fill="#1f8a4c" data-page-node-id="jk97WoxeNN74ImCOlsYgVD"/><text x="215.8" y="99.6" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle" data-page-node-id="x4OBFOg9iGWkAntCJ7k57w">+9.12</text><circle cx="333.0" cy="185.0" r="3" fill="#1f8a4c" data-page-node-id="346HDGHhFkoqJ45Y5wYvfN"/><text x="333.0" y="198.0" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle" data-page-node-id="bpivrOk6zD7LeWqdP2G1zK">-1.33</text><circle cx="450.2" cy="170.2" r="3" fill="#1f8a4c" data-page-node-id="5p1AN8df51lVtg1p24pPUB"/><text x="450.2" y="183.2" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle" data-page-node-id="5Csar4yYlBJghbSjAh65xH">+0.25</text><circle cx="567.4" cy="153.5" r="3" fill="#1f8a4c" data-page-node-id="CDKlJn92SdBjliHd1MwI3a"/><text x="567.4" y="166.5" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle" data-page-node-id="5gEE7ofHqhte4ltLDip6s0">+2.02</text><rect x="40" y="20" width="10" height="10" rx="2" fill="#c0392b" data-page-node-id="9YaN1296IwvUMPc8MgF4e6"/><text x="54" y="29" font-size="10" fill="#5b6675" data-page-node-id="7Pb5V9vQTmJv5bfLnVi8k1">营收YoY</text><rect x="150" y="20" width="10" height="10" rx="2" fill="#1f8a4c" data-page-node-id="57WXcFFgLzT0BmjXRv4NO0"/><text x="164" y="29" font-size="10" fill="#5b6675" data-page-node-id="ohMLQcm1JYPoGK4qbCNqEp">归母YoY</text><text x="40" y="238" font-size="9.5" fill="#8a94a6" data-page-node-id="MlocYxHisI6mDSM1QRqrCf">红=营收增速 绿=归母增速；2026 双双转正（营收结束三年连降），利润增速自 2023 年 +9.12% 台阶式回落至 +2% 平台</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="lGjMiLgSGT2HfW5x4qMSsN">
+    <div class="sec-h" data-page-node-id="7AcUqHQzpthAf1zUskr9DV">核心财务指标变动</div>
+    <div class="metrics" data-page-node-id="DJDzGuHUOTTVfdUiiybgFy">
+
+<div class="mcard" data-page-node-id="BUzoZ61yBm0E2e5HuyDMS5"><div class="lab" data-page-node-id="VC8kr8m9BM0rzH0W1SPRun">营业收入</div><div class="val" data-page-node-id="HdKZ761Iyirhf8WEGcZVpU">1781.81亿</div><div class="delta up" data-page-node-id="xtALqgcujV8PBaJgGcjAta">+4.83%</div></div>
+<div class="mcard" data-page-node-id="YMygwg02iYdPE3eLMG98Ox"><div class="lab" data-page-node-id="i3pOFo48ZIG3OxnUSPSluf">归母净利润</div><div class="val" data-page-node-id="pKkgjQ7emadIWzhvst0A0X">764.45亿</div><div class="delta up" data-page-node-id="G1VQXCfkpR1hfReeNBxDfN">+2.02%</div></div>
+<div class="mcard" data-page-node-id="JHZJBgowyFjZlzte9Lixpq"><div class="lab" data-page-node-id="z0m9A2hI1YoMDEob14vrFF">扣非归母净利润</div><div class="val" data-page-node-id="WmbWTG2JEMDW4hEBMOVh80">763.39亿</div><div class="delta up" data-page-node-id="gQ2EEQ1M2UFDR5AzoTPQPs">+2.03%</div></div>
+<div class="mcard" data-page-node-id="wlAYaH0a4UXIxW0vKATEmw"><div class="lab" data-page-node-id="gQuqo42JBv3FuY1lI1HVXl">基本EPS</div><div class="val" data-page-node-id="WIZncEtUYsxsJFeWvBmOCJ">2.98元</div><div class="delta up" data-page-node-id="eXHCfRz2IP7JHkFncnNq34">+3.11%</div></div>
+<div class="mcard" data-page-node-id="zUOVyf457GBGYKHMOJYb7c"><div class="lab" data-page-node-id="wlMaoATVNYVVGbCDzlRbTA">加权ROE(年化)</div><div class="val" data-page-node-id="JMaTQuDhWLwFb2lnfE5Q4B">13.42%</div><div class="delta down" data-page-node-id="ImjrECeytcOmEAVfezVWJB">-0.43pp</div></div>
+<div class="mcard" data-page-node-id="6qTn8H79D97cTb9aq16MGw"><div class="lab" data-page-node-id="FqNOMLpZyEPBNnwbCbG9Vj">净利息收益率NIM</div><div class="val" data-page-node-id="9NFePFfODZVTG5yIGwaR2Q">1.83%</div><div class="delta down" data-page-node-id="XDVaophQAEIMTfiEnskY7W">-5BP</div></div>
+<div class="mcard" data-page-node-id="xmJUsD5u5RGn5Ey9hCpx09"><div class="lab" data-page-node-id="hCBkDAt8wU4VjWIxB9V7TT">不良贷款率</div><div class="val" data-page-node-id="wkGj6X0OtGhS5UpHmrZkGE">0.94%</div><div class="delta flat" data-page-node-id="GPaSPB2NxkDckcHWCgIaKz">持平</div></div>
+<div class="mcard" data-page-node-id="dCvLaY6scyIaDXnDNkSj7v"><div class="lab" data-page-node-id="PnV63yJfIEg5Xxk4sEG8Fy">拨备覆盖率</div><div class="val" data-page-node-id="zW8qyDQYdr43NEKEZv3bFK">385.10%</div><div class="delta down" data-page-node-id="4fENqkyQjmv2fp45rtWQqy">-6.69pp</div></div>
+<div class="mcard" data-page-node-id="SrVkFRcDORer0jEFMCy3Q6"><div class="lab" data-page-node-id="OpEK1HK8bdXcR03Qv1N8XN">核心一级资本充足率</div><div class="val" data-page-node-id="rsdz0E8m2OmXdqqAqDgewW">14.07%</div><div class="delta down" data-page-node-id="jvPS5BjDjNpahsN5Dt0IH2">-0.09pp</div></div>
+<div class="mcard" data-page-node-id="gFB8AKYHlr8Uwt4OuS2wBh"><div class="lab" data-page-node-id="MY1Bx1Fq4ZUxUvv9ldJwPh">成本收入比</div><div class="val" data-page-node-id="kOGDErX6Rqppi04Dkch7PE">29.70%</div><div class="delta up" data-page-node-id="1VXSWWYtFYnw0jgd9lRhJa">-0.41pp</div></div>
+<div class="mcard" data-page-node-id="rXFnnbB9Fhk3F4NunDJfQB"><div class="lab" data-page-node-id="MCtgrS7lgFvTi1Q8pFZYJ0">经营现金流净额</div><div class="val" data-page-node-id="Wg0xfaFCkc4FtgZi4GDubP">3046.11亿</div><div class="delta up" data-page-node-id="RrU2BqZyrgOcC0eapTivkm">+126.54%</div></div>
+<div class="mcard" data-page-node-id="HHC1eXPSxHeLg66TvDLMLb"><div class="lab" data-page-node-id="6r758iWuSQaHHV1aksjwyo">管理零售AUM</div><div class="val" data-page-node-id="Mdl8Cy9AYTRyo8msZPzoLi">18.44万亿</div><div class="delta up" data-page-node-id="UIcl2Nm7LYCAbommVTJAGT">+7.96%</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="mtPJ400LmYCy4f7IO9cCMP">
+    <div class="sec-h" data-page-node-id="TFhQPQpODWQW9aggi9B0NN">与历史同期对比</div>
+    <table class="tbl" data-page-node-id="UBul0ZdLI3kk1R1E8TCkws">
+      <thead data-page-node-id="cuQf0qAv0o01BVCiWeuNaT"><tr data-page-node-id="SPwz5o6gE0ec5sLYu6zo30"><th data-page-node-id="7Ilx8YNKvu754LkUWd7hM5">指标</th><th style="text-align:right" data-page-node-id="jrd4FuKDHEBb77O12TlDtR">本期</th><th style="text-align:right" data-page-node-id="wugzGZSfDZ5KtvUYGFSmj1">去年同期</th><th style="text-align:right" data-page-node-id="fHvAIBjbjugC5gAzXUBT3d">同比变动</th></tr></thead>
+      <tbody data-page-node-id="S4FXo4ndVhCOrZHKEC2HUe">
+
+<tr data-page-node-id="pX9bNMyu8wzfUqXLmHhRh1"><td data-page-node-id="kt1O6elmT6Njj7bF6sKvlF">营业收入</td><td class="num" data-page-node-id="rJM0M9hix3Uhsw9KQmS9aD">1781.81亿</td><td class="num" data-page-node-id="OoFxSqRCQFPn3LngdHels8">1699.69亿</td><td class="num up" data-page-node-id="HE9lRlhvo8xeXnsgornRzO">+4.83%</td></tr>
+<tr data-page-node-id="jWpv1KwsbCjY9R5BKQCya1"><td data-page-node-id="gqMr5SHm7oVFjcW8CW1SYu">归母净利润</td><td class="num" data-page-node-id="fVWtugyIcJVw4JV8RUzTxu">764.45亿</td><td class="num" data-page-node-id="pK9w6vvWBn61ylvoVNUYmw">749.30亿</td><td class="num up" data-page-node-id="fLhFxRf8pLrNZdKKx83g9s">+2.02%</td></tr>
+<tr data-page-node-id="QPcyzrjaULkDknMGSvHmYn"><td data-page-node-id="NGd03U7YuZicHBHtXn5MN1">扣非归母净利润</td><td class="num" data-page-node-id="JKwmKn5YdyQOcwAhX7vkit">763.39亿</td><td class="num" data-page-node-id="qkl9kXPui9f34itsrPIwE8">748.19亿</td><td class="num up" data-page-node-id="BjSxvCFBy7bskhuhWDqJo9">+2.03%</td></tr>
+<tr data-page-node-id="wnpnO10PujPFTNjrCzPCUx"><td data-page-node-id="FuxUqwsx3bFtIsNReWXfAE">加权ROE(年化)</td><td class="num" data-page-node-id="kxneq8QtRlMBUrBG1yRZEn">13.42%</td><td class="num" data-page-node-id="V19FlJZEDb8ygjFfCAtsCM">13.85%</td><td class="num down" data-page-node-id="mamT4QGoca9jz72UkR3AGo">-0.43pp</td></tr>
+<tr data-page-node-id="AHPPUBZc9yCB1KKHEZ8fNN"><td data-page-node-id="ksJbhii6eYuoMOsrXVjKri">基本EPS</td><td class="num" data-page-node-id="pSQeXY5uYPJWxlT997jJMT">2.98元</td><td class="num" data-page-node-id="fmhrw5BWoUwX4KAcez2HHY">2.89元</td><td class="num up" data-page-node-id="QS4CAC1YUJuhuJHSgJU354">+3.11%</td></tr>
+<tr data-page-node-id="R7B05dEBEOPpF1W2gnOGuO"><td data-page-node-id="FVGJWVXMixW7kBfXFstTsN">净利息收益率NIM</td><td class="num" data-page-node-id="CdsQczL7MJDrsSn3VmzPkI">1.83%</td><td class="num" data-page-node-id="JisDzGCpKTDZd4JoBUQAMa">1.88%</td><td class="num down" data-page-node-id="ykXgl9zVp8NiHliCppzv10">-5BP</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec" data-page-node-id="rzu2DqfKpp3syQHQ1b7BHU">
+    <div class="sec-h" data-page-node-id="1QxbJ9GlRy880xAwGsZVgr">与市场预期对比<span class="sec-sub" data-page-node-id="kc1Ce1fE3AsAyrs1WTRhGH">（v2 须标注来源与口径）</span></div>
+    <table class="tbl" data-page-node-id="gCvq64WL1D4sL41GWMS4Hl">
+      <thead data-page-node-id="hLN04qAxJluhAzLz3A4DVN"><tr data-page-node-id="WNwzoRAcGeFRGG34wYRf7b"><th data-page-node-id="znl1yzCUWRIH8eUn4EySyC">指标</th><th style="text-align:right" data-page-node-id="p3Ehqr1lUXWqIaaiJc6r3G">实际</th><th style="text-align:right" data-page-node-id="ZhQVLMQQV7RazmTbdA4l4E">市场预期</th><th style="text-align:right" data-page-node-id="YSJIk5lsqE6IVSMhzV1J4o">差异</th><th style="text-align:right" data-page-node-id="91pZ0TIHJ3HonCHlgQ0RLj">判断</th></tr></thead>
+      <tbody data-page-node-id="IVgmi5fXSBgqByhkKBtdfT">
+
+<tr data-page-node-id="qpHkcIyV6XsUyOjgkrtAfK"><td data-page-node-id="LbouFXUPbRZHbd6JzBWEHF">营业收入</td><td class="num" data-page-node-id="sMGp3HynKBB56EDygOND2E">1781.81亿(+4.83%)</td><td class="num" data-page-node-id="rv1gyoyrTjwp7eHVSaDx1w">按2025年H1占全年50.4%外推→2026E约3,535亿(+4.7%)</td><td class="num flat" data-page-node-id="KCmxprhpuHTNb6o3RpzK9z">符合进度</td><td class="num down" data-page-node-id="6QKBloH1AJWKg9GRVXPG6I">但增速落后六大行(+6.7%~+11.2%)</td></tr>
+<tr data-page-node-id="6MG4DXPRAogRuSu5gMBkYC"><td data-page-node-id="oxyGg02emKN72EZHBl07Vp">归母净利润</td><td class="num" data-page-node-id="n87ACB5q8cRop3rs6M4jnx">764.45亿(+2.02%)</td><td class="num" data-page-node-id="53aSgzTGBrBbtm8000o72Y">按2025年H1占全年49.9%外推→2026E约1,532亿(+2.0%)</td><td class="num flat" data-page-node-id="QLxrbOMgoA8w3eNZ4Q2xB2">符合进度</td><td class="num down" data-page-node-id="8uFxq505fINkpzvXPp0pwr">增速落后六大行(+3.3%~+5.1%)</td></tr>
+<tr data-page-node-id="vy4BMyOF0cz39nWaLDhlxG"><td data-page-node-id="cQp1ZAToFE0AMbHrVUO9lZ">净利息收益率NIM</td><td class="num" data-page-node-id="rbkd5wuhYqAhN9ZEGRNPwZ">1.83%(-5BP)</td><td class="num" data-page-node-id="4jrYoMqukzOyGFDrb8PQHA">公司指引：Q1环比-3BP、Q2环比-1BP，下半年降幅进一步收窄</td><td class="num up" data-page-node-id="dCO3I535v6p1nG69cF8nbn">符合/优于指引</td><td class="num flat" data-page-node-id="GXgPfEwtyIMM24Yt4nvHQ0">降幅逐季收窄已兑现Q1→Q2</td></tr>
+<tr data-page-node-id="6ngpAlPbS7VFN4Sbe08ZGm"><td data-page-node-id="xfNTVjXhRGFY2XhG4IpSVY">不良贷款率</td><td class="num" data-page-node-id="R4VKY5ZPMtk0M95z7ldE38">0.94%(持平)</td><td class="num" data-page-node-id="lgYRkmPcSSrfny0VlcvtTV">市场预期维持0.9%-0.95%区间</td><td class="num flat" data-page-node-id="PPsb5IfwAVAMnS11Gh0Bj7">符合预期</td><td class="num amber" data-page-node-id="vLib7t0zM9k500gYXcAAfv">但次级类迁徙率同比+12.34pp</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)" data-page-node-id="YSfs5TJrsVP212PPXZOMNi">预期来源与统计时点：无单季 Wind/一致预期完整数据（银行以全年预测为主，统计时点 2026-08-29）。按 v2 修正 B 全年进度校验：① 2025 全年营收 3,375.32 亿、归母 1,501.81 亿；2025H1 营收占全年 50.4%、归母占 49.9%。按同样进度外推，2026E 营收约 <b data-page-node-id="yAKcDWeQ8ypmEZMMmVWte5">3,535 亿（+4.7%）</b>、归母约 <b data-page-node-id="Quf2AmFb2k5ZO2UBdArDZO">1,532 亿（+2.0%）</b>。② 节奏：Q1 营收 +3.81%、归母 +1.52%；Q2 单季营收 912.41 亿、归母 385.93 亿（+2.52%），<b data-page-node-id="lOYx1CSRKo3xhQSQowQ0s4">环比与同比双双提速</b>。③ 市场反应：2026-08-28 A 股收 39.35 元（52 周区间 35.28–43.99，距高点 −10.5%）、市值 9,982 亿、PE(TTM) 6.58x、PB 0.90x（破净）、股息率 TTM 5.12%。<b data-page-node-id="I6eyl1bOEUYFFdem5qft9s">结论：H1 营收增速（+4.83%）明显低于六大行（+6.7%~+11.2%），归母增速（+2.02%）亦低于六大行（+3.32%~+5.10%）与部分股份行，属「符合自身预期、落后同业」</b>。</p>
+  </div>
+
+
+  <div class="sec" data-page-node-id="vJ6GwyaT2wBHu9hf161tvF">
+    <div class="sec-h" data-page-node-id="dWlOyfZGHB1RqziNphTTSJ">行业坐标与供需</div>
+    <div class="card" data-page-node-id="fATRvuLXl7eEZIOJmJ5sbi">
+      <p data-page-node-id="YotHomNxGDVCfWa3FPgd8q"><b data-page-node-id="Wwl9KkHHljIctCOemGJ4xC">行业所处阶段与传导方向：</b>中国银行业 2026 上半年处于<b data-page-node-id="66u7uXGtgUgr9q5fn7OdRn">「息差企稳、规模驱动、非息接力」的修复期</b>：六大行（工建农中邮交）8 月 28 日集中披露中报，合计营收约 2.00 万亿、归母 7,125.98 亿，<b data-page-node-id="MH4DFpZGWSWzrqCkd1wY1j">全员正增长</b>；更关键的信号是<b data-page-node-id="lk0KbW81IBKyOeXOg6zn9O">净息差整体企稳回升</b>——建行 1.37%（较全年 +3BP）、农行 1.28%（较 Q1 +2BP）、中行 1.27%（+1BP）、交行 1.23%（同比 +2BP），仅工行 1.29%（−1BP）、邮储 1.63%（−7BP）下行。驱动来自存款成本管控（中行付息负债成本率 −35BP、建行存款付息率 1.11%、−29BP）。不良率普遍下行（工/建 1.29%、农 1.25%、中 1.22%、邮储 1.00%、交 1.30%），拨备覆盖率 200%–290% 区间。招商银行的坐标是<b data-page-node-id="eGVl7msK0YPLEpv6jSus3R">「息差绝对水平最高（1.83% vs 大行 1.23%–1.63%）、资产质量最优（不良 0.94% vs 大行 1.00%–1.30%）、拨备最厚（385.10% vs 大行 200%–290%），但增速最慢」</b>——典型的「高质量低增长」，市场给的是破净定价。</p>
+      <p data-page-node-id="ebUEt46kn8uhG5fNaHP4Le"><b data-page-node-id="x1JIjtD7HvIMuYgg08P6gi">量价 / 供需 / 价格位置 / 政策：</b>① 息差：招行 NIM 1.83%（−5BP）、净利差 1.77%（−2BP），绝对水平行业第一，且<b data-page-node-id="V3DHRjbABay21T2V4E229c">降幅逐季收窄（Q1 环比 −3BP、Q2 环比 −1BP，公司预计下半年进一步收窄）</b>；同业建行 1.37%、工行 1.29%、农行 1.28%、中行 1.27%、交行 1.23%、邮储 1.63%。② 规模：招行总资产 13.79 万亿（+5.47%）、贷款 7.45 万亿（+2.69%）、存款 10.16 万亿（+3.32%）；<b data-page-node-id="AXxgdIUFXBXGIap8hV3ZtQ">存款结构持续优化</b>——零售活期 +4.50%、公司活期 +4.24%，均快于定期（+2.19%/+2.30%），低成本核心存款优势巩固。③ 非息：招行非息占比 37.13%（−0.46pp），其中财富管理手续费高增（大财富管理收入 247.04 亿 +18.44%、代理基金 +61.40%、代理信托 +43.76%）；六大行非息普遍回升（建行非息 +16.31%、占比 +1.36pp）。④ 资产质量：招行不良 0.94%（持平）、拨备 385.10%（−6.69pp）；大行不良 1.00%–1.30%、拨备 200.85%–290.10%。⑤ 分红：六大行中期分红比例<b data-page-node-id="9xvSMEqn7GZtmbzMPz8MGZ">全部提升至 31%</b>（合计拟派 2,209.89 亿、+7.98%），而<b data-page-node-id="qtJBNHR2jH8dJCyckXB6lh">招行董事会不建议派发 2026 年中期股息</b>，形成鲜明反差（招行历行年度分红，2025 年度每股派息 2.02 元、派息率 35.37%）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="ZqisbiHevQuNynGIqRQ3US">
+    <div class="sec-h" data-page-node-id="DpSn2uG7DJeV4DDduGzgPb">盈利质量与增长归因</div>
+    <div class="card" data-page-node-id="AZ7vLY2WcjeJPaCKGtJ0Dj">
+      <p data-page-node-id="YdMYbx9Nic4dK8t6HXuYN2"><b data-page-node-id="YRe7iVCGWreEb1etxHTraB">ROIC − WACC（创造价值判据）：</b>银行业<b data-page-node-id="6K8hYEJm2hZCSwuwmI65uG">不适用传统 ROIC−WACC</b>（负债是原材料而非融资来源），按 v2 修正 C 以<b data-page-node-id="qlsE9jbc7jpEzxsCxlgB3B">ROE−COE</b> 与 <b data-page-node-id="tTtKtJlPWcm4FIxXYJec0l">ROA</b> 框架替代（允许定性）：年化 ROAE <b data-page-node-id="CI1usvgNmn5onCmNQQQAJl">13.42%</b>（−0.43pp）、ROAA <b data-page-node-id="LQrCZwHMbyvheAjcVboHoX">1.14%</b>（−0.07pp）。招行股权成本 COE 取 10%–11%（β 约 1.0、无风险利率 ~1.8%、ERP ~5%–6%，银行系统性风险溢价已含于 β），则 <b data-page-node-id="Xjp7EtyFRjgepzh473k6He">ROE−COE ≈ +2.4 ~ +3.4pp，价值创造仍为正</b>，但利差较 2021 年（ROE 17%+、COE 10% → +7pp）已大幅收窄——这正是 PB 从 2.0x 回落至 0.87x 的定量解释。反推市场隐含 COE：若 PB = ROE/COE（永续零增长近似），<b data-page-node-id="DulxRvhbksgRSWFwViTIdd">隐含 COE ≈ 13.42%/0.90 ≈ 14.9%</b>，远高于合理 10%–11%，说明市场对零售资产质量、地产敞口与永续增长给予极端悲观定价。<b data-page-node-id="jkYaD8KnE6OgsN6cFMiU39">结论：超额收益为正但在收窄；破净定价隐含的风险溢价过高，是本案的核心矛盾</b>（v2 修正 C 定性结论）。</p>
+      <p data-page-node-id="1gFcONxWfVAtm7RE3MfV4J"><b data-page-node-id="nObrqeufaxA9yQvOgDkAAG">增长归因（量 / 价 / 成本 / 非经）：</b><b data-page-node-id="bkCwbux5RnPNkuS5CwhraB">收入端</b>：营收 +82.12 亿（+4.83%）= 净利息收入 +59.4 亿（1,120.22 亿、+5.60%，以量补价：总资产 +5.47%、贷款 +2.69%、存款 +3.32%，对冲 NIM −5BP）+ 净手续费及佣金收入 +22.5 亿（398.55 亿、+5.99%，财富管理驱动：大财富管理收入 247.04 亿 +18.44%、财富管理手续费 161.92 亿 +26.53%）+ 其他净收入 +0.22 亿（263.04 亿，含债券/汇兑损益）。<b data-page-node-id="4Ax3XKABiJnWw0UvLcdBJ7">支出端</b>：业务及管理费 +17.41 亿（529.12 亿、+3.40%，慢于营收 → 成本收入比降至 29.70%、−0.41pp）；<b data-page-node-id="6gdU7fMs18NNSeyKgdZDOO">信用减值损失 +45.54 亿（291.77 亿、+18.49%）——这是利润增速（+2.02%）大幅落后营收增速（+4.83%）的最核心原因</b>；其他资产减值 0.14 亿、其他业务成本 37.87 亿、营业外净支出 0.46 亿。<b data-page-node-id="RIGY0Ufg5nlmj0cTeF2b8q">税率</b>：实际所得税税率 15.23%（+0.04pp）。<b data-page-node-id="M1rxBjE2GdVN2dbgHerGtC">结论</b>：营收增量 82.12 亿中，减值多提吃掉 55.5%、管理费吃掉 21.2%，仅剩 23.3% 落到营业利润（+18.31 亿、+2.06%）。拆分看：Q1 营收 +3.81%/归母 +1.52% → Q2 营收 +5.5%/归母 +2.52%，<b data-page-node-id="GFLrXMERm9qFMY0hvCDM0B">逐季改善</b>。</p>
+      <p data-page-node-id="FYcoGKexbAZ6bn3XmIPi4H"><b data-page-node-id="8rt0u4MmcJaq4eXeJ4Lqgs">盈利质量（扣非 vs 归母，真 / 虚）：</b><b data-page-node-id="OTSseNi3a8iXJj6IJQaoBl">质量「真」、极干净</b>。扣非归母 763.39 亿 vs 归母 764.45 亿，非经常性损益仅 <b data-page-node-id="UutGNJxQdTnPeYrERtbC4z">1.06 亿元</b>（占归母 0.14%，其中影响少数股东 0.06 亿），几乎无粉饰空间——银行无政府补助依赖、无资产处置收益调节。<b data-page-node-id="N0wTr5redJ7JuagkcIBxAY">拨备是银行真实的「利润蓄水池」，需重点检验</b>：本期信用减值 291.77 亿（+18.49%）、信用成本年化 0.69%（+0.02pp），<b data-page-node-id="zu1Cxy37hF0IU66Lojpra9">拨备计提不减反增</b>，拨备覆盖率虽从 391.79% 降至 385.10%（−6.69pp），但仍为上市银行最高梯队（大行 200%–290%）；贷款拨备率 3.63%（−0.05pp）——<b data-page-node-id="HzTUm0MP4OidR9W6nwPzET">未通过释放拨备反哺利润，利润含金量高</b>。成本收入比 29.70%（−0.41pp）、信息科技投入 46.79 亿（占营收 2.99%）为长期能力建设而非费用浪费。</p>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="iTxvg1FxxbWUAVBrDMMw8V">
+    <div class="sec-h" data-page-node-id="l9nFpKWMwTeBnHpPIKq0nP">业务分部与地区拆解</div>
+    <div class="card" data-page-node-id="2mjeiAQdL5H0BFKogwe1x2">招行按<b data-page-node-id="OCsy6sIVXJp2ldltGDZBBh">业务板块</b>披露（2026 中报，人民币）：<br data-page-node-id="q1ThWHcMnVjWf6tqp5Spri"/>• <b data-page-node-id="OVlEcSTxzabSbY8dV3HPok">零售金融</b>：营业收入 <b data-page-node-id="2JAhqbGEEhqUelu0MG7VO7">968.20 亿（+0.65%）</b>、占集团营收 54.34%；<b data-page-node-id="BoPJ6CyQ6Z4NNxBlKpSH0Q">税前利润 428.88 亿（−17.58%）</b>。拆解：零售净利息收入 684.54 亿（<b data-page-node-id="ZoZ7nB3RRMXzYcr1DdWErG">−3.23%</b>，零售信贷需求偏弱+零售息差收窄）、零售非利息净收入 283.66 亿（+11.43%）。亮点是<b data-page-node-id="GB4uy9vklwxAPhzofr7S9j">零售财富管理手续费 140.69 亿（+24.81%）</b>，占零售净手续费收入 56.47%；拖累是<b data-page-node-id="yFIPCwj125PGiYbJBGZJ6r">零售银行卡手续费 63.21 亿（−11.71%）</b>（信用卡交易量与费率高基数回落）。零售税前利润大幅下滑 = 净利息收入降 + 零售信用减值计提上升（零售不良生成压力）。<br data-page-node-id="FHI0tEG1U9U43Zu0QJt4wF"/>• <b data-page-node-id="SKmsBSw8WPasQMaNfzkMGU">批发金融</b>：营业收入 <b data-page-node-id="FLMRvwsaV0kZgtFN0RjQ0G">755.36 亿（+7.42%）</b>、占 42.39%；<b data-page-node-id="VrI3SUHBXSvdXJgazHof8O">税前利润 457.03 亿（+23.33%）</b>。拆解：批发净利息收入 482.16 亿（<b data-page-node-id="Oam6TKdAUMBfNrXofbwtCu">+21.69%</b>，对公贷款 +9.27%、同业与债券投资量增）、批发非息 273.20 亿（−11.00%，债券/汇兑高基数）。FPA 余额 72,719.97 亿（较年初 +5,465.60 亿），非传统融资占比 40.24%。<br data-page-node-id="OdgyQcJnwCiV4WQxUbqGdz"/><b data-page-node-id="FBwC6xbh9iQapLoJ96SX7w">增量利润归因（核心看点）</b>：零售税前利润 −91.4 亿、批发 +86.5 亿，<b data-page-node-id="rGvLi0G3DPnd0L9D82qOoR">两者几乎完全对冲，批发首次超越零售成为第一利润支柱</b>；集团利润总额 +18.31 亿的增量实际由「其他/抵销项 +23.3 亿」贡献。这标志着招行利润结构从「零售单极」转向「批零双轮」，短期稳住利润，但零售护城河的盈利质量正在被息差压缩与零售信用风险双向侵蚀。</div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="0peh9EmSLCXHFUAhEaocex">
+    <div class="sec-h" data-page-node-id="wCkxJIM5BrB6GGNQt5do7J">资产负债与周转效率</div>
+    <div class="card" data-page-node-id="PFhZZAkxe15E5CvFuJ7YCM"><b data-page-node-id="QhcWzAm3NIrW0PhWgQVajc">资产负债结构（银行口径）</b>：总资产 <b data-page-node-id="vUfDagqMruHNpQQxWEFJyv">137,852.80 亿</b>（较年初 +5.47%）、总负债 124,319.79 亿（+5.45%）、归母股东权益 13,450.33 亿（+5.67%）、<b data-page-node-id="5vWD1F0gETqr3rXToqQu64">每股净资产 45.40 元（+4.54%）</b>；资产负债率约 <b data-page-node-id="M7J1kQ9eRvJTCLjFM2btZh">90.2%</b>（银行正常水平，Q1 为 90.43%）。<br data-page-node-id="j1LPaT5SlVM81tyAS5BHWA"/><b data-page-node-id="ZzZTfBP6MBf5KwlCKx5sLJ">资产端（占比）</b>：贷款和垫款净额 71,848.11 亿（52.12%）、投资证券及其他金融资产 44,043.68 亿（31.95%）、同业往来 11,164.25 亿（8.10%）、现金/贵金属/存放央行 7,226.19 亿（5.24%）、商誉 99.54 亿（0.07%，极小）。<br data-page-node-id="4BALPBCr9K55h1HKwQkYt7"/><b data-page-node-id="veCN4FQAI5NQMnMYqPBLwv">负债端（占比）</b>：客户存款 <b data-page-node-id="2eUAYjdJ3HkczFgXlhBVne">101,624.98 亿（81.74%，核心负债、成本优势根基）</b>、同业往来 15,162.29 亿（12.20%）、其他 3,350.58 亿（2.69%）、FVTPL 金融负债及衍生 2,244.93 亿（1.81%）、应付债券 1,351.62 亿（1.09%）、向央行借款 585.39 亿（0.47%）。<br data-page-node-id="yKy0SjWo06lWn8cG86C7bu"/><b data-page-node-id="3uy4wVNGi8EkIrM4KVHAYi">资本充足（高级法）</b>：核心一级资本净额 11,152.73 亿（+4.47%）、RWA 79,289.39 亿（<b data-page-node-id="FhpRLEZ30MhZfvLbwWQ58b">+5.16%，快于资本增速</b>）；核心一级 <b data-page-node-id="arTY2aGE0Wc19eWr5rbmZv">14.07%</b>（−0.09pp）、一级 16.59%（+0.08pp）、资本充足率 <b data-page-node-id="wZaUtSdRgkJnEFm69uY1Vz">18.33%</b>（+0.09pp）；权重法下 11.84%/13.96%/15.06%（均高于监管底线 7.5%/8.5%/10.5%）。<b data-page-node-id="yDW09PQUgn3UQTKWDWRgys">2026-04-15 已赎回全部境内优先股 275 亿元</b>，在赎回后一级与总资本充足率仍双双提升，说明其他一级/二级资本工具补充有效。<br data-page-node-id="fWm8fKuHM2D0WWwHTgjrvT"/><b data-page-node-id="EuhICLATJyQlrkgoagLn62">流动性</b>：流动性覆盖率 LCR 202.04%、流动性比例人民币 62.36%/外币 124.87%；单一最大客户贷款比例 2.14%、前十大客户 13.93%（集中度低）。</div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="aoCez124iLq4nmpecMBc2O">
+    <div class="sec-h" data-page-node-id="zG5W1yxf2Irkg7rFXBDMlm">现金流健康度</div>
+    <div class="card" data-page-node-id="lHKxE6t7MRAaIvRDVkF4OM">
+      <p data-page-node-id="KuXYR7qHKLhRTxtOHwOlh5"><b data-page-node-id="FmBq48Wprtq4VNWpIPmljB">现金流匹配度：</b><b data-page-node-id="wnn4Kfb1LS8oV18SQhG1MB">需谨慎解读——银行现金流量表不可与实业类比</b>。经营活动现金流净额 <b data-page-node-id="LBgTE7v06qzDQjuQ5LbGGi">3,046.11 亿（+126.54%）</b>、每股 OCF 12.08 元（+126.64%），<b data-page-node-id="kywrC5LbboBObpE67Ccq9Q">OCF/归母 ≈ 398%</b>。但银行 OCF 包含客户存款净吸收、同业往来、拆借资金等经营性负债变动，<b data-page-node-id="GwobEbtMMvL75iLIvP8Fhx">波动极大且不代表盈利现金含量</b>（2024H1 仅 1,081.80 亿、2025H1 1,344.61 亿，2026H1 3,046.11 亿）。本期暴增主因存款与同业负债净增加规模扩大（总资产 +5.47%、存款 +3.32%），属<b data-page-node-id="6Eb1kJpQkKaF65fTP3ZycU">负债端的经营性流入</b>，而非资产端回款改善。<b data-page-node-id="5qTMB5zS04M3OclSqChZja">对本报告的意义</b>：不能以 OCF 作为银行盈利质量的验证指标；银行应以<b data-page-node-id="F19Z6TgR27WaEdTgCQSSCv">不良率、迁徙率、信用成本、拨备覆盖率</b>作为「盈利真实性」的替代验证——招行这四项中前三项边际走弱、拨备绝对水平仍行业最优。</p>
+      <p data-page-node-id="zyEjCbTZmQlU7zn8jmxJJX"><b data-page-node-id="w8o4kz78ZmXfLNJlAi2yy9">OCF 拆解归因（v2 修正 E）：</b>半年报摘要未披露完整现金流量表分项，可确认项：<b data-page-node-id="M5wMRS1t1OuXBnDs8YDgvh">经营活动现金流净额 3,046.11 亿（+126.54%）</b>、每股 12.08 元；归母净利润 764.45 亿、净利润现金含量约 398%。<br data-page-node-id="k4QmZMKj2qzGLlmGItB42t"/><b data-page-node-id="A93DURW35SVDGIzBl1EtnG">结构性归因（基于资产负债变动倒推）</b>：① <b data-page-node-id="Gf9hgGcM0GIDNK2gKEOOMT">经营性负债净增</b>：客户存款 +3,266.68 亿（98,361.30→101,624.98 亿）、同业往来与应付债券变动，是 OCF 暴增主因；② <b data-page-node-id="aswE3BChnyOzURUCb3X945">经营性资产占用</b>：贷款 +1,949.75 亿、投资证券及其他金融资产增加，形成现金流出；③ <b data-page-node-id="yJCUy0uttrxg0Ux1DT3JfW">减值等非付现项</b>：信用减值 291.77 亿（加回项）、折旧摊销等。<br data-page-node-id="W3NkGzAp72Hfwt9j3EvynD"/><b data-page-node-id="Naw2xR8h3b4HygDHvvMMvO">结论</b>：OCF 暴增由负债端驱动（存款沉淀 + 同业融入），反映<b data-page-node-id="WT8lwKn42LJCQRRwSpmK4X">负债基础扎实、客户存款黏性强</b>，是正面信号；但不可据此认为「利润现金含量 398%」，亦不可与实业公司横向比较（§5 红旗 10）。</p>
+      <p data-page-node-id="OpYEH01wuILPEt3N1J0sdx"><b data-page-node-id="TAmnL2RBN0FQWEcHak027C">自由现金流与覆盖能力：</b><b data-page-node-id="J8yhjGpn9nTHfRDH6WqpNl">不适用传统 FCF 口径</b>。银行不产生「经营现金流 − 资本开支」意义上的自由现金流：其「CapEx」主要是金融投资（债券、同业资产）与科技投入，均属经营性资产配置而非固定资产支出。<b data-page-node-id="hL1dOH2TwAFCWuWAPZGj9p">替代框架</b>：① <b data-page-node-id="5BcbG65TeNm7DY9T7aQdlN">可分配能力</b>——风险加权资产增速 5.16% 略快于核心一级资本净额增速 4.47%，资本内生积累基本可支撑当前扩张（核心一级 14.07%，远高于监管底线与自身目标），<b data-page-node-id="LTUp6OROcHa0vxJ8BJnOCL">留存收益足以支撑 RWA 增长并派息</b>；② <b data-page-node-id="iUO0dNG2ZDpgAIlyheD9ps">分红覆盖</b>——2025 年度每股派息 2.02 元（总额约 509 亿）、派息率 35.37%，由净利润内生覆盖，<b data-page-node-id="PGRmtLTn00E9Bal0FWk46b">非「借钱分红」</b>；③ <b data-page-node-id="Uxz6IiVlTvUMaWCaKSXWhx">科技投入</b>——信息科技投入 46.79 亿（占营收 2.99%）、研发人员 10,946 人（占员工 8.98%），为战略性支出但计入当期费用，不挤压分红能力。<b data-page-node-id="B5UeQEmAwE0Gt4gt9Ztdqc">结论：资本内生 + 分红可持续，无需外部融资支撑增长</b>（2026-04 赎回 275 亿优先股后资本指标仍改善即为佐证）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="uohE1L0JYZhm1tBvPf40nw">
+    <div class="sec-h" data-page-node-id="1pq7p6KaI7tCzPaB4yYKFV">估值与股东回报</div>
+    <div class="card" data-page-node-id="cnzs0sFug8q7eX3IsVpOO4">
+      <p data-page-node-id="aKl9TTt238aMYFImcHJ46Q"><b data-page-node-id="qiunArLfHMeIg4unhVRMO9">相对估值水位：</b><b data-page-node-id="CVbSww5mqigh4bWE9V81q9">深度破净、高股息、隐含风险溢价极高</b>。以 2026-08-28 A 股收盘 <b data-page-node-id="2kEqu2syh9gMpexaiS1izH">39.35 元</b>计：总市值 <b data-page-node-id="uUNzfAMDlEuj9Hl1Go2CAL">9,982 亿</b>、PE(TTM) <b data-page-node-id="blIceD6Mu7z9SX9CxfAqBJ">6.58x</b>、PB <b data-page-node-id="N8e389c748oYp4XFNb8MoZ">0.90x</b>（按 2025 年末每股净资产 43.43 元）／<b data-page-node-id="gVvxCPdFSus3q6gtqMNTpL">0.87x</b>（按中报 45.40 元）——<b data-page-node-id="YJSopc8dyDgYt8Xe9SemUc">已破净</b>；股息率 TTM <b data-page-node-id="Jt6n08tgpepxxiV39hxUDz">5.12%</b>（2025 年度每股派息 2.02 元 / 39.35 元）、派息率 35.37%、TTM EPS 5.70 元；52 周区间 35.28–43.99 元（现价距高点 −10.5%、距低点 +11.5%）。<b data-page-node-id="BqjEuhN4VY789W7DZndL61">相对位置</b>：股份行 PB 中枢历史 0.8–1.2x，招行自身历史 PB 中枢 1.3–1.5x（2021 峰值约 2.0x），<b data-page-node-id="rXuC2N6eocsEo3hie0qAlq">当前 0.87–0.90x 处历史极低分位</b>。若按中报年化 EPS（2.98×2≈5.96 元）与 35.37% 派息率外推，2026 年度股息约 2.11 元/股 → 现价对应<b data-page-node-id="zPbDtMmfbYkVo33VCHwepH">前瞻股息率约 5.36%</b>，较十年期国债（约 1.8%）利差超 350BP，防御配置价值突出。</p>
+      <p data-page-node-id="KmsQbJQTLD77rldngKSjCt"><b data-page-node-id="Nh9eSYy7GUnjWIjpe8WESz">周期正常化估值（v2 修正 F）：</b>银行利润受拨备政策影响大，正常化以<b data-page-node-id="ofBQtnoHUxSfNay5cOtLj7">PB−ROE 框架</b>还原（v2 修正 F）。当前年化 ROAE 13.42%、PB 0.87–0.90x。<b data-page-node-id="7TM2o9KdSW8uVGAzfwh7Jc">反推隐含 COE</b>：PB = ROE/COE → <b data-page-node-id="O3S1lnXsY6nq2ELc2VWmkL">COE ≈ 13.42%/0.90 ≈ 14.9%</b>，而合理 COE 取 10%–11%（β≈1.0、无风险 1.8%、ERP 5%–6%）→ <b data-page-node-id="gsFcdyuitgIXQmLPqiMmbX">合理 PB ≈ 13.42/10.5 ≈ 1.28x</b>，对应股价约 <b data-page-node-id="3ChVxy7CuFhafxiAHhk34b">58 元</b>。<b data-page-node-id="id15JcAM4hoAksLLOF671i">但该模型对「永续零增长 + ROE 恒定」高度敏感，需加风险折价</b>：① ROE 仍在下行（−0.43pp/年）；② 零售资产质量与迁徙率恶化；③ 增速落后同业。保守取合理 PB <b data-page-node-id="koZ4RQ5tRmre0GfKocX0WT">1.0–1.2x</b>（隐含 COE 11.2%–13.4%）→ 合理股价区间 <b data-page-node-id="yBzCsUowHx3k8bl8LD4fM3">45.4–54.5 元</b>，较现价 39.35 元有 <b data-page-node-id="wgwRVkN4HvER9JHfIX09An">+15%~+39%</b> 空间。<b data-page-node-id="wpnXLkINrJhS4kvGoppLPd">结论</b>：0.90x PB 已定价「ROE 永久降至 12% 以下 + 零售风险实质暴露」的悲观情形；若下半年 NIM 降幅如公司指引进一步收窄、财富管理维持双位数增长，存在估值修复窗口。下行保护来自 5.1%–5.4% 股息率与破净安全边际。</p>
+      <p data-page-node-id="xpmxdajHFNKqccW16MGvLU"><b data-page-node-id="EVn8firxIoVbPeDo3u4ofE">股东回报可持续性：</b><b data-page-node-id="NgyUSpRBeUWALJhGWcpbtM">年度高分红，但 2026 不派中期股息（与六大行形成反差）</b>。招行历行<b data-page-node-id="0VWNKQ0upzXqMvBrcFSW2N">年度分红</b>：2025 年度每股派息 <b data-page-node-id="V6GbENgRlBDoQk8fuLgFoJ">2.02 元</b>、派息总额约 509 亿、<b data-page-node-id="OQPfPXJvCWHf4E18WTtHtT">派息率 35.37%</b>（连续多年维持 35% 左右，高于六大行本次中期分红比例 31%）；近三年利润增速 2.86% CAGR 下仍稳定提升每股股息。<b data-page-node-id="VB3DXHFDGu4U65LlIigV0q">2026 年中期</b>：董事会<b data-page-node-id="XT3q0DlIJc2MiXf447V8xW">不建议派发 2026 年中期股息</b>——此为招行一贯做法（与六大行同步提升中期分红比例至 31% 的路径不同），<b data-page-node-id="DiQYIYvHgx6XMQ6hISGW9B">属节奏差异而非回报削减</b>，年度分红方案仍待年报披露。<b data-page-node-id="Qdi3vtsmqvpyGtVQ410b2l">其他资本动作</b>：2026-04-15 完成赎回<b data-page-node-id="C1mOYnBLQtAtHHyInc8A4A">全部境内优先股 275 亿元</b>（此前股息率已调至 3.62%），降低了高成本其他一级资本占比、每年节省股息支出，长期利好普通股股东回报；H1 无回购注销公告。<b data-page-node-id="EIHbOKcG355Pvym3LbBjV0">可持续性</b>：派息由净利润内生覆盖（资本内生可支撑 RWA +5.16% 增长），非外部融资派息；按中报年化 EPS 5.96 元 × 35.37% 派息率，2026 年度股息约 2.11 元、前瞻股息率约 5.36%。</p>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="AoFjbzRwvBj7AibYvHScTB">
+    <div class="sec-h" data-page-node-id="WNME68OXrlpVT9fnWYuHX9">管理层指引与前瞻</div>
+    <div class="card" data-page-node-id="eUz3sedHXmkmwBz2VeZ7Wd"><b data-page-node-id="Vckk4u0m79nDqDyyiN8GX0">管理层对下半年 NIM 与息差的表述偏正面</b>：中报明确「实现净利息收益率行业领先」，并披露<b data-page-node-id="upfNTZqyxKEBFIQt6DXgbV">NIM 降幅逐季收窄（Q1 环比 −3BP、Q2 环比 −1BP），公司预计下半年净利息收益率降幅将进一步收窄</b>；成本端「深入推进降本增效长效机制，推动战略投入稳中有升和基础费用稳中有降」（成本收入比 29.70%、−0.41pp 已兑现）。<b data-page-node-id="YT7higIBPr9UWMVdMhHhEY">战略</b>：「AI First」全面提速——信息科技投入 46.79 亿（占营收 2.99%）、研发人员 10,946 人（8.98%）、落地智能化场景 1,386 个（较上年末 +62%）、AI 提效等效 1,388 万人工工时、日均 Tokens 吞吐同比 +78%。<b data-page-node-id="Bw0hTTvaUvKLTo86iC8PMB">业务方向</b>：坚持零售主体地位 + 批零均衡协同；零售聚焦财富管理（AUM 18.44 万亿、+7.96%；「TREE 资产配置」客户 1,257.71 万户、+6.98%）；对公聚焦科技/绿色/普惠/制造（绿色贷款 +11.50%、制造业 +10.68%、涉农 +10.57%，均高于贷款平均增速）；重点区域分行（长三角/珠三角/海西/成渝）增速高于境内平均。<b data-page-node-id="kN9QAoLXI4voejEwQADx0j">风险管控</b>：「控生成、强清收」，全面加强零售贷款风险管理，加强房地产存量项目管理；对表外业务、并表管理加强督导。<b data-page-node-id="9NRECAWVs6DKv7GcqIhvUW">宏观判断（公司口径）</b>：海外「AI 扩张与地缘重构为主线、高利率延续」；国内「2026 年经济增速保持合理区间、名义增速随价格修复改善，增长动能由地产/信用/土地财政向 AI/能源/高端制造转变」。<i data-page-node-id="SfFebSo8eYE2DOjP5goUyu">（前瞻性陈述，非承诺）</i></div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="Vl9D6E91FqSwV0IXYAvG1M">
+    <div class="sec-h" data-page-node-id="FcGqyBSLC5UAMJSwQ2cVpw">同业可比与相对表现</div>
+    <div class="card" data-page-node-id="k0uFSSdzw1UKoEfDuPH5BT">六大行与股份行可比（2026 中报，人民币）：<br data-page-node-id="mjcwv6LOIq0XxlG1qgQTGB"/>• <b data-page-node-id="Ho4ouy3vlxKeaHbkPkzTgr">招商银行</b>：营收 1,781.81 亿（+4.83%）、归母 764.45 亿（+2.02%）、NIM <b data-page-node-id="ZMEpEorDoE7TGAdjeySqgV">1.83%</b>、不良 <b data-page-node-id="8WemB4VM0cOjQCb1rd8bEj">0.94%</b>、拨备 <b data-page-node-id="oVnDCfINYNiJK7w4fIB571">385.10%</b>、核心一级 14.07%、成本收入比 29.70%、PB 0.90x、股息率 5.12%——<b data-page-node-id="5i0uquj2bB1fpmfRxnVzUN">息差/资产质量/拨备/ROE 全面领先，但增速最慢</b>。<br data-page-node-id="ZGxIvRsOfXzqy5lyW3rith"/>• <b data-page-node-id="lyFlwAAtBeE5pnS2iVC1yq">工商银行</b>：营收 4,461.63 亿（+9.10%）、归母 1,736.82 亿（+3.32%）、NIM 1.29%（−1BP）、不良 1.29%、拨备 217.58%、资本充足率 18.57%。<br data-page-node-id="DyyFqWkuQWWAPiTEWtlOAQ"/>• <b data-page-node-id="Pdry9cThoXjtMP2iP6n9y6">建设银行</b>：营收 4,365.29 亿（+10.72%）、归母 1,695.64 亿（+4.62%）、NIM <b data-page-node-id="irznGdx2TiZ93rnqc0mQFm">1.37%（+3BP，逐季向好）</b>、不良 1.29%、拨备 238.69%、核心一级 14.24%、成本收入比 22.17%、中期分红比例升至 31%。<br data-page-node-id="d8imCW8GtWxvCiA6HSbFzo"/>• <b data-page-node-id="E9fLf5N48H50f9KfKKSe07">农业银行</b>：营收 4,111.22 亿（+11.18%）、归母 1,463.81 亿（+4.93%）、NIM 1.28%（较 Q1 +2BP）、不良 1.25%、拨备 290.10%（大行最高）。<br data-page-node-id="tva5jUsIzd4UDpK60dZjMn"/>• <b data-page-node-id="UqUCBZ6UCGGg0kKAJosCuh">中国银行</b>：营收 3,569.03 亿（+8.48%）、归母 1,235.94 亿（+5.10%，增速最快）、NIM 1.27%（+1BP）、不良 1.22%、拨备 200.85%。<br data-page-node-id="MLv64cy3jc4FSpo9Hgma0Z"/>• <b data-page-node-id="oSurPDNljhrSd1U1vBiyyD">邮储银行</b>：营收 1,924.82 亿（+7.26%）、归母 515.03 亿（+4.62%）、NIM 1.63%（−7BP，仍行业次高）、不良 1.00%、拨备 214.93%。<br data-page-node-id="xYvyWfyz2yBkEs4OZIotdO"/>• <b data-page-node-id="HbrJM4BwFBhYYt4pumaqsr">交通银行</b>：营收 1,423.43 亿（+6.73%）、归母 478.74 亿（+4.04%）、NIM 1.23%（+2BP）、不良 1.30%、拨备 203.80%、核心一级 11.25%。<br data-page-node-id="t6c6t1AcTLiDkenTK53N8p"/>• <b data-page-node-id="oCKSUFRjrenNu3va6allGB">股份行</b>：<b data-page-node-id="TgmZ7UmLUgi86cUf2vCgza">兴业银行归母 172.99 亿（−10.58%，同业唯一大幅负增）</b>；<b data-page-node-id="dW4psGxEq8lsImnBrbkQ69">平安银行归母 111.73 亿（+3.70%）、NIM 1.79%、不良 1.05%</b>——招行在股份行中增速居中、息差与资产质量最优。<br data-page-node-id="rAyoSirF68eiN1RcNQgsaW"/><b data-page-node-id="dRq1V5iI8MeHWuuSgY5j3R">结论</b>：招行的「护城河指标」（NIM 1.83% 高出大行 20–60BP、不良 0.94% 低 30BP 以上、拨备 385% 高出 95–184pp、成本收入比优势下的 ROE 13.42%）依然完整，但<b data-page-node-id="OAGBqd3v1tOLdvdGTsXxvc">增速首次系统性落后于大行</b>（营收 +4.83% vs 大行 +6.7%~+11.2%），主因大行受益于存款成本大幅改善（−29~−35BP）带来的息差反弹，而招行存款成本本已极低、改善空间小，且零售信贷需求偏弱。<b data-page-node-id="vJJsoIip5EAbBN39IBMW8h">投资含义：招行从「成长型零售银行」切换为「高质量高股息价值股」，估值锚应从 PE/成长切换为 PB/股息率。</b></div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="aEzXKBeWILZUnrFNt8yE1y">
+    <div class="sec-h" data-page-node-id="rOqzL1AKgVLONaCKODeqBM">财务排雷</div>
+    <div class="redflags" data-page-node-id="cn3fcORJ7CCkdHTFPHkARG">
+
+
+<div class="rf" data-page-node-id="aLQLJpgy5f5bgLSYJFzH7W"><div class="k" data-page-node-id="I7sYyVqcYklT9gFoB2Xi0u">商誉</div><div class="v" data-page-node-id="B7RVyD8HTTH4tiwVrphOVV"><span class="verdict flat" data-page-node-id="4wfsfOKX4MApOE2MjIzIcp">安全</span>商誉 99.54 亿元，<b data-page-node-id="5h67i5oCTMBRuAJdogykGi">仅占总资产 0.07%、占归母净资产 0.74%</b>（v2 阈值远未触及），主要来自招商永隆银行、招银国际等历史并购；与 13.79 万亿总资产相比可忽略，无减值风险。</div></div>
+<div class="rf" data-page-node-id="BUTfj9SuA5N3OTW7YFCyA6"><div class="k" data-page-node-id="7AvTDCbxt7hpuIDwqBovsU">研发资本化</div><div class="v" data-page-node-id="sshYw5rf3kSHLHhHeFQNYh"><span class="verdict flat" data-page-node-id="vgyt7AxRfKVGrGurfUcd2r">安全（不适用）</span>信息科技投入 46.79 亿元（占营收 2.99%）<b data-page-node-id="D8ISAZ8DeXR3lggW5QCHJJ">全部费用化</b>（计入业务及管理费），不形成资本化无形资产；研发人员 10,946 人（占员工 8.98%）。银行无研发资本化率的会计操纵空间，此项不适用。</div></div>
+<div class="rf" data-page-node-id="6Sm2w06LmBw38TacE8mC6j"><div class="k" data-page-node-id="fRNKJP0AlPxmZ4BRGm12eb">资产减值</div><div class="v" data-page-node-id="RivYMeUGBJ9GNGu1iKp177"><span class="verdict amber" data-page-node-id="hQsulVjwBxtWVLM6LfWPCL">关注（正常计提，非洗大澡）</span>信用减值损失 <b data-page-node-id="CtLGmvWEankxwLy8JAs4GU">291.77 亿元（+18.49%）</b>、其他资产减值 0.14 亿元；信用成本（年化）0.69%（+0.02pp）。<b data-page-node-id="tETa2GzmBCvHNXPd2unomq">判定为「逆周期多提」而非「洗大澡」</b>：不良率持平 0.94%、拨备覆盖率仍 385.10%（行业最高梯队），本期未释放拨备反哺利润，拨备计提增速（+18.49%）快于营收（+4.83%）——<b data-page-node-id="i4p7qJiJn2nKTvUcTRui1c">利润增速仅 +2.02% 正是多提减值的结果，属审慎而非粉饰</b>。需跟踪：若下半年继续加速计提，则指向零售资产质量实质恶化（§4/§9 红旗 13）。</div></div>
+<div class="rf" data-page-node-id="bBHvmqeBAEIpurBXL0hANO"><div class="k" data-page-node-id="Gm8OrNvbhd3sgny5Zkoz3F">债务结构</div><div class="v" data-page-node-id="ZfWuUZGNHF7GS6HjInJ5kc"><span class="verdict flat" data-page-node-id="bl1orDKT0G4iUi9j93dbcv">安全（银行口径特殊）</span>资产负债率约 90.2%（银行正常水平，杠杆受资本充足率约束而非资产负债率）：客户存款 101,624.98 亿占负债 <b data-page-node-id="rTeLUoCbyfj4A5K1htfHNA">81.74%</b>（核心负债、稳定性最好），同业往来仅 12.20%；核心一级 14.07%、一级 16.59%、资本充足率 18.33%（高级法），<b data-page-node-id="AoLMMaxmhTaqDga0zivJEl">远高于监管底线 7.5%/8.5%/10.5%</b>；LCR 202.04%、流动性比例人民币 62.36%/外币 124.87%；单一最大客户贷款占比 2.14%、前十 13.93%（集中度低）。2026-04 赎回全部境内优先股 275 亿元后资本指标仍改善，<b data-page-node-id="bRcXydOyFyElLGbs6TyPGG">资本质量优</b>。</div></div>
+<div class="rf" data-page-node-id="03RwPfUgEtGvHvz0zSG8eO"><div class="k" data-page-node-id="UkOUXTTfmYI11skmLMna9m">审计意见</div><div class="v" data-page-node-id="XXPpM7hnH3BQeKPrxhNbkb"><span class="verdict flat" data-page-node-id="bPDG0rNTURHDgHfBOUkF4R">审阅（非审计）</span>安永华明会计师事务所按《中国注册会计师审阅准则第 2101 号》执行<b data-page-node-id="i6EwsCVc5ycD2iPcn7IrLe">审阅</b>、安永按 ISRE 2410 执行审阅，<b data-page-node-id="EWjBQBQgkfS3hXgXPg1u3v">半年度报告未经审计</b>（A 股半年报惯例）；报告明确「未发现…存在重大错报」。需待 2026 年报审计校验；关键科目（贷款分类、拨备计提、金融投资估值）涉及重大管理层判断，是审计关注重点（§4）。</div></div>
+<div class="rf" data-page-node-id="B9ACMJc9OCmfoYFYtS0jE0"><div class="k" data-page-node-id="K0KTwgfR6OscXZ3aqzpFLm">关联交易 / 其他应收</div><div class="v" data-page-node-id="7bQGxwdsAhQLf9tCbrTEBU"><span class="verdict amber" data-page-node-id="y8syr4IOacHhEH1PhjxOtd">关注</span>银行口径下无实业意义的「其他应收款占用」，但存在<b data-page-node-id="iyBnjqnV2cY4u6rc1kLvTT">关联授信与集团内交易</b>：招银理财、招商基金、招商信诺资管、招银国际、招银金租等子公司并表，资管业务总规模 4.98 万亿（+5.29%）、托管规模 23.58 万亿（+8.17%）。<b data-page-node-id="keqQg5CPQtgs9tUEObBAUj">关注点</b>：理财子公司与母行之间的资产流转、理财回表风险、并表管理（中报已明确「对并表管理、表外业务加强督导管控」）。半年报摘要未披露关联授信明细，需年报核查（§4/§9）。</div></div>
+<div class="rf" data-page-node-id="jGES5EIzFoOSgeKkQNbmnc"><div class="k" data-page-node-id="YVoFYez9NuJsSgoKLnRny5">营收质量</div><div class="v" data-page-node-id="c7FIBbxKMpVaJBXfSFk4zW"><span class="verdict amber" data-page-node-id="xiqG7djClDGMQJEAnYwFEr">关注（成长性偏弱）</span>① <b data-page-node-id="auKOfIwBYZeHh6oGZK5FmG">增速落后同业</b>：营收 +4.83% vs 六大行 +6.7%~+11.2%，归母 +2.02% vs 六大行 +3.32%~+5.10%；② <b data-page-node-id="hzG21MWN2HFtUUd4C2PRT2">非息占比下滑</b>：非利息净收入占比 37.13%（−0.46pp），其中<b data-page-node-id="ZTke8cqds1sKMY3n2cOTaj">零售银行卡手续费 63.21 亿（−11.71%）</b>为明显拖累（信用卡交易量与费率双降）；③ <b data-page-node-id="3IZ6gt1c3suIkI9roSBEke">结构分化</b>：财富管理高增（+26.53%）掩盖不了零售净利息收入 −3.23% 的主业疲弱。<b data-page-node-id="w5VOvscGbnANZKthzQtnl9">正面</b>：成本收入比 29.70%（−0.41pp）、扣非≈归母（非经常性仅 1.06 亿），收入真实性无问题，问题在<b data-page-node-id="sScNIK0jGJHtC9PAiqjhaT">增长动能</b>而非质量（§2/§3）。</div></div>
+<div class="rf" data-page-node-id="QE34TKiGAi0p1XeKgXiKuS"><div class="k" data-page-node-id="9xUpXtLRD8cBJWJhmU7iIU">金融资产分类与估值（存货/投资类科目）</div><div class="v" data-page-node-id="UfjNQa5VhQFqBZ2MGrtepn"><span class="verdict amber" data-page-node-id="tBpFQQM3TXw7CYbn6VeNDl">中性偏关注</span>银行无「存货」，对应科目为<b data-page-node-id="cY9gwCImEyShE8lsED1pxo">投资证券及其他金融资产 44,043.68 亿元（占总资产 31.95%）</b>与 FVTPL 金融负债及衍生 2,244.93 亿元。分类涉及 FVTPL / FVOCI / 摊余成本三分类判断：<b data-page-node-id="ZrjefKe6dhgzgrPDPIsswE">若分类偏向 FVOCI/FVTPL，公允价值波动直接冲击其他综合收益与当期损益</b>（本期其他净收入 263.04 亿，与上年 262.82 亿基本持平，未出现大幅公允价值收益贡献，反而是<b data-page-node-id="vnO9HPKLxagC3LUxprgFaA">未靠投资收益粉饰</b>的正面信号）。需跟踪：债券市场波动下的其他综合收益变动、FVOCI 权益工具处置的利润调节（§4/§9 红旗 12）。</div></div>
+<div class="rf" data-page-node-id="3kSJrCHtGjMFaAtFxUyM8U"><div class="k" data-page-node-id="Q45asiOca5Lx5tDsG0BJLd">非经常性损益</div><div class="v" data-page-node-id="9WvPZX567xxek0zHg4C3m9"><span class="verdict flat" data-page-node-id="B204UvotMaVcCKNKjAonG3">安全（极干净）</span>非经常性损益合计仅 <b data-page-node-id="hWjkPYOZOjIqVBX4IuvKvR">1.06 亿元</b>（2025 同期 1.11 亿），占归母净利润 <b data-page-node-id="mmX1vhqLtL5K0ddqY9LauF">0.14%</b>；扣非归母 763.39 亿 vs 归母 764.45 亿，差异 1.06 亿。银行本就无政府补助依赖、无资产处置收益调节，<b data-page-node-id="AQqI6EWNZoZ0BVdEzGh6HL">盈利完全来自经营性收入，无粉饰痕迹</b>。</div></div>
+<div class="rf" data-page-node-id="22aQmWd96DiFhWp6gqGpZp"><div class="k" data-page-node-id="VvKu2gjXwE0hJexdLxU0Ww">现金流背离</div><div class="v" data-page-node-id="uoVm6dZUFE2qHFr9ry46Mn"><span class="verdict flat" data-page-node-id="n761sJjXtwFGfPihvejXKd">安全（但需正确解读）</span>经营现金流净额 3,046.11 亿（+126.54%）、OCF/归母 ≈ 398%。<b data-page-node-id="jrHumNnxzTfB0z8yivuI0n">不构成背离，但也不代表现金含量</b>——银行 OCF 包含客户存款净吸收（+3,266.68 亿）与同业往来，波动极大（2024H1 1,081.80 亿 → 2025H1 1,344.61 亿 → 2026H1 3,046.11 亿）。<b data-page-node-id="TMoBcU6DGvKuaZkx5e59Za">银行应以不良率/迁徙率/信用成本/拨备覆盖率替代 OCF 做盈利验证</b>：本期拨备不降反升（未释放拨备反哺利润），<b data-page-node-id="YrgAmkeFdL3SfDkDX6X15B">盈利真实性无问题</b>。分红由净利润内生覆盖，非借钱分红（§5）。</div></div>
+<div class="rf" data-page-node-id="IIyjxgXFslaXCWu7rVBaJj"><div class="k" data-page-node-id="PwLNH4Wx1Kb44LH7aApJ2N">收入确认激进（v2 新增）</div><div class="v" data-page-node-id="8tpFlv1tumZYULzlk34Z3a"><span class="verdict flat" data-page-node-id="ijerAmQj8uxsgrliZS2wT8">安全</span>银行收入按实际利率法（利息收入）、服务完成时点/时段（手续费及佣金收入）确认，受《企业会计准则第 22 号/第 14 号》与 IFRS 9/15 约束，且<b data-page-node-id="X34QsipWGrNk4I2xc9phFn">外部审计与监管（金融监管总局）双重约束下几无激正确认空间</b>。交叉验证：净利息收入 +5.60% 与总资产 +5.47%、贷款 +2.69%、NIM −5BP 匹配；净手续费 +5.99% 与 AUM +7.96%、财富管理手续费 +26.53% 匹配，<b data-page-node-id="dO6sPnpMNEYTdCGKlwQi5D">无提前确认/通道压货迹象</b>。</div></div>
+<div class="rf" data-page-node-id="jkE4JpqG5FSNM5ILYrilrR"><div class="k" data-page-node-id="BZyYSZap1cHjGzqODiZfBN">表外 / 担保 / 外币折算（v2 新增）</div><div class="v" data-page-node-id="0VZv5UpA6IN86AigIbUoF7"><span class="verdict amber" data-page-node-id="TUoTrIhP68SDKG3tXt42rf">关注</span>① <b data-page-node-id="mrD1MaGJhwGjdcSZj4lEYc">表外承担的信用风险</b>：银行核心表外项目为<b data-page-node-id="QgtZMG6zho3EKMjeI2SFAr">承兑汇票、信用证、保函、承诺授信</b>——FPA 中「非传统融资」29,265.92 亿（占 FPA 40.24%）即含表外部分；招行 FPA 余额 72,719.97 亿 vs 表内公司贷款 32,013.86 亿，<b data-page-node-id="uQYOA7GNIimjMnmjlSEvOk">表外/非传统融资敞口大于表内</b>，需关注 RWA 计量与回表风险（中报已明确对表外业务加强督导）。② <b data-page-node-id="dRPxr3yZ6hFkbwRHgSO1KU">托管/理财代客风险</b>：资管 4.98 万亿、托管 23.58 万亿（代客、原则上不入表，但存在声誉与刚性兑付历史包袱）。③ <b data-page-node-id="0kxJGjDHmcf5NIIOlqIDGl">外币折算</b>：境外机构（香港分行、招商永隆、招银国际、招银欧洲）以外币为记账本位币，人民币升值/贬值通过其他综合收益与汇兑损益传导；本期其他净收入 263.04 亿与上年持平，未出现大额汇兑收益贡献，净敞口可控（§4/§9）。</div></div>
+<div class="rf" data-page-node-id="XvgyfoG6WCQXxtTlwLS141"><div class="k" data-page-node-id="efBCPqfA85zZfqRwCyl7DE">零售资产质量与迁徙率（行业特有，核心红旗）</div><div class="v" data-page-node-id="ksEf2oI7GoLsmEdwzp829H"><span class="verdict amber" data-page-node-id="C1Sewh4O8H3xfh5kNwTqmO">关注（红旗）</span>表观稳定但内部恶化：不良率 <b data-page-node-id="FypH44NolMFce2WFYAXQTK">0.94%（持平）</b>、本公司口径 0.93%、拨备覆盖率 385.10%（−6.69pp）。<b data-page-node-id="ihoaBqhcLBKSLVhCoi8F5H">但迁徙率揭示压力</b>（年化，2026H1 vs 2025H1）：正常类 1.62% vs 1.63%（−0.01pp）、关注类 39.94% vs 40.06%（−0.12pp）、<b data-page-node-id="QXxNb7sMGRoz2jfgr56E0r">次级类 135.05% vs 122.71%（+12.34pp）</b>、可疑类 101.13% vs 104.50%（−3.37pp）。<b data-page-node-id="xfaqzGrqU6BKldJGNMvGUz">解读</b>：关注类/可疑类迁徙率同比略降是正面信号，但<b data-page-node-id="XDB7hK5ZxcDCGXPWBEXduC">次级类迁徙率大幅上升 12.34pp，意味着已进入不良的资产向下迁徙与最终损失认定加速</b>；叠加信用成本 0.69%（+0.02pp）、信用减值 +18.49%、<b data-page-node-id="xc42v1RqoTut2bDFSLdlNB">零售金融税前利润 −17.58%</b>，共同指向<b data-page-node-id="VENsiVEgOLbvHsM6duEINZ">零售端（按揭/信用卡/消费贷/经营贷）不良生成压力上升</b>。中报已明确「全面加强零售贷款风险管理，提升零售贷款资产质量管控质效」。（历史参考：2025 全年非年化口径 正常 1.35/关注 28.66/次级 72.51/可疑 75.21。）（§4/§9）</div></div>
+<div class="rf" data-page-node-id="hIe0GnqddPDj6oIDruxGtf"><div class="k" data-page-node-id="5mAjNQXAF9ZtPIdDR4b70S">息差收窄 / 增速落后 / 中期不派息（行业特有，红旗）</div><div class="v" data-page-node-id="wX8KQ0FFqlykuE2NydhC9k"><span class="verdict amber" data-page-node-id="caFvlX0jnhrZqz7FvKHW8x">关注（红旗）</span>① <b data-page-node-id="6O5m9ITHG1IRUJzeFdi8Qf">NIM 下行未见底</b>：1.83%（−5BP）、净利差 1.77%（−2BP），虽降幅逐季收窄（Q1 −3BP、Q2 −1BP）且绝对水平行业第一，但已连续多年下行（2024H1 2.00% → 2025H1 1.88% → 2026H1 1.83%）；② <b data-page-node-id="pKiNK53ICS4pLRaHla5D9P">存款成本优势对大行反成「低基数劣势」</b>——大行存款付息率大幅改善（−29~−35BP）推动息差反弹，招行改善空间小；③ <b data-page-node-id="XfQaPHeiGqCs95igYDCCyx">增速系统性落后</b>：营收 +4.83%、归母 +2.02% 均低于六大行，若息差继续收窄且财富管理高增不可持续（代理基金 +61.40% 含低基数与资本市场活跃因素），营收增速存在进一步走低风险；④ <b data-page-node-id="PTBzSTjo2y9tMBbjRwLopu">零售主业疲弱</b>：零售净利息收入 −3.23%、零售税前利润 −17.58%，零售护城河的盈利转化正在弱化；⑤ <b data-page-node-id="gQmuw9p3sf4Hf2zsuEOiPU">2026 年中期不派息</b>——董事会不建议派发中期股息，与六大行中期分红比例<b data-page-node-id="29FUuNruFskz8W5MJJqtyO">全部提升至 31%</b>（合计拟派 2,209.89 亿、+7.98%）形成反差；<b data-page-node-id="w6JLucIFJsvvNnu0hPe4eh">定性为中性</b>：招行历行年度分红（2025 年度每股派息 2.02 元、派息率 35.37%，高于大行 31%），属节奏差异而非回报削减，但对偏好中期现金流的资金阶段性不利。⑥ <b data-page-node-id="2HwmDM60LS8QXCljeuIaO9">正面项</b>：2026-04-15 赎回全部境内优先股 275 亿元（赎回前股息率已调至 3.62%），降低高成本其他一级资本、节省股息支出、利好普通股股东；赎回后一级资本充足率 16.59%（+0.08pp）、资本充足率 18.33%（+0.09pp）仍改善，资本接续有效（§0.5/§2/§3/§6/§9）。</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="GklxTZDOIIcE4jlQZ23h3Z">
+    <div class="sec-h" data-page-node-id="PL4vAW3IwH22Otl3j7EWiJ">业务亮点与潜在风险</div>
+    <div class="two" data-page-node-id="3HZ0yMyS24sByRuZzASpaD">
+      <div class="panel hl" data-page-node-id="rkhUTCuFcyYxEOqDQonbaM"><h4 data-page-node-id="DpqB5fom6EkoqAwvmerzgG">✓ 业务亮点</h4><ul data-page-node-id="T5QQvlO0DoumnEHgyYMnpw">
+<li data-page-node-id="N9zCvxPQUgKPZAIhl70pNN"><b data-page-node-id="0WFtDukvCxUmj39bef4oDs">营收净利双增、增速较 Q1 改善</b>：H1 营收 1,781.81 亿（+4.83%，结束 2023–2025 连续三年下滑）、归母 764.45 亿（+2.02%，创历史同期新高）、扣非 763.39 亿（+2.03%）、基本 EPS 2.98 元（+3.11%）。节奏上 Q1 营收 +3.81%/归母 +1.52% → Q2 单季营收 912.41 亿/归母 385.93 亿（+2.52%），逐季提速。</li>
+<li data-page-node-id="WAVONGfqMD65HqAnypxkDZ"><b data-page-node-id="jwqLyLfDWyG1aFPS6wgefS">以量补价 + 财富管理回暖驱动营收</b>：净利息收入 1,120.22 亿（+5.60%），在 NIM 1.83%（−5BP）下靠总资产 +5.47%、贷款 +2.69%、存款 +3.32% 以量补价；净手续费收入 398.55 亿（+5.99%），大财富管理收入 247.04 亿（+18.44%）、零售财富管理手续费 140.69 亿（+24.81%）、代理基金 +61.40%。成本收入比降至 29.70%（−0.41pp）。</li>
+<li data-page-node-id="kOdhObSo8vqYsUZI1IbA4F"><b data-page-node-id="mN0xGfQqFZxnrdF5iSYZwa">利润增速落后营收 = 主动多提拨备</b>：信用减值损失 291.77 亿（+18.49%）、信用成本 0.69%（+0.02pp），吃掉 55.5% 的营收增量。<b data-page-node-id="3eLSvH35HcqYz8jRcel2cL">未释放拨备反哺利润，拨备覆盖率 385.10% 仍为上市银行最高梯队</b>（大行 200%–290%），利润含金量高。</li>
+<li data-page-node-id="fQ6ht5C0VsaE6oXEtDdhrw"><b data-page-node-id="CBmN10Uc03GJxVPQAkmpbW">分部结构剧烈切换：批发反超零售</b>：零售金融税前利润 428.88 亿（−17.58%）、营收 968.20 亿（+0.65%）；批发金融税前利润 457.03 亿（+23.33%）、营收 755.36 亿（+7.42%）——<b data-page-node-id="bcgfyCRJRREfAecqRURG6e">批发首次成为第一利润支柱</b>，两者几乎完全对冲。</li>
+<li data-page-node-id="mQ37SVTieMDgisaKUZCDDn"><b data-page-node-id="FGlw77YSZJLHVWv5ENbAwT">资产质量表观最优、估值深度破净</b>：不良率 0.94%（持平，大行 1.00%–1.30%）、核心一级 14.07%、LCR 202.04%、AUM 18.44 万亿（+7.96%）。A 股 39.35 元、PB 0.87–0.90x（破净）、PE(TTM) 6.58x、股息率 TTM 5.12%，隐含 COE 约 14.9%（合理值 10%–11%）。</li>
+</ul></div>
+      <div class="panel rk" data-page-node-id="iHx4e5cicr00FtThV9G9Lg"><h4 data-page-node-id="HcFnpFPhZO15YSyFbJpiW3">⚠ 潜在风险</h4><ul data-page-node-id="fJCp5cRHrlrFKWSxYOmoVa">
+<li data-page-node-id="fpyjBdS891rabRLHkUGX8P"><b data-page-node-id="P332iwzoOcAXHu6ovONlFn">零售资产质量与迁徙率（核心红旗）</b>：不良率 0.94% 持平的平静表象下，次级类迁徙率 135.05%（同比 +12.34pp）、信用成本 0.69%（+0.02pp）、零售金融税前利润 −17.58%，共同指向零售端不良生成压力上升；若迁徙继续加速，拨备释放空间将被侵蚀。</li>
+<li data-page-node-id="f7a9Du8Np8IGTsECohx44G"><b data-page-node-id="4JdYl6i59hsI8op1GIA3hd">息差收窄与增速落后同业（核心红旗）</b>：NIM 1.83%（−5BP）连续三年下行（2.00%→1.88%→1.83%）；营收 +4.83%、归母 +2.02% 均落后六大行（+6.7%~+11.2% / +3.3%~+5.1%）——大行存款成本大幅改善（−29~−35BP）推动息差反弹，招行低存款成本优势反成「改善空间小」的劣势。</li>
+<li data-page-node-id="8axMTeKBmuNhTeX351AooA"><b data-page-node-id="FXs4MuHlhJQ7Z7ApvRov6V">零售主业疲弱与结构依赖</b>：零售净利息收入 −3.23%、银行卡手续费 −11.71%，零售护城河的盈利转化弱化；利润增长越来越依赖批发金融（+23.33%，受对公信贷与债券投资驱动，周期性更强）与财富管理（+26.53%，受资本市场活跃度影响），稳定性下降。</li>
+<li data-page-node-id="s72SIP38InQ4JM1l8vUpmj"><b data-page-node-id="A8cA9LaeMF0tOHVz7Igfb6">表外敞口与中期不派息</b>：FPA 中非传统融资 29,265.92 亿（占比 40.24%）大于表内公司贷款 32,013.86 亿的对应体量，表外承担信用风险需持续跟踪；2026 年不派中期股息（六大行中期分红比例已全部提升至 31%），虽属年度分红惯例，但对偏好中期现金流的资金阶段性不利。</li>
+</ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec" data-page-node-id="cBM7xVpBWJDb011SovSFQB">
+    <div class="sec-h" data-page-node-id="T702nnKnUpS0dObjAPcezD">下季跟踪事项</div>
+    <div class="track" data-page-node-id="h5HEfoa8xGYb8SweGWwTpC"><ol data-page-node-id="9vfb1Tu1QS08M82E3kc4Mu">
+<li data-page-node-id="jwcUzGFl1YhkgcCyXmbdAt"><b data-page-node-id="zsJ94IMKLZISWV7IjW1sGC">NIM 与息差（NIM 1.83%、−5BP；净利差 1.77%、−2BP）</b> → 下季看 Q3 单季 NIM 环比能否如公司指引「进一步收窄降幅」甚至企稳，以及存款成本率变化（§2/§9 红旗 14）。</li>
+<li data-page-node-id="YhzchywjJAVY5fC2hkkPqS"><b data-page-node-id="KvZiyMZbAEFdBjL4WY6bQR">零售资产质量（次级类迁徙率 135.05%、同比 +12.34pp；信用成本 0.69%、+0.02pp；零售税前利润 −17.58%）</b> → 下季看零售不良生成率、信用卡不良率、关注类贷款率与迁徙率的走向，以及是否继续加速计提（§4/§9 红旗 13）。</li>
+<li data-page-node-id="D4M0rsFxNWJTjI5nKtfckU"><b data-page-node-id="O7uBMXriRMiYCA29gMYs0v">分部结构切换（零售税前利润 428.88 亿 −17.58% vs 批发 457.03 亿 +23.33%）</b> → 下季看批零利润差是否继续扩大、零售净利息收入（−3.23%）能否转正（§3/§9 红旗 14）。</li>
+<li data-page-node-id="sHiEhaLuwyJaAy695aHhK7"><b data-page-node-id="8ZRYj7faWmqf6tZNVDAsVk">财富管理与非息（大财富管理收入 247.04 亿 +18.44%；代理基金 +61.40%；银行卡手续费 −11.71%）</b> → 下季看资本市场活跃度对代理基金/理财收入的可持续性、银行卡手续费降幅是否收窄（§2/§3/§9 红旗 7）。</li>
+<li data-page-node-id="wR5DdIuRJxTv35CG1Mz5YJ"><b data-page-node-id="IekgpAOR6yDqFvFebE8Q8x">资本与股东回报（核心一级 14.07%、−0.09pp；RWA +5.16% 快于资本 +4.47%；中期不派息；2025 年度派息率 35.37%）</b> → 下季/年报看年度分红方案派息率是否维持 35%+、核心一级资本能否企稳回升（§6/§9 红旗 14）。</li>
+</ol></div>
+  </div>
+
+
+  <div class="foot" data-page-node-id="Z0GvIYG2kMyiofP8HzsjdA">
+    <b data-page-node-id="G3OA9mAjFgfyVnTE8bbmjO">数据来源：</b>① 雪球/上交所 PDF <code data-page-node-id="XpdIDVHUdcSGOiQTWUkwLo">600036_20260829_SH9S.pdf</code>（招商银行股份有限公司 2026 年半年度报告<b data-page-node-id="05pZBR5L3AhVdpEBecwnlA">摘要</b>，披露 2026-08-29；安永华明会计师事务所（中国准则）/安永（IFRS）<b data-page-node-id="RCdy5QSsgIUXSyg1cQil5c">审阅</b>，未经审计）。② 多期序列：H1 同半年度营收/归母取自 A 股历次半年报（2021:1687.49/611.50、2022:1790.91/694.20、2023:1784.60/757.52、2024:1729.45/747.43、2025:1699.69/749.30、2026:1781.81/764.45 亿元）；Q1/Q2 单季与 2025 全年数据取自 A 股定期报告（2026Q1 营收 869.40 亿 +3.81%、归母 378.52 亿 +1.52%；2026Q2 营收 912.41 亿、归母 385.93 亿 +2.52%；2025 全年营收 3,375.32 亿、归母 1,501.81 亿、ROE 13.44%、每股净资产 43.43 元、每股股利 2.02 元）。③ 同业与行业数据经 WebSearch（2026-08-28 六大行集中披露中报：工行营收 4,461.63 亿 +9.10%/归母 1,736.82 亿 +3.32%、建行 4,365.29 亿 +10.72%/1,695.64 亿 +4.62%、农行 4,111.22 亿 +11.18%/1,463.81 亿 +4.93%、中行 3,569.03 亿 +8.48%/1,235.94 亿 +5.10%、邮储 1,924.82 亿 +7.26%/515.03 亿 +4.62%、交行 1,423.43 亿 +6.73%/478.74 亿 +4.04%；NIM 建行 1.37%/农行 1.28%/中行 1.27%/工行 1.29%/交行 1.23%/邮储 1.63%；六大行中期分红比例均提升至 31%、合计拟派 2,209.89 亿；兴业归母 −10.58%、平安 +3.70%）。④ 估值：2026-08-28 A 股收 39.35 元、市值 9,982 亿、PE(TTM) 6.58x、PB 0.90x、股息率 TTM 5.12%、52 周 35.28–43.99 元。<b data-page-node-id="ATsURFkdYiHALTm2Z9lVGZ">口径说明</b>：本报告为<b data-page-node-id="Qyr1jnuL94X6JI5YHN4BtS">半年度报告摘要</b>（16 页），未披露完整现金流量表分项与零售/对公不良明细，部分结构数据（如 OCF 拆解）为基于资产负债变动的倒推估算，已在正文标注；集团口径与本公司（母行）口径并存时以<b data-page-node-id="EMqTgcOvELv4ZjBKhY9wRY">集团口径</b>为主、本公司口径单独标注（本公司不良率 0.93%、拨备覆盖率 390.39%）。无 Wind/一致预期单季数据，全年进度校验采用自身历史占比外推（修正 B）。<br data-page-node-id="PqhSxWoh3ovGTDaIhHC6hP"/>
+    <b data-page-node-id="QIocDsDjAJ9hB0EGbGPHX8">免责声明：</b>本报告依据《财报深度分析模型 v2》生成，仅供研究参考，不构成任何投资建议。财务数据以公司正式公告为准；市场预期数据须标注来源与统计时点，无一致预期时采用进度校验。港股须注明 IFRS / Non-IFRS 口径。股市有风险，投资需谨慎。
+  </div>
+
+</div>
+</body>
+</html>

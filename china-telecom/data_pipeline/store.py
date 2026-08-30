@@ -79,35 +79,68 @@ def _autosize(ws, widths):
 
 
 def build_file(out_dir, file_name, title, annual_headers, annual_rows,
-               q_headers, q_rows, source_text, annual_widths=None):
-    wb = openpyxl.Workbook()
-    # Sheet1 年报数据
-    ws = wb.active
-    ws.title = "年报数据"
-    ws.cell(row=1, column=1, value=title).font = TITLE_FONT
-    ws.cell(row=2, column=1, value="口径：全年累计；指标为行、年份为列；单位见指标名；无法核验年份显示'—'。").font = SUB_FONT
-    _write_table(ws, 4, annual_headers, annual_rows)
-    if annual_widths is None:
-        annual_widths = {"A": 30}
-        for i in range(2, len(annual_headers)):
-            annual_widths[openpyxl.utils.get_column_letter(i)] = 13
-    _autosize(ws, annual_widths)
-    ws.freeze_panes = "B5"
-    # Sheet2 季报数据
-    ws2 = wb.create_sheet("季报数据")
-    ws2.cell(row=1, column=1, value=title + " · 季报数据").font = TITLE_FONT
-    ws2.cell(row=2, column=1, value="口径：单季（由累计利润表推导）。").font = SUB_FONT
-    if q_headers and q_rows:
-        _write_table(ws2, 4, q_headers, q_rows)
-        qw = {"A": 30}
-        for i in range(2, len(q_headers)):
-            qw[openpyxl.utils.get_column_letter(i)] = 14
-        _autosize(ws2, qw)
-        ws2.freeze_panes = "B5"
+               q_headers, q_rows, source_text, annual_widths=None,
+               years_as_rows=False, annual_header_row=4, preserve_quarterly=False):
+    # years_as_rows=True：把 metrics-as-rows 的 annual_rows 转置为
+    # 「年份为行、指标为列」方向（与 build_s1_svg / 手工在盘文件一致）。
+    if years_as_rows:
+        periods = annual_headers[1:-1]  # 去掉首尾「指标」「备注」
+        indicators = [r[0] for r in annual_rows]
+        new_headers = ["年度"] + indicators
+        new_rows = []
+        for i, p in enumerate(periods):
+            vals = [r[1][i] if i < len(r[1]) else None for r in annual_rows]
+            new_rows.append((p, vals, ""))
+        annual_headers, annual_rows = new_headers, new_rows
+
+    # preserve_quarterly=True：加载已有文件、仅重写「年报数据」sheet，
+    # 保留手工补全的「季报数据」「数据来源与口径说明」，避免管道覆盖丢失。
+    path = os.path.join(out_dir, file_name)
+    if preserve_quarterly and os.path.exists(path):
+        wb = openpyxl.load_workbook(path)
+        if "年报数据" in wb.sheetnames:
+            del wb["年报数据"]
+        ws = wb.create_sheet("年报数据", 0)  # 插到最前
+        sub_text = "口径：全年累计；年份为行、指标为列；单位见指标名；无法核验年份显示'—'。"
     else:
-        ws2.cell(row=4, column=1, value="（暂无单季数据）").font = SUB_FONT
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "年报数据"
+        sub_text = ("口径：全年累计；指标为行、年份为列；单位见指标名；无法核验年份显示'—'。"
+                    if not years_as_rows else
+                    "口径：全年累计；年份为行、指标为列；单位见指标名；无法核验年份显示'—'。")
+    ws.cell(row=1, column=1, value=title).font = TITLE_FONT
+    ws.cell(row=2, column=1, value=sub_text).font = SUB_FONT
+    _write_table(ws, annual_header_row, annual_headers, annual_rows)
+    # 年份为行时，标题跨所有指标列合并
+    last_col = openpyxl.utils.get_column_letter(max(2, len(annual_headers)))
+    if years_as_rows:
+        ws.merge_cells("A1:%s1" % last_col)
+    if annual_widths is None:
+        annual_widths = {"A": 14}
+        for i in range(2, len(annual_headers) + 1):
+            annual_widths[openpyxl.utils.get_column_letter(i)] = 20
+    _autosize(ws, annual_widths)
+    ws.freeze_panes = "B%d" % (annual_header_row + 1)
+    # Sheet2 季报数据
+    if not preserve_quarterly:
+        ws2 = wb.create_sheet("季报数据")
+        ws2.cell(row=1, column=1, value=title + " · 季报数据").font = TITLE_FONT
+        ws2.cell(row=2, column=1, value="口径：单季（由累计利润表推导）。").font = SUB_FONT
+        if q_headers and q_rows:
+            _write_table(ws2, 4, q_headers, q_rows)
+            qw = {"A": 30}
+            for i in range(2, len(q_headers)):
+                qw[openpyxl.utils.get_column_letter(i)] = 14
+            _autosize(ws2, qw)
+            ws2.freeze_panes = "B5"
+        else:
+            ws2.cell(row=4, column=1, value="（暂无单季数据）").font = SUB_FONT
     # Sheet3 数据来源与口径说明
-    ws3 = wb.create_sheet("数据来源与口径说明")
+    if "数据来源与口径说明" not in wb.sheetnames:
+        ws3 = wb.create_sheet("数据来源与口径说明")
+    else:
+        ws3 = wb["数据来源与口径说明"]
     ws3.cell(row=1, column=1, value=title + " · 数据来源与口径说明").font = TITLE_FONT
     r = 3
     for line in source_text:
@@ -118,7 +151,6 @@ def build_file(out_dir, file_name, title, annual_headers, annual_rows,
         r += 1
     ws3.cell(row=r + 1, column=1, value="抓取时间：%s" % C.__dict__.get("_FETCH_TS_", "运行时")).font = SUB_FONT
     ws3.column_dimensions["A"].width = 120
-    path = os.path.join(out_dir, file_name)
     wb.save(path)
     print("  已生成：", file_name)
     return path
@@ -131,6 +163,9 @@ def write_dataset(dataset, out_dir=C.OUT_DIR):
         p = build_file(
             out_dir, f["file_name"], f["title"], f["annual_headers"],
             f["annual_rows"], f["q_headers"], f["q_rows"], f["source_text"],
+            years_as_rows=f.get("years_as_rows", False),
+            annual_header_row=f.get("annual_header_row", 4),
+            preserve_quarterly=f.get("preserve_quarterly", False),
         )
         paths.append(p)
     return paths

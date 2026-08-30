@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>顺丰控股 2026 一季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">顺丰控股</div>
+      <div class="meta">
+        <span>002352.SZ</span><span>物流</span><span>深交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026年一季度报告</div>
+      <div class="pdate">披露日期：2026-04-28</div>
+      <div class="badge up">偏积极</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone up">偏积极</span>
+      <p class="oneliner">2026 年一季度顺丰控股实现营收 741.42 亿（同比 +6.14%）、归母净利润 25.26 亿（+13.05%）、扣非归母 23.17 亿（+17.42%），收入与利润均创 Q1 同期历史新高，且<b>扣非增速快于归母</b>（非经常性由去年同期的 2.60 亿降至 2.08 亿），盈利质量「真」。增长由「业务结构调优（激活经营进阶机制、主动放弃低质电商件）+ 单票收入回升（Q1 单票 14.78 元 +1.0%、3 月 +4.2% 止跌回升）+ 供应链及国际业务 +8.2%（第二增长曲线）+ 毛利率 +0.4pp 至 13.7%」共同驱动。行业处「反内卷」价格修复、件量增速换挡至 +5.8% 的供需双拐点，顺丰以差异化（时效+供应链+国际）规避同质价格战。资产负债表稳健（资产负债率 47.8%、现金短债比约 2.0x、商誉仅 9.3% 净资产），但经营现金流 33.65 亿（−17.16%）、净现比 1.33x 虽仍 >1 但同比回落，需跟踪营运资金。当前 A 股 36.60 元、PE(TTM) 16.35x、PB 1.86x、股息率 TTM 2.43%，估值处历史中低位，回购注销 + 极兔战略互持提供边际催化。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul>
+<li>2026Q1 营收 741.42 亿（+6.14%）、归母 25.26 亿（+13.05%）、扣非 23.17 亿（+17.42%），<b>收入与利润均创 Q1 同期历史新高</b>，且扣非增速快于归母（非经常性由 2.60 亿降至 2.08 亿），盈利质量「真」。</li>
+<li>「激活经营」进阶机制显成效：主动调优结构（放弃低质电商件）+ 单票收入回升（Q1 14.78 元 +1.0%、3 月 +4.2% 止跌回升）+ 毛利率 +0.4pp 至 13.7%，连续 2 季净利率及扣非净利率环比回升。</li>
+<li>供应链及国际业务 +8.2%（第二增长曲线，占营收比提升），行业处「反内卷」价格修复、供需双拐点，顺丰以差异化（时效+供应链+国际）规避同质价格战。</li>
+<li>资产负债表稳健：资产负债率 47.8%（−1.2pp）、现金短债比约 2.0x、商誉仅 9.3% 净资产；A 股累计回购 6704 万股（~26 亿、注销减资）+ H 股回购方案，估值处历史中低位（PE 16.35x/PB 1.86x）。</li>
+</ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
+<li>经营现金流 33.65 亿（−17.16%），净现比 1.33x 虽 >1 但较去年同期 1.82x 回落，主因应付账款/职工薪酬支付致营运资金净流入收窄，需跟踪回款与周转。</li>
+<li>短期借款 90.44 亿（+28.96%），债务期限结构调整需关注；毛利率 13.7% 仍处历史低位，盈利弹性取决于价格修复（反内卷）持续性与网络提效。</li>
+<li>国际业务受海运价格波动、油价上行、地缘政治直接冲击；与极兔互持股份（各约 82.99 亿港元）截至披露日尚未完成交割，协同与并表影响待验证。</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">营业收入（Q1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="61.5" y="76.4" width="70.6" height="129.6" rx="3" fill="#13406b" opacity="0.85"/><text x="96.8" y="72.4" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">630</text><text x="96.8" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2022</text><rect x="179.1" y="80.4" width="70.6" height="125.6" rx="3" fill="#13406b" opacity="0.85"/><text x="214.4" y="76.4" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">610</text><text x="214.4" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><rect x="296.7" y="71.6" width="70.6" height="134.4" rx="3" fill="#13406b" opacity="0.85"/><text x="332.0" y="67.6" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">653</text><text x="332.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="414.3" y="62.3" width="70.6" height="143.7" rx="3" fill="#13406b" opacity="0.85"/><text x="449.6" y="58.3" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">698</text><text x="449.6" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><rect x="531.9" y="53.5" width="70.6" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="567.2" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">741</text><text x="567.2" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">Q1 同季多年序列；2026 创同期历史新高</text></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">归母净利润（Q1 同季，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="61.5" y="144.3" width="70.6" height="61.7" rx="3" fill="#13406b" opacity="0.85"/><text x="96.8" y="140.3" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">10</text><text x="96.8" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2022</text><rect x="179.1" y="102.1" width="70.6" height="103.9" rx="3" fill="#13406b" opacity="0.85"/><text x="214.4" y="98.1" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">17</text><text x="214.4" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><rect x="296.7" y="90.5" width="70.6" height="115.5" rx="3" fill="#13406b" opacity="0.85"/><text x="332.0" y="86.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">19</text><text x="332.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><rect x="414.3" y="71.1" width="70.6" height="134.9" rx="3" fill="#13406b" opacity="0.85"/><text x="449.6" y="67.1" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">22</text><text x="449.6" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><rect x="531.9" y="53.5" width="70.6" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="567.2" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">25</text><text x="567.2" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">Q1 同季多年序列；连续四年回升至 25.26 亿</text></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="40" y="16" font-size="12" font-weight="700" fill="#13406b">Q1 同比增速（%）</text><line x1="40" y1="198.3" x2="626" y2="198.3" stroke="#c8d0db" stroke-dasharray="3 3"/><text x="113.2" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2023</text><text x="259.8" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2024</text><text x="406.2" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2025</text><text x="552.8" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">2026</text><polyline points="113.2,205.0 259.8,182.8 406.2,183.1 552.8,184.8" fill="none" stroke="#c0392b" stroke-width="2.2"/><circle cx="113.2" cy="205.0" r="3" fill="#c0392b"/><text x="113.2" y="198.0" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">-3.1</text><circle cx="259.8" cy="182.8" r="3" fill="#c0392b"/><text x="259.8" y="175.8" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+7.0</text><circle cx="406.2" cy="183.1" r="3" fill="#c0392b"/><text x="406.2" y="176.1" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+6.9</text><circle cx="552.8" cy="184.8" r="3" fill="#c0392b"/><text x="552.8" y="177.8" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+6.1</text><polyline points="113.2,48.5 259.8,173.8 406.2,161.3 552.8,169.6" fill="none" stroke="#1f8a4c" stroke-width="2.2"/><circle cx="113.2" cy="48.5" r="3" fill="#1f8a4c"/><text x="113.2" y="61.5" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+68.3</text><circle cx="259.8" cy="173.8" r="3" fill="#1f8a4c"/><text x="259.8" y="186.8" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+11.2</text><circle cx="406.2" cy="161.3" r="3" fill="#1f8a4c"/><text x="406.2" y="174.3" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+16.8</text><circle cx="552.8" cy="169.6" r="3" fill="#1f8a4c"/><text x="552.8" y="182.6" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+13.1</text><rect x="40" y="20" width="10" height="10" rx="2" fill="#c0392b"/><text x="54" y="29" font-size="10" fill="#5b6675">营收YoY</text><rect x="150" y="20" width="10" height="10" rx="2" fill="#1f8a4c"/><text x="164" y="29" font-size="10" fill="#5b6675">归母YoY</text><text x="40" y="238" font-size="9.5" fill="#8a94a6">红=营收增速 绿=归母增速（A股习惯）</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+
+<div class="mcard"><div class="lab">营业收入</div><div class="val">741.42亿</div><div class="delta up">+6.14%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">25.26亿</div><div class="delta up">+13.05%</div></div>
+<div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">23.17亿</div><div class="delta up">+17.42%</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">0.51元</div><div class="delta up">+13.33%</div></div>
+<div class="mcard"><div class="lab">加权ROE</div><div class="val">2.52%</div><div class="delta up">+0.12pp</div></div>
+<div class="mcard"><div class="lab">毛利率</div><div class="val">13.7%</div><div class="delta up">+0.4pp</div></div>
+<div class="mcard"><div class="lab">经营现金流净额</div><div class="val">33.65亿</div><div class="delta down">-17.16%</div></div>
+<div class="mcard"><div class="lab">总件量</div><div class="val">37.3亿票</div><div class="delta up">+4.9%</div></div>
+<div class="mcard"><div class="lab">总资产</div><div class="val">2,137.97亿</div><div class="delta down">-1.23%</div></div>
+<div class="mcard"><div class="lab">资产负债率</div><div class="val">47.8%</div><div class="delta up">-1.2pp</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+
+<tr><td>营业收入</td><td class="num">741.42亿</td><td class="num">698.50亿</td><td class="num up">+6.14%</td></tr>
+<tr><td>归母净利润</td><td class="num">25.26亿</td><td class="num">22.34亿</td><td class="num up">+13.05%</td></tr>
+<tr><td>扣非归母净利润</td><td class="num">23.17亿</td><td class="num">19.74亿</td><td class="num up">+17.42%</td></tr>
+<tr><td>基本每股收益</td><td class="num">0.51元</td><td class="num">0.45元</td><td class="num up">+13.33%</td></tr>
+<tr><td>加权ROE</td><td class="num">2.52%</td><td class="num">2.40%</td><td class="num up">+0.12pp</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比<span class="sec-sub">（v2 须标注来源与口径）</span></div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+
+<tr><td>营业收入</td><td class="num">741.42亿(+6.14%)</td><td class="num">无单季权威一致预期(瑞银给全年EPS 2.43)</td><td class="num flat">基本符合</td><td class="num flat">营收端结构调优</td></tr>
+<tr><td>扣非归母净利润</td><td class="num">23.17亿(+17.42%)</td><td class="num">瑞银称超市场预期约7pp</td><td class="num up">超预期</td><td class="num up">扣非质量真</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：无单季权威一致预期逐项目比对（卖方以全年 EPS 预测为主）。按 v2 修正 B 改用卖方点评相对校验：① <b>瑞银（UBS）Fast Take</b>称「Q1 扣非归母净利 23 亿元，同比增 17%、超市场预期约 7 个百分点」，评级中性、12 个月目标价 42.00 元；② 华创交运称「顺丰调优策略已显成效，实现连续 2 个季度净利率及扣非净利率环比回升」；③ 招商证券/国盛交运称「推荐业绩拐点 + 估值低位的顺丰控股」。综合：Q1 业绩<b>整体超市场预期（尤其扣非）</b>，营收端符合、利润端（扣非）超预期。</p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>快递物流行业处于<b>「反内卷」价格修复、供需双拐点中段</b>：2025 年下半年以来监管整治低价恶性竞争、叠加燃油成本传导与加盟商自下而上挺价，行业单票收入持续回升，从「以价换量」走向「量利齐升」。2026Q1 行业件量同比 +5.8%（增速由 13%+ 换挡至个位数），快递收入 +6.8%、票均收入 7.7 元（+1.0%）——量增价跌局面扭转。传导方向：对<b>单票收入/利润率（价）</b>正面（直接修复盈利）、对<b>件量增速（量）</b>中性偏负（增速换挡）、对<b>成本端</b>受油价上行压力（部分可优化运力结构对冲）。顺丰以直营中高端时效 + 供应链及国际 + 同城即时配送的差异化结构，规避同质电商件价格战，受益价格修复但不依赖低价揽件。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>① 行业大盘：国家邮政局 2026Q1 快递业务量 477.3 亿件（+5.8%）、收入 3690.2 亿（+6.8%）；前 4 月业务量 645.7 亿件（+5.1%）、收入 4979.3 亿（+6.6%）。② 顺丰 Q1 件量 37.3 亿票（+4.9%，低于行业因主动优化结构、放弃低质电商件），单票收入 14.78 元（+1.0%），3 月 14.40 元（同比 +4.2% 止跌回升）。③ 顺丰差异化：速运物流收入 +5.9%（时效稳增、单票收入回升）、供应链及国际 +8.2%（第二增长曲线、占营收比提升）、同城即时配送 2025 年收入 127.2 亿（+43.4%、净利倍增）。④ 格局：2025 年中通份额 19.4% 居首，顺丰速运件量 167 亿件（份额 8.4%）但单票收入远高于通达系。⑤ 政策：反内卷延续、快递员社保覆盖扩大或推升第二波涨价。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>顺丰为<b>重资产物流</b>（固定资产净额 519 亿 + 飞机 98.7 亿 + 使用权资产 151 亿），以 ROIC−WACC 衡量价值创造。估算（v2 修正 C，数据有限降级为估算）：年化 NOPAT ≈ 营业利润 33.99 亿 ×4 ×(1−有效税率 23.7%) ≈ 103.8 亿；投入资本 ≈ 总资产 2138 亿 − 无息流动负债（应付账款+合同负债+应付职工+其他应付款等 ≈ 458 亿）≈ 1680 亿。<b>ROIC ≈ 103.8/1680 ≈ 6.2%</b>；WACC 估算 ~5.5%（10Y 国债 ~1.8% + β~0.9×风险溢价 ~4% → Re~5.4%，Rd~4% 按债股结构）。<b>ROIC−WACC ≈ +0.7pp，小幅为正、价值创造但不显著</b>——重资产与租赁负债拖累 ROIC，改善取决于产能利用率、网络分层提效与自由现金转化。相对历史（2021 年盈利低谷 ROIC 转负）已显著修复。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：总件量 37.3 亿票（+4.9%），但主动调优结构（放弃低质电商件），直营中高端时效件稳增。<b>价</b>：单票收入 14.78 元（+1.0%），其中速运物流收入 +5.9%、单票收入同比回升；供应链及国际 +8.2%。<b>成本</b>：营业成本 639.57 亿（+5.61%，低于营收 +6.14%），毛利率 13.7%（+0.4pp）；规模效应 + 网络结构扁平化/分层 + 营运模式革新驱动结构性提效降本。<b>费用</b>：销售费率 +0.1pp（激励高价值业务）、管理费率 +0.4pp（国际销售能力建设）、研发费率 −0.1pp（科技提效）、财务费率 −0.1pp（降杠杆优化资本结构）。<b>非经常</b>：公允价值变动收益 +130.74%（结构性存款）、资产减值损失 −98.96%（固定资产减值减少）。<b>结论</b>：增长「靠结构调优 + 单票回升 + 国际第二曲线 + 成本提效」，非依赖低价冲量，质量较高。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>偏「真」</b>。非经常性损益 2.08 亿（2026Q1）vs 去年同期 2.60 亿，占净利润 25.26 亿的 <b>8.2%</b>（适中）；扣非归母 23.17 亿（+17.42%）增速<b>快于</b>归母（+13.05%），说明非经常性同比收窄、核心经营利润无水分、且经营增速更强。归母净利润率 3.4%（+0.2pp）、扣非净利率 3.1%（+0.3pp）连续两季环比回升。须注意物流业利润含较大折旧/租赁摊销（非现金），报表利润含金量实质更高。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">顺丰 Q1 季报未披露分部经营利润，按<b>收入结构</b>拆解（本集团 2026Q1，来自 MD&A）：<br/>• <b>速运物流业务</b>：收入同比 <b>+5.9%</b>，占绝对主体；中高端时效服务稳健，单票收入同比回升（核心业绩基本盘稳固）。<br/>• <b>供应链及国际业务</b>：收入同比 <b>+8.2%</b>，增速高于整体，占营收比例持续提升，为<b>第二增长曲线</b>（国际快递、跨境电商物流、海外仓、国际供应链合计强劲增长；尽管国际货代受海运价格波动影响收入增速，但端到端能力支撑快速拓展）。<br/>• <b>同城即时配送</b>：2025 年收入 127.2 亿（+43.4%、净利倍增），2026 延续高增（即时零售扩容）。<br/>• <b>总件量</b> 37.3 亿票（+4.9%），单票收入 14.78 元（+1.0%）。<br/><b>结论</b>：增长由「速运时效稳增 + 供应链国际第二曲线 + 同城高增」驱动，结构持续优化、规避低价电商件内卷（注：Q1 未披露分部利润，增量利润贡献以收入结构与毛利率 +0.4pp 综合判断）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（稳健、杠杆下行）</b>：资产负债率 = 负债 1021.95 / 资产 2137.97 = <b>47.8%</b>（−1.2pp vs 上年末 49.0%）；归母权益 1004.10 亿（+1.11%）。<br/><b>流动性</b>：类现金（货币资金 169.92 亿 + 交易性金融资产 256.38 亿，后者 +58.27% 为结构性存款）= 426.30 亿；短期有息（短期借款 90.44 亿 + 一年内到期非流动负债 123.55 亿）= 213.99 亿；<b>现金短债比 ≈ 2.0x</b>，安全。短期借款 +28.96%（90.44 亿）需关注但整体可控；长期借款 46.55 亿（−10.2%）、应付债券 113.81 亿、租赁负债 96.19 亿。<br/><b>周转/效率</b>：应收账款 290.40 亿（−5.12%，回款改善）；存货 30.57 亿（占营收 4.1%，物流低存货特征，周转正常）；商誉 93.67 亿（占净资产 9.3%）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>匹配但同比回落</b>。经营活动现金流净额 33.65 亿（−17.16%），OCF/归母 = 33.65 / 25.26 ≈ <b>1.33x</b>（仍 >1，但低于去年同期 1.82x）；营收现金比（销售商品收到现金 799.12 亿 / 营收 741.42 亿）≈ 108%。投资活动净流出 64.14 亿（购建固定资产等 28.63 亿 + 投资支付），筹资净流出 9.09 亿（借款净流入增加 + 回购股份）。期末现金及现金等价物 159.72 亿（类现金另含交易性金融资产 256 亿）。现金流与盈利基本匹配，但 OCF 同比回落需跟踪。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）：</b>OCF 拆解（亿元，v2 修正 E）：净利润 26.51 ＋ 非现损益（折旧摊销/信用减值 −0.57 亿等）− 营运资金变动。关键项：① <b>应付账款下降 31.54 亿</b>（302.77→271.23 亿，支付供应商致现金流出）；② <b>应付职工薪酬下降 19.21 亿</b>（61.93→42.73 亿，支付薪酬）；③ 应收账款下降 15.67 亿（306.07→290.40 亿，回款正向）；④ 收到其他与经营活动有关的现金 227.61 亿（去年同期 243.40 亿，−15.79 亿）。<b>归因</b>：OCF −17.16% 主因去年同期高基数下应付账款/职工薪酬集中释放、本期营运资金净流入规模收窄；净现比 1.33x 仍健康，非盈利质量恶化。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>余量充足</b>。资本开支（购建固定资产/无形/长期资产）28.63 亿（同比 +49.7%，为国际及网络能力前瞻性投入）；FCF = OCF 33.65 − CapEx 28.63 ≈ <b>5.02 亿</b>（单季为正）。投资活动净流出 64.14 亿中多为结构性存款等理财滚动（交易性金融资产 +90 亿），非纯粹资本开支。筹资活动净流出 9.09 亿（借款净流入 + 回购股份 26 亿）。<b>覆盖能力</b>：OCF 33.65 亿覆盖 CapEx 与回购；A 股累计回购 6704 万股（~26 亿、均价 38.78 元、用途注销）由经营现金流及债务支撑，非危机性。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b><b>历史中低位、回购提供支撑</b>。A 股 002352 2026-04-28 收 36.60 元，PE(TTM) 16.35x、PB(LF) 1.86x、股息率 TTM 2.43%、总市值约 1870 亿（RMB 187b）；52 周区间 35.28–50.70 元；瑞银 12 个月目标价 42.00 元（中性）。H 股 06936.HK 同步上市。相对同业：顺丰 PE 高于通达系（圆通/申通动态 PE 因 2026Q1 高增更低），溢价反映直营网络 + 时效护城河 + 国际第二曲线 + 高 ROE 质量；但绝对 PE 处自身历史中低位。</p>
+      <p><b>周期正常化估值（v2 修正 F）：</b>物流<b>非强周期</b>但受行业价格周期影响（反内卷修复期）。正常化盈利以<b>2025 归母 111.17 亿为锚</b>（盈利波动平缓、持续增长），对应正常化 PE ≈ 16–17x，处历史中低位（v2 修正 F）。须注意 Q1 净利 25.26 亿年化 ~101 亿低于 2025 全年（Q1 季节性偏低 + OCF 回落），若以正常化 110 亿计 PE ≈ 17x。<b>PB 1.86x</b> 对应 ROE ~10%（年化），未明显低估但安全边际来自回购注销（缩减股本提升 EPS）与价格修复周期延续。</p>
+      <p><b>股东回报可持续性：</b><b>回购注销 + 稳定分红</b>。① A 股回购：累计回购 6704 万股（占总股本 1.33%），均价 38.78 元、总额约 26 亿，用途<b>注销减资</b>（增厚 EPS）；② H 股回购方案 ≤5 亿港元（截至期末未实施）；③「共同成长」持股计划首次归属（6407 人、1390.7 万股）；④ 分红：以 2025 全年分红测算股息率 TTM 约 2.4%（市场数据）；回购 + 分红均由经营现金流覆盖，非借钱回报。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card"><b>宏观</b>：全球经济复杂多变、地缘冲突推升能源价格及加剧贸易不确定性，公司聚焦价值经营、优化业务结构应对（管理层）。<b>战略</b>：2025Q3 推出「激活经营」进阶机制，由规模驱动进阶至<b>价值驱动</b>，保障高价值业务增速；坚持「亚洲唯一、全球覆盖」国际化战略，加强空海陆干线与海外仓建设。<b>资本配置</b>：持续回购注销（A 股上限 30–60 亿）、优化资本结构、前瞻投入国际及网络能力；H 股 IPO 募资用途部分重新分配至国内物流网络。<b>重大事项</b>：拟与极兔速递互持股份（各约 82.99 亿港元，交易完成后持股极兔 10%），截至披露日<b>尚未完成交割</b>；AI 应用于货量预测、智能路由、无人驾驶、AI 报关。<i>（前瞻性陈述，非承诺）</i></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">2026Q1 快递头部盈利普遍改善（反内卷价格修复），关键对比：<br/>• <b>归母净利润（亿）/ 同比</b>：顺丰 25.26 / +13.0% ＞ 圆通 13.78 / +60.8% ＞ 韵达 4.87 / +51.7% ＞ 申通 4.59 / +94.3% ＞ 中通 21.18 / +6.3%（港股，调整后净利 +5.2%）。<br/>• <b>营收（亿）/ 同比</b>：顺丰 741.42 / +6.1% ＞ 中通 132.82 / +22.0% ＞ 圆通 187.69 / +10.0% ＞ 申通 156.86 / +30.7% ＞ 韵达 125.76 / +3.2%。<br/>• <b>单票扣非净利（元）</b>：圆通 0.18 ＞ 韵达 0.08 ＞ 申通 0.07（26Q1）；顺丰因件量结构差异单票收入 14.78 元远高于通达系（2 元级）。<br/><b>结论</b>：顺丰增速绝对值低于加盟制同行（后者受益低基数 + 价格修复弹性更大），但<b>绝对利润规模、差异化结构、盈利质量（扣非 +17.4%）与净利率回升趋势领先</b>；估值溢价有基本面支撑，但需看国际业务与极兔协同兑现。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉 93.67 亿，占净资产 1004.10 亿的 <b>9.3%</b>、占年利润（2025 归母 111.17 亿）0.84x，远低于 v2 阈值（净资产 30% 或 年利 5x），无并购泡沫。主要由历史并购（DHL 供应链中国、嘉里物流等）形成，无新增激增。</div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">安全</span>研发费用 5.36 亿（−8.3%），研发费用率 −0.1pp，以费用化为主；无研发资本化率异常或突然上升，科技投入审慎。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">安全</span>资产减值损失 476 万（<b>−98.96%</b>，主因固定资产减值减少）；信用减值损失 −0.57 亿（同比略增但规模小），无大额一次性减值洗大澡迹象。</div></div>
+<div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict amber">关注</span>短期借款 90.44 亿（<b>+28.96%</b>），但类现金（货币 169.92 + 交易性金融资产 256.38 = 426.30 亿）对短期有息（短借 + 一年内到期 = 214 亿）<b>现金短债比 ≈ 2.0x</b>，安全；资产负债率 47.8%（−1.2pp）下行。短借上升主因债务期限结构调整，整体可控，需跟踪后续走势。</div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">标准</span>Q1 季报未经审计（监管允许），无保留意见前提；数据以管理层账目编制，待年报审计校验。</div></div>
+<div class="rf"><div class="k">关联交易 / 其他应收</div><div class="v"><span class="verdict flat">安全</span>其他应收款 37.77 亿（略降），无畸高资金占用；关联交易（极兔互持、共同成长持股计划）披露合规。</div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict flat">安全</span>营收 +6.14% 与 OCF/归母 1.33x 同向（净现比 >1），销售商品收到现金 799.12 亿 / 营收 741.42 亿 ≈ 108%，现金含量尚可，无放宽信用促收入迹象。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">安全</span>存货 30.57 亿（占营收 4.1%，物流低存货特征），周转正常，无积压/滞销风险；跌价准备充分。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">安全</span>非经常性损益 2.08 亿（去年同期 2.60 亿），占净利 8.2%；扣非归母 23.17 亿（+17.42%）增速快于归母，核心经营未含水分、质量「真」。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict amber">关注</span>OCF 33.65 亿（<b>−17.16%</b>），净现比 1.33x 仍 >1 但较去年同期 1.82x 回落；归因应付账款/职工薪酬支付致营运资金净流入收窄（详见 OCF 拆解），非盈利恶化，但需跟踪后续回款与周转。</div></div>
+<div class="rf"><div class="k">收入确认激进（v2 新增）</div><div class="v"><span class="verdict flat">安全</span>直营网络按服务完成确认收入（CAS 14），无经销商压货机制；营收与 OCF 同向（净现比 >1），无渠道库存高于终端动销迹象；国际货代收入按完工进度确认，需关注跨境外运波动对确认节奏影响。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 或有负债（v2 新增）</div><div class="v"><span class="verdict amber">关注</span>为境外全资子公司发行可转 H 股可转债（29.09 亿港元）提供担保；拟与极兔速递互持股份（各约 82.99 亿港元，<b>截至披露日尚未完成交割</b>）；无重大未决诉讼披露。需跟踪极兔交易交割进度与并表/权益法影响。</div></div>
+<div class="rf"><div class="k">国际业务 / 地缘政治（物流特有）</div><div class="v"><span class="verdict amber">关注</span>供应链及国际收入 +8.2%（第二曲线），但受海运价格波动（影响货代收入增速）、油价上行（推升运输成本）、地缘政治/贸易不确定性直接冲击；公司称已优化运力结构应对，需跟踪国际运价与出海节奏。</div></div>
+<div class="rf"><div class="k">毛利率低位（物流特有）</div><div class="v"><span class="verdict amber">关注</span>毛利率 13.7%（+0.4pp）虽连续回升但仍处历史低位（2020 年曾 16%、2021 年低谷 7.2%）；价格战遗留 + 重资产折旧拖累，盈利弹性取决于价格修复持续性（反内卷）与网络提效。</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+<li>2026Q1 营收 741.42 亿（+6.14%）、归母 25.26 亿（+13.05%）、扣非 23.17 亿（+17.42%），<b>收入与利润均创 Q1 同期历史新高</b>，且扣非增速快于归母（非经常性由 2.60 亿降至 2.08 亿），盈利质量「真」。</li>
+<li>「激活经营」进阶机制显成效：主动调优结构（放弃低质电商件）+ 单票收入回升（Q1 14.78 元 +1.0%、3 月 +4.2% 止跌回升）+ 毛利率 +0.4pp 至 13.7%，连续 2 季净利率及扣非净利率环比回升。</li>
+<li>供应链及国际业务 +8.2%（第二增长曲线，占营收比提升），行业处「反内卷」价格修复、供需双拐点，顺丰以差异化（时效+供应链+国际）规避同质价格战。</li>
+<li>资产负债表稳健：资产负债率 47.8%（−1.2pp）、现金短债比约 2.0x、商誉仅 9.3% 净资产；A 股累计回购 6704 万股（~26 亿、注销减资）+ H 股回购方案，估值处历史中低位（PE 16.35x/PB 1.86x）。</li>
+</ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+<li>经营现金流 33.65 亿（−17.16%），净现比 1.33x 虽 >1 但较去年同期 1.82x 回落，主因应付账款/职工薪酬支付致营运资金净流入收窄，需跟踪回款与周转。</li>
+<li>短期借款 90.44 亿（+28.96%），债务期限结构调整需关注；毛利率 13.7% 仍处历史低位，盈利弹性取决于价格修复（反内卷）持续性与网络提效。</li>
+<li>国际业务受海运价格波动、油价上行、地缘政治直接冲击；与极兔互持股份（各约 82.99 亿港元）截至披露日尚未完成交割，协同与并表影响待验证。</li>
+</ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol>
+<li><b>经营现金流回落（OCF 33.65 亿、−17.16%、净现比 1.33x 低于去年同期 1.82x）</b> → 下季看应收账款回款、应付账款周转与净现比是否修复（§5/§9 红旗 10）。</li>
+<li><b>短期借款上升（90.44 亿、+28.96%）</b> → 下季看债务期限结构、现金短债比与财务费用率（§4/§9 红旗 4）。</li>
+<li><b>极兔互持交易未完成交割（各约 82.99 亿港元）</b> → 下季看交割先决条件达成、权益法/并表影响与协同兑现（§7/§9 红旗 12）。</li>
+<li><b>国际业务波动（供应链及国际 +8.2%，受海运价格/油价/地缘影响）</b> → 下季看国际运价、出海节奏与第二曲线占比（§0.5/§3/§9 红旗 13）。</li>
+<li><b>毛利率低位（13.7%，+0.4pp）</b> → 下季看单票收入（反内卷价格修复持续性）与网络提效对毛利率拉动（§2/§9 红旗 14）。</li>
+<li><b>扣非净利率环比回升持续性（连续 2 季回升）</b> → 下季看「激活经营」进阶机制成效与高价值业务增速（§1/§2）。</li>
+<li><b>回购注销进度（A 股累计 6704 万股 ~26 亿）</b> → 下季看回购上限 30–60 亿执行与 EPS 增厚（§6）。</li>
+</ol></div>
+  </div>
+
+
+</div>
+</body>
+</html>

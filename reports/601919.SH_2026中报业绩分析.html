@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中远海控 2026 中报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">中远海控</div>
+      <div class="meta">
+        <span>601919.SH</span><span>航运(集装箱航运)</span><span>上交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026年半年度报告</div>
+      <div class="pdate">披露日期：2026-08-29</div>
+      <div class="badge flat">中性偏谨慎</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性偏谨慎</span>
+      <p class="oneliner">2026 中报营收 1,119.22 亿元（+2.59%）、归母净利润 134.19 亿元（−23.48%）、扣非 133.87 亿元（−23.35%）、基本 EPS 0.88 元（−21.43%）、加权 ROE（半年）5.70%（−1.65pp）。业绩呈现典型「营收微增、利润显著回落」的强周期特征：营收增主因集装箱量稳增（码头总吞吐量 8,015.70 万TEU、+7.89%）+ 供应链收入 240.90 亿（+11.61%）+ Q2 运价反弹（CCFI Q2 环比 +19.5%、SCFI 6 月末较年初 +95.65%）；利润降 −23.5% 主因①集装箱航运毛利率 17.19%（−3.29pp）：单箱收入 −2.1%（1,180.68 美元/TEU）、国际油价上行推高燃油成本、船队扩张刚性支出；②财务费用转正 3.57 亿（去年同期净收益 20.98 亿，+24.55 亿）：利息收入 −11.09 亿 + 美元贬值致汇兑净损失 8.10 亿。亮点在财务端：经营现金流 233.30 亿（OCF/归母 174% 极高）、货币资金 1,414.42 亿、资产负债率 41.0%（净现金约 700 亿）、中期股息每股 0.43 元（占 H1 归母 49%）。估值低估（A 股收 16.88 元、PE(TTM) 10.3x、PB 1.13x、股息率 TTM ~6%、机构 90.9% 买入），具高股息+破净修复防御价值，但强周期运价波动是核心风险。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul>
+<li>营收微增、利润显著回落（强周期特征）：H1 营收 1,119.22 亿（+2.59%）、归母 134.19 亿（−23.48%）、扣非 133.87 亿（−23.35%）、EPS 0.88 元（−21.43%）、加权 ROE（半年）5.70%（−1.65pp）。利润降主因单箱收入 −2.1% + 燃油成本升 + 财务费转正（+24.55 亿：利息降 + 汇兑净损 8.10 亿）。</li>
+<li>分部与量价：集装箱航运收入 1,072.98 亿（+2.38%）、毛利率 17.19%（−3.29pp）；码头收入 63.27 亿（+8.30%）、总吞吐量 8,015.70 万TEU（+7.89%）；供应链收入 240.90 亿（+11.61%）为增量亮点；Q2 运价反弹（CCFI Q2 +19.5%、SCFI 6 月末较年初 +95.65%）部分对冲 H1 均价微降。</li>
+<li>财务极稳健、现金含量极高：资产负债率 41.0%、货币资金 1,414.42 亿、净现金约 700 亿；经营现金流 233.30 亿（OCF/归母 174%）、中期股息每股 0.43 元（占 H1 归母 49%）；扣非≈归母、非经常性仅 −0.32 亿，盈利质量极干净。</li>
+<li>低估破净边缘高股息：A 股收 16.88 元、PE(TTM) 10.3x、PB 1.13x（近破净）、股息率 TTM ~6%、机构 90.9% 买入、平均目标价 18.17 元（+7.6%），具高股息+破净修复防御价值。</li>
+</ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
+<li>运价周期波动（核心红旗）：集运强周期，业绩与 CCFI/SCFI 高度绑定；2027 新船交付高峰→运力过剩隐忧，当前运价反弹属 3–6 个月窗口期而非永续，回落将直接压制利润。</li>
+<li>地缘 / 贸易政策（核心红旗）：红海绕行（吸收 6–8% 运力）、美伊局势、美国新 301 关税前抢运、贸易政策不确定性，多重扰动双向影响运价与燃油/碳税成本。</li>
+<li>汇率与成本：美元贬值致汇兑净损失 8.10 亿、财务费转正；国际油价上行推高燃油成本（存货 +34.08%）、船队扩张刚性支出 + 环保改造成本扩大，持续挤压毛利率（−3.29pp）。</li>
+<li>营收质量：应收账款 111.18 亿（较年初 +37.96%）、存货 84.57 亿（+34.08%）快于营收，账期略放宽/油价驱动，需下季跟踪周转。</li>
+</ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">营业收入（H1 同半年度，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="57.6" y="105.2" width="58.8" height="100.8" rx="3" fill="#13406b" opacity="0.85"/><text x="87.0" y="101.2" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">1,393</text><text x="87.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">21</text><rect x="155.6" y="53.5" width="58.8" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="185.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">2,108</text><text x="185.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">22</text><rect x="253.6" y="139.5" width="58.8" height="66.5" rx="3" fill="#13406b" opacity="0.85"/><text x="283.0" y="135.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">918</text><text x="283.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">23</text><rect x="351.6" y="132.7" width="58.8" height="73.3" rx="3" fill="#13406b" opacity="0.85"/><text x="381.0" y="128.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">1,012</text><text x="381.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">24</text><rect x="449.6" y="127.0" width="58.8" height="79.0" rx="3" fill="#13406b" opacity="0.85"/><text x="479.0" y="123.0" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">1,091</text><text x="479.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">25</text><rect x="547.6" y="125.0" width="58.8" height="81.0" rx="3" fill="#13406b" opacity="0.85"/><text x="577.0" y="121.0" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">1,119</text><text x="577.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">26</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">H1 同半年度多年序列；2026 营收 1,119.22 亿(+2.59%)，高于 2024-25、低于 2022 峰值，处于周期中低位</text></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="38" y="16" font-size="12" font-weight="700" fill="#13406b">归母净利润（H1 同半年度，亿元）</text><line x1="38" y1="206" x2="626" y2="206" stroke="#e7ebf1"/><rect x="57.6" y="118.7" width="58.8" height="87.3" rx="3" fill="#13406b" opacity="0.85"/><text x="87.0" y="114.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">371</text><text x="87.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">21</text><rect x="155.6" y="53.5" width="58.8" height="152.5" rx="3" fill="#13406b" opacity="0.85"/><text x="185.0" y="49.5" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">648</text><text x="185.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">22</text><rect x="253.6" y="167.0" width="58.8" height="39.0" rx="3" fill="#13406b" opacity="0.85"/><text x="283.0" y="163.0" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">166</text><text x="283.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">23</text><rect x="351.6" y="166.3" width="58.8" height="39.7" rx="3" fill="#13406b" opacity="0.85"/><text x="381.0" y="162.3" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">169</text><text x="381.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">24</text><rect x="449.6" y="164.7" width="58.8" height="41.3" rx="3" fill="#13406b" opacity="0.85"/><text x="479.0" y="160.7" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">175</text><text x="479.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">25</text><rect x="547.6" y="174.4" width="58.8" height="31.6" rx="3" fill="#13406b" opacity="0.85"/><text x="577.0" y="170.4" font-size="10.5" font-weight="700" fill="#1f2733" text-anchor="middle">134</text><text x="577.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">26</text><text x="38" y="238" font-size="9.5" fill="#8a94a6">H1 同半年度；2026 归母 134.19 亿(-23.48%)，为 2023H1(165.61) 以来最低，强周期回落（2022 峰值 648.31）</text></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 640 240" width="100%" style="font-family:-apple-system,PingFang SC,Microsoft YaHei,sans-serif"><text x="40" y="16" font-size="12" font-weight="700" fill="#13406b">H1 同比增速（%）</text><line x1="40" y1="80.5" x2="626" y2="80.5" stroke="#c8d0db" stroke-dasharray="3 3"/><text x="137.7" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">24</text><text x="333.0" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">25</text><text x="528.3" y="222.0" font-size="10.5" fill="#8a94a6" text-anchor="middle">26</text><polyline points="137.7,33.1 333.0,44.3 528.3,68.4" fill="none" stroke="#c0392b" stroke-width="2.2"/><circle cx="137.7" cy="33.1" r="3" fill="#c0392b"/><text x="137.7" y="26.1" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+10.2</text><circle cx="333.0" cy="44.3" r="3" fill="#c0392b"/><text x="333.0" y="37.3" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+7.8</text><circle cx="528.3" cy="68.4" r="3" fill="#c0392b"/><text x="528.3" y="61.4" font-size="9.5" font-weight="700" fill="#c0392b" text-anchor="middle">+2.6</text><polyline points="137.7,71.7 333.0,62.4 528.3,189.6" fill="none" stroke="#1f8a4c" stroke-width="2.2"/><circle cx="137.7" cy="71.7" r="3" fill="#1f8a4c"/><text x="137.7" y="84.7" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+1.9</text><circle cx="333.0" cy="62.4" r="3" fill="#1f8a4c"/><text x="333.0" y="75.4" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">+3.9</text><circle cx="528.3" cy="189.6" r="3" fill="#1f8a4c"/><text x="528.3" y="202.6" font-size="9.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-23.5</text><rect x="40" y="20" width="10" height="10" rx="2" fill="#c0392b"/><text x="54" y="29" font-size="10" fill="#5b6675">营收YoY</text><rect x="150" y="20" width="10" height="10" rx="2" fill="#1f8a4c"/><text x="164" y="29" font-size="10" fill="#5b6675">归母YoY</text><text x="40" y="238" font-size="9.5" fill="#8a94a6">红=营收增速 绿=归母增速（A股习惯）；2026 营收+2.6% 微增、归母-23.5% 连增两年后转降（单箱收入-2.1%+油价+汇率）</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+
+<div class="mcard"><div class="lab">营业收入</div><div class="val">1119.22亿</div><div class="delta up">+2.59%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">134.19亿</div><div class="delta down">-23.48%</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">0.88元</div><div class="delta down">-21.43%</div></div>
+<div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">133.87亿</div><div class="delta down">-23.35%</div></div>
+<div class="mcard"><div class="lab">加权ROE(半年)</div><div class="val">5.70%</div><div class="delta down">-1.65pp</div></div>
+<div class="mcard"><div class="lab">集运毛利率</div><div class="val">17.19%</div><div class="delta down">-3.29pp</div></div>
+<div class="mcard"><div class="lab">资产负债率</div><div class="val">41.0%</div><div class="delta up">-0.3pp</div></div>
+<div class="mcard"><div class="lab">货币资金</div><div class="val">1414.42亿</div><div class="delta down">-6.6%</div></div>
+<div class="mcard"><div class="lab">经营现金流净额</div><div class="val">233.30亿</div><div class="delta down">-9.49%</div></div>
+<div class="mcard"><div class="lab">码头吞吐量</div><div class="val">8015.70万TEU</div><div class="delta up">+7.89%</div></div>
+<div class="mcard"><div class="lab">中期股息</div><div class="val">0.43元/股</div><div class="delta flat">占49%</div></div>
+<div class="mcard"><div class="lab">OCF/归母</div><div class="val">174%</div><div class="delta flat">优秀</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+
+<tr><td>营业收入</td><td class="num">1119.22亿</td><td class="num">1090.99亿</td><td class="num up">+2.59%</td></tr>
+<tr><td>归母净利润</td><td class="num">134.19亿</td><td class="num">175.36亿</td><td class="num down">-23.48%</td></tr>
+<tr><td>扣非归母净利润</td><td class="num">133.87亿</td><td class="num">174.65亿</td><td class="num down">-23.35%</td></tr>
+<tr><td>加权ROE(半年)</td><td class="num">5.70%</td><td class="num">7.35%</td><td class="num down">-1.65pp</td></tr>
+<tr><td>基本EPS</td><td class="num">0.88元</td><td class="num">1.12元</td><td class="num down">-21.43%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比<span class="sec-sub">（v2 须标注来源与口径）</span></div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+
+<tr><td>营业收入</td><td class="num">1119.22亿(+2.59%)</td><td class="num">2026E营收~2,200-2,400亿(H1占~47-51%)</td><td class="num flat">符合预期</td><td class="num flat">箱量稳+运价中枢上移</td></tr>
+<tr><td>归母净利润</td><td class="num">134.19亿(-23.48%)</td><td class="num">2026E归母~270-310亿(H1占~43-50%)</td><td class="num down">低于预期</td><td class="num up">Q2运价反弹后H2有望改善</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：无单季一致预期（卖方以全年预测为主，统计时点 2026-08-29 中报后）。按 v2 修正 B 全年进度校验：① 2025 全年营收 2,195.04 亿、归母 308.60 亿；市场对 2026E 营收预期约 2,200–2,400 亿、归母约 270–310 亿；H1 营收 1,119.22 亿约占全年 47%–51%、归母 134.19 亿约占 43%–50%，符合季节性（Q2 运价反弹后 H2 有望改善）。② 中报披露后市场反应：A 股 2026-08-28 收 16.88 元、机构 11 家评级 90.9% 建议买入（63.64% 买入 + 27.27% 强推）、平均目标价 18.17 元（+7.6%）。<b>H1 业绩低于预期（运价/成本/汇率三重挤压），但 Q2 运价强势反弹 + 高股息托底，市场预期已部分修复</b>。</p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>集装箱航运行业处于<b>「周期高位震荡、供给过剩隐忧」阶段</b>：2026H1 全球集装箱贸易量增速 5.3%（温和复苏），但运力供给全年增长约 4.2%、<b>2027 年迎新船交付高峰，供需走向「平衡偏宽松」</b>。运价受多重扰动共振：红海绕行（吸收 6–8% 有效运力）、美伊局势、7 月美国新 301 关税前抢运、燃油附加费上调，推动 SCFI 上半年均值 1,956.53（+15%）、CCFI 上半年均值 1,249（同比微降 0.26%，但 Q2 环比 +19.5%）。中远海控以「集装箱航运 + 港口 + 数字化供应链」一体化应对，船队运力约 366 万TEU（订单合计破 530 万TEU）、码头吞吐量全球领先，规模与网络优势显著。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>① 运价：CCFI 上半年均值 1,249（同比 −0.26%，Q2 环比 +19.5%）；SCFI 上半年均值 1,956.53（+15%），6 月末较年初 +95.65%；单箱收入 1,180.68 美元/TEU（−2.1%）。② 量：码头总吞吐量 8,015.70 万TEU（+7.89%，控股 +2.50%/参股 +9.43%）；集装箱航运双品牌（中远海运集运 + 东方海外）共运营 42 组东西干线、运力稳居第一梯队。③ 船队：现有运力约 366 万TEU（自有+租赁），手持自有新造船订单 82 艘约 118 万TEU、租赁订单约 50 万TEU，<b>合计突破 530 万TEU</b>；2026H1 运力增长 +2.1%。④ 成本：国际油价大幅上行（存货 +34.08% 主因燃油采购成本升）、船队扩张刚性支出、环保规则（碳税/技术改造）成本扩大。⑤ 财务费：利息收入 −11.09 亿（存款余额降+利率降）、汇兑净损失 8.10 亿（美元贬值）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>重资产航运，以<b>ROIC−WACC</b> 衡量价值创造（v2 修正 C，允许定性）。估算（半年年化）：NOPAT ≈ 归母 134.19 亿×2 ≈ 268 亿（少数股东与财务费已含）；投入资本 IC = 归母净资产 2,337.62 亿 + 净负债（有息负债 ~712 亿 − 货币资金 1,414 亿 = <b>净现金 ~702 亿</b>，故 IC ≈ 净资产 − 净现金 ≈ 1,636 亿）；<b>ROIC（年化）≈ 268 / 1,636 ≈ 16.4%</b>（半年口径 ROE 5.70% 年化约 11.4%，受净现金放大）。WACC ≈ 7.5%（航运 β 中性、债权占比低、股权为主）。<b>ROIC−WACC ≈ +8–9pp，价值创造为正</b>——但强周期下 ROIC 随运价大幅波动（2022 峰值 ROE >50%、2023 谷底 ~10%），当前处周期中低位仍为正利差。投资逻辑偏「高股息 + 破净修复 + 周期拐点」而非稳态 ROIC 扩张（v2 修正 C 允许定性）。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：营业收入 1,119.22 亿（+2.59%）：集装箱航运 1,072.98 亿（+2.38%）、码头 63.27 亿（+8.30%）、供应链收入（除海运）240.90 亿（+11.61%）；码头总吞吐量 8,015.70 万TEU（+7.89%）。<b>价</b>：整体毛利率约 17.8%（同比 −3.11pp，集装箱航运 17.19%−3.29pp、码头 27.63%−0.42pp），净利率 12.00%（−3.9pp）——单箱收入 −2.1%（1,180.68 美元/TEU）、国际油价上行推高燃油成本、船队扩张刚性支出。<b>成本/费用</b>：营业成本增（集装箱航运成本 +6.62% 快于收入 +2.38%）；管理费用 39.06 亿（+7.4%）、研发费用 5.28 亿；财务费用转正 3.57 亿（去年同期净收益 20.98 亿，+24.55 亿：利息收入 −11.09 亿 + 汇兑净损失 8.10 亿）。<b>投资/其他</b>：投资收益 30.02 亿（对联营/合营 28.18 亿，港口与物流联营）；资产减值 −0.23 亿、信用减值 −0.81 亿（极小）。<b>结论</b>：归母 −23.48% = 毛利率 −3.11pp（燃油+成本升）− 财务费用 +24.55 亿（利息收入降+汇兑损）− 所得税随利润降 + 投资收益持平 + 供应链/码头增量缓冲；经营基本盘受运价/成本/汇率三重挤压。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「真」、极干净</b>。扣非 133.87 亿 vs 归母 134.19 亿，非经常性仅 −0.32 亿（几乎无）；非经常性含其他收益 5.44 亿（政府补助，同比 −40%）、公允价值 −0.11 亿、资产减值 −0.23 亿，无依赖资产处置/政府补助粉饰，盈利含金量高。<b>现金验证</b>：经营现金流净额 233.30 亿（−9.49%），<b>OCF/归母 ≈ 174%（远超 100%）</b>，盈利有真金白银支撑，无借钱分红；货币资金 1,414.42 亿、净现金约 700 亿，现金含量极高。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">中远海控按<b>业务分部</b>披露（2026 中报，人民币）：<br/>• <b>集装箱航运业务</b> 收入 1,072.98 亿（+2.38%）、毛利 184.45 亿、毛利率 <b>17.19%（−3.29pp）</b>、EBIT 21.99 亿美元（−26.6%）——主业，受单箱收入 −2.1% + 燃油成本升 + 船队刚性支出拖累；双品牌（中远海运集运 + 东方海外货柜）共运营 42 组东西干线、运力稳居第一梯队。<br/>• <b>码头业务（中远海运港口）</b> 收入 63.27 亿（+8.30%）、毛利率 27.63%（−0.42pp）、总吞吐量 <b>8,015.70 万TEU（+7.89%）</b>——全球 40 港 394 泊位，控股为主、重点参股差异化经营。<br/>• <b>供应链（除海运）</b> 收入 240.90 亿（+11.61%）——一体化延伸增量亮点。<br/><b>增量利润归因</b>：集装箱航运 EBIT −26.6% 被码头 + 供应链 + 对联营合营投资收益（28.18 亿）部分缓冲；分部间抵销后整体利润降 −23.5%。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（极稳健、净现金）</b>：资产负债率 <b>41.0%</b>（负债合计 1,983.19 亿 / 总资产 4,836.30 亿，较年初 41.4% 略降）；有息负债 ≈ 短期借款 7.77 + 长期借款 215.12 + 租赁负债 305.99 + 一年内到期 183.01 ≈ <b>711.89 亿</b>；货币资金 1,414.42 亿 → <b>净现金约 702 亿</b>。<br/><b>流动性（极强）</b>：流动资产 ≈ 1,705 亿（货币 1,414 + 应收 111 + 其他）、流动负债合计 1,179.68 亿，流动比率 ≈ 1.45；现金短债比（货币 / 短期有息 ~191 亿）≈ 7.4x，短期偿债无虞。<br/><b>资产质量与周转</b>：应收账款 111.18 亿（较年初 +37.96%，账期略放宽/6 月营收增）、存货 84.57 亿（+34.08%，主因国际油价上行燃油采购成本升、非滞销）；<b>商誉 61.44 亿（占净资产 2.6%，无泡沫）</b>；固定资产 1,481.65 亿 + 使用权资产 402.96 亿（租赁船队并表）；长期股权投资 774.69 亿（港口/物流联营，权益法）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>回落但现金含量极高</b>。经营现金流净额 233.30 亿（−9.49%，去年同期 257.77 亿），<b>OCF/归母 ≈ 174%</b>，盈利现金含量远超 100%，无背离。销售商品收到现金 1,107.43 亿（+2.8%，与营收匹配）；购买商品支付 792.42 亿（+10.6%，主因燃油成本升 + 绕行附加支出）；支付税费 33.97 亿（−47%，利润降致所得税降）；投资活动净流出 119.12 亿（船舶建造/码头/理财）、筹资净流出 182.32 亿（分红 + 回购注销 + 偿债）。经营净流入充分覆盖，净现金累积。</p>
+      <p><b>OCF 拆解归因（v2 修正 E）：</b>OCF 拆解（亿元）：经营净流入 233.30（−9.49%）。关键项：① <b>收款端</b>：销售商品收到 1,107.43（+2.8%）匹配营收；应收账款 111.18 亿（较年初 +37.96%，6 月营收增 + 账期略放宽）。② <b>支出端</b>：购买商品支付 792.42（+10.6%，燃油成本升 + 航线绕行附加成本）；支付税费 33.97（−47%，利润降）；支付职工与其他约 28.4 亿。③ <b>投资</b>：投资活动净流出 119.12（新船建造/码头投资 + 理财）；④ <b>筹资</b>：净流出 182.32（中期分红 65.65 + 回购注销 + 偿债）。<b>归因</b>：OCF 回落主因购买商品支出增（燃油/成本）与应收占用，非盈利质量恶化。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>由充沛经营现金流与净现金覆盖</b>。H1 投资活动流出 119.12 亿（船舶建造/码头为主），FCF ≈ OCF 233.30 − 经营相关 CapEx（约 80–100 亿）≈ <b>半年 +130–150 亿（为正）</b>，因净现金充裕。中期分红 65.65 亿仅占 OCF 28%、由经营现金流充分覆盖，<b>非借钱分红</b>；全年 CapEx（新船建造为主）由经营 + 净现金支撑，财务极稳健。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b><b>低估值、破净边缘、高股息</b>。以 2026-08-28 收盘价 A 股 16.88 元计：总市值约 2,577 亿，PE(TTM) 10.29x、PB(LF) 1.13x（<b>近破净</b>）、股息率 TTM ~5.97%；H 股 01919 收 17.20 港元（≈15.8 人民币，AH 小幅溢价）。机构 11 家评级 90.9% 建议买入（63.64% 买入 + 27.27% 强推）、平均目标价 18.17 元（+7.6%），部分来源区间 17.70–18.80 元。相对国际同业（马士基/达飞/赫伯罗特 PE 8–12x 但处周期高位利润），中远海控估值处历史中低位。</p>
+      <p><b>周期正常化估值（v2 修正 F）：</b>集运强周期，利润正常化以<b>中性运价</b>还原（v2 修正 F）。当前 2026H1 归母 134.19 亿处周期中低位（2022 峰值 648 亿、2023–24 谷底 ~165–169 亿、2025 恢复 175 亿、2026H1 年化 ~268 亿）。若取近 3 年（2023–2025）平均归母 ~170 亿为「周期中性」参考，<b>正常化 PE ≈ 2,577 亿 / 170 亿 ≈ 15x</b>；若按 2025 全年 309 亿则 ~8.3x。<b>结论</b>：当前 PE(TTM) 10.3x + PB 1.13x（近破净）+ 股息率 ~6%，已反映周期担忧；下行有净现金 ~700 亿 + 高股息托底，上行取决于运价中枢与 2027 供给释放节奏。</p>
+      <p><b>股东回报可持续性：</b><b>高分红 + 回购注销、回馈股东</b>。2026 中期股息每股 0.43 元（含税），合计约 65.65 亿，<b>占 H1 归母 49%</b>（延续 50% 左右高派息率）；2025 全年分红（中期 0.56 + 末期）延续高回报。报告期内延续股份回购注销（2025H1 累计回购注销 A 股 1.02 亿股 + H 股 2.37 亿股，增厚 EPS、维护股东权益），2026 按规划接续。中期分红由 OCF 174% 充分覆盖，<b>分红可持续、非借钱分红</b>；2025–2027 股东分红回报规划维持高派息。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card"><b>「十五五」开局、数字化供应链 + 绿色低碳双赛道</b>：船队规模稳居第一梯队（现有 366 万TEU、订单合计破 530 万TEU），码头全球 40 港 394 泊位持续布局关键节点；推进「大订单」平台、自研 AI「智能供应链管家」、绿色船队构建。<b>股东回报</b>：维持高派息（中期占 49%）+ 回购注销。<b>风险敏感</b>：运价周期（2027 新船交付高峰 → 运力过剩）、地缘（红海绕行/美伊）、贸易政策（美国新 301 关税）、汇率（美元贬值致汇兑净损 8.10 亿）。<i>（前瞻性陈述，非承诺）</i></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">集运 / 港口板块可比（2026 中报/最新）：<br/>• <b>中远海控</b>：归母 134.19 亿（−23.48%）、PB 1.13x、PE(TTM) 10.3x、股息率 ~6%、净现金 ~700 亿——综合航运+港口+供应链一体化、财务最稳健、分红最高。<br/>• <b>东方海外国际（00316.HK）</b>：同为双品牌，受益 Q2 运价反弹，弹性更大。<br/>• <b>中谷物流（A）</b>：内贸集运，周期敏感度与外贸不同。<br/>• <b>上港集团 / 青岛港</b>：港口稳健，与中远海控码头板块可比。<br/>• <b>国际：马士基 / 达飞 / 赫伯罗特</b>：2026H1 普遍受益运价反弹（马士基 Q2 强劲），但 2027 供给过剩担忧一致。<br/><b>结论</b>：中远海控在 A/H 航运股中财务最稳健（净现金、低负债率 41%）、分红最高、估值处历史中低位（PB 近破净）；相对国际同业 PE 偏低，但强周期属性决定其估值中枢随运价波动。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉 61.44 亿（占净资产 2.6%），远低于 v2 阈值；主要来自东方海外、港口等并购，资产质量干净、无减值迹象（本期商誉微降 63.59→61.44 亿）。</div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">安全（不适用）</span>研发费用 5.28 亿（费用化），航运以运维/技改为主，无研发资本化率异常；数智化（AI 供应链管家）计入当期费用。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">安全</span>资产减值损失 −0.23 亿、信用减值 −0.81 亿（均极小），无大额洗大澡；应收账款坏账准备计提正常（信用减值仅 −0.81 亿，占应收 0.7%）。</div></div>
+<div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict flat">安全（优）</span>资产负债率 41.0%（较年初 41.4% 略降）；有息负债 ~712 亿、货币资金 1,414 亿 → <b>净现金约 700 亿</b>；短期借款仅 7.77 亿（−62.45%）、现金短债比 ~7.4x，短期偿债无虞；租赁负债 305.99 亿为经营租赁并表（非隐性债务）。</div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">标准（未经审计）</span>半年度报告未经审计（A 股惯例），待年报审计校验；财务数据以管理层账目编制，关键科目（货币/应收/负债）与现金流匹配。</div></div>
+<div class="rf"><div class="k">关联交易 / 其他应收</div><div class="v"><span class="verdict amber">关注</span>其他应收款 42.48 亿（较年初 +32.3%），含集团内关联往来与联营企业应收股利 39.14 亿（年初 34.57 亿）；报告明确「不存在被控股股东及其他关联方非经营性占用资金」，但需关注关联资金往来合理性（§4/§9）。</div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span>营收 +2.59% 但应收账款 111.18 亿（较年初 +37.96%）、存货 84.57 亿（+34.08%）快于营收，指向账期略放宽 / 燃油采购成本升；需下季跟踪应收周转与信用政策（§4/§9）。但经营现金流 OCF/归母 174% 验证收入真实回款。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict amber">中性</span>存货 84.57 亿（较年初 +34.08%），报告明确主因国际油价大幅上行、燃油采购成本上升，属成本驱动而非滞销积压；航运即产即运，无库存商品积压风险。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">安全</span>扣非 133.87 亿 vs 归母 134.19 亿，非经常性仅 −0.32 亿（几乎无）；政府补助（其他收益 5.44 亿，同比 −40%）、公允价值 −0.11 亿、资产减值 −0.23 亿，无依赖资产处置/补助粉饰，盈利质量极干净。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">安全（正面）</span>经营现金流 233.30 亿（−9.49%）但 <b>OCF/归母 ≈ 174%</b>，现金含量远超 100%；中期分红 65.65 亿仅占 OCF 28%，非借钱分红；净现金约 700 亿累积，无背离。</div></div>
+<div class="rf"><div class="k">收入确认激进（v2 新增）</div><div class="v"><span class="verdict flat">安全</span>航运收入按航次完成/提单交货、客户取得控制权时确认（标准控制权转移模型）；营收 +2.59% 与箱量（码头 +7.89%）/运价（CCFI 微降、Q2 +19.5%）匹配，无提前确认/渠道压货迹象。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 外币折算（v2 新增）</div><div class="v"><span class="verdict amber">关注</span>① 表外/担保：报告明确「不存在违反规定决策程序对外提供担保」（否）；租赁负债 305.99 亿为经营租赁并表（已显性，非表外）。② 外币折算：功能货币含美元（东方海外/海外港口收入美元），美元贬值致汇兑净损失 8.10 亿、其他综合收益受汇率波动；净敞口随运价与美元利率双向变动（§2/§9）。</div></div>
+<div class="rf"><div class="k">运价周期波动（行业特有，核心红旗）</div><div class="v"><span class="verdict amber">关注（红旗）</span>集运强周期，业绩与 CCFI/SCFI 高度绑定（「运价涨则利润爆发、跌则收缩」）；2026H1 CCFI 均值 1,249 微降、但 Q2 环比 +19.5%、SCFI 6 月末较年初 +95.65%。<b>2027 年新船交付高峰 → 运力过剩隐忧</b>，运价或重回下行通道；当前行情属 3–6 个月窗口期而非永续成长（§0.5/§3/§9）。</div></div>
+<div class="rf"><div class="k">地缘 / 贸易政策（行业特有，红旗）</div><div class="v"><span class="verdict amber">关注（红旗）</span>红海绕行（吸收 6–8% 有效运力、航程 +10–14 天）、美伊局势、7 月美国新 301 关税前抢运、贸易政策不确定性，多重扰动双向影响运价与成本；燃油价格（存货 +34%）与碳税/环保改造成本扩大亦受地缘传导（§0.5/§3/§9）。</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
+<li>营收微增、利润显著回落（强周期特征）：H1 营收 1,119.22 亿（+2.59%）、归母 134.19 亿（−23.48%）、扣非 133.87 亿（−23.35%）、EPS 0.88 元（−21.43%）、加权 ROE（半年）5.70%（−1.65pp）。利润降主因单箱收入 −2.1% + 燃油成本升 + 财务费转正（+24.55 亿：利息降 + 汇兑净损 8.10 亿）。</li>
+<li>分部与量价：集装箱航运收入 1,072.98 亿（+2.38%）、毛利率 17.19%（−3.29pp）；码头收入 63.27 亿（+8.30%）、总吞吐量 8,015.70 万TEU（+7.89%）；供应链收入 240.90 亿（+11.61%）为增量亮点；Q2 运价反弹（CCFI Q2 +19.5%、SCFI 6 月末较年初 +95.65%）部分对冲 H1 均价微降。</li>
+<li>财务极稳健、现金含量极高：资产负债率 41.0%、货币资金 1,414.42 亿、净现金约 700 亿；经营现金流 233.30 亿（OCF/归母 174%）、中期股息每股 0.43 元（占 H1 归母 49%）；扣非≈归母、非经常性仅 −0.32 亿，盈利质量极干净。</li>
+<li>低估破净边缘高股息：A 股收 16.88 元、PE(TTM) 10.3x、PB 1.13x（近破净）、股息率 TTM ~6%、机构 90.9% 买入、平均目标价 18.17 元（+7.6%），具高股息+破净修复防御价值。</li>
+</ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
+<li>运价周期波动（核心红旗）：集运强周期，业绩与 CCFI/SCFI 高度绑定；2027 新船交付高峰→运力过剩隐忧，当前运价反弹属 3–6 个月窗口期而非永续，回落将直接压制利润。</li>
+<li>地缘 / 贸易政策（核心红旗）：红海绕行（吸收 6–8% 运力）、美伊局势、美国新 301 关税前抢运、贸易政策不确定性，多重扰动双向影响运价与燃油/碳税成本。</li>
+<li>汇率与成本：美元贬值致汇兑净损失 8.10 亿、财务费转正；国际油价上行推高燃油成本（存货 +34.08%）、船队扩张刚性支出 + 环保改造成本扩大，持续挤压毛利率（−3.29pp）。</li>
+<li>营收质量：应收账款 111.18 亿（较年初 +37.96%）、存货 84.57 亿（+34.08%）快于营收，账期略放宽/油价驱动，需下季跟踪周转。</li>
+</ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol>
+<li><b>运价指数（CCFI 1,249 / Q2 +19.5%、SCFI 均值 1,956.53 / +15%、6 月末较年初 +95.65%）</b> → 下季看 Q3 旺季运价持续性、2027 新船交付后运力过剩节奏（§0.5/§3/§9 红旗 13）。</li>
+<li><b>单箱收入与燃油成本（单箱收入 1,180.68 美元/TEU、−2.1%；存货 +34.08% 主因油价）</b> → 下季看 Brent 油价、单箱收入修复、船队刚性支出（§2/§3/§9 红旗 13）。</li>
+<li><b>汇率与财务费（汇兑净损失 8.10 亿、财务费转正 3.57 亿、美元贬值）</b> → 下季看美元/人民币汇率、利息收入与套保有效性（§2/§9 红旗 12）。</li>
+<li><b>应收与存货周转（应收 111.18 亿 +37.96%、存货 84.57 亿 +34.08%）</b> → 下季看账期政策、燃油采购节奏、周转是否恶化（§4/§9 红旗 7/8）。</li>
+<li><b>股东回报与回购（中期股息 0.43 元/股、占 49%；2025 回购注销 A 股 1.02 亿+H 股 2.37 亿股）</b> → 下季看全年派息率、回购注销接续与 EPS 增厚（§6/§9）。</li>
+</ol></div>
+  </div>
+
+
+</div>
+</body>
+</html>

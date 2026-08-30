@@ -3,7 +3,8 @@
 
 存储规范（与中国移动一致）：
   每个 .xlsx 含三张 sheet：年报数据 / 季报数据 / 数据来源与口径说明。
-  "年报数据"：指标为行、年份(2020-2025)为列（metrics-as-rows 布局），最后一列"备注"。
+  "年报数据"：默认指标为行、年份(2020-2025)为列（metrics-as-rows 布局），最后一列"备注"。
+  例外：文件1「财务健康」采用 years_as_rows=True，写入为「年份为行、指标为列」方向（与手工在盘文件及 build_s1_svg 读取方向一致）。
 单位写进指标名后缀（如"营业收入(亿元)"），比率标"%"，规模标单位。
 无法核验的年份值为 None（写入 XLSX 显示为"—"）。
 """
@@ -118,16 +119,31 @@ def build_dataset():
 
     files = []
 
+    # 派生：EBITDA率(%) = EBITDA / 营业收入 × 100（与 build_s1_svg 同口径）
+    ebitda_rate = []
+    for i, y in enumerate(C.YEARS):
+        e = dv["ebitda"][i]
+        r = dv["revenue"][i]
+        ebitda_rate.append(round(e / r * 100, 2) if (e and r) else None)
+    dv["ebitda_rate"] = ebitda_rate
+
     # ---- 文件1：财务健康与盈利质量 ----
+    # 注：f1 写入采用「年份为行、指标为列」方向（years_as_rows=True），
+    # 与手工维护的在盘文件及 build_s1_svg 读取方向一致；preserve_quarterly=True
+    # 表示仅重写年报数据 sheet，保留手工补全的丰富单季数据。
     f1_rows = [
-        _row("revenue"), _row("net_profit"), _row("ebitda"), _row("roe"),
-        _row("net_margin"), _row("debt_ratio"), _row("fcf"), _row("ar"),
+        _row("revenue"), _row("net_profit"), _row("ebitda"),
+        ("EBITDA率(%)", ebitda_rate, "=EBITDA/营业收入，计算值（派生）"),
+        _row("roe"), _row("net_margin"), _row("debt_ratio"), _row("fcf"), _row("ar"),
     ]
     files.append({
         "file_name": "中国电信_财务健康与盈利质量.xlsx",
         "title": "中国电信 · 财务健康与盈利质量（2020–2025）",
         "annual_headers": ["指标", "2020", "2021", "2022", "2023", "2024", "2025", "备注"],
         "annual_rows": f1_rows,
+        "years_as_rows": True,
+        "annual_header_row": 3,
+        "preserve_quarterly": True,
         "q_headers": q_headers, "q_rows": q_rows,
         "source_text": [
             "· 数据来源：东方财富 Eastmoney 港股 F10 利润表/资产负债表（00728.HK，源自港交所披露易）、A 股合并报表复合指标（00728 港股财务指标，源自历年年报）、港交所 2020-2025 年报与业绩公告。",
