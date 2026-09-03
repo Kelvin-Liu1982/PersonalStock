@@ -95,13 +95,14 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:18
 .modal .sub{font-size:12px;color:var(--dim);margin-top:8px}
 footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
 </style>
+<script src="/quote-live.js" defer></script>
 </head>
 <body>
 <header class="top">
   <h1>中远海控 · 主营与业绩追踪看板</h1>
 </header>
 <div class="wrap">
-  <div class="quotebar" id="quotebar"></div>
+  <div class="quotebar" data-a-code="sh601919" data-h-code="hk01919" id="quotebar"></div>
 
   <div class="grid">
 
@@ -408,42 +409,6 @@ const COLORS={scfi:"#c8102e",ccfi:"#15616d",thru:"#15616d",util:"#d98a14",fleet:
     +'</div>';
   document.getElementById("quotebar").innerHTML=html;
 
-  // 刷新行情按钮：浏览器侧 fetch('/rebuild')，由 serve.py 调用 build_tracker.py
-  const btn=document.getElementById("qRefreshBtn");
-  const sp =btn&&btn.querySelector(".spinner");
-  const lb =btn&&btn.querySelector(".lbl");
-  const mg =document.getElementById("qRefreshMsg");
-  if(btn){
-    btn.addEventListener("click",()=>{
-      btn.disabled=true;
-      if(sp)sp.classList.remove("hidden");
-      if(lb)lb.textContent="刷新中…";
-      if(mg){mg.className="qmsg";mg.textContent="";}
-      const t0=Date.now();
-      fetch("/rebuild",{cache:"no-store"})
-        .then(r=>r.json().then(o=>({status:r.status,o})))
-        .then(({status,o})=>{
-          const dt=((Date.now()-t0)/1000).toFixed(1);
-          if(o&&o.ok){
-            if(mg){mg.className="qmsg ok";mg.textContent="✓ "+o.msg+"（"+dt+"s）";}
-            if(lb)lb.textContent="刷新行情";
-            // 自动重载页面，拉取新 HTML
-            setTimeout(()=>location.reload(),800);
-          }else{
-            if(mg){mg.className="qmsg err";mg.textContent="✗ "+(o&&o.msg||("HTTP "+status));}
-            if(lb)lb.textContent="重试";
-          }
-        })
-        .catch(e=>{
-          if(mg){mg.className="qmsg err";mg.textContent="✗ "+e;}
-          if(lb)lb.textContent="重试";
-        })
-        .finally(()=>{
-          btn.disabled=false;
-          if(sp)sp.classList.add("hidden");
-        });
-    });
-  }
 })();
 
 function spark(el,data,color){

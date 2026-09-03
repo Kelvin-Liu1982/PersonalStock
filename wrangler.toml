@@ -1,5 +1,8 @@
 name = "personalstock"
-compatibility_date = "2024-09-23"
+compatibility_date = "2025-04-01"
+
+# Worker 入口：仅处理 /api/quote，其余请求回落静态资源
+main = "worker/index.js"
 
 # 将整个仓库根作为静态资源目录
 # 根 index.html 会作为站点首页
