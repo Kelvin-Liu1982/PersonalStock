@@ -12,7 +12,9 @@ import os, re, sys
 ROOT = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, "/Users/sto1/.workbuddy/skills/finance-xlsx-svg-charts/scripts")
 sys.path.insert(0, ROOT)
-from gen_line_svg import make_line_svg
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from common.svg_charts import make_line_svg
 import openpyxl
 
 XLSX = os.path.join(ROOT, "数据源", "中国移动_宏观政策与股东回报.xlsx")

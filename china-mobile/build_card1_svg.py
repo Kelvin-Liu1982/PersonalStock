@@ -16,7 +16,9 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from gen_line_svg import make_line_svg, make_placeholder
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from common.svg_charts import make_line_svg, make_placeholder
 
 FN = os.path.join(HERE, "数据源", "中国移动_财务健康与盈利质量.xlsx")
 OUT_DIR = os.path.join(HERE, "svg 图", "s1")

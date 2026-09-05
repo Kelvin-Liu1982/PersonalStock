@@ -1,6 +1,13 @@
 # ---- 构建中间产物 ----
 # build_tracker.py 生成、render_html.py 读取，每次构建都会重新生成，不入库
 _data_js.txt
+# build_card*_svg.py / build_s1_svg.py / build_s2_svg.py 生成的中间 svg 文件。
+# 图表已由 common/reinject_svgs.py 内联注入各看板 HTML 的 __CHARTS__，运行时不依赖这些文件；
+# 需要时重跑对应 build 脚本再执行 reinject_svgs.py 即可 100% 还原，故不入库。
+china-mobile/svg 图/
+china-telecom/svg/
+# 注：coal 的中间 svg 直接生成在项目根目录（非 svg/ 子目录），故按文件匹配
+china-coal/*.svg
 # build_financials.py 的东方财富 API 抽取回退缓存，每次构建会重新生成，不入库
 财报原始数据_缓存.json
 

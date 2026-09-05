@@ -10,7 +10,9 @@ import sys
 import openpyxl
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gen_line_svg import make_line_svg
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from common.svg_charts import make_line_svg
 
 SRC = "数据源/中国电信_核心业务运营与结构转型.xlsx"
 OUT = "svg/s2"

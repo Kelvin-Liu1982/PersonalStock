@@ -97,6 +97,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
 @media(max-width:640px){.qdate{margin-left:0}}
 </style>
 <script src="../quote-live.js" defer></script>
+<script src="../chart-zoom.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -212,7 +213,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <details open>
       <summary>① 营业收入 &amp; 归母净利润（2021–2025，亿）</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_rev"></div>
+        <div class="chart" data-zoom id="ch_rev"></div>
         <p class="fin-note">口径说明：2020–2025 为全年累计，盈利采用港股年报"本公司权益持有者应占盈利"口径（与移动/电信看板一致）。营收/净利增速均为近年低位，行业进入新旧动能转换的平台期；2025 年自由现金流同比 +28.5% 为亮点。<b>注：2020–2025 多年度序列已按公司 2025 年报、HKEX 披露与东方财富真实财报接口回填，2025 单年值与年报一致。</b></p>
         <h4>核心财务数据（亿元）</h4>
         <table class="ftab">
@@ -228,7 +229,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <details>
       <summary>② 资本开支总额及结构（2021–2026F，亿）</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_capex"></div>
+        <div class="chart" data-zoom id="ch_capex"></div>
         <p class="fin-note">口径说明：2026 为<b>公司资本开支指引</b>（约 500 亿）。投资结构"由连接转向算力"：2026 算力投资占比超 35%（超 175 亿），网络基础设施通过共建共享精简。2025 资本开支占服务收入比降至 16%。<b>注：2020–2025 资本开支已按公司披露与年报回填（2026F 为公司指引约 500 亿）。</b></p>
         <h4>资本开支（亿元）</h4>
         <table class="ftab">
@@ -242,7 +243,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <details>
       <summary>③ 派息率与每股股息（2021–2025）</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_payout"></div>
+        <div class="chart" data-zoom id="ch_payout"></div>
         <p class="fin-note">口径说明：公司持续提升股东回报，派息率由 2020 年 48.7% 波动上行至 2025 年 61.3%；每股股息为全年（中期 + 末期）合计，人民币计价。<b>注：派息率 2020–2025 已按历年分红总额/净利与公司披露回填；每股股息 2023–2025 取自年报，2020–2022 待补。</b></p>
         <h4>股东回报数据</h4>
         <table class="ftab">
@@ -257,7 +258,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <details>
       <summary>④ 移动 / 宽带 ARPU（2021–2025，元/户/月，估算）</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_arpu"></div>
+        <div class="chart" data-zoom id="ch_arpu"></div>
         <p class="fin-note">口径说明：受资费下行与流量经营转型承压，移动 ARPU 趋稳；宽带综合 ARPU 因智慧家庭 + 融合套餐升级而稳中略升。ARPU 是衡量"价值经营"的核心指标。<b>注：联通未单独披露 ARPU 年度序列，本图多年度为估算，2025 为示意值；待逐年补年报复核。</b></p>
         <h4>ARPU 数据（元/户/月，估算）</h4>
         <table class="ftab">
@@ -271,7 +272,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <details>
       <summary>⑤ 客户规模：移动 / 宽带 / 5G套餐（2021–2025，估算）</summary>
       <div class="body fin-sec">
-        <div class="chart" id="ch_cust"></div>
+        <div class="chart" data-zoom id="ch_cust"></div>
         <p class="fin-note">口径说明：5G 套餐用户为披露口径（2025 年约 2.95 亿户）；移动/宽带用户为规模口径，2025 年移动净增约 1,300 万、宽带净增 761 万，全连接用户总量突破 12 亿。<b>注：2025 移动 3.57 亿户、宽带 1.29 亿户取自 2025 年报；多年度序列为估算，待逐年补年报复核。</b></p>
         <h4>客户规模（估算）</h4>
         <table class="ftab">
@@ -290,6 +291,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
   </footer>
 </div>
 
+<script src="../common/charts.js"></script>
 <script>
 // ===== 内联 SVG 图表渲染（无外部依赖）=====
 function niceCeil(v){
@@ -372,27 +374,7 @@ function barChart(id, labels, series, opts){
   document.getElementById(id).innerHTML=svg+lg+cap;
 }
 
-// ===== 指标行内联 sparkline（仅渲染迷你折线 SVG）=====
-function sparkMini(id, values, color){
-  const box=document.getElementById(id);
-  if(!box) return;
-  color=color||'#c8102e';
-  const pts=values.map(v=>Number(v)).filter(v=>!isNaN(v));
-  if(!pts.length){ box.innerHTML=''; return; }
-  let min=Math.min.apply(null,pts);
-  let max=Math.max.apply(null,pts);
-  if(min===max){ const d=Math.abs(max)||1; min-=d*0.15; max+=d*0.15; }
-  const W=100,H=24,pad=3, n=pts.length;
-  const X=i=> n<=1?W/2:pad+i*(W-2*pad)/(n-1);
-  const Y=v=> pad+(1-(v-min)/(max-min))*(H-2*pad);
-  let line='';
-  pts.forEach((v,i)=>{ line+=(i?'L':'M')+X(i).toFixed(2)+' '+Y(v).toFixed(2)+' '; });
-  const area='M'+X(0).toFixed(2)+' '+H+' '+line.replace('M','L')+'L'+X(n-1).toFixed(2)+' '+H+' Z';
-  box.innerHTML='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" width="100%" height="100%">'+
-    '<path d="'+area+'" fill="'+color+'" fill-opacity="0.12"/>'+
-    '<path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'+
-    '</svg>';
-}
+// ===== 指标行内联 sparkline（由 common/charts.js 的 CommonCharts.sparkMini 提供，见 <script src="../common/charts.js">）=====
 
 // ===== 图表数据 =====
 // ① 营收与净利（HK口径）

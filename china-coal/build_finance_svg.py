@@ -3,7 +3,7 @@
 卡片4「财务表现」SVG 趋势图生成（只读数据源版）
 -----------------------------------------------------------------
 - 数据来源：`数据源/中煤能源_业务追踪数据.xlsx`
-  - `财务指标(季度)` sheet（单季还原后的真实单季值，报告日 YYYYQn，2020Q1-2026Q1）
+  - `财务指标(季度)` sheet（单季还原后的真实单季值，报告日 YYYYQn，2020Q1-2026Q2）
   - `财务指标(年度)` sheet（年报全年值，年份 2020-2025）
 - 生成：
   - `trend_{key}_y.svg` 年度趋势图（来自 财务指标(年度)）
@@ -14,8 +14,12 @@
 - 视觉风格与 build_finance_card.py 的 build_svg_base / build_sparkline 完全一致。
 - 本脚本**只读 xlsx，绝不写回 Excel**。
 """
+import os
 import openpyxl
 from openpyxl.utils import get_column_letter
+
+SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
+os.makedirs(SVG_DIR, exist_ok=True)
 
 EXCEL = "数据源/中煤能源_业务追踪数据.xlsx"
 Q_SHEET = "财务指标(季度)"
@@ -144,16 +148,16 @@ for key, title, col, unit, color in METRICS:
     y_vals = col_vals(y_rows, y_labels, col)
     build_svg_base([(title, y_vals, color)],
                    f"{title}趋势（年度）", unit,
-                   f"trend_{key}_y.svg", W=1000, H=420,
+                   f"svg/trend_{key}_y.svg", W=1000, H=420,
                    xlabels=y_labels)
-    # 季度（财务指标(季度)，标签 2020Q1-2026Q1）
+    # 季度（财务指标(季度)，标签 2020Q1-2026Q2）
     q_vals = col_vals(q_rows, q_labels, col)
     build_svg_base([(title, q_vals, color)],
                    f"{title}趋势（季度·单季）", unit,
-                   f"trend_{key}_q.svg", W=1000, H=420,
+                   f"svg/trend_{key}_q.svg", W=1000, H=420,
                    xlabels=quarter_label_smart(q_labels), label_step=1)
     # sparkline（年度序列，与趋势按钮口径统一）
-    build_sparkline(y_vals, color, f"spark_{key}.svg")
+    build_sparkline(y_vals, color, f"svg/spark_{key}.svg")
 
 # =====================================================================
 # 注：长期趋势专区财务表现原为两张组合图（trend_revenue_profit /

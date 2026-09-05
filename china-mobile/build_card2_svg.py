@@ -19,7 +19,9 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, "/Users/sto1/.workbuddy/skills/finance-xlsx-svg-charts/scripts")
 sys.path.insert(0, HERE)
 import openpyxl
-from gen_line_svg import make_line_svg
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from common.svg_charts import make_line_svg
 
 SRC = os.path.join(HERE, "数据源", "中国移动_核心业务运营与结构转型.xlsx")
 OUT_DIR = os.path.join(HERE, "svg 图", "s2")

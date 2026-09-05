@@ -14,7 +14,11 @@
 - 视觉风格与 build_finance_svg.py 的 build_svg_base / build_sparkline 完全一致。
 - 本脚本**只读 xlsx，绝不写回 Excel**。
 """
+import os
 import openpyxl
+
+SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
+os.makedirs(SVG_DIR, exist_ok=True)
 
 EXCEL = "数据源/中煤能源_业务结构.xlsx"
 
@@ -144,7 +148,7 @@ def build_sparkline(vals, color, fname):
 
 for key, title, sheet, col, unit, color in METRICS:
     labels, vals = load_col(sheet, col)
-    build_svg_base([(title, vals, color)], f"{title}趋势（年度）", unit, f"trend_{key}_y.svg", W=1000, H=420, xlabels=labels)
-    build_sparkline(vals, color, f"spark_{key}.svg")
+    build_svg_base([(title, vals, color)], f"{title}趋势（年度）", unit, f"svg/trend_{key}_y.svg", W=1000, H=420, xlabels=labels)
+    build_sparkline(vals, color, f"svg/spark_{key}.svg")
 
 print("\nDone: 6 张年度趋势图 + 6 张 sparkline 已生成（仅年度口径，均来自 中煤能源_业务结构.xlsx）")

@@ -9,14 +9,16 @@
 输出：svg/s1/s1_<key>_annual.svg 与 s1_<key>_q.svg
 只读 XLSX，绝不写回。
 
-基于 finance-xlsx-svg-charts skill 的 gen_line_svg（紧凑边距版，与 china-mobile 看板一致）。
+基于 finance-xlsx-svg-charts skill 的紧凑边距折线图（现由 common.svg_charts.make_line_svg 提供，与 china-mobile 看板一致）。
 """
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from gen_line_svg import make_line_svg, make_placeholder
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from common.svg_charts import make_line_svg, make_placeholder
 
 import openpyxl
 

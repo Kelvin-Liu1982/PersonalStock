@@ -11,12 +11,25 @@
 - 若需更新价格，请直接编辑 xlsx，再运行本脚本刷新图表即可。
 """
 import os
+import datetime
 import openpyxl
+
+SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
+os.makedirs(SVG_DIR, exist_ok=True)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_XLSX = os.path.join(HERE, "数据源", "中煤能源_价格和成本.xlsx")
-OUT_SVG = os.path.join(HERE, "trend_qhd5500_weekly.svg")
-OUT_SPARK = os.path.join(HERE, "spark_qhd5500.svg")
+OUT_SVG = os.path.join(HERE, "svg/trend_qhd5500_weekly.svg")
+OUT_SPARK = os.path.join(HERE, "svg/spark_qhd5500.svg")
+
+
+def _fmt_date(d):
+    """把日期单元格统一成 'YYYY-MM-DD' 字符串；同时支持 str 与 datetime。"""
+    if isinstance(d, datetime.datetime):
+        return d.strftime("%Y-%m-%d")
+    if isinstance(d, str):
+        return d[:10]
+    return None
 
 
 def load_series(path):
@@ -25,6 +38,7 @@ def load_series(path):
     - 价格列缺失/非数值 → 跳过；
     - 价格 = 0 的行（文件中 1 月无 CCTD 披露的周）保留为 0 占位，绘图时跳过，
       以保证 x 轴按真实周序连续。
+    - 日期列可为 str('YYYY-MM-DD') 或 datetime（周结束日），两种都接受。
     """
     wb = openpyxl.load_workbook(path, data_only=True)
     ws = wb["秦皇岛5500周度"]
@@ -48,9 +62,10 @@ def load_series(path):
             vf = float(v)
         except (TypeError, ValueError):
             continue
-        if not isinstance(d, str):
+        ds = _fmt_date(d)
+        if ds is None:
             continue
-        dates.append(str(d)[:10])
+        dates.append(ds)
         vals.append(vf)
     return dates, vals
 
@@ -90,12 +105,14 @@ def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
     svg.append(f'<path d="M{" L".join(pts)}" fill="none" stroke="#c53030" stroke-width="2.5"/>')
     for i in valid_idx:
         svg.append(f'<circle cx="{xs_all[i]:.1f}" cy="{yp(vals[i]):.1f}" r="2.6" fill="#c53030" stroke="#fff" stroke-width="1"/>')
-    # x 标签（每月标一次）
-    step = max(1, n // 12)
+    # x 标签：仅标注「每月第一个日期」（数据中出现的最早日），格式 YYYY/MM/DD
+    last_month = None
     for i in range(n):
-        if i % step == 0 or i == n - 1:
-            lab = dates[i][5:7] + "/" + dates[i][8:10]
+        cur_month = dates[i][:7]  # 'YYYY-MM'
+        if cur_month != last_month:
+            lab = dates[i].replace("-", "/")  # 'YYYY/MM/DD'
             svg.append(f'<text x="{xs_all[i]:.1f}" y="{mt+ph+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{lab}</text>')
+            last_month = cur_month
     # 图例
     svg.append(f'<rect x="{ml+4}" y="{H-20}" width="12" height="12" rx="2" fill="#c53030"/>')
     svg.append(f'<text x="{ml+21}" y="{H-10}" font-size="11.5" fill="#374151">秦皇岛5500现货价</text>')

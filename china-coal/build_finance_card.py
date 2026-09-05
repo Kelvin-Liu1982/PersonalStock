@@ -1,3 +1,4 @@
+import os
 # -*- coding: utf-8 -*-
 """
 卡片4「财务表现」数据获取 + Excel 存储 + 趋势图 + HTML 更新
@@ -15,6 +16,9 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from openpyxl import load_workbook
 import re, os, json
+
+SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
+os.makedirs(SVG_DIR, exist_ok=True)
 
 # 重试会话，规避 TLS 抖动
 _session = requests.Session()
@@ -269,7 +273,7 @@ build_svg_base(
     [("营业收入", mix("营业收入(亿元)", "营业收入(亿元)"), "#c53030"),
      ("归母净利润", mix("归母净利润(亿元)", "归母净利润(亿元)"), "#1e3a5f")],
     "营业收入 vs 归母净利润（季度·单季 / 年度·全年）", "亿元",
-    "trend_revenue_profit.svg", W=1000, H=420,
+    "svg/trend_revenue_profit.svg", W=1000, H=420,
     xlabels=[d[-4:] if d.endswith("1231") else q_labels_comb.pop(0) for d in dates])
 
 q_labels_comb2 = quarter_label_smart([d for d in dates if not d.endswith("1231")])
@@ -278,7 +282,7 @@ build_svg_base(
      ("ROE累计", [single_map.get(d, {}).get("ROE累计(%)") if not d.endswith("1231") else year_map.get(d, {}).get("ROE累计(%)") for d in dates], "#b45309"),
      ("每股净资产", mix("每股净资产(元)", "每股净资产(元)"), "#1e3a5f")],
     "资产负债率 / ROE / 每股净资产", "%·元",
-    "trend_ratios.svg", W=1000, H=420,
+    "svg/trend_ratios.svg", W=1000, H=420,
     xlabels=[d[-4:] if d.endswith("1231") else q_labels_comb2.pop(0) for d in dates])
 
 # ② 每个指标单独生成「季度版」与「年度版」两张图（弹窗内可切换）
@@ -291,8 +295,8 @@ for key, title, col, unit, color in [
     ("roe", "ROE累计", "ROE累计(%)", "%", "#b45309"),
     ("bps", "每股净资产", "每股净资产(元)", "元", "#2563eb"),
 ]:
-    fq = f"trend_{key}_q.svg"
-    fy = f"trend_{key}_y.svg"
+    fq = f"svg/trend_{key}_q.svg"
+    fy = f"svg/trend_{key}_y.svg"
     # 季度：用还原后的真实单季值
     fq_df = fin_q_single
     build_svg_base([(title, fq_df[col].tolist(), color)],
@@ -316,7 +320,7 @@ SPARKLINES = {
     "bps":     (fin_q_single["每股净资产(元)"].tolist(), "#1e3a5f"),
 }
 for key, (vals, color) in SPARKLINES.items():
-    build_sparkline(vals, color, f"spark_{key}.svg")
+    build_sparkline(vals, color, f"svg/spark_{key}.svg")
 
 # ---------- 更新 HTML 卡片4 ----------
 with open(HTML, encoding="utf-8") as f:
@@ -389,12 +393,12 @@ spark_map = [
 for metric_name, key in spark_map:
     html = re.sub(
         rf'(<div class="metric-name">{re.escape(metric_name)}</div>\s*<div class="metric-value[^"]*">[^<]*(?:<span class="metric-delta[^>]*>[^<]*</span>)?</div>\s*</div>\s*)<svg class="spark"[^>]*>.*?</svg>',
-        lambda m: m.group(1) + f'<img src="spark_{key}.svg" class="spark" alt="{metric_name}趋势">',
+        lambda m: m.group(1) + f'<img src="svg/spark_{key}.svg" class="spark" alt="{metric_name}趋势">',
         html, count=1, flags=re.DOTALL)
 
 # 备注：趋势图不再内嵌卡片4，统一在 HTML「长期趋势专区」区块展示（见 trend-box）。
 # 此处仅校验趋势专区已引用两张图，不重复插入。
-if 'trend_revenue_profit.svg' not in html or 'trend_ratios.svg' not in html:
+if 'svg/trend_revenue_profit.svg' not in html or 'svg/trend_ratios.svg' not in html:
     print("⚠️ 警告：HTML 长期趋势专区未引用趋势图 SVG，请检查。")
 
 with open(HTML, "w", encoding="utf-8") as f:

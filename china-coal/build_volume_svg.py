@@ -17,7 +17,11 @@
     python3 build_volume_svg.py
 依赖：openpyxl（仅读取）
 """
+import os
 import openpyxl
+
+SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
+os.makedirs(SVG_DIR, exist_ok=True)
 
 FID = "数据源/中煤能源_产销数据.xlsx"
 PR_FID = "数据源/中煤能源_价格和成本.xlsx"  # 价格与成本（原秦皇岛5500现货价_周度.xlsx 改名）
@@ -257,26 +261,26 @@ if __name__ == "__main__":
     ss_q = extract_quarterly(wb["商品煤总销量"])
     sp_y = extract_annual(wb["自产商品煤产量"])
     ss_y = extract_annual(wb["商品煤总销量"])
-    build_trend_q(sp_q, "trend_selfprod_q.svg", "中煤能源 自产商品煤产量（2020-2026·季度·万吨）", "#c53030")
-    build_trend_q(ss_q, "trend_totalsales_q.svg", "中煤能源 商品煤总销量（2020-2026·季度·万吨）", "#c53030")
-    build_trend_y(sp_y, "trend_selfprod_y.svg", "中煤能源 自产商品煤产量（2020-2025·年度·万吨）", "#c53030")
-    build_trend_y(ss_y, "trend_totalsales_y.svg", "中煤能源 商品煤总销量（2020-2025·年度·万吨）", "#c53030")
-    build_spark([v for _, _, v in sp_q], "spark_selfprod.svg", "#c53030")
-    build_spark([v for _, _, v in ss_q], "spark_totalsales.svg", "#c53030")
+    build_trend_q(sp_q, "svg/trend_selfprod_q.svg", "中煤能源 自产商品煤产量（2020-2026·季度·万吨）", "#c53030")
+    build_trend_q(ss_q, "svg/trend_totalsales_q.svg", "中煤能源 商品煤总销量（2020-2026·季度·万吨）", "#c53030")
+    build_trend_y(sp_y, "svg/trend_selfprod_y.svg", "中煤能源 自产商品煤产量（2020-2025·年度·万吨）", "#c53030")
+    build_trend_y(ss_y, "svg/trend_totalsales_y.svg", "中煤能源 商品煤总销量（2020-2025·年度·万吨）", "#c53030")
+    build_spark([v for _, _, v in sp_q], "svg/spark_selfprod.svg", "#c53030")
+    build_spark([v for _, _, v in ss_q], "svg/spark_totalsales.svg", "#c53030")
     # 自产/贸易煤结构：自产占比 = 自产商品煤产量 / 商品煤总销量
     ratio_q = [(y, q, a / b * 100) for (y, q, a), (_, _, b) in zip(sp_q, ss_q)]
     ratio_y = [(y, a / b * 100) for (y, a), (_, b) in zip(sp_y, ss_y)]
-    build_trend_ratio(ratio_q, "trend_structure_q.svg", "中煤能源 自产/贸易煤结构·自产占比（2020-2026·季度·%）", "#15616d", mode="q")
-    build_trend_ratio(ratio_y, "trend_structure_y.svg", "中煤能源 自产/贸易煤结构·自产占比（2020-2025·年度·%）", "#15616d", mode="annual")
-    build_spark([v for *_, v in ratio_q], "spark_structure.svg", "#15616d")
+    build_trend_ratio(ratio_q, "svg/trend_structure_q.svg", "中煤能源 自产/贸易煤结构·自产占比（2020-2026·季度·%）", "#15616d", mode="q")
+    build_trend_ratio(ratio_y, "svg/trend_structure_y.svg", "中煤能源 自产/贸易煤结构·自产占比（2020-2025·年度·%）", "#15616d", mode="annual")
+    build_spark([v for *_, v in ratio_q], "svg/spark_structure.svg", "#15616d")
     # 在产矿井核定产能（年度，券商口径重建/待校年报）
     cap_y = extract_annual_named(wb["在产矿井核定产能(年度)"], "在产矿井核定产能")
-    build_trend_y(cap_y, "trend_capacity_y.svg", "中煤能源 在产矿井核定产能（2020-2025·年度·万吨）", "#d98a14")
-    build_spark([v for _, v in cap_y], "spark_capacity.svg", "#d98a14")
+    build_trend_y(cap_y, "svg/trend_capacity_y.svg", "中煤能源 在产矿井核定产能（2020-2025·年度·万吨）", "#d98a14")
+    build_spark([v for _, v in cap_y], "svg/spark_capacity.svg", "#d98a14")
     # 剩余可采储量（年度，据年报/券商汇编；2025=129.05亿吨，可开采年限约80年）
     res_y = extract_annual_named(wb["剩余可采储量(年度)"], "剩余可采储量")
-    build_trend_y(res_y, "trend_reserves_y.svg", "中煤能源 剩余可采储量（2020-2025·年度·亿吨）", "#2e9e6b", unit="亿吨")
-    build_spark([v for _, v in res_y], "spark_reserves.svg", "#2e9e6b")
+    build_trend_y(res_y, "svg/trend_reserves_y.svg", "中煤能源 剩余可采储量（2020-2025·年度·亿吨）", "#2e9e6b", unit="亿吨")
+    build_spark([v for _, v in res_y], "svg/spark_reserves.svg", "#2e9e6b")
 
     # ============================================================
     # 价格与成本（来自 中煤能源_价格和成本.xlsx，独立 wb_pr）
@@ -284,14 +288,14 @@ if __name__ == "__main__":
     wb_pr = openpyxl.load_workbook(PR_FID, data_only=True)
     # 自产煤平均售价（年度，元/吨；红色 #c8102e 与卡片色一致）
     ap_y = extract_annual_named(wb_pr["自产煤平均售价(年度)"], "自产煤平均售价")
-    build_trend_y(ap_y, "trend_avgprice_y.svg", "中煤能源 自产煤平均售价（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
-    build_spark([v for _, v in ap_y], "spark_avgprice.svg", "#c8102e")
+    build_trend_y(ap_y, "svg/trend_avgprice_y.svg", "中煤能源 自产煤平均售价（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
+    build_spark([v for _, v in ap_y], "svg/spark_avgprice.svg", "#c8102e")
     # 自产煤吨完全成本（年度，绿色 #2e9e6b）
     uc_y = extract_annual_named(wb_pr["自产煤吨完全成本(年度)"], "自产煤吨完全成本")
-    build_trend_y(uc_y, "trend_unitcost_y.svg", "中煤能源 自产煤吨完全成本（2020-2025·年度·元/吨）", "#2e9e6b", unit="元/吨")
-    build_spark([v for _, v in uc_y], "spark_unitcost.svg", "#2e9e6b")
+    build_trend_y(uc_y, "svg/trend_unitcost_y.svg", "中煤能源 自产煤吨完全成本（2020-2025·年度·元/吨）", "#2e9e6b", unit="元/吨")
+    build_spark([v for _, v in uc_y], "svg/spark_unitcost.svg", "#2e9e6b")
     # 自产煤吨毛利（年度，红色 #c8102e）
     gm_y = extract_annual_named(wb_pr["自产煤吨毛利(年度)"], "自产煤吨毛利")
-    build_trend_y(gm_y, "trend_unitgm_y.svg", "中煤能源 自产煤吨毛利（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
-    build_spark([v for _, v in gm_y], "spark_unitgm.svg", "#c8102e")
+    build_trend_y(gm_y, "svg/trend_unitgm_y.svg", "中煤能源 自产煤吨毛利（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
+    build_spark([v for _, v in gm_y], "svg/spark_unitgm.svg", "#c8102e")
     print("✅ 完成（未写回 xlsx）")

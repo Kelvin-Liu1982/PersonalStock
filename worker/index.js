@@ -49,7 +49,18 @@ export default {
     }
 
     // 其余路径：回落到仓库根的静态资源
-    if (env.ASSETS) return env.ASSETS.fetch(request);
+    if (env.ASSETS) {
+      const assetRes = await env.ASSETS.fetch(request);
+      // 未加 content-hash 的 HTML 若长期缓存，push 新版本后仍会命中旧缓存。
+      // 让 HTML 走 no-cache（每次重新校验），部署后自动失效，避免线上停留在旧版。
+      const ct = assetRes.headers.get('Content-Type') || '';
+      if (ct.includes('text/html')) {
+        const h = new Headers(assetRes.headers);
+        h.set('Cache-Control', 'no-cache');
+        return new Response(assetRes.body, { status: assetRes.status, headers: h });
+      }
+      return assetRes;
+    }
     return new Response('Not Found', { status: 404 });
   },
 };
