@@ -22,6 +22,13 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
+# ── 路径基准 ───────────────────────────────────────────────────────
+# 本脚本位于 <项目根>/src/，统一把工作目录切到项目根，
+# 让「数据源/…」「svg/…」「china-coal-dashboard.html」等既有相对路径
+# 保持有效——无论从哪个目录执行，结果都一致。
+import os as _os
+_os.chdir(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 # 注入带重试的会话，规避偶发 TLS EOF 抖动
 _session = requests.Session()
 _retry = Retry(total=5, backoff_factor=1.0,

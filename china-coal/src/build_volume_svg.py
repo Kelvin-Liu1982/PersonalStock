@@ -20,6 +20,13 @@
 import os
 import openpyxl
 
+# ── 路径基准 ───────────────────────────────────────────────────────
+# 本脚本位于 <项目根>/src/，统一把工作目录切到项目根，
+# 让「数据源/…」「svg/…」「china-coal-dashboard.html」等既有相对路径
+# 保持有效——无论从哪个目录执行，结果都一致。
+import os as _os
+_os.chdir(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
 os.makedirs(SVG_DIR, exist_ok=True)
 
@@ -78,13 +85,23 @@ def extract_annual(ws):
 
 # ---------- 读取：按表头子串定位某列，提取年度序列（通用）----------
 def extract_annual_named(ws, header_substr):
+    # 先按"年份"在 A 列定位表头行；若 A 列为空则回退为"在任意列找含 header_substr 的行"
     hdr = None
     for r in range(1, ws.max_row + 1):
         if ws.cell(row=r, column=1).value == "年份":
             hdr = r
             break
     if hdr is None:
-        raise ValueError("未找到表头行（年份）")
+        for r in range(1, ws.max_row + 1):
+            for c in range(1, ws.max_column + 1):
+                h = ws.cell(row=r, column=c).value
+                if h and header_substr in str(h):
+                    hdr = r
+                    break
+            if hdr is not None:
+                break
+    if hdr is None:
+        raise ValueError(f"未找到含『{header_substr}』的表头行")
     col = None
     for c in range(1, ws.max_column + 1):
         h = ws.cell(row=hdr, column=c).value
@@ -122,7 +139,8 @@ def build_trend_q(series, fname, title, color="#c53030"):
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
            f'font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">']
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
-    svg.append(f'<text x="{ml}" y="26" font-size="16" font-weight="700" fill="#1e3a5f">{title}</text>')
+    # 顶部标题：双击放大时仍可见，弹窗内与 modal 标题视觉重复但可接受
+    svg.append(f'<text x="{ml}" y="22" fill="#1f2733" font-size="14" font-weight="700">{title}</text>')
     for k in range(5):
         yv = vmin + (vmax - vmin) * k / 4
         yy = yp(yv)
@@ -140,7 +158,6 @@ def build_trend_q(series, fname, title, color="#c53030"):
             svg.append(f'<text x="{cx:.1f}" y="{cy-10:.1f}" font-size="11" fill="#374151" text-anchor="middle">{vals[i]:.0f}</text>')
         xlab = f"{y_}Q1" if q == 1 else f"Q{q}"
         svg.append(f'<text x="{cx:.1f}" y="{plot_bottom+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{xlab}</text>')
-    svg.append(f'<text x="{ml+pw}" y="{H-10}" font-size="10.5" fill="#9ca3af" text-anchor="end">单位:万吨</text>')
     svg.append('</svg>')
     with open(fname, "w", encoding="utf-8") as f:
         f.write("".join(svg))
@@ -165,7 +182,8 @@ def build_trend_y(series, fname, title, color="#c53030", unit="万吨"):
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
            f'font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">']
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
-    svg.append(f'<text x="{ml}" y="26" font-size="16" font-weight="700" fill="#1e3a5f">{title}</text>')
+    # 顶部标题：双击放大时仍可见，弹窗内与 modal 标题视觉重复但可接受
+    svg.append(f'<text x="{ml}" y="22" fill="#1f2733" font-size="14" font-weight="700">{title}</text>')
     for k in range(5):
         yv = vmin + (vmax - vmin) * k / 4
         yy = yp(yv)
@@ -181,7 +199,6 @@ def build_trend_y(series, fname, title, color="#c53030", unit="万吨"):
         svg.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="3.6" fill="{color}" stroke="#fff" stroke-width="1"/>')
         svg.append(f'<text x="{cx:.1f}" y="{cy-12:.1f}" font-size="12" fill="#374151" text-anchor="middle">{vals[i]:.0f}</text>')
         svg.append(f'<text x="{cx:.1f}" y="{plot_bottom+18:.1f}" font-size="11" fill="#6b7280" text-anchor="middle">{y_}</text>')
-    svg.append(f'<text x="{ml+pw}" y="{H-10}" font-size="10.5" fill="#9ca3af" text-anchor="end">单位:{unit}</text>')
     svg.append('</svg>')
     with open(fname, "w", encoding="utf-8") as f:
         f.write("".join(svg))
@@ -224,7 +241,8 @@ def build_trend_ratio(series, fname, title, color="#15616d", mode="annual"):
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
            f'font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">']
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
-    svg.append(f'<text x="{ml}" y="26" font-size="16" font-weight="700" fill="#1e3a5f">{title}</text>')
+    # 顶部标题：双击放大时仍可见，弹窗内与 modal 标题视觉重复但可接受
+    svg.append(f'<text x="{ml}" y="22" fill="#1f2733" font-size="14" font-weight="700">{title}</text>')
     for k in range(5):
         yv = vmin + (vmax - vmin) * k / 4
         yy = yp(yv)
@@ -248,7 +266,6 @@ def build_trend_ratio(series, fname, title, color="#15616d", mode="annual"):
                 svg.append(f'<text x="{cx:.1f}" y="{cy-10:.1f}" font-size="11" fill="#374151" text-anchor="middle">{vals[i]:.1f}%</text>')
             xlab = f"{y_}Q1" if q == 1 else f"Q{q}"
             svg.append(f'<text x="{cx:.1f}" y="{plot_bottom+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{xlab}</text>')
-    svg.append(f'<text x="{ml+pw}" y="{H-10}" font-size="10.5" fill="#9ca3af" text-anchor="end">单位:%</text>')
     svg.append('</svg>')
     with open(fname, "w", encoding="utf-8") as f:
         f.write("".join(svg))
@@ -261,25 +278,25 @@ if __name__ == "__main__":
     ss_q = extract_quarterly(wb["商品煤总销量"])
     sp_y = extract_annual(wb["自产商品煤产量"])
     ss_y = extract_annual(wb["商品煤总销量"])
-    build_trend_q(sp_q, "svg/trend_selfprod_q.svg", "中煤能源 自产商品煤产量（2020-2026·季度·万吨）", "#c53030")
-    build_trend_q(ss_q, "svg/trend_totalsales_q.svg", "中煤能源 商品煤总销量（2020-2026·季度·万吨）", "#c53030")
-    build_trend_y(sp_y, "svg/trend_selfprod_y.svg", "中煤能源 自产商品煤产量（2020-2025·年度·万吨）", "#c53030")
-    build_trend_y(ss_y, "svg/trend_totalsales_y.svg", "中煤能源 商品煤总销量（2020-2025·年度·万吨）", "#c53030")
+    build_trend_q(sp_q, "svg/trend_selfprod_q.svg", "自产商品煤产量（2020-2026·季度·万吨）", "#c53030")
+    build_trend_q(ss_q, "svg/trend_totalsales_q.svg", "商品煤总销量（2020-2026·季度·万吨）", "#c53030")
+    build_trend_y(sp_y, "svg/trend_selfprod_y.svg", "自产商品煤产量（2020-2025·年度·万吨）", "#c53030")
+    build_trend_y(ss_y, "svg/trend_totalsales_y.svg", "商品煤总销量（2020-2025·年度·万吨）", "#c53030")
     build_spark([v for _, _, v in sp_q], "svg/spark_selfprod.svg", "#c53030")
     build_spark([v for _, _, v in ss_q], "svg/spark_totalsales.svg", "#c53030")
     # 自产/贸易煤结构：自产占比 = 自产商品煤产量 / 商品煤总销量
     ratio_q = [(y, q, a / b * 100) for (y, q, a), (_, _, b) in zip(sp_q, ss_q)]
     ratio_y = [(y, a / b * 100) for (y, a), (_, b) in zip(sp_y, ss_y)]
-    build_trend_ratio(ratio_q, "svg/trend_structure_q.svg", "中煤能源 自产/贸易煤结构·自产占比（2020-2026·季度·%）", "#15616d", mode="q")
-    build_trend_ratio(ratio_y, "svg/trend_structure_y.svg", "中煤能源 自产/贸易煤结构·自产占比（2020-2025·年度·%）", "#15616d", mode="annual")
+    build_trend_ratio(ratio_q, "svg/trend_structure_q.svg", "自产/贸易煤结构·自产占比（2020-2026·季度·%）", "#15616d", mode="q")
+    build_trend_ratio(ratio_y, "svg/trend_structure_y.svg", "自产/贸易煤结构·自产占比（2020-2025·年度·%）", "#15616d", mode="annual")
     build_spark([v for *_, v in ratio_q], "svg/spark_structure.svg", "#15616d")
     # 在产矿井核定产能（年度，券商口径重建/待校年报）
     cap_y = extract_annual_named(wb["在产矿井核定产能(年度)"], "在产矿井核定产能")
-    build_trend_y(cap_y, "svg/trend_capacity_y.svg", "中煤能源 在产矿井核定产能（2020-2025·年度·万吨）", "#d98a14")
+    build_trend_y(cap_y, "svg/trend_capacity_y.svg", "在产矿井核定产能（2020-2025·年度·万吨）", "#d98a14")
     build_spark([v for _, v in cap_y], "svg/spark_capacity.svg", "#d98a14")
     # 剩余可采储量（年度，据年报/券商汇编；2025=129.05亿吨，可开采年限约80年）
     res_y = extract_annual_named(wb["剩余可采储量(年度)"], "剩余可采储量")
-    build_trend_y(res_y, "svg/trend_reserves_y.svg", "中煤能源 剩余可采储量（2020-2025·年度·亿吨）", "#2e9e6b", unit="亿吨")
+    build_trend_y(res_y, "svg/trend_reserves_y.svg", "剩余可采储量（2020-2025·年度·亿吨）", "#2e9e6b", unit="亿吨")
     build_spark([v for _, v in res_y], "svg/spark_reserves.svg", "#2e9e6b")
 
     # ============================================================
@@ -288,14 +305,14 @@ if __name__ == "__main__":
     wb_pr = openpyxl.load_workbook(PR_FID, data_only=True)
     # 自产煤平均售价（年度，元/吨；红色 #c8102e 与卡片色一致）
     ap_y = extract_annual_named(wb_pr["自产煤平均售价(年度)"], "自产煤平均售价")
-    build_trend_y(ap_y, "svg/trend_avgprice_y.svg", "中煤能源 自产煤平均售价（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
+    build_trend_y(ap_y, "svg/trend_avgprice_y.svg", "自产煤平均售价（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
     build_spark([v for _, v in ap_y], "svg/spark_avgprice.svg", "#c8102e")
     # 自产煤吨完全成本（年度，绿色 #2e9e6b）
     uc_y = extract_annual_named(wb_pr["自产煤吨完全成本(年度)"], "自产煤吨完全成本")
-    build_trend_y(uc_y, "svg/trend_unitcost_y.svg", "中煤能源 自产煤吨完全成本（2020-2025·年度·元/吨）", "#2e9e6b", unit="元/吨")
+    build_trend_y(uc_y, "svg/trend_unitcost_y.svg", "自产煤吨完全成本（2020-2025·年度·元/吨）", "#2e9e6b", unit="元/吨")
     build_spark([v for _, v in uc_y], "svg/spark_unitcost.svg", "#2e9e6b")
     # 自产煤吨毛利（年度，红色 #c8102e）
     gm_y = extract_annual_named(wb_pr["自产煤吨毛利(年度)"], "自产煤吨毛利")
-    build_trend_y(gm_y, "svg/trend_unitgm_y.svg", "中煤能源 自产煤吨毛利（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
+    build_trend_y(gm_y, "svg/trend_unitgm_y.svg", "自产煤吨毛利（2020-2025·年度·元/吨）", "#c8102e", unit="元/吨")
     build_spark([v for _, v in gm_y], "svg/spark_unitgm.svg", "#c8102e")
     print("✅ 完成（未写回 xlsx）")

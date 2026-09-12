@@ -113,8 +113,12 @@ util=[parse_util(v) for v in util_raw]
 
 # --- 需求 ---
 de_dates=[str(r[0]) for r in de[1:]]
-thru=[float(r[1]) for r in de[1:]]
-thru_y=[float(r[2]) for r in de[1:]]
+def _or_none(v):
+    if v is None or (isinstance(v, str) and v.strip()==""):
+        return None
+    return float(v)
+thru=[_or_none(r[1]) for r in de[1:]]
+thru_y=[_or_none(r[2]) for r in de[1:]]
 exp=[float(r[3]) for r in de[1:]]
 exp_y=[float(r[4]) for r in de[1:]]
 asean_y=[float(r[5]) for r in de[1:]]
@@ -268,7 +272,9 @@ VALUES = {
     "eu": f"{eu[-1]:.0f}", "med": f"{med[-1]:.0f}", "usw": f"{usw[-1]:.0f}",
     "use": f"{use[-1]:.0f}", "gulf": f"{gulf[-1]:.0f}",
     "util": f"{util[-1]:.0f}%",
-    "thru": f"{thru[-1]:.0f} 万TEU", "thru_yoy": pct(thru_y[-1]), "thru_dir":"up",
+    "thru": (f"{thru[-1]:.0f} 万TEU" if thru[-1] is not None else "待更新"),
+    "thru_yoy": (pct(thru_y[-1]) if thru_y[-1] is not None else "待更新"),
+    "thru_dir": ("up" if thru_y[-1] >= 0 else "down") if thru_y[-1] is not None else "flat",
     "exp": f"{exp[-1]:.0f} 亿美元", "exp_yoy": pct(exp_y[-1]), "exp_dir":"up",
     "asean": pct(asean_y[-1]), "eu_yoy": pct(eu_y[-1]), "us_yoy": pct(us_y[-1]),
     "export_yoy_detail": f"总出口{pct(exp_y[-1])}/东盟{pct(asean_y[-1])}/欧盟{pct(eu_y[-1])}/美国{pct(us_y[-1])}",
@@ -870,7 +876,7 @@ CHARTS["qvol"]=make_qvol_svg(qvol_dates, qvol_yoy, qvol)
 # ---------- 序列化 ----------
 SERIES = {
     "fr_dates":fr_dates, "scfi":scfi, "ccfi":ccfi, "eu":eu, "med":med, "usw":usw, "use":use, "gulf":gulf, "util":util,
-    "de_dates":de_dates, "thru":thru, "exp":exp, "asean_y":asean_y, "eu_y":eu_y, "us_y":us_y, "exp_y":exp_y,
+    "de_dates":de_dates, "thru":[v for v in thru if v is not None], "exp":exp, "asean_y":asean_y, "eu_y":eu_y, "us_y":us_y, "exp_y":exp_y,
     "su_dates":su_dates, "fleet":fleet, "idle_r":idle_r, "order":order,
     "co_dates":co_dates, "blank_us":blank_us, "blank_eu":blank_eu,
     "fin_years":fin_years, "fin_rev_a":fin_rev_a, "fin_np_a":fin_np_a, "fin_gm_a":fin_gm_a, "fin_roe_a":fin_roe_a, "fin_ocf_a":fin_ocf_a, "fin_dar_a":fin_dar_a, "fin_eps_a":fin_eps_a,
@@ -888,7 +894,7 @@ NOTES = {
     "freight": "",
     "supply": "",
     "control": notes_co[-1],
-    "demand": f"2026年1/2月合并吞吐量{de[1][1]}万TEU、出口{de[1][3]}亿美元为区间峰值，随后回归约3300万TEU常态平台；对东盟出口增速持续领跑，对美国增速波动最大。",
+    "demand": f"2026年1–7月全国港口集装箱吞吐量在{de[1][1]:.0f}–3130万TEU区间运行（1/2月为 MOT 合并口径折半）；3–6月维持3100万TEU以上平台，8月交通运输部月度值待发布。对东盟出口增速持续领跑，对美国增速波动最大。",
     "fin": "2021–2022 为周期峰值（净利 893 / 1097 亿），2023 谷底（239 亿，-78%），2024–2025 修复至 491 / 309 亿；2026H1 归母 134.19 亿（-23.48%，运价/成本/汇率三重挤压），其中 Q2 单季约 75.4 亿（H1−Q1 推算，受 Q2 运价强反弹驱动、环比 H1 显著改善）。资产负债率由 56.8% 降至 41.0%，财务结构持续优化。",
     "div": "2022–2025 分红比例稳定在 ~50%（年报+中报合计）；2021 中报仅转增不派现，比例仅 15.6%。2025 全年每股分红 1.00 元、现金分红 154 亿元（A+H）。",
     "cost": "2021–2022 周期高位单箱成本 1000/1205 美元，2023 运价腰斩降至 786 美元，2024–2025 红海绕行+成本管控趋稳于约 863/866 美元。成本结构中设备及货物运输占比约 48–59%（随运价同向涨跌），航程成本(含燃油)约 17–22%，船舶成本(含租船/折旧)约 16–21%。年报未单列燃油费、租船费明细行；现按 航程成本×70%、船舶成本×30% 估算 2025 年燃油费≈260.6 亿、租船费≈107.9 亿（估算值，非官方披露）。",

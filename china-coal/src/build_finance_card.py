@@ -17,6 +17,13 @@ from urllib3.util.retry import Retry
 from openpyxl import load_workbook
 import re, os, json
 
+# ── 路径基准 ───────────────────────────────────────────────────────
+# 本脚本位于 <项目根>/src/，统一把工作目录切到项目根，
+# 让「数据源/…」「svg/…」「china-coal-dashboard.html」等既有相对路径
+# 保持有效——无论从哪个目录执行，结果都一致。
+import os as _os
+_os.chdir(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
 os.makedirs(SVG_DIR, exist_ok=True)
 
@@ -185,7 +192,8 @@ def build_svg_base(series_list, title, yunit, fname, W=1000, H=420, xlabels=None
     xs = [ml + (pw * i / (n - 1)) for i in range(n)]
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">']
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
-    svg.append(f'<text x="{ml}" y="26" font-size="16" font-weight="700" fill="#1e3a5f">{title}</text>')
+    # 顶部标题：双击放大时仍可见，弹窗内与 modal 标题视觉重复但可接受
+    svg.append(f'<text x="{ml}" y="22" fill="#1f2733" font-size="14" font-weight="700">{title}</text>')
     # y 轴范围
     allv = [v for _, vals, _ in series_list for v in vals if v is not None]
     ymin, ymax = min(allv), max(allv)
@@ -222,7 +230,7 @@ def build_svg_base(series_list, title, yunit, fname, W=1000, H=420, xlabels=None
         svg.append(f'<rect x="{lx}" y="{H-22}" width="12" height="12" rx="2" fill="{color}"/>')
         svg.append(f'<text x="{lx+17}" y="{H-12}" font-size="11.5" fill="#374151">{name}</text>')
         lx += 18 + len(name) * 12
-    svg.append(f'<text x="{ml+pw}" y="{H-12}" font-size="10.5" fill="#9ca3af" text-anchor="end">单位:{yunit}</text>')
+    # 单位已统一从右下角移除（按用户要求，弹窗/卡片标题已显示单位信息）
     svg.append('</svg>')
     s = "".join(svg)
     with open(fname, "w", encoding="utf-8") as f:

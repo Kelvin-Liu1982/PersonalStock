@@ -18,6 +18,13 @@ import os
 import openpyxl
 from openpyxl.utils import get_column_letter
 
+# ── 路径基准 ───────────────────────────────────────────────────────
+# 本脚本位于 <项目根>/src/，统一把工作目录切到项目根，
+# 让「数据源/…」「svg/…」「china-coal-dashboard.html」等既有相对路径
+# 保持有效——无论从哪个目录执行，结果都一致。
+import os as _os
+_os.chdir(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
 os.makedirs(SVG_DIR, exist_ok=True)
 
@@ -58,6 +65,15 @@ def col_vals(rows, labels, col):
     return [rows[l].get(col) for l in labels]
 
 # ---------- 绘图函数（与 build_finance_card.py 视觉一致） ----------
+def fmt_val(v):
+    """数据值标签：整数不带小数，其余最多 2 位小数并去掉末尾 0。
+    例：1410 / 275.2 / 55.82 / 13.95 / 0.66 / -10.69
+    """
+    if abs(v - round(v)) < 1e-9:
+        return f"{v:.0f}"
+    return f"{v:.2f}".rstrip("0").rstrip(".")
+
+
 def build_svg_base(series_list, title, yunit, fname, W=1000, H=420, xlabels=None, label_step=None):
     ml, mr, mt, mb = 58, 24, 42, 44
     pw, ph = W - ml - mr, H - mt - mb
@@ -65,13 +81,25 @@ def build_svg_base(series_list, title, yunit, fname, W=1000, H=420, xlabels=None
     xs = [ml + (pw * i / (n - 1)) for i in range(n)]
     svg = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">'.format(W=W, H=H)]
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
-    svg.append(f'<text x="{ml}" y="26" font-size="16" font-weight="700" fill="#1e3a5f">{title}</text>')
+    # 顶部标题：双击放大时仍可见，弹窗内与 modal 标题视觉重复但可接受
+    svg.append(f'<text x="{ml}" y="22" fill="#1f2733" font-size="14" font-weight="700">{title}</text>')
     allv = [v for _, vals, _ in series_list for v in vals if v is not None]
     ymin, ymax = min(allv), max(allv)
     pad = (ymax - ymin) * 0.15 or 1
     ymin, ymax = ymin - pad, ymax + pad
     def ypos(v):
         return mt + ph - (v - ymin) / (ymax - ymin) * ph
+
+    # 数值标签自适应：点越密 / 标签越长 → 字号越小（下限 9px）；仍会重叠则隔点标注
+    maxlen = max((len(fmt_val(v)) for v in allv), default=1)
+    spacing = pw / max(1, n - 1)
+    fs, lstep = 12.0, 1
+    while fs > 9.0 and maxlen * fs * 0.58 > spacing * lstep - 3:
+        fs -= 0.5
+    if maxlen * fs * 0.58 > spacing * lstep - 3:
+        lstep, fs = 2, 11.0
+        while fs > 9.0 and maxlen * fs * 0.58 > spacing * lstep - 3:
+            fs -= 0.5
     for k in range(5):
         yv = ymin + (ymax - ymin) * k / 4
         yy = ypos(yv)
@@ -85,18 +113,18 @@ def build_svg_base(series_list, title, yunit, fname, W=1000, H=420, xlabels=None
             _lab = (xlabels[i] if xlabels else str(i))
             svg.append(f'<text x="{xs[i]:.1f}" y="{mt+ph+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{_lab}</text>')
     for name, vals, color in series_list:
-        pts = [(xs[i], ypos(vals[i])) for i in range(n) if vals[i] is not None]
+        pts = [(xs[i], ypos(vals[i]), vals[i]) for i in range(n) if vals[i] is not None]
         if len(pts) > 1:
-            d = "M" + " L".join(f"{x:.1f} {y:.1f}" for x, y in pts)
+            d = "M" + " L".join(f"{x:.1f} {y:.1f}" for x, y, _ in pts)
             svg.append(f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.5"/>')
-        for x, y in pts:
+        for pi, (x, y, v) in enumerate(pts):
             svg.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3" fill="{color}" stroke="#fff" stroke-width="1"/>')
-    lx = ml + 4
-    for name, _, color in series_list:
-        svg.append(f'<rect x="{lx}" y="{H-22}" width="12" height="12" rx="2" fill="{color}"/>')
-        svg.append(f'<text x="{lx+17}" y="{H-12}" font-size="11.5" fill="#374151">{name}</text>')
-        lx += 18 + len(name) * 12
-    svg.append(f'<text x="{ml+pw}" y="{H-12}" font-size="10.5" fill="#9ca3af" text-anchor="end">单位:{yunit}</text>')
+            # 数据值标签：默认在点上方；太靠顶部则翻到下方，避免压到标题/上边界
+            if pi % lstep == 0 or pi == len(pts) - 1:
+                ly = y - 11 if (y - 11) > mt else y + 18
+                svg.append(f'<text x="{x:.1f}" y="{ly:.1f}" font-size="{fs:g}" font-weight="600" '
+                           f'fill="#374151" text-anchor="middle">{fmt_val(v)}</text>')
+    # 底部图例（颜色方块 + 指标名）已按用户要求移除
     svg.append('</svg>')
     s = "".join(svg)
     with open(fname, "w", encoding="utf-8") as f:

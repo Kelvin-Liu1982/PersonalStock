@@ -17,6 +17,13 @@
 import os
 import openpyxl
 
+# ── 路径基准 ───────────────────────────────────────────────────────
+# 本脚本位于 <项目根>/src/，统一把工作目录切到项目根，
+# 让「数据源/…」「svg/…」「china-coal-dashboard.html」等既有相对路径
+# 保持有效——无论从哪个目录执行，结果都一致。
+import os as _os
+_os.chdir(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
+
 SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
 os.makedirs(SVG_DIR, exist_ok=True)
 
@@ -53,6 +60,12 @@ def parse_val(v):
     except ValueError:
         return None
 
+
+def fmt_val(v):
+    """数据值标签：整数不带小数，非整数保留 1 位（如 404 / 477.2 / 13.8）。"""
+    return f"{v:.0f}" if abs(v - round(v)) < 1e-9 else f"{v:.1f}"
+
+
 # ---------- 读取 sheet -> (labels, vals) ----------
 def load_col(sheet_name, col_name):
     wb = openpyxl.load_workbook(EXCEL, data_only=True)
@@ -84,7 +97,8 @@ def build_svg_base(series_list, title, yunit, fname, W=1000, H=420, xlabels=None
     xs = [ml + (pw * i / (n - 1)) for i in range(n)]
     svg = ['<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">'.format(W=W, H=H)]
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
-    svg.append(f'<text x="{ml}" y="26" font-size="16" font-weight="700" fill="#1e3a5f">{title}</text>')
+    # 顶部标题：双击放大时仍可见，弹窗内与 modal 标题视觉重复但可接受
+    svg.append(f'<text x="{ml}" y="22" fill="#1f2733" font-size="14" font-weight="700">{title}</text>')
     allv = [v for _, vals, _ in series_list for v in vals if v is not None]
     ymin, ymax = min(allv), max(allv)
     pad = (ymax - ymin) * 0.15 or 1
@@ -102,18 +116,17 @@ def build_svg_base(series_list, title, yunit, fname, W=1000, H=420, xlabels=None
         _lab = (xlabels[i] if xlabels else str(i))
         svg.append(f'<text x="{xs[i]:.1f}" y="{mt+ph+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{_lab}</text>')
     for name, vals, color in series_list:
-        pts = [(xs[i], ypos(vals[i])) for i in range(n) if vals[i] is not None]
+        pts = [(xs[i], ypos(vals[i]), vals[i]) for i in range(n) if vals[i] is not None]
         if len(pts) > 1:
-            d = "M" + " L".join(f"{x:.1f} {y:.1f}" for x, y in pts)
+            d = "M" + " L".join(f"{x:.1f} {y:.1f}" for x, y, _ in pts)
             svg.append(f'<path d="{d}" fill="none" stroke="{color}" stroke-width="2.5"/>')
-        for x, y in pts:
+        for x, y, v in pts:
             svg.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="3" fill="{color}" stroke="#fff" stroke-width="1"/>')
-    lx = ml + 4
-    for name, _, color in series_list:
-        svg.append(f'<rect x="{lx}" y="{H-22}" width="12" height="12" rx="2" fill="{color}"/>')
-        svg.append(f'<text x="{lx+17}" y="{H-12}" font-size="11.5" fill="#374151">{name}</text>')
-        lx += 18 + len(name) * 12
-    svg.append(f'<text x="{ml+pw}" y="{H-12}" font-size="10.5" fill="#9ca3af" text-anchor="end">单位:{yunit}</text>')
+            # 数据值标签：默认在点上方；若太靠顶部则翻到点下方，避免压到标题/上边界
+            ly = y - 11 if (y - 11) > mt else y + 18
+            svg.append(f'<text x="{x:.1f}" y="{ly:.1f}" font-size="12" font-weight="600" '
+                       f'fill="#374151" text-anchor="middle">{fmt_val(v)}</text>')
+    # 底部图例（颜色方块 + 指标名）已按用户要求移除
     svg.append('</svg>')
     s = "".join(svg)
     with open(fname, "w", encoding="utf-8") as f:

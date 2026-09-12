@@ -11,13 +11,22 @@
 - 若需更新价格，请直接编辑 xlsx，再运行本脚本刷新图表即可。
 """
 import os
+import re
 import datetime
 import openpyxl
+
+# ── 路径基准 ───────────────────────────────────────────────────────
+# 本脚本位于 <项目根>/src/，统一把工作目录切到项目根，
+# 让「数据源/…」「svg/…」「china-coal-dashboard.html」等既有相对路径
+# 保持有效——无论从哪个目录执行，结果都一致。
+import os as _os
+_os.chdir(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))))
 
 SVG_DIR = "svg"   # 图表统一输出到 svg/ 子目录
 os.makedirs(SVG_DIR, exist_ok=True)
 
-HERE = os.path.dirname(os.path.abspath(__file__))
+# 项目根（本脚本位于 <项目根>/src/）：所有输入/输出路径以项目根为基准
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_XLSX = os.path.join(HERE, "数据源", "中煤能源_价格和成本.xlsx")
 OUT_SVG = os.path.join(HERE, "svg/trend_qhd5500_weekly.svg")
 OUT_SPARK = os.path.join(HERE, "svg/spark_qhd5500.svg")
@@ -89,8 +98,8 @@ def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
 
     svg = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" font-family="-apple-system,Segoe UI,PingFang SC,sans-serif">']
     svg.append(f'<rect width="{W}" height="{H}" fill="#ffffff"/>')
-    ttl = title or "秦皇岛港5500动力煤现货价（2026·周度·元/吨）"
-    svg.append(f'<text x="{ml}" y="26" font-size="16" font-weight="700" fill="#1e3a5f">{ttl}</text>')
+    # 顶部标题：双击放大时仍可见，弹窗内与 modal 标题视觉重复但可接受
+    svg.append(f'<text x="{ml}" y="22" fill="#1f2733" font-size="14" font-weight="700">{title}</text>')
     # y 网格
     for k in range(5):
         yv = vmin + (vmax - vmin) * k / 4
@@ -113,10 +122,7 @@ def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
             lab = dates[i].replace("-", "/")  # 'YYYY/MM/DD'
             svg.append(f'<text x="{xs_all[i]:.1f}" y="{mt+ph+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{lab}</text>')
             last_month = cur_month
-    # 图例
-    svg.append(f'<rect x="{ml+4}" y="{H-20}" width="12" height="12" rx="2" fill="#c53030"/>')
-    svg.append(f'<text x="{ml+21}" y="{H-10}" font-size="11.5" fill="#374151">秦皇岛5500现货价</text>')
-    svg.append(f'<text x="{ml+pw}" y="{H-10}" font-size="10.5" fill="#9ca3af" text-anchor="end">单位:元/吨（仅CCTD口径，缺测段不画）</text>')
+    # 底部图例（色块 + 指标名）已按用户要求移除，保持全看板下方无图例
     svg.append('</svg>')
     with open(fname, "w", encoding="utf-8") as f:
         f.write("".join(svg))
@@ -145,12 +151,61 @@ def build_spark(vals, fname, color="#c53030", W=62, H=28):
     print(f"✅ 生成 sparkline：{fname}")
 
 
+def band_of(avg):
+    """按当年截止目前均价分三档着色：>750 高景气(红) / 550–750 中性(琥珀) / <550 承压(绿)。"""
+    if avg > 750:
+        return "#c53030", "高景气(>750)"
+    if avg >= 550:
+        return "#d97706", "中性(550–750)"
+    return "#047857", "承压(<550)"
+
+
+def patch_dashboard(latest, ytd_avg, color, band_label):
+    """把秦皇岛5500现货价的『名称着色 + 最新周度值 + 年内均价』写回看板 HTML。
+    幂等：每次都按稳定 data-page-node-id 重建对应 span，重复运行不产生重复注释。
+    """
+    HTML = "china-coal-dashboard.html"
+    html = open(HTML, encoding="utf-8").read()
+    k_node = 'data-page-node-id="KQMTlv6vlERIB7IqHlCpSQ"'   # 指标名称 span
+    v_node = 'data-page-node-id="vcBbOmHQ33kvGp9jGkTBov"'  # 数值 span
+    # 1) 指标名称按分档着色
+    html = re.sub(
+        r'<span class="k" ' + re.escape(k_node) + r'>秦皇岛5500现货价</span>',
+        f'<span class="k" {k_node} style="color:{color}">秦皇岛5500现货价</span>',
+        html, count=1)
+    # 2) 数值更新为最新周度价
+    html = re.sub(
+        r'<span class="v" ' + re.escape(v_node) + r'>[^<]*</span>',
+        f'<span class="v" {v_node}>{latest:.0f} 元/吨</span>',
+        html, count=1)
+    # 3) 年内均注释（先删旧，再插到数值后）
+    html = re.sub(r'<span class="ytdavg" data-ytd="1"[^>]*>[^<]*</span>', "", html)
+    ann = (f'<span class="ytdavg" data-ytd="1" '
+           f'style="color:#6b7280;font-size:11px;margin-left:6px;">年内均 {ytd_avg:.0f}</span>')
+    html = re.sub(
+        r'(<span class="v" ' + re.escape(v_node) + r'>[^<]*</span>)',
+        lambda m: m.group(1) + ann, html, count=1)
+    open(HTML, "w", encoding="utf-8").write(html)
+    print(f"✅ 看板已更新：秦皇岛5500现货价 名称着色[{band_label}]、最新 {latest:.0f}、年内均 {ytd_avg:.0f}")
+
+
 def main():
     dates, vals = load_series(OUT_XLSX)
     print(f"📊 从 xlsx 读取 {len(dates)} 个周度观测点（价格=0 为无数据占位，不绘制）")
     build_trend_svg(dates, vals, OUT_SVG,
                     title="秦皇岛港5500动力煤现货价（2026·周度·仅CCTD口径）")
     build_spark(vals, OUT_SPARK)
+    # 当年截止目前均价 + 最新周度 → 名称分档着色（替代原「情景假设框架」）
+    ytd = [(d, v) for d, v in zip(dates, vals)
+           if d.startswith("2026") and isinstance(v, (int, float)) and v != 0]
+    if ytd:
+        latest_d, latest_v = ytd[-1]
+        ytd_avg = sum(v for _, v in ytd) / len(ytd)
+        color, band_label = band_of(ytd_avg)
+        patch_dashboard(latest_v, ytd_avg, color, band_label)
+        print(f"📈 2026 年内 {len(ytd)} 个有效周：最新 {latest_v:.0f}（{latest_d}），均价 {ytd_avg:.1f} → 分档 {band_label}")
+    else:
+        print("⚠️ 无 2026 年有效价格数据，跳过名称着色")
 
 
 if __name__ == "__main__":
