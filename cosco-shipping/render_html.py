@@ -224,12 +224,10 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
           <div class="imgbox" id="chart-route-usw" data-img="route_usw"></div>
           <div class="imgbox" id="chart-route-use" data-img="route_use"></div>
           <div class="imgbox" id="chart-route-gulf" data-img="route_gulf"></div>
-        </div>
-        <div class="svg-grid">
-          <div class="imgbox" data-img="qvol"></div>
           <div class="imgbox" data-img="util"></div>
         </div>
         <div class="svg-grid">
+          <div class="imgbox" data-img="qvol"></div>
           <div class="imgbox" data-img="routemix"></div>
         </div>
       </div>

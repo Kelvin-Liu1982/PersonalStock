@@ -103,6 +103,9 @@ util_raw=[r[10] for r in fr[1:]]
 notes_fr=[str(r[11]) for r in fr[1:]]
 
 def parse_util(v):
+    if isinstance(v,(int,float)):          # Excel 数字单元格存的是小数比例: 0.95=95%、1=100%
+        x=float(v)
+        return round(x*100,1) if x<=1.5 else round(x,1)
     s=str(v); nums=[int(n) for n in re.findall(r"\d+", s)]
     if not nums: return None
     if "-" in s and len(nums)>=2: return round((nums[0]+nums[1])/2,1)
