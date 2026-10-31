@@ -1,7 +1,7 @@
 # china-coal/src — 看板构建脚本
 
 中煤能源（601898.SH / 01898.HK）看板 `../china-coal-dashboard.html` 的全部构建脚本。
-产物目录：`../svg/`（64 张 SVG）、`../数据源/`（5 个 xlsx）、`../china-coal-dashboard.html`。
+产物目录：`../svg/`（62 张 SVG）、`../数据源/`（5 个 xlsx）、`../china-coal-dashboard.html`。
 
 ---
 
@@ -12,9 +12,9 @@
 python /path/to/china-coal/src/<script>.py
 ```
 
-依赖：`openpyxl`（全部）；`pandas / numpy / akshare / requests`（仅 `build_finance_card.py`、`build_monitor_excel.py`）。
+依赖：`openpyxl`（全部脚本）；`pandas / numpy` 仅 `build_business_svg.py` 等少数图表脚本按需使用。
 
-> **路径基准**（10 个脚本统一注入，勿删）：
+> **路径基准**（8 个脚本统一注入，勿删）：
 > ```python
 > import os as _os
 > _os.chdir(_os.path.dirname(_os.path.dirname(os.path.abspath(__file__))))
@@ -28,20 +28,18 @@ python /path/to/china-coal/src/<script>.py
 
 ## 1. 脚本清单（输入 → 输出）
 
-| # | 脚本 | 读（输入） | 写（输出） | 联网 | 写回 xlsx |
-|---|------|-----------|-----------|:---:|:---:|
-| 1 | `build_monitor_excel.py` | 新浪财经（akshare） | `数据源/中煤能源_业务追踪数据.xlsx`（7 sheet） | ✅ | ✅（重建） |
-| 2 | `build_volume_svg.py` | `数据源/中煤能源_产销数据.xlsx`<br>`数据源/中煤能源_价格和成本.xlsx` | `svg/trend_selfprod_q/_y`、`totalsales_q/_y`、`structure_q/_y`、`capacity_y`、`reserves_y`、`avgprice_y`、`unitcost_y`、`unitgm_y`<br>+ 同名 `spark_*.svg` | ❌ | ❌ |
-| 3 | `build_finance_svg.py` | `数据源/中煤能源_业务追踪数据.xlsx`<br>（`财务指标(季度)` / `财务指标(年度)`） | `svg/trend_{revenue,profit,cash,debt,roe,bps}_{y,q}.svg`<br>+ `svg/spark_{…}.svg` | ❌ | ❌ |
-| 4 | `build_business_svg.py` | `数据源/中煤能源_业务结构.xlsx`（6 sheet） | `svg/trend_biz_{chem,equip,elec}[_gm]_y.svg`<br>+ `svg/spark_biz_*.svg` | ❌ | ❌ |
-| 5 | `build_monthly_svg.py` | `数据源/中煤能源_月度经营数据.xlsx` | `svg/trend_m_{prod,sales,selfsales,equip,chem}.svg`<br>+ `svg/spark_m_*.svg` | ❌ | ❌ |
-| 6 | `build_coal_price.py` | `数据源/中煤能源_价格和成本.xlsx`<br>（`秦皇岛5500周度` sheet） | `svg/trend_qhd5500_weekly.svg`、`svg/spark_qhd5500.svg`<br>**并 patch `china-coal-dashboard.html`** | ❌ | ❌ |
-| 7 | `build_finance_card.py` | 新浪财经三表 + `数据源/中煤能源_业务追踪数据.xlsx` | `svg/trend_revenue_profit.svg`、`svg/trend_ratios.svg`、`svg/spark_*.svg`<br>**并 patch `china-coal-dashboard.html` Card 4**<br>**并写回 xlsx「财务表现」sheet** | ✅ | ✅ |
-| 8 | `build_cycle_svg.py` | `数据源/煤炭行业周期历史煤价.xlsx`<br>（`年度均价` / `周期阶段`） | `svg/煤炭周期复盘.svg`（1240×460） | ❌ | ❌ |
-| 9 | `move_cycle_to_trend.py` | `svg/煤炭周期复盘.svg` | **patch `china-coal-dashboard.html`**：<br>① 删末尾「煤炭行业周期」章节 ② 换 `.cycle-chart` CSS<br>③ 写 `__CHARTS__["cycle_coal_price"]` ④ 插「长期趋势专区」第 7 项 | ❌ | ❌ |
-| 10 | `reinject_svgs.py` | `svg/*.svg` + `china-coal-dashboard.html` | **patch `china-coal-dashboard.html`**：按 key（=svg 文件名去扩展名）把重生成 svg 写回 `__CHARTS__` | ❌ | ❌ |
+| # | 脚本 | 读（输入） | 写（输出） |
+|---|------|-----------|-----------|
+| 1 | `build_volume_svg.py` | `数据源/中煤能源_产销数据.xlsx`<br>`数据源/中煤能源_价格和成本.xlsx` | `svg/trend_selfprod_q/_y`、`totalsales_q/_y`、`structure_q/_y`、`capacity_y`、`reserves_y`、`avgprice_y`、`unitcost_y`、`unitgm_y`<br>+ 同名 `spark_*.svg` |
+| 2 | `build_finance_svg.py` | `数据源/中煤能源_业务追踪数据.xlsx`<br>（`财务指标(季度)` / `财务指标(年度)`） | `svg/trend_{revenue,profit,cash,debt,roe,bps}_{y,q}.svg`<br>+ `svg/spark_{…}.svg` |
+| 3 | `build_business_svg.py` | `数据源/中煤能源_业务结构.xlsx`（6 sheet） | `svg/trend_biz_{chem,equip,elec}[_gm]_y.svg`<br>+ `svg/spark_biz_*.svg` |
+| 4 | `build_monthly_svg.py` | `数据源/中煤能源_月度经营数据.xlsx` | `svg/trend_m_{prod,sales,selfsales,equip,chem}.svg`<br>+ `svg/spark_m_*.svg` |
+| 5 | `build_coal_price.py` | `数据源/中煤能源_价格和成本.xlsx`<br>（`秦皇岛5500周度` sheet） | `svg/trend_qhd5500_weekly.svg`、`svg/spark_qhd5500.svg`<br>**并 patch `china-coal-dashboard.html`** |
+| 6 | `build_cycle_svg.py` | `数据源/煤炭行业周期历史煤价.xlsx`<br>（`年度均价` / `周期阶段`） | `svg/煤炭周期复盘.svg`（1240×460） |
+| 7 | `move_cycle_to_trend.py` | `svg/煤炭周期复盘.svg` | **patch `china-coal-dashboard.html`**：<br>① 删末尾「煤炭行业周期」章节 ② 换 `.cycle-chart` CSS<br>③ 写 `__CHARTS__["cycle_coal_price"]` ④ 插「长期趋势专区」第 7 项 |
+| 8 | `reinject_svgs.py` | `svg/*.svg` + `china-coal-dashboard.html` | **patch `china-coal-dashboard.html`**：按 key（=svg 文件名去扩展名）把重生成 svg 写回 `__CHARTS__` |
 
-> 第 6/7/9/10 号脚本会改 HTML；第 1/7 号会改 xlsx。**其余一律只读输入、只写产物。**
+> 第 5/7/8 号脚本会改 HTML。其余一律只读输入、只写产物。
 
 ---
 
@@ -68,28 +66,28 @@ python src/reinject_svgs.py china-coal-dashboard.html svg
 python src/move_cycle_to_trend.py
 ```
 
-### C. 财报季更新（需要联网）
+### C. 财报季更新（手工管线）
 
 ```bash
-python src/build_monitor_excel.py  # 重建 业务追踪数据.xlsx（7 sheet 全量）
-python src/build_finance_svg.py    # 财务趋势图
-python src/build_finance_card.py   # Card 4 数值 + 「财务表现」sheet + sparkline
+# ① 按官方季报 PDF，用 sheet-agent / 本地编辑 更新 数据源/中煤能源_业务追踪数据.xlsx
+#    的 4 张季度表 + 财务指标(季度)（含资产负债率），以及 中煤能源_产销数据.xlsx 的 Q3 行
+# ② 重跑财务图 + reinject
+python src/build_finance_svg.py
+python src/reinject_svgs.py china-coal-dashboard.html svg
 ```
 
-> `build_finance_card.py` 会输出两张**看板当前未引用**的 SVG（`trend_revenue_profit.svg`、`trend_ratios.svg`）。
-> 这是 2026-08-23 把组合图拆成 10 张单图之后的历史遗留，脚本自身会打印
-> 「⚠️ HTML 长期趋势专区未引用趋势图 SVG」告警，暂保留。
+> **Card4 数据链路**（2026-10-24 固化）：六项年度值 + 6 张 sparkline + 12 张趋势图（6 指标 × 季度+年度）
+> 全部由 `财务指标(季度)/(年度)` 驱动，**不依赖任何联网脚本**。看板为自包含静态站，无实时 API。
 
 ---
 
 ## 3. 幂等性 / 安全性
 
-- 第 2–6、8 号：**只读 xlsx、只写 SVG**，可反复重跑，产物 byte-identical。
-- 第 9 号 `move_cycle_to_trend.py`：靠 4 组标记去重（`BEGIN/END 煤炭行业周期`、`CSS_MARK`、
+- 第 1–6 号：**只读 xlsx、只写 SVG**，可反复重跑，产物 byte-identical。
+- 第 7 号 `move_cycle_to_trend.py`：靠 4 组标记去重（`BEGIN/END 煤炭行业周期`、`CSS_MARK`、
   `__CHARTS__` key、`<!-- 7 煤炭行业周期 -->`），重复运行不改变文件内容。
-- 第 7 号 `build_finance_card.py`：会 `wb.save(EXCEL)`。写回后**必查**
-  `xl/styles.xml` 有无空 `<fill/>`（openpyxl 已知缺陷，会导致 Excel 打不开）。
-- 第 1 号 `build_monitor_excel.py`：会**整体重建** `业务追踪数据.xlsx`，仅在财报季执行。
+- 第 8 号 `reinject_svgs.py`：按 key 写回，跳过的文件 = `svg/` 中存在但 `__CHARTS__` 无同名 key 者
+  （目前仅 `煤炭周期复盘.svg`，由第 7 号单独处理）。
 
 ---
 
@@ -98,15 +96,19 @@ python src/build_finance_card.py   # Card 4 数值 + 「财务表现」sheet + s
 ```
 china-coal/
 ├─ china-coal-dashboard.html   看板（自包含；__CHARTS__ 内联 62 个 key）
-├─ src/                        本目录（10 个 py）
-├─ svg/                        64 张 SVG = 61 张与 __CHARTS__ key 同名
-│                                        + 煤炭周期复盘.svg（key 名 cycle_coal_price）
-│                                        + 2 张历史遗留未引用
+├─ src/                        本目录（8 个 py 构建脚本）
+├─ svg/                        62 张 SVG，文件名(去扩展名)=__CHARTS__ key
+│                                        = 35 趋势 + 26 sparkline + 1 cycle_coal_price
 └─ 数据源/
-   ├─ 中煤能源_业务追踪数据.xlsx       ← build_monitor_excel / build_finance_card（写）
+   ├─ 中煤能源_业务追踪数据.xlsx       ← 手工/sheet-agent 维护（只读；8 sheet）
    ├─ 中煤能源_产销数据.xlsx            ← 手工维护（只读）
    ├─ 中煤能源_价格和成本.xlsx          ← 手工维护（只读，含秦皇岛5500周度）
    ├─ 中煤能源_业务结构.xlsx            ← 手工维护（只读）
    ├─ 中煤能源_月度经营数据.xlsx        ← 手工维护（只读）
    └─ 煤炭行业周期历史煤价.xlsx         ← 手工维护（只读）
 ```
+
+> 数据源 xlsx 均为手工/sheet-agent 维护的**只读输入**，构建脚本不写回 xlsx（历史上曾用
+> `build_finance_card.py` / `build_monitor_excel.py` 联网写回，已于 2026-10-24 删除——前者
+> 写入的「财务表现」sheet 与 `财务指标(季度)/(年度)` 完全重复且口径有偏差，后者重建结构与当前
+> 文件不符）。

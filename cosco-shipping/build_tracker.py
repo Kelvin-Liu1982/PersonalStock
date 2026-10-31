@@ -81,26 +81,93 @@ def sheet_rows(name):
 
 fr = sheet_rows("周运价指数(SCFI&CCFI)")
 de = sheet_rows("需求端-港口吞吐量&出口")
+de = [de[0]] + [r for r in de[1:] if r[0] not in (None, "")]   # 去掉尾部空行（编辑器易产生），避免 float(None) 崩
 su = sheet_rows("供给端-运力&闲置率")
 def _qkey(s):
     m=re.search(r"(\d{4})\s*Q(\d)", str(s)); return (int(m.group(1)),int(m.group(2))) if m else (0,0)
-su = [su[0]] + [r for r in su[1:] if _qkey(r[0]) <= (2026,2)]   # 仅取干净季频数据至 2026Q2
+su = [su[0]] + [r for r in su[1:] if _qkey(r[0]) <= (2026,3)]   # 季频数据至 2026Q3
 co = sheet_rows("供需调控-停航率&联盟")
-co = [co[0]] + [r for r in co[1:] if _qkey(r[0]) <= (2026,2)]   # 仅取干净季频数据至 2026Q2
+co = [co[0]] + [r for r in co[1:] if _qkey(r[0]) <= (2026,3)]   # 季频数据至 2026Q3
 
 # --- 运价 ---
-fr_dates=[str(r[0]) for r in fr[1:]]
-scfi=[float(r[1]) for r in fr[1:]]
-scfi_w=[float(r[2]) for r in fr[1:]]   # 周环比
-ccfi=[float(r[3]) for r in fr[1:]]
-ccfi_w=[float(r[4]) for r in fr[1:]]
-eu=[float(r[5]) for r in fr[1:]]
-med=[float(r[6]) for r in fr[1:]]
-usw=[float(r[7]) for r in fr[1:]]
-use=[float(r[8]) for r in fr[1:]]
-gulf=[float(r[9]) for r in fr[1:]]
-util_raw=[r[10] for r in fr[1:]]
-notes_fr=[str(r[11]) for r in fr[1:]]
+# 列位置一律按表头关键字定位（表内插列/挪列不会导致整体错位）
+_HDR = {str(h).strip(): i for i, h in enumerate(fr[0]) if h is not None}
+def _col(*keys, required=True):
+    for k, i in _HDR.items():
+        if all(x in k for x in keys):
+            return i
+    if required:
+        raise KeyError("周运价表未找到表头: %s（现有: %s）" % (keys, list(_HDR)))
+    return None
+I_DATE  = _col("日期")
+I_SCFI  = _col("SCFI综合指数")
+I_SCFIW = _col("SCFI周环比")
+I_CCFI  = _col("CCFI综合指数")
+I_CCFIW = _col("CCFI周环比")
+I_THETA = _col("SCFI", "CCFI", "溢价", required=False)   # SCFI / CCFI 即期溢价倍数（可缺省）
+I_EU    = _col("欧洲航线")
+I_MED   = _col("地中海")
+I_USW   = _col("美西")
+I_USE   = _col("美东")
+I_GULF  = _col("波斯湾")
+I_UTIL  = _col("舱位利用率")
+I_NOTE  = _col("简评")
+
+fr_dates=[str(r[I_DATE]) for r in fr[1:]]
+scfi=[float(r[I_SCFI]) for r in fr[1:]]
+scfi_w=[float(r[I_SCFIW]) for r in fr[1:]]   # 周环比
+ccfi=[float(r[I_CCFI]) for r in fr[1:]]
+ccfi_w=[float(r[I_CCFIW]) for r in fr[1:]]
+eu=[float(r[I_EU]) for r in fr[1:]]
+med=[float(r[I_MED]) for r in fr[1:]]
+usw=[float(r[I_USW]) for r in fr[1:]]
+use=[float(r[I_USE]) for r in fr[1:]]
+gulf=[float(r[I_GULF]) for r in fr[1:]]
+util_raw=[r[I_UTIL] for r in fr[1:]]
+notes_fr=[str(r[I_NOTE]) for r in fr[1:]]
+
+# θ = SCFI / CCFI：优先取表中公式的缓存值（编辑器已存盘才有），缺失则用两列现算
+theta=[]
+for _r, _s, _c in zip(fr[1:], scfi, ccfi):
+    _v = _r[I_THETA] if I_THETA is not None else None
+    if not isinstance(_v, (int, float)):
+        _v = (_s / _c) if _c else None
+    theta.append(round(float(_v), 4) if isinstance(_v, (int, float)) else None)
+
+# --- θ 长历史：2022-2025 取自 数据源/运价指数_周度_2021-2025.csv，2026 沿用上表 ---
+CSV_TH = os.path.join(SRC, "运价指数_周度_2021-2025.csv")
+_hist_d, _hist_v = [], []
+if os.path.exists(CSV_TH):
+    import csv as _csv
+    with open(CSV_TH, encoding="utf-8-sig") as _fh:
+        for _row in _csv.DictReader(_fh):
+            _v = (_row.get("SCFI/CCFI 即期溢价倍数") or "").strip()
+            _d = (_row.get("日期") or "").strip()
+            if not _v or not _d:
+                continue
+            try:
+                _hist_v.append(round(float(_v), 4))
+                _hist_d.append(_d)
+            except ValueError:
+                continue
+_pairs = [(d, v) for d, v in zip(_hist_d, _hist_v)]
+_seen = {d for d, _ in _pairs}
+_pairs += [(d, v) for d, v in zip(fr_dates, theta) if v is not None and d not in _seen]
+_pairs.sort()
+theta_long_dates = [d for d, _ in _pairs]
+theta_long = [v for _, v in _pairs]
+
+def _quantile(vals, p):
+    xs = sorted(v for v in vals if v is not None)
+    if not xs: return None
+    k = (len(xs) - 1) * p
+    lo, hi = int(math.floor(k)), int(math.ceil(k))
+    return xs[lo] if lo == hi else xs[lo] + (xs[hi] - xs[lo]) * (k - lo)
+
+TH_P5  = _quantile(theta_long, 0.05)
+TH_P95 = _quantile(theta_long, 0.95)
+TH_MED = _quantile(theta_long, 0.50)
+TH_N   = len(theta_long)
 
 def parse_util(v):
     if isinstance(v,(int,float)):          # Excel 数字单元格存的是小数比例: 0.95=95%、1=100%
@@ -114,6 +181,18 @@ def parse_util(v):
     return nums[0]
 util=[parse_util(v) for v in util_raw]
 
+# 舱位利用率：周报偶尔不披露该字段 → 用上一有效值顺延，避免 None 传入图表/指标导致崩溃
+def _carry_forward(seq):
+    out=[]; last=None
+    for v in seq:
+        if v is None and last is not None:
+            v = last
+        if v is not None:
+            last = v
+        out.append(v)
+    return out
+util = _carry_forward(util)
+
 # --- 需求 ---
 de_dates=[str(r[0]) for r in de[1:]]
 def _or_none(v):
@@ -122,6 +201,26 @@ def _or_none(v):
     return float(v)
 thru=[_or_none(r[1]) for r in de[1:]]
 thru_y=[_or_none(r[2]) for r in de[1:]]
+# 补齐缺失的吞吐量同比：用「上年同月绝对值」反算（仅填 None 格；用户已填的 2025 段不动）
+_thru_map = {}
+for _d, _t in zip(de_dates, thru):
+    try:
+        _k = (int(str(_d)[:4]), int(str(_d)[5:7]))
+    except (ValueError, IndexError):
+        continue
+    if _t is not None:
+        _thru_map[_k] = _t
+def _fill_thru_yoy(d, t, y):
+    if y is not None or t is None:
+        return y
+    try:
+        k = (int(str(d)[:4]), int(str(d)[5:7]))
+        base = _thru_map.get((k[0] - 1, k[1]))
+    except (ValueError, IndexError):
+        return y
+    return round(t / base - 1, 6) if base else y
+thru_y = [_fill_thru_yoy(d, t, y) for d, t, y in zip(de_dates, thru, thru_y)]
+_thru_last = [(t, y) for t, y in zip(thru, thru_y) if t is not None]   # 最新「有吞吐量数据」的月份（9 月未发布时取 8 月）
 exp=[float(r[3]) for r in de[1:]]
 exp_y=[float(r[4]) for r in de[1:]]
 asean_y=[float(r[5]) for r in de[1:]]
@@ -275,9 +374,9 @@ VALUES = {
     "eu": f"{eu[-1]:.0f}", "med": f"{med[-1]:.0f}", "usw": f"{usw[-1]:.0f}",
     "use": f"{use[-1]:.0f}", "gulf": f"{gulf[-1]:.0f}",
     "util": f"{util[-1]:.0f}%",
-    "thru": (f"{thru[-1]:.0f} 万TEU" if thru[-1] is not None else "待更新"),
-    "thru_yoy": (pct(thru_y[-1]) if thru_y[-1] is not None else "待更新"),
-    "thru_dir": ("up" if thru_y[-1] >= 0 else "down") if thru_y[-1] is not None else "flat",
+    "thru": (f"{_thru_last[-1][0]:.0f} 万TEU" if _thru_last else "待更新"),
+    "thru_yoy": (pct(_thru_last[-1][1]) if _thru_last else "待更新"),
+    "thru_dir": (("up" if _thru_last[-1][1] >= 0 else "down") if _thru_last else "flat"),
     "exp": f"{exp[-1]:.0f} 亿美元", "exp_yoy": pct(exp_y[-1]), "exp_dir":"up",
     "asean": pct(asean_y[-1]), "eu_yoy": pct(eu_y[-1]), "us_yoy": pct(us_y[-1]),
     "export_yoy_detail": f"总出口{pct(exp_y[-1])}/东盟{pct(asean_y[-1])}/欧盟{pct(eu_y[-1])}/美国{pct(us_y[-1])}",
@@ -457,6 +556,78 @@ def make_util_svg(title, unit, labels, values, color, ylo=70, yhi=105, W=780, H=
     o.append('</svg>')
     return "".join(o)
 
+def make_theta_svg(title, unit, labels, values, color, ylo=0.7, yhi=2.1, band=None, W=780, H=300):
+    """SCFI/CCFI 即期溢价倍数（周度）：固定 y 轴 + 5–95% 分位带 + 最新/峰值标注。
+    labels 跨多年时 x 轴自动切到「年-月」稀疏标注。"""
+    padL, padR, padT, padB = 54, 18, 40, 42
+    plotW = W - padL - padR; plotH = H - padT - padB
+    xs, xf = padL, W - padR; ys, yf = padT, H - padB
+    vs = [v for v in values if isinstance(v, (int, float))]
+    if not vs: return ""
+    n = len(values)
+    def X(i): return xs + (plotW * (i / (n - 1)) if n > 1 else plotW / 2)
+    def Y(v): return ys + plotH * (1 - (v - ylo) / (yhi - ylo))
+    multi = bool(labels and labels[0][:4] != labels[-1][:4])
+    o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Microsoft YaHei,sans-serif">' % (W, H)]
+    o.append('<rect x="0" y="0" width="%d" height="%d" fill="#ffffff"/>' % (W, H))
+    o.append('<text x="%d" y="19" fill="#1f2733" font-size="14" font-weight="700">%s</text>' % (padL, title))
+    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 样本 %d 周 · %s ~ %s · 数据源：周运价指数(SCFI&amp;CCFI)＋运价指数_周度_2021-2025.csv</text>' % (padL, unit, n, labels[0], labels[-1]))
+    T = 7
+    for g in range(T + 1):
+        val = ylo + (yhi - ylo) * g / T
+        gy = Y(val)
+        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#eef2f6" stroke-width="1"/>' % (xs, gy, xf, gy))
+        o.append('<text x="%d" y="%.1f" fill="#7a8694" font-size="10" text-anchor="end">%.1f</text>' % (xs - 6, gy + 3.5, val))
+    o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#c3ccd6" stroke-width="1"/>' % (xs, yf, xf, yf))
+    if band and band[0] is not None and band[1] is not None:
+        y_top, y_bot = Y(band[1]), Y(band[0])
+        o.append('<rect x="%d" y="%.1f" width="%d" height="%.1f" fill="%s" opacity="0.10"/>' % (xs, y_top, plotW, y_bot - y_top, color))
+        for bv in band:
+            o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="%s" stroke-width="1" stroke-dasharray="4 3" opacity="0.55"/>' % (xs, Y(bv), xf, Y(bv), color))
+        o.append('<text x="%d" y="%.1f" fill="%s" font-size="9.5" text-anchor="start">95%% 分位 %.2f</text>' % (xs + 3, Y(band[1]) - 4, color, band[1]))
+        o.append('<text x="%d" y="%.1f" fill="%s" font-size="9.5" text-anchor="start">5%% 分位 %.2f</text>' % (xs + 3, Y(band[0]) + 12, color, band[0]))
+    if multi:
+        _seen, idxs = set(), []
+        for _i, _lb in enumerate(labels):
+            _y = _lb[:4]
+            if _y not in _seen:
+                _seen.add(_y); idxs.append(_i)
+        if len(idxs) < 3:
+            step = max(1, n // 6)
+            idxs = list(range(0, n, step))
+        if idxs[-1] != n - 1:
+            idxs.append(n - 1)
+    else:
+        xstep = max(1, math.ceil(n / 8))
+        idxs = [i for i in range(n) if i % xstep == 0 or i == n - 1]
+    for i in idxs:
+        lb = labels[i]
+        txt = (lb[2:4] + "-" + lb[5:7]) if multi else lb[5:]
+        o.append('<line x1="%.1f" y1="%d" x2="%.1f" y2="%.1f" stroke="#eef2f6" stroke-width="1"/>' % (X(i), ys, X(i), yf))
+        o.append('<text x="%.1f" y="%d" fill="#7a8694" font-size="9.5" text-anchor="middle">%s</text>' % (X(i), H - 16, txt))
+    d = ""
+    for i, v in enumerate(values):
+        if v is None: continue
+        d += ("L" if d else "M") + "%.1f %.1f " % (X(i), Y(v))
+    if d:
+        o.append('<path d="%s" fill="none" stroke="%s" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>' % (d, color))
+    if not multi:
+        for i, v in enumerate(values):
+            if v is None: continue
+            o.append('<circle cx="%.1f" cy="%.1f" r="2.4" fill="%s"/>' % (X(i), Y(v), color))
+    vals_idx = [(i, v) for i, v in enumerate(values) if v is not None]
+    imax = max(vals_idx, key=lambda t: t[1])
+    if imax[0] != n - 1:
+        _py = Y(imax[1]) - 8
+        _px, _anchor = X(imax[0]), "middle"
+        if _py < ys + 12:
+            _py, _px, _anchor = Y(imax[1]) + 16, X(imax[0]) + 6, "start"
+        o.append('<text x="%.1f" y="%.1f" fill="#7a8694" font-size="10" text-anchor="%s">峰值 %.2f</text>' % (_px, _py, _anchor, imax[1]))
+    i_last, v_last = vals_idx[-1]
+    o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="11" font-weight="700" text-anchor="end">%.2f</text>' % (X(i_last) - 2, Y(v_last) - 8, color, v_last))
+    o.append('</svg>')
+    return "".join(o)
+
 def make_demand_yoy_svg(dates, series, ylo=-0.20, yhi=0.30, W=780, H=340):
     """分区域出口同比增速（月频）多线 SVG（浅色主题，复刻 matplotlib 原图：4 色折线、零基准、顶部横排图例、x 轴月份标签斜排）。"""
     padL, padR, padT, padB = 52, 18, 40, 90
@@ -554,8 +725,11 @@ def make_fin_svg(key, title, unit, a_lbl, a_val, q_lbl, q_val, color, avfmt, qvf
         for i, v in enumerate(vals):
             if v is None: continue
             g.append('<circle cx="%.1f" cy="%.1f" r="2.8" fill="%s"/>' % (X(i), Y(v), color))
-            if (not xq) or labels[i].endswith("Q1"):
-                g.append('<text x="%.1f" y="%.1f" fill="%s" font-size="8.5" text-anchor="middle">%s</text>' % (X(i), Y(v) - 7, color, vfmt(v)))
+            if (not xq) or labels[i].endswith("Q1") or i == n - 1:
+                if xq and i == n - 1 and not labels[i].endswith("Q1"):
+                    g.append('<text x="%.1f" y="%.1f" fill="%s" font-size="8.5" text-anchor="end">%s</text>' % (X(i) - 2, Y(v) - 7, color, vfmt(v)))
+                else:
+                    g.append('<text x="%.1f" y="%.1f" fill="%s" font-size="8.5" text-anchor="middle">%s</text>' % (X(i), Y(v) - 7, color, vfmt(v)))
         g.append('</g>')
         return g
 
@@ -635,8 +809,26 @@ def make_multi_line_svg(title, unit, labels, series, colors, vfmt=None, W=780, H
     o.append('</svg>')
     return "".join(o)
 
-def make_monthly_yoy_svg(title, unit, labels, values, color_now, color_prev="#9aa6b2", W=780, H=300):
-    """月度同比对比折线图：按年分组，每年一条线，x 轴固定为 1–12 月。"""
+def _nice_step(span, target=5):
+    """选一个"好看"的坐标间隔，使 span/间隔 ≈ target（取 1/2/2.5/5/10 ×10^k 中最接近者）。"""
+    if span <= 0:
+        return 1.0
+    raw = span / float(target)
+    mag = 1.0
+    while mag * 10 <= raw:
+        mag *= 10
+    return min((1, 2, 2.5, 5, 10), key=lambda m: abs(m * mag - raw)) * mag
+
+def _fmt_signed_pct(v, d=1):
+    """同比标注：带正负号，如 +9.8% / -4.4%（涨=红、跌=绿在上层调用处着色）。"""
+    return "%+.{0}f%%".format(d) % (v * 100)
+
+def make_monthly_yoy_svg(title, unit, labels, values, color_now, color_prev="#9aa6b2", y_lo=None, y_hi=None, yoy=None, W=780, H=300):
+    """月度对比折线图：按年分组，每年一条线，x 轴固定为 1–12 月。
+    y_lo / y_hi 可同时指定以收紧纵轴区间（如 2500–3300）放大数据带；
+    若指定的区间装不下数据，会自动向外扩展，保证所有点都在画布内。
+    yoy 传入与 labels 对齐的同比序列（小数比例）时，会在每个数据点旁直接标注同比%，
+    不新增线条；最新年标在点的上方，往年标在点的下方，末点下移让位给年末标签。"""
     padL, padR, padT, padB = 54, 18, 56, 42
     plotW = W - padL - padR
     plotH = H - padT - padB
@@ -650,25 +842,41 @@ def make_monthly_yoy_svg(title, unit, labels, values, color_now, color_prev="#9a
         except (ValueError, IndexError):
             continue
         groups.setdefault(yy, {})[mm] = v
+    # 同比标注映射 (年, 月) -> 同比(小数比例)
+    yoy_map = {}
+    if yoy:
+        for lb, v in zip(labels, yoy):
+            if v is None: continue
+            try:
+                yy = int(str(lb)[:4]); mm = int(str(lb)[5:7])
+            except (ValueError, IndexError):
+                continue
+            yoy_map[(yy, mm)] = v
     if not groups: return ""
     years = sorted(groups.keys())
     ymax = max(years)
     vs = [v for g in groups.values() for v in g.values() if isinstance(v, (int, float))]
     vmax, vmin = max(vs), min(vs)
-    ylo = 0.0 if vmin >= 0 else vmin * 1.02
-    yhi = float(_nice_ceil(vmax))
+    ylo = float(y_lo) if y_lo is not None else (0.0 if vmin >= 0 else vmin * 1.02)
+    yhi = float(y_hi) if y_hi is not None else float(_nice_ceil(vmax))
+    # 安全兜底：区间必须完整包含数据，否则向外扩展
+    if yhi <= vmax: yhi = float(_nice_ceil(vmax))
+    if ylo > vmin:  ylo = vmin * 0.98 if vmin > 0 else vmin * 1.02
     if yhi == ylo: yhi = ylo + 1
     def X(m): return xs + plotW * ((m - 1) / 11.0)
     def Y(v): return ys + plotH * (1 - (v - ylo) / (yhi - ylo))
     o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Microsoft YaHei,sans-serif">' % (W, H)]
     o.append('<rect x="0" y="0" width="%d" height="%d" fill="#ffffff"/>' % (W, H))
     o.append('<text x="%d" y="19" fill="#1f2733" font-size="14" font-weight="700">%s</text>' % (padL, title))
-    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 月度同比（x 轴=1–12 月）· 数据源：中远海控_行业供需与运价数据.xlsx · 需求端-港口吞吐量&amp;出口</text>' % (padL, unit))
-    for g in range(5):
-        val = ylo + (yhi - ylo) * g / 4
-        gy = Y(val)
+    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 月度值（x 轴=1–12 月）%s · 数据源：中远海控_行业供需与运价数据.xlsx · 需求端-港口吞吐量&amp;出口</text>'
+             % (padL, unit, " · 点旁标注=同比%" if yoy_map else ""))
+    _step = _nice_step(yhi - ylo)
+    _val = ylo
+    while _val <= yhi + 1e-6:
+        gy = Y(_val)
         o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#eef2f6" stroke-width="1"/>' % (xs, gy, xf, gy))
-        o.append('<text x="%d" y="%.1f" fill="#7a8694" font-size="10" text-anchor="end">%s</text>' % (xs - 6, gy + 3.5, _fmt_axis(val)))
+        o.append('<text x="%d" y="%.1f" fill="#7a8694" font-size="10" text-anchor="end">%s</text>' % (xs - 6, gy + 3.5, _fmt_axis(_val)))
+        _val += _step
     o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#c3ccd6" stroke-width="1"/>' % (xs, yf, xf, yf))
     for m in range(1, 13):
         gx = X(m)
@@ -684,6 +892,19 @@ def make_monthly_yoy_svg(title, unit, labels, values, color_now, color_prev="#9a
             o.append('<path d="%s" fill="none" stroke="%s" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>' % (d, col))
         for m, v in pts:
             o.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>' % (X(m), Y(v), col))
+        # 同比% 直接标注在点上（不新增线）：最新年标上方，往年标下方；末点一律下方，让位给年末标签；
+        # 往年线的倒数第二个点也移到上方，避免与年末标签（位于其右上方）碰撞
+        if yoy_map:
+            last_m = pts[-1][0]
+            for m, v in pts:
+                g = yoy_map.get((yy, m))
+                if g is None: continue
+                above = (yy == ymax and m != last_m) or (yy != ymax and m == last_m - 1)
+                tx = X(m) - (2 if m == 12 else 0)
+                ty = Y(v) + (-8.5 if above else 13.5)
+                o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="8.5" font-weight="600" text-anchor="middle" '
+                         'stroke="#ffffff" stroke-width="2.6" paint-order="stroke">%s</text>'
+                         % (tx, ty, col, _fmt_signed_pct(g)))
         m, v = pts[-1]
         anchor = "end" if m == 12 else "middle"
         dx = X(m) - 5 if m == 12 else X(m)
@@ -766,6 +987,12 @@ def make_qvol_svg(dates, yoy, vol, W=780, H=390):
 # C1 运价指数：SCFI / CCFI 各自独立 SVG（数据源：主源 周运价指数(SCFI&CCFI)）
 CHARTS["scfi"] = make_weekly_svg("SCFI 综合指数（2026 周度）", "指数点", fr_dates, scfi, C_SCFI)
 CHARTS["ccfi"] = make_weekly_svg("CCFI 综合指数（2026 周度）", "指数点", fr_dates, ccfi, C_CCFI)
+# 长历史缺失（CSV 被删/损坏）时自动降级为 2026 单年、且不画分位带，避免用 40 个点冒充全历史
+_LONG_OK = TH_N >= 100
+_theta_title = "SCFI / CCFI 即期溢价倍数（%s 周度）" % (
+    (theta_long_dates[0][:4] + "-" + theta_long_dates[-1][:4]) if _LONG_OK else "2026")
+CHARTS["theta"] = make_theta_svg(_theta_title, "倍", theta_long_dates, theta_long, C_MED,
+                                 ylo=0.7, yhi=2.1, band=((TH_P5, TH_P95) if _LONG_OK else None))
 
 # C2 主力航线即期运价：五航线各自独立 SVG（数据源：主源 周运价指数(SCFI&CCFI)）
 CHARTS["route_eu"]   = make_weekly_svg("欧洲航线即期运价（2026 周度）",   "USD/TEU", fr_dates, eu,   C_EU)
@@ -777,10 +1004,10 @@ CHARTS["route_gulf"] = make_weekly_svg("波斯湾航线即期运价（2026 周�
 # C3 舱位利用率：内联 SVG 折线图（复刻 matplotlib，浅色主题）
 CHARTS["util"]=make_util_svg("舱位利用率（周度，区间值取中值）", "%", fr_dates, util, C_IDLE)
 
-# C4 需求：全国港口吞吐量（月度同比，独立 SVG）
-CHARTS["demand_thru"] = make_monthly_yoy_svg("全国港口吞吐量（月度同比）", "万TEU", de_dates, thru, C_THRU)
-# C4b 需求：海关出口总额（月度同比，独立 SVG）
-CHARTS["demand_exp"]  = make_monthly_yoy_svg("海关出口总额（月度同比）", "亿美元", de_dates, exp, C_EXP)
+# C4 需求：全国港口吞吐量（月度绝对值，独立 SVG；纵轴收紧到 2500–3300 以放大数据带）
+CHARTS["demand_thru"] = make_monthly_yoy_svg("全国港口吞吐量（月度）", "万TEU", de_dates, thru, C_THRU, y_lo=2500, y_hi=3300, yoy=thru_y)
+# C4b 需求：海关出口总额（月度，独立 SVG）
+CHARTS["demand_exp"]  = make_monthly_yoy_svg("海关出口总额（月度）", "亿美元", de_dates, exp, C_EXP)
 
 # C5 需求：分区域出口同比（内联 SVG 多线图，复刻 matplotlib）
 CHARTS["demand_yoy"]=make_demand_yoy_svg(de_dates, [(exp_y,C_TY,"总出口"),(asean_y,C_ASEAN,"东盟"),(eu_y,C_EUY,"欧盟"),(us_y,C_USY,"美国")])
@@ -878,7 +1105,7 @@ CHARTS["qvol"]=make_qvol_svg(qvol_dates, qvol_yoy, qvol)
 
 # ---------- 序列化 ----------
 SERIES = {
-    "fr_dates":fr_dates, "scfi":scfi, "ccfi":ccfi, "eu":eu, "med":med, "usw":usw, "use":use, "gulf":gulf, "util":util,
+    "fr_dates":fr_dates, "scfi":scfi, "ccfi":ccfi, "theta":theta, "eu":eu, "med":med, "usw":usw, "use":use, "gulf":gulf, "util":util,
     "de_dates":de_dates, "thru":[v for v in thru if v is not None], "exp":exp, "asean_y":asean_y, "eu_y":eu_y, "us_y":us_y, "exp_y":exp_y,
     "su_dates":su_dates, "fleet":fleet, "idle_r":idle_r, "order":order,
     "co_dates":co_dates, "blank_us":blank_us, "blank_eu":blank_eu,
@@ -893,11 +1120,19 @@ SERIES = {
     "macro_redsea_ratio":m_redsea_ratio, "macro_redsea_absorb":m_redsea_absorb, "macro_pmi":m_pmi,
     "qvol_dates":qvol_dates, "qvol":qvol, "qvol_yoy":qvol_yoy, "qvol_cum":qvol_cum, "qrev":qrev, "qnp":qnp,
 }
+_thru_nn = [(d, t, y) for d, t, y in zip(de_dates, thru, thru_y) if t is not None]
+_lt = _thru_nn[-1]                       # 最新有吞吐量数据的月份（9 月吞吐量未发布时为 8 月）
+_tmin = min(t for _, t, _ in _thru_nn)
+_tmax = max(t for _, t, _ in _thru_nn)
 NOTES = {
     "freight": "",
     "supply": "",
     "control": notes_co[-1],
-    "demand": f"2026年1–8月全国港口集装箱吞吐量在{de[1][1]:.0f}–3130万TEU区间运行（1/2月为 MOT 合并口径折半）；3–6月维持3100万TEU以上平台，8月为{thru[-1]:.0f}万TEU（同比{pct(thru_y[-1])}，受外贸吞吐量下滑拖累）。对东盟出口增速持续领跑，对美国增速波动最大。",
+    "demand": (
+        f"2026年1–{int(_lt[0][5:])}月全国港口集装箱吞吐量在{_tmin:.0f}–{_tmax:.0f}万TEU区间运行（1/2月为 MOT 合并口径折半），"
+        f"{_lt[0]}为{_lt[1]:.0f}万TEU（同比{pct(_lt[2])}，受外贸吞吐量下滑拖累）。"
+        f"出口端{de_dates[-1]}达{exp[-1]:.0f}亿美元（同比{pct(exp_y[-1])}），对东盟/欧盟/美国分别{pct(asean_y[-1])}/{pct(eu_y[-1])}/{pct(us_y[-1])}，东盟持续领跑、美国波动最大。"
+    ),
     "fin": "2021–2022 为周期峰值（净利 893 / 1097 亿），2023 谷底（239 亿，-78%），2024–2025 修复至 491 / 309 亿；2026H1 归母 134.19 亿（-23.48%，运价/成本/汇率三重挤压），其中 Q2 单季约 75.4 亿（H1−Q1 推算，受 Q2 运价强反弹驱动、环比 H1 显著改善）。资产负债率由 56.8% 降至 41.0%，财务结构持续优化。",
     "div": "2022–2025 分红比例稳定在 ~50%（年报+中报合计）；2021 中报仅转增不派现，比例仅 15.6%。2025 全年每股分红 1.00 元、现金分红 154 亿元（A+H）。",
     "cost": "2021–2022 周期高位单箱成本 1000/1205 美元，2023 运价腰斩降至 786 美元，2024–2025 红海绕行+成本管控趋稳于约 863/866 美元。成本结构中设备及货物运输占比约 48–59%（随运价同向涨跌），航程成本(含燃油)约 17–22%，船舶成本(含租船/折旧)约 16–21%。年报未单列燃油费、租船费明细行；现按 航程成本×70%、船舶成本×30% 估算 2025 年燃油费≈260.6 亿、租船费≈107.9 亿（估算值，非官方披露）。",

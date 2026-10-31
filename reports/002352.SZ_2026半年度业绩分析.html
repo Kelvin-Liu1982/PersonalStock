@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>顺丰控股 2026 半年度 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">顺丰控股</div>
+      <div class="meta">
+        <span>002352.SZ / 06936.HK</span><span>交通运输（物流 · 综合快递与供应链）</span><span>深交所 / 港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 半年度</div>
+      <div class="pdate">披露日期：2026-08-28</div>
+      <div class="badge flat">中性 · 表观下滑源于高基数，扣非仍双位数增长</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性（归母 −4.11% 全部由去年同期 REIT 一次性收益 5.9 亿造成，扣非 +9.32% 才是真实趋势；但件量零增长、OCF −13.65%、FCF 腰斩是三条必须跟踪的边际变化）</span>
+      <p class="oneliner">顺丰控股 2026 年上半年营收 <b>1,555.06 亿元（+5.89%）</b>、归母净利润 <b>55.02 亿元（−4.11%）</b>、扣非归母 <b>49.75 亿元（+9.32%）</b>、基本 EPS 1.10 元（−5.17%）、加权 ROE 5.49%（−0.58pp）；单二季度营收 <b>813.64 亿元（+5.70%）</b>、归母 <b>29.76 亿元（−15.05%）</b>、扣非 26.58 亿元。<b>「归母降、扣非增」的 13.4pp 剪刀差是第一读点</b>——差额几乎全部来自 2025 年上半年将三家持有物业的全资子公司转让至南方顺丰物流 REIT 产生的一次性股权处置收益 <b>5.9 亿元（税后）</b>；<b>剔除该项，扣非 +9.32% 才是真实经营趋势</b>，且 Q2 单季扣非 +3.1% 明显弱于 Q1 的 +17.4%，<b>说明增长在二季度已明显换挡</b>（油价与运力成本上行是主因）。<b>业务结构完成关键切换</b>：总件量 <b>78.09 亿票（−0.1%，首次零增长）</b>，但<b>票均收入 14.4 元（+3.3%）</b>——「激活经营」进阶机制把导向由规模转为价值，<b>用零增长的件量换来了收入 +5.89%</b>；分部落点为：速运及大件 <b>1,068.07 亿（68.68%）</b>、<b>供应链及国际 412.98 亿（26.56%）</b>、同城即时配送 67.96 亿（4.37%）；地区上海外 160.38 亿（10.31%）已超一成。<b>成本端是本期最亮的一块</b>：<b>毛利率 13.45%（+0.23pp）</b>，在同业单票普遍下滑的环境中靠结构优化与网络融通实现逆势改善。<b>三条必须正视的边际变化</b>：① <b>件量停滞</b>——78.09 亿票同比 −0.1%，而行业 +5.0%、通达系 +9.5%，<b>份额持续让渡</b>；② <b>现金流转弱</b>——OCF <b>111.71 亿元（−13.65%）</b>、<b>FCF 仅 50.3 亿元（−42.8%）</b>，主因「收到其他与经营活动有关的现金」由 511.92 亿降至 460.77 亿（−51.15 亿）与 CapEx <b>60.83 亿元（+47.0%）</b>；③ <b>杠杆上升</b>——资产负债率 <b>50.08%（+1.05pp）</b>、短期借款 <b>172.54 亿元（+146.04%，认购极兔的过桥贷款）</b>、有息负债（含租赁）约 <b>526.98 亿元</b>。<b>资本运作是本期另一条主线</b>：以 10.10 港元/股认购极兔速递股份（约 83 亿港元），同时以 36.74 港元/股向极兔发行 H 股（净额 82.89 亿港元），<b>长期股权投资升至 141.77 亿元（+101.55%）</b>；总投资额 <b>138.35 亿元（+156.17%）</b>，其中股权投资 76.94 亿。<b>股东回报明显加码</b>：中期分红 <b>每 10 股派 4.9 元（0.49 元/股，+6.5%）</b>、分红比例由 40% 提至 <b>45%</b>（总额约 25.0 亿），并规划 <b>2026/2027/2028 年分红比例 45%/50%/≥50%</b>；A 股回购上限由 30 亿上调至 <b>60 亿元并已执行完毕（全部注销）</b>，库存股 59.14 亿（+283.35%）。<b>估值处历史低位</b>：2026-08-28 收 <b>33.67 元</b>、市值约 <b>1,690 亿元</b>、<b>PE(TTM) 15.5×、PB 1.77×、PS(TTM) 0.57×</b>，年内累计 <b>−11.30%</b>，PB 显著低于 2021 年约 3.5×、2023 年约 2.0× 的中枢。<b>核心矛盾：这是一份「用份额换价值」的中报——零增长的件量换来了 +3.3% 的票均与 +0.23pp 的毛利率，通达系则用 +9.5% 的件量换来 +73%~+128% 的利润爆发；两条路径没有对错，但顺丰必须证明「价值」能转化为「利润增速」</b>——Q2 扣非仅 +3.1% 说明这个转化在二季度受阻，下半年能否回到双位数是全年成色的关键。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li><b>毛利率逆势 +0.23pp 至 13.45%，结构优化见效</b>：在通达系单票普遍下滑（圆通单票 −1.04%）的环境中，顺丰靠<b>票均收入 +3.3%</b>、网络融通与资源分层，实现毛利额与毛利率双升——<b>这是「价值驱动」最硬的财务证据</b></li><li><b>扣非 +9.32%，盈利质量「真」</b>：扣非 49.75 亿高于归母 55.02 亿的增速，<b>归母 −4.11% 的差额 100% 可归因于去年同期 REIT 处置收益 5.9 亿</b>（非经营性），剔除后主业仍在增长</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li><b>件量首次零增长，份额在让渡（核心风险）</b>：总件量 <b>78.09 亿票（−0.1%）</b>，而行业 +5.0%、通达系 +9.5%（圆通件量 +9.52%）——<b>「以量换价」的另一面是份额流失</b>；若票均提升见顶（H1 +3.3%，已由 Q1 的 +1.0% 提速），收入增长将失去唯一支点</li><li><b>Q2 扣非仅 +3.1%，增长明显换挡</b>：Q1 扣非 +17.42% → Q2 +3.1%，Q2 归母 <b>29.76 亿（−15.05%）</b>；<b>油价与运力成本上行在二季度集中体现</b>，下半年能否回到双位数决定全年成色</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">营业收入（H1 同半年度，亿元）</text><rect x="88.8" y="91.7" width="62.4" height="106.3" rx="3" fill="#13406b"/><text x="120.0" y="86.7" font-size="10.5" fill="#1f2733" text-anchor="middle">1301</text><text x="120.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2022</text><rect x="208.8" y="96.3" width="62.4" height="101.7" rx="3" fill="#13406b"/><text x="240.0" y="91.3" font-size="10.5" fill="#1f2733" text-anchor="middle">1244</text><text x="240.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023</text><rect x="328.8" y="88.1" width="62.4" height="109.9" rx="3" fill="#13406b"/><text x="360.0" y="83.1" font-size="10.5" fill="#1f2733" text-anchor="middle">1344</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024</text><rect x="448.8" y="78.0" width="62.4" height="120.0" rx="3" fill="#13406b"/><text x="480.0" y="73.0" font-size="10.5" fill="#1f2733" text-anchor="middle">1469</text><text x="480.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025</text><rect x="568.8" y="70.9" width="62.4" height="127.1" rx="3" fill="#c0392b"/><text x="600.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">1555</text><text x="600.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">归母净利润（H1 同半年度，亿元）</text><rect x="88.8" y="142.4" width="62.4" height="55.6" rx="3" fill="#13406b"/><text x="120.0" y="137.4" font-size="10.5" fill="#1f2733" text-anchor="middle">25.1</text><text x="120.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2022</text><rect x="208.8" y="105.4" width="62.4" height="92.6" rx="3" fill="#13406b"/><text x="240.0" y="100.4" font-size="10.5" fill="#1f2733" text-anchor="middle">41.8</text><text x="240.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023</text><rect x="328.8" y="91.5" width="62.4" height="106.5" rx="3" fill="#13406b"/><text x="360.0" y="86.5" font-size="10.5" fill="#1f2733" text-anchor="middle">48.1</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024</text><rect x="448.8" y="70.9" width="62.4" height="127.1" rx="3" fill="#13406b"/><text x="480.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">57.4</text><text x="480.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025</text><rect x="568.8" y="76.2" width="62.4" height="121.8" rx="3" fill="#c0392b"/><text x="600.0" y="71.2" font-size="10.5" fill="#1f2733" text-anchor="middle">55.0</text><text x="600.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026H1 关键指标同比（%）</text><line x1="60" y1="110.3" x2="660" y2="110.3" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="113.3" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="70.8" width="50.0" height="39.5" rx="3" fill="#c0392b"/><text x="110.0" y="64.8" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+5.9%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营业收入</text><rect x="185.0" y="110.3" width="50.0" height="27.5" rx="3" fill="#1f8a4c"/><text x="210.0" y="150.7" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-4.1%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母净利</text><rect x="285.0" y="48.0" width="50.0" height="62.3" rx="3" fill="#c0392b"/><text x="310.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+9.3%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">扣非归母</text><rect x="385.0" y="88.2" width="50.0" height="22.1" rx="3" fill="#c0392b"/><text x="410.0" y="82.2" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+3.3%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">票均收入</text><rect x="485.0" y="110.3" width="50.0" height="0.7" rx="3" fill="#1f8a4c"/><text x="510.0" y="123.9" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-0.1%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">总件量</text><rect x="585.0" y="110.3" width="50.0" height="91.7" rx="3" fill="#1f8a4c"/><text x="610.0" y="215.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-13.7%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">经营现金流</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+
+<div class="mcard"><div class="lab">营业收入</div><div class="val">1,555.06亿</div><div class="delta up">+5.89%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">55.02亿</div><div class="delta down">−4.11%</div></div>
+<div class="mcard"><div class="lab">扣非归母净利</div><div class="val">49.75亿</div><div class="delta up">+9.32%</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">1.10元</div><div class="delta down">−5.17%</div></div>
+<div class="mcard"><div class="lab">加权ROE(半年)</div><div class="val">5.49%</div><div class="delta down">−0.58pp</div></div>
+<div class="mcard"><div class="lab">毛利率</div><div class="val">13.45%</div><div class="delta up">+0.23pp</div></div>
+<div class="mcard"><div class="lab">总件量</div><div class="val">78.09亿票</div><div class="delta down">−0.1%</div></div>
+<div class="mcard"><div class="lab">票均收入</div><div class="val">14.4元</div><div class="delta up">+3.3%</div></div>
+<div class="mcard"><div class="lab">经营现金流净额</div><div class="val">111.71亿</div><div class="delta down">−13.65%</div></div>
+<div class="mcard"><div class="lab">自由现金流</div><div class="val">50.3亿</div><div class="delta down">−42.8%</div></div>
+<div class="mcard"><div class="lab">资产负债率</div><div class="val">50.08%</div><div class="delta down">+1.05pp</div></div>
+<div class="mcard"><div class="lab">中期股息</div><div class="val">0.49元/股</div><div class="delta up">占45%</div></div>
+
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+
+<tr><td>营业收入(亿元)</td><td class="num">1,555.06</td><td class="num">1,468.58</td><td class="num up">+5.89%</td></tr>
+<tr><td>归母净利润(亿元)</td><td class="num">55.02</td><td class="num">57.38</td><td class="num down">−4.11%</td></tr>
+<tr><td>扣非归母净利(亿元)</td><td class="num">49.75</td><td class="num">45.51</td><td class="num up">+9.32%</td></tr>
+<tr><td>毛利率(%)</td><td class="num">13.45</td><td class="num">13.22</td><td class="num up">+0.23pp</td></tr>
+<tr><td>净利率(%)</td><td class="num">3.54</td><td class="num">3.91</td><td class="num down">−0.37pp</td></tr>
+<tr><td>加权ROE(半年，%)</td><td class="num">5.49</td><td class="num">6.07</td><td class="num down">−0.58pp</td></tr>
+<tr><td>基本EPS(元)</td><td class="num">1.10</td><td class="num">1.16</td><td class="num down">−5.17%</td></tr>
+<tr><td>经营现金流净额(亿元)</td><td class="num">111.71</td><td class="num">129.37</td><td class="num down">−13.65%</td></tr>
+<tr><td>资产负债率(%)</td><td class="num">50.08</td><td class="num">49.03</td><td class="num down">+1.05pp</td></tr>
+
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+
+<tr><td>营业收入</td><td class="num">1,555.06亿(+5.89%)</td><td class="num">按2025年H1占全年47.6%外推→2026E约3,266亿(+6.0%)</td><td class="num up">符合进度</td><td class="num up">Q1+6.14%/Q2+5.70%小幅换挡</td></tr>
+<tr><td>归母净利润</td><td class="num">55.02亿(−4.11%)</td><td class="num">按H1占全年51.6%外推→2026E约106.6亿(−4.1%)</td><td class="num down">低于卖方</td><td class="num amber">瑞银隐含124亿需H2+28%</td></tr>
+<tr><td>扣非归母净利</td><td class="num">49.75亿(+9.32%)</td><td class="num">按H1占全年49.1%外推→2026E约101亿(+9.4%)</td><td class="num up">符合进度</td><td class="num amber">但Q2扣非仅+3.1%</td></tr>
+<tr><td>总件量</td><td class="num">78.09亿票(−0.1%)</td><td class="num">行业约+5.0%、通达系约+9.5%</td><td class="num down">低于行业</td><td class="num amber">主动放弃低质电商件</td></tr>
+<tr><td>自由现金流</td><td class="num">50.3亿(−42.8%)</td><td class="num">2025全年88.93亿、H1约88.0亿</td><td class="num down">低于预期</td><td class="num amber">CapEx+47.0%所致</td></tr>
+
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：A 股半年报无强制单季一致预期披露惯例，<b>本报告不采用「搜索碎值」充当一致预期</b>（v2 修正 B），改用<b>季节性进度校验 + 卖方年度预测反推</b>：<br/>① <b>营收进度</b>：2025 年 H1 营收 1,468.58 亿、占全年 3,082.27 亿的 <b>47.6%</b>；若 2026 年维持同一季节性，<b>2026E 营收 ≈ 1,555.06 / 47.6% ≈ 3,266 亿元（+6.0%）</b>，对应 H2 需 1,711 亿（+6.1%）——<b>与 H1 的 +5.89% 基本接续，可达</b>。<br/>② <b>归母进度</b>：2025 年 H1 归母 57.38 亿、占全年 <b>51.6%</b>（H1 利润占比高于营收，因 H2 旺季 CapEx 与费用前置）；按同法 <b>2026E 归母 ≈ 55.02 / 51.6% ≈ 106.6 亿元（−4.1%）</b>。<br/>③ <b>扣非进度</b>：2025 年 H1 扣非 45.51 亿、占全年 92.64 亿的 <b>49.1%</b> → <b>2026E 扣非约 101 亿元（+9.4%）</b>，即<b>全年扣非仍有望保持接近双位数增长，但需 H2 扣非同比 +9.6% 以上</b>（H1 仅 +9.32%，Q2 更只有 +3.1%）。<br/>④ <b>与卖方预期的关系</b>：瑞银在 Q1 点评中给 2026E EPS 2.43 元（对应归母约 124 亿），<b>较本报告外推的 106.6 亿高出约 17%</b>——意味着卖方隐含 <b>H2 归母需 69 亿（同比 +28%）</b>（2025H2 归母 = 111.17 − 57.38 = 53.79 亿）。<b>判断：该假设偏乐观，需同时满足「旺季件量回升 + 票均继续提升 + 无大额减值」，概率偏低；全年归母更可能落在 100–110 亿元</b>。<br/>⑤ <b>口径约束</b>：半年报为<b>累计口径</b>，Q2 单季数据由「H1 − Q1」倒算（Q1 取自公司一季报）；物流业 <b>Q4 为旺季、Q1 为淡季</b>（Q1 归母约占全年 20–23%），<b>H2 利润占比通常高于 H1（约 51–52%）</b>，故季节性外推具备可比性，但单季环比不具备趋势外推意义。</p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>快递物流行业 2026 年上半年处于<b>「量增换挡、价止跌回升、利润集中于加盟制」的分化期</b>：① <b>量</b>——行业件量增速降至约 <b>+5.0%</b>（前三季度进一步降至 +4.3%、9 月单月 +2.1%），电商渗透率见顶；但通达系凭借低价基数与份额进攻仍做到 <b>+9.5%</b>；② <b>价</b>——「反内卷」政策 + 燃油成本传导 + 加盟商挺价，行业单票止跌回升（H1 通达系中除圆通外普遍提价，韵达单票 2.13 元、+0.21 元）；③ <b>利润</b>——通达系利润爆发式修复：<b>圆通归母 +73.44%、申通 +128.31%、韵达 +88.82%</b>，而<b>顺丰扣非仅 +9.32%</b>；④ <b>结构</b>——跨境电商与制造业出海拉动国际空海运需求，即时零售扩容带动同城配送高增。<b>行业坐标：2026H1 是「通达系集体利润爆发、顺丰表观下滑」的典型背离期</b>——通达系受益低基数与提价弹性（单票 2 元级，提价 0.1–0.2 元即翻倍利润），顺丰受去年 REIT 一次性收益高基数拖累（扣非仍 +9.32%）。<b>结构性差异：顺丰票均 14.4 元是通达系（2.13–2.17 元）的 6.7 倍，走的是时效/供应链/国际的差异化路线，不参与电商件价格战，代价是件量停滞</b>（−0.1% vs 行业 +5.0%、通达系 +9.5%）。<b>投资含义：顺丰的估值锚应是「综合物流平台的 PB−ROE + 分红回购」，而不是「快递公司的件量增长」；同时需警惕中通净利润（51.69 亿）已逼近顺丰（55.02 亿）所引发的龙头溢价重估。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：顺丰总件量 <b>78.09 亿票（−0.1%）</b>、Q2 单季约 40.8 亿票；行业 H1 约 +5.0%，通达系 +9.5%（圆通 162.78 亿件、+9.52%；韵达 122.57 亿票）。价：顺丰<b>票均收入 14.4 元（+3.3%）</b>；通达系圆通单票 2.17 元（<b>−1.04%</b>）、韵达 2.13 元（<b>+0.21 元</b>）。结构：速运及大件 <b>1,068.07 亿（68.68%）</b>、供应链及国际 <b>412.98 亿（26.56%）</b>、同城即时配送 67.96 亿（4.37%）；按业务性质分物流及货运代理 1,523.91 亿（98.00%）、其他非物流 31.15 亿（2.00%）；地区上中国大陆 1,344.57 亿（86.46%）、<b>海外 160.38 亿（10.31%）</b>、港澳台 50.11 亿（3.22%）。成本：毛利率 <b>13.45%（+0.23pp）</b>。<b>同业参照（2026H1 归母/营收）</b>：顺丰 55.02 亿/1,555.06 亿（+5.89%）；中通 51.69 亿（<b>+31.5%</b>，调整后 54.63 亿 +26.7%）/278.32 亿（+22.5%），毛利率 25.66%、ROE 16.11%；圆通 31.75 亿（<b>+73.44%</b>）/388.93 亿（+8.39%）；申通 10.35 亿（<b>+128.31%</b>）/324.91 亿（+29.83%）；韵达 9.98 亿（<b>+88.82%</b>）/264.39 亿（+6.47%）；极兔调整后净利 3.51 亿美元（+124.3%，顺丰为战略股东）。<b>对比结论：顺丰体量仍是最大、毛利率最高的综合物流商，但利润增速已被加盟制全面反超；中通净利润已逼近顺丰，是最需要正视的对手。</b></p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>物流是<b>重资产、低毛利、高周转</b>行业，价值创造须用 <b>ROIC−WACC</b> 判断（v2 修正 C）。半年口径估算：净利润约 <b>57.8 亿元</b>（归母 55.02 ＋ 少数股东约 2.8）、所得税约 15.4 亿 → 税前约 <b>73.2 亿元</b>；EBIT ≈ 73.2 ＋ 利息费用约 <b>6.0 亿</b>（估算）= <b>79.2 亿元</b>；有效税率 ≈ 20.9% → NOPAT ≈ <b>62.6 亿元</b>（年化 ≈ 125.1 亿）。投入资本 IC = 总资产约 2,289.0 亿（年初 2,164.69 ×1.0574）− 无息负债约 619.2 亿（= 总负债 1,146.2 − 有息负债 526.98）≈ <b>1,669.8 亿元</b>。<b>半年度 ROIC ≈ 3.75%，年化 ≈ 7.49%</b>；若扣减超额现金（类现金 459.0 亿 − 经营所需约 200 亿 ≈ 259 亿），IC 降至约 1,411 亿、<b>年化 ROIC ≈ 8.87%</b>。WACC ≈ <b>5.4%</b>（Rf 约 1.8% ＋ β 约 0.9–1.0×ERP 5.0–5.5%；债务成本约 3.4%×(1−21%)≈2.7%；E/V 约 66%）。<b>ROIC−WACC ≈ +2.1pp（保守）/ +3.5pp（扣超额现金）</b>——<b>方向为正、但空间薄</b>，这是物流龙头的常态。与 Q1（年化 7.27%）相比略有改善，但<b>距 2024 年（CapEx 收缩期）仍有差距</b>：本期 CapEx 60.83 亿（+47.0%）、有息负债扩张 526.98 亿，<b>分母增长快于分子，属「投入先行、回报后置」</b>；2027 年能否靠供应链及国际业务的利润兑现弥合这一剪刀差，是估值能否抬升的前提。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：总件量 <b>78.09 亿票（−0.1%）</b>——<b>首次零增长，量是零贡献</b>；Q2 单季件量约 40.8 亿票，环比 Q1 的 37.3 亿票回升。<b>价</b>：<b>票均收入 14.4 元（+3.3%）</b>（Q1 为 14.78 元、+1.0%）——<b>提价在二季度提速，是收入 +5.89% 的唯一来源</b>。<b>结构</b>：速运及大件 1,068.07 亿（68.68%）、供应链及国际 412.98 亿（<b>26.56%</b>）、同城即时配送 67.96 亿（4.37%）；高毛利业务占比提升支撑毛利率。<b>成本与毛利</b>：营业成本约 1,345.88 亿（<b>+5.61%，慢于营收 +5.89%</b>），毛利约 209.18 亿（<b>+7.7%</b>）、<b>毛利率 13.45%（+0.23pp）</b>——在通达系单票普遍下滑的环境中逆势改善，靠的是网络融通、资源分层与营运模式革新。<b>费用</b>：四项费用率稳中有降（研发投入 14.48 亿、<b>−2.34%</b>、费率 −0.1pp；管理费用率与销售费用率同比基本持平）；财务费用受借款增加影响，但低利率环境下仍可控。<b>税费与少数股东</b>：所得税约 15.4 亿（有效税率约 20.9%）、<b>少数股东损益约 2.8 亿</b>（供应链与国际子公司少数股权，占比抬升）——<b>归母被结构性摊薄</b>。<b>非经营项（本期关键扰动）</b>：信用减值损失 <b>1.65 亿</b>（计提 1.47、核销 0.42）、资产减值 0.33 亿（长期股权投资减值 0.32）；<b>去年同期则含 REIT 处置收益 5.9 亿（税后）</b>。<b>结论</b>：归母 −4.11%（−2.36 亿）＝ 毛利 +14.96 亿 ＋ 费用率改善 － 去年同期 REIT 一次性收益 5.9 亿 － 减值与税项 － 少数股东分流；<b>即「主业在增长、报表在下滑」，下滑全部来自高基数与结构性摊薄。</b></p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「真」，但表观与实质背离需要拆开看</b>。归母 55.02 亿、扣非 49.75 亿，<b>非经常性损益约 5.27 亿元（占归母 9.6%）</b>——主要构成：政府补助、结构性存款等金融资产收益、非流动资产处置损益，减税与非控股权益影响。<b>关键判断：非经占比较 Q1（8.2%）进一步上升，说明利润中「非经营性」的比重在增加，这是本期质量上的一处瑕疵</b>。但<b>扣非增速（+9.32%）仍为正、且高于归母（−4.11%）13.4pp</b>，印证<b>表观下滑完全由去年 REIT 一次性收益造成</b>（2025H1 处置三家物业子公司、税后 5.9 亿）。<b>现金验证</b>：销售商品提供劳务收到现金 <b>1,623.58 亿元（+7.50%）</b>、<b>收现比 1.044</b>——收现增速快于营收（+5.89%），<b>回款质量良好</b>；<b>OCF/归母 2.03×</b>，净利润现金含量远超 100%；应收账款 323.23 亿（+5.61%，慢于营收）、<b>坏账准备 9.23 亿（占应收 2.86%）</b>，计提审慎。<b>需要提示</b>：合同负债、预收款项规模小，无「预收蓄水池」；<b>但 FCF 仅 50.3 亿（−42.8%）</b>说明本期扩张性投入正在消耗现金，质量「真」而「薄」。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">半年报<b>披露分部收入（不含分部利润）</b>，结构完整（v2 修正 H）：<br/>• <b>速运及大件</b>：收入 <b>1,068.07 亿元、占 68.68%</b>——时效、经济、快运、冷运的集合，是毛利率改善的主要来源（票均 14.4 元、+3.3%，件量 78.09 亿票、−0.1%）。<br/>• <b>供应链及国际</b>：收入 <b>412.98 亿元、占 26.56%</b>——第二支柱，驱动来自国际空海运需求回稳 + 运价同比提升 + 中国企业出海；<b>但该板块利润未单独披露，是本报告最重要的数据缺口</b>。<br/>• <b>同城即时配送</b>：收入 67.96 亿元、占 4.37%——2025 年该板块收入 127.2 亿（+43.4%、净利倍增），即时零售扩容下延续高增。<br/>• <b>未分配部分</b>：6.06 亿元（0.39%）。<br/><b>按业务性质</b>：物流及货运代理收入 <b>1,523.91 亿（98.00%）</b>、其他非物流业务 31.15 亿（2.00%）。<br/><b>地区结构</b>：中国大陆 <b>1,344.57 亿（86.46%）</b>、<b>海外 160.38 亿（10.31%）</b>、港澳台 50.11 亿（3.22%）——<b>海外占比首超一成，与「亚洲唯一、全球覆盖」战略一致</b>。<br/><b>判断</b>：结构上已从「单一快递」变成「快递 + 供应链 + 国际 + 同城」四轮驱动，<b>但收入结构领先于利润结构——分部利润的披露缺失使市场无法验证第二曲线的盈利性</b>，这是估值折价的来源之一。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（杠杆由降转升，但仍属稳健区间）</b>：总资产约 <b>2,289.0 亿（+5.74%）</b>、总负债约 <b>1,146.2 亿（+7.98%，快于资产 2.24pp）</b>，<b>资产负债率 50.08%（较年初 +1.05pp）</b>。<br/><b>流动性（充足）</b>：流动资产 989.01 亿 / 流动负债 832.47 亿 → <b>流动比率 1.19</b>（年初 1.25）、速动比率约 1.15；类现金 <b>459.0 亿</b>（现金及等价物 250.18 ＋ 结构性存款 208.30 ＋ 固收凭证 0.50）vs 短期有息（短借 172.54 ＋ 一年内到期 268.23）→ <b>现金短债比约 1.71×</b>，<b>净有息负债仅约 68 亿元</b>，无逾期借款。<br/><b>债务结构变化（本期最关键）</b>：有息负债（含租赁）约 <b>526.98 亿元</b>、总借款 <b>430.16 亿</b>（较年初 +92.08 亿）；<b>短期借款 172.54 亿（+146.04%）</b>——主因<b>认购极兔速递股份举借过桥贷款</b>，该笔贷款已于 6 月由 H 股募资（72.08 亿元）偿还大部分；一年内到期 268.23 亿，<b>短期化趋势明显，需跟踪续作</b>。<br/><b>资产质量与周转</b>：应收账款 323.23 亿（+5.61%，慢于营收）、坏账准备 9.23 亿（2.86%）；存货 29.99 亿（−1.31%，占资产 1.31%，无滞销风险）；固定资产 526.05 亿（+1.32%）、在建工程 33.41 亿（<b>+14.85%</b>）、使用权资产 153.77 亿；<b>商誉 93.51 亿（占归母净资产 9.10%、总资产 4.09%）</b>——构成：<b>KLN 56.91 亿（占 61%）</b>、丰豪供应链 29.37 亿、顺新晖 3.50 亿、顺心快运 1.50 亿、其他 2.23 亿，KEX（泰国快递）0.59 亿<b>已全额计提减值</b>，本期仅新增 1.38 亿、外币折算 −3.33 亿；<b>长期股权投资 141.77 亿（+101.55%）</b>为极兔追加投资（由其他权益工具投资重分类）；资产受限仅 20.28 亿（存放央行准备金 + 借款抵押）。<br/><b>权益项</b>：<b>库存股 59.14 亿（较年初 +283.35%）</b>——A/H 股回购尚未注销的部分，待注销后将增厚 EPS；后续三季报显示 A 股 1.6 亿股已注销，库存股降至 3.86 亿。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>存在方向性背离，是本期最需要提示的一块</b>。经营活动现金流净额 <b>111.71 亿元（−13.65%）</b>，归母净利润 55.02 亿 → <b>OCF/归母 2.03×</b>（现金含量仍远超 100%），<b>但 OCF 与利润方向相反</b>：营收 +5.89%、扣非 +9.32%，而 OCF −13.65%。拆解：经营活动现金流入 2,090.24 亿（+58.73 亿）、流出 1,978.53 亿（<b>+76.38 亿</b>），净额减少 17.65 亿。<br/><b>流出端快于流入端的原因</b>：购买商品接受劳务支付现金 <b>1,171.64 亿（+6.88%，略快于营业成本 +5.61%，含油价上行的现金支付）</b>、支付职工 194.21 亿（+3.28%）、支付各项税费 <b>49.88 亿（+14.12%）</b>；<b>流入端的最大拖累是「收到其他与经营活动有关的现金」由 511.92 亿降至 460.77 亿（−51.15 亿）</b>——主要为代收货款、押金保证金等往来款波动。<br/><b>投资与筹资</b>：投资活动净流出 <b>122.62 亿</b>（上年 175.17 亿，收窄 30.0%），其中购建长期资产 60.83 亿、投资支付 <b>75.42 亿（上年仅 11.80 亿，主因认购极兔）</b>；筹资活动净流入 <b>61.82 亿</b>（上年净流出 72.81 亿），来自取得借款及发债 215.10 亿 ＋ 吸收投资 73.07 亿（H 股），减去偿还 115.12 亿与分配股利/偿付利息 27.56 亿。<br/><b>结论：OCF 下滑来自往来款波动与成本现金支付加快，不构成盈利质量警报，但削弱了「利润→现金」的转化效率</b>；收现比 1.044（销售收现 +7.50% &gt; 营收 +5.89%）证明收入真实。</p>
+      <p><b>OCF 拆解归因：</b>OCF 拆解（v2 修正 E；半年报按直接法列示、无补充资料，折旧摊销不可得，不做倒推）：<b>经营净流入 111.71 亿（上年同期 129.37 亿，−13.65%）</b>。<br/>① <b>收款端（健康）</b>：销售商品提供劳务收到现金 <b>1,623.58 亿（+7.50%）</b>——增速快于营收 +5.89%、<b>收现比 1.044</b>；收到税费返还 5.90 亿（+62.9%）。<br/>② <b>其他经营流入（本期最大拖累）</b>：收到其他与经营活动有关的现金 <b>460.77 亿（−51.15 亿）</b>，为代收货款、押金保证金等往来款波动，<b>属营运资金性质</b>。<br/>③ <b>支出端</b>：购买商品接受劳务 <b>1,171.64 亿（+6.88%）</b>、支付职工 194.21 亿（+3.28%）、支付各项税费 49.88 亿（<b>+14.12%</b>）、支付其他与经营活动有关的现金 556.97 亿（−2.99%）。<br/>④ <b>资本开支</b>：购建固定资产、无形资产及其他长期资产 <b>60.83 亿（+47.0%）</b>——分拣中心 24.84 亿、飞机 13.63 亿、车辆 5.54 亿、信息技术设备 4.58 亿、仓库 3.66 亿、办公综合楼 1.70 亿、土地 1.08 亿，<b>指向工业区零担网络、国际航线与自动化仓的主动投入</b>。<br/><b>归因结论</b>：OCF −17.65 亿 ≈ 往来款流入减少 51.15 亿 ＋ 成本/税费现金支出增加 － 经营性收款增加；<b>核心是往来款科目波动 + 成本现金支付加快，全部可解释、无异常科目</b>。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>自由现金流腰斩，是本期最需要警惕的指标</b>。公司披露口径：<b>2026H1 自由现金流入 50.3 亿元</b>（= 经营现金流净额 111.7 亿 − 资本性支出（不含股权投资）61.4 亿），对比 2025H1 约 <b>88.0 亿</b>（129.37 − 41.38），<b>同比 −42.8%</b>；2025 全年 FCF 为 88.93 亿。<br/><b>收窄原因</b>：① OCF −13.65%（往来款波动）；② CapEx 由 41.38 亿增至 <b>60.83 亿（+47.0%）</b>；此外<b>总投资额 138.35 亿（+156.17%）</b>，其中<b>股权投资 76.94 亿</b>（主要为认购极兔速递股份，属战略性投资而非经营性 CapEx）。<br/><b>覆盖能力</b>：中期分红约 <b>25.0 亿</b>，仅占 FCF 50.3 亿的 <b>49.7%</b>、占 OCF 的 22.4%，<b>由经营现金流充分覆盖，非借钱分红</b>；但 A+H 回购累计约 <b>46.5 亿元</b>（1–7 月）与分红合计已接近 FCF，<b>缺口由借款净流入与 H 股发行资金支撑</b>。<br/><b>结论：FCF 仍为正且覆盖分红，但同比腰斩——扩张期 CapEx 上行 + OCF 波动，需跟踪下半年 CapEx 节奏与 OCF 恢复；若两者不改善，45% 分红率与回购将不可避免与杠杆扩张绑定</b>（三季报已显示短期借款 +157.50%、FCF 进一步降至 92.70 亿/9 个月）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b><b>估值处历史低位，年内跑输</b>。以 2026-08-28 A 股收盘 <b>33.67 元（+0.78%）</b>计：<b>PE(TTM) 约 15.5×</b>、<b>PB(LF) 约 1.77×</b>、PS(TTM) 约 0.57×；总市值约 <b>1,690 亿元</b>。年内累计 <b>−11.30%</b>（2025 年末 37.96 元），区间 30.13–39.66 元（最低 2026-06-29、最高 2026-01-20），现价距高点 −15.1%、距低点 +11.7%。<b>历史分位</b>：PB 1.77× 显著低于 2021 年约 3.5×、2023 年约 2.0× 的中枢，处上市以来偏低区域。<br/><b>相对同业</b>：中通快递（ZTO.US / 2057.HK）PE 12.24×、PB 1.81×、ROE <b>16.11%</b>——顺丰 PE 溢价约 <b>27%</b>、PB 基本持平，但 <b>ROE 低约 5pp</b>；溢价来自直营网络、时效壁垒、国际第二曲线与更积极的回购分红。<br/><b>股息</b>：2025 年度每股股利 0.89 元 → 现价股息率约 <b>2.64%</b>；若 2026 年度分红比例提至 45%、TTM EPS 约 2.17 元 → 股息约 0.98 元、<b>前瞻股息率约 2.91%</b>。<br/><b>结论</b>：PE 15.5× / PB 1.77× 的组合说明市场已不把顺丰当成长股定价，而是「现金流稳定的物流基础设施 + 国际业务期权」——<b>这与本报告的判断一致：下行由分红回购托底，上行必须由第二曲线利润兑现触发</b>。</p>
+      <p><b>周期正常化估值：</b>物流重资产、利润受油价与一次性损益扰动，正常化以<b>扣非口径 + PB−ROE 框架</b>还原（v2 修正 F 的适用改造）。<br/>① <b>盈利正常化</b>：以扣非归母为基准——2025 全年扣非 <b>92.64 亿</b>、2026H1 扣非 <b>49.75 亿（+9.32%）</b>；按 2025 年 H1 占全年 49.1% 外推，<b>2026E 扣非约 101 亿</b> → <b>正常化 PE ≈ 1,690 / 101 ≈ 16.7×</b>（高于表观 PE(TTM) 15.5×，因 TTM 归母含去年一次性收益）。<br/>② <b>PB−ROE 反推</b>：年化 ROE 约 <b>11.0%</b>（半年加权 5.49%×2；2025 全年 11.51%）、PB 1.77×、分红比例 45% → 可持续增长率 g = 11.0%×55% ≈ <b>6.05%</b>；由 PB=(ROE−g)/(r−g) 反推 <b>隐含 COE ≈ 8.85%</b>，略低于合理 COE（9%–10%）→ <b>当前定价大致合理、略偏乐观而非显著低估</b>。<br/>③ <b>情景锚</b>：<br/>• <b>保守</b>（ROE 维持 11%、扣非增速 5–8%）→ 合理 PB 1.8–2.0× → <b>34.5–38.3 元</b>；<br/>• <b>乐观</b>（ROE 修复至 12–13%、供应链及国际分部净利率由不足 1% 提至 1% 以上、油价回落）→ 合理 PB 2.0–2.2× → <b>38.3–42.1 元</b>；<br/>• <b>下行</b>（件量持续零增长 + 运力成本居高不下 → ROE 跌破 10%）→ PB 1.6× → <b>约 30.6 元</b>。<br/><b>结论</b>：现价 33.67 元处<b>保守区间下沿</b>，下行有中期分红 45%（2027 年提至 50%）与已执行完毕并注销的60 亿回购托底；<b>上行取决于第二曲线利润率兑现与油价压力缓解，而非 PE 修复本身</b>。</p>
+      <p><b>股东回报可持续性：</b><b>回购 + 分红双管齐下，回报力度明显加码</b>。<br/>• <b>中期分红</b>：每 10 股派 <b>4.9 元（含税）</b>（2025 中期 4.6 元、<b>+6.5%</b>），现金分红总额约 <b>25.0 亿元</b>，占 2026H1 归母的 <b>45%</b>（2025 中期 40%、<b>再提 5pp</b>）。<br/>• <b>分红规划升级</b>：拟修订《未来五年（2024–2028 年）股东回报规划》，明确现金分红比例 <b>2026 年度 45%、2027 年度 50%、2028 年度不低于 50%</b>（待股东会审议）。<br/>• <b>回购</b>：A 股回购金额上限由 30 亿<b>上调至 60 亿元并已执行完毕</b>，<b>全部用于注销减资</b>（增厚 EPS）；<b>首次推出 H 股回购方案</b>（不超过 5 亿港元，截至 7 月底已累计约 2.3 亿港元）；2026-01-01 至 07-31 累计 A+H 回购约 <b>46.5 亿元</b>（资产负债表体现为库存股 <b>59.14 亿、+283.35%</b>）。<br/><b>可持续性</b>：中期分红 25.0 亿占 OCF 的 22.4%、占 FCF 的 49.7%，<b>由经营现金流内生覆盖、非借钱分红</b>；2025 年度每股股利 0.89 元、分红比例约 40%。<b>股东总回报测算</b>：股息率约 2.6% ＋ 回购收益率（59.99 亿/1,690 亿 ≈ 3.6%，一次性）≈ <b>6% 量级</b>（2026 特殊年份）；常态化约 3–4%。<br/><b>结论</b>：在扣非 +9.32% 的同时把分红比例从 40% 提至 45%（2027 年 50%），并用 60 亿元注销式回购，<b>股东回报诚意明确，是本案估值的重要支撑</b>；<b>但叠加后已接近甚至超出 FCF，需警惕与杠杆扩张绑定</b>。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card"><b>三大战略主线（公司口径）</b>：① <b>速运物流</b>——坚持价值经营、实现「量稳利增」，「激活经营」进阶机制由规模驱动转向价值驱动，以票均收入与业务结构健康为优先；② <b>供应链及国际</b>——锚定中国企业出海与柔性供应链升级，增长全面提速；③ <b>AI 技术</b>——驱动内部提效降本，并对外赋能数智化服务创收。<br/><b>下半年关键抓手（可验证的执行清单）</b>：网络分层与资源融通（干线新增<b>上千台 LNG 重卡</b>、支线与末端<b>新能源车超 5.4 万台</b>、自动化设备投入<b>同比 +200%</b>、<b>9 座「黑灯仓库」</b>）；工业区零担渗透（<b>货量与收入 +20% 以上</b>）；国际网络（<b>68 条全货机国际航线</b>、海外仓<b>超 275 万平方米</b>、<b>100 个口岸清关</b>）；鄂州枢纽（国内航线 61 条、国际 25 条，<b>国际航空货运吞吐量 +23%</b>）。<br/><b>股东回报指引</b>：中期分红比例 45%，规划 2026/2027/2028 年度 <b>45%/50%/不低于 50%</b>；A 股 60 亿回购已执行完毕并注销。<br/><b>公司明示的风险敏感项</b>：燃油价格中长期波动、区域局势冲突扰乱空海运线路、关税与跨境监管政策变化、汇率与利率波动（已用<b>远期购汇 69.32 亿元</b>对美元债套保）、消费端修复偏弱（社零仅 +1.3%）。<br/><b>敏感性（可复核口径）</b>：票均收入每 ±1% 对应年化收入约 ±21 亿、归母约 ±16 亿（相当于 2025 年归母的 14%）；件量每 ±1% 对应收入 ±21 亿、毛利 ±2.7 亿——<b>票均对利润的弹性约为件量的 6 倍</b>。<i>（前瞻性陈述与测算，非公司承诺）</i></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">快递物流板块可比（2026 半年度，人民币）：<br/>• <b>顺丰控股</b>：营收 <b>1,555.06 亿（+5.89%）</b>、归母 55.02 亿（−4.11%）、扣非 <b>+9.32%</b>、毛利率 <b>13.45%</b>、件量 78.09 亿票（−0.1%）、票均 14.4 元、PE 15.5×/PB 1.77×、ROE（年化）约 11%——<b>体量最大、毛利率最高、唯一综合物流 + 国际化布局，但件量零增长</b>。<br/>• <b>中通快递</b>（ZTO.US / 2057.HK）：营收 278.32 亿（<b>+22.5%</b>）、归母 <b>51.69 亿（+31.5%）</b>、调整后净利 54.63 亿（+26.7%）、包裹量 +9.6%、核心单票收入 <b>+12.0%</b>、毛利率 <b>25.66%</b>、净利率 20.97%、ROE <b>16.11%</b>、PE 12.24×/PB 1.81×——<b>净利润已逼近顺丰（51.69 vs 55.02 亿），且 ROE 高出约 5pp，是最强劲的对手</b>。<br/>• <b>圆通速递</b>：营收 388.93 亿（+8.39%）、归母 <b>31.75 亿（+73.44%）</b>、扣非 +76.87%、件量 162.78 亿件（+9.52%）、单票 2.17 元（<b>−1.04%</b>）、毛利率 12.84%、ROE 8.72%。<br/>• <b>申通快递</b>：营收 324.91 亿（<b>+29.83%</b>）、归母 <b>10.35 亿（+128.31%）</b>、毛利率 7.69%、ROE 9.03%。<br/>• <b>韵达股份</b>：营收 264.39 亿（+6.47%）、归母 <b>9.98 亿（+88.82%）</b>、件量 122.57 亿票、单票 2.13 元（+0.21 元）、毛利率 7.78%、ROE 4.62%。<br/>• <b>极兔速递</b>：上半年调整后净利润 3.51 亿美元（<b>+124.3%</b>）——顺丰本期为战略股东（追加投资后成联营企业、权益法核算）。<br/><b>关键对比结论</b>：① <b>2026H1 是「通达系集体利润爆发、顺丰表观下滑」的背离期</b>——通达系受益反内卷提价与低基数（+73%~+128%），顺丰受去年 REIT 一次性收益高基数拖累（扣非仍 +9.32%）。② <b>结构性差异</b>：顺丰票均 14.4 元是通达系（2.13–2.17 元）的 <b>6.7 倍</b>，走时效/供应链/国际的差异化路线，不参与电商件价格战，代价是件量停滞（−0.1% vs 行业 +5.0%、通达系 +9.5%）。③ <b>投资含义</b>：顺丰的估值锚应是「综合物流平台的 PB−ROE + 分红回购」，而非「快递公司的件量增长」；<b>需警惕中通净利润逼近顺丰所引发的龙头溢价重估</b>。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict amber">关注</span>商誉 <b>93.51 亿元</b>，占归母净资产 <b>9.10%</b>、占总资产 4.09%，<b>低于 v2 阈值</b>；构成：<b>KLN（嘉里物流）56.91 亿（占 61%）</b>、丰豪供应链 29.37 亿、顺新晖冷链 3.50 亿、顺心快运 1.50 亿、其他 2.23 亿；<b>KEX（泰国快递）0.59 亿已全额计提减值</b>，本期仅新增 1.38 亿、外币折算 −3.33 亿，<b>未新增减值</b>。<b>关注点：KLN 占六成且与国际货代运价高度相关，其 H1 贡献净利润 6.08 亿（归母 2.77 亿），若运价持续波动需复核减值测试假设。</b></div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发投入 <b>14.48 亿元（−2.34%，费率 −0.1pp）</b>，<b>基本全部费用化</b>；期末开发支出仅 <b>1.28 亿元</b>（较年初 1.62 亿下降），占营收 0.08%、占净资产 0.12%——<b>无研发资本化率异常、无通过资本化虚增利润的空间</b>。AI 与智能装备投入（信息技术设备 4.58 亿）计入资本开支或当期费用。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">低风险</span>信用减值损失 <b>1.65 亿元</b>（计提 1.47 亿、核销/处置减少 0.42 亿）、资产减值损失 <b>0.33 亿元</b>（长期股权投资减值 0.32 亿），<b>合计仅占营收 0.13%，无大额「洗大澡」迹象</b>；应收账款 323.23 亿（+5.61%，慢于营收）、<b>坏账准备 9.23 亿（占应收 2.86%）</b>，计提审慎、无重大逾期。</div></div>
+<div class="rf"><div class="k">债务结构与财务杠杆</div><div class="v"><span class="verdict amber">关注</span>资产负债率 <b>50.08%（较年初 +1.05pp）</b>、总负债 +7.98% 快于总资产 +5.74%；有息负债（含租赁）约 <b>526.98 亿</b>、总借款 430.16 亿（较年初 +92.08 亿）；<b>短期借款 172.54 亿（+146.04%）</b>为认购极兔举借过桥贷款，一年内到期 268.23 亿，<b>短债化趋势明显</b>。缓冲：类现金 459.0 亿、<b>净有息负债仅约 68 亿、现金短债比约 1.71×</b>、流动比率 1.19（年初 1.25）、无逾期借款。<b>方向已由「降杠杆」转为「加杠杆」，需跟踪续作与长期化安排。</b></div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>半年度报告<b>未经审计（部分公司为审阅，顺丰未披露审阅结论）</b>，不存在非标意见问题；董事会已声明保证真实准确完整。<b>待年报审计验证，重点看商誉减值（KLN 56.91 亿）与关联交易定价。</b></div></div>
+<div class="rf"><div class="k">关联交易与资金往来</div><div class="v"><span class="verdict amber">关注</span>① <b>认购极兔速递股份</b>（821,657,973 股、10.10 港元/股，约 83 亿港元）并以 225,877,669 股 H 股支付（36.74 港元/股、净额 82.89 亿港元），<b>完成后极兔持股顺丰 4.42%，双方互为股东</b>，后续运力采购与协同将构成持续关联交易；② 「共同成长」持股计划 2 亿股系控股股东明德控股<b>无偿赠与</b>；③ KLN 等并购子公司与其原股东体系的往来需披露核查；④ 明德控股质押情况（见三季报口径 762,092,980 股）。<b>资本运作密集，需持续跟踪定价与披露。</b></div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict flat">低风险</span>应收账款 <b>323.23 亿元（+5.61%，慢于营收 +5.89%）</b>、坏账准备 9.23 亿（2.86%）；<b>收现比 1.044</b>（销售收现 1,623.58 亿 / 营收 1,555.06 亿，且收现 +7.50% 快于营收）、<b>OCF/归母 2.03×</b>——<b>收入真实、回款充分，无放宽信用促收入迹象</b>。信用减值 1.65 亿占营收 0.11%，规模可控。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">低风险</span>存货 <b>29.99 亿元（−1.31%）</b>，占总资产 1.31%、占营收 1.93%，<b>物流企业存货极轻、无积压与跌价风险</b>；周转正常，跌价准备充分。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict amber">关注</span>非经常性损益约 <b>5.27 亿元，占归母 9.6%</b>（高于 Q1 的 8.2%）；主要构成：政府补助、<b>结构性存款等金融资产收益</b>、非流动资产处置损益，减税与非控股权益影响。<b>判断：非经占比上升说明利润中「非经营性」比重在增加，是本期质量上的一处瑕疵；但扣非增速（+9.32%）仍高于归母（−4.11%）13.4pp，主业并未失速</b>。需注意结构性存款收益随现金被用于并购而趋于下降。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">低风险</span>OCF <b>111.71 亿（−13.65%）</b>与营收 +5.89%、扣非 +9.32% <b>方向背离</b>，但 <b>OCF/归母 2.03×、收现比 1.044</b>——<b>背离已完整归因于「收到其他与经营活动有关的现金 −51.15 亿」（代收代付往来款）与成本现金支付加快，非盈利质量恶化</b>（§5）。<b>更值得跟踪的是 FCF 50.3 亿（−42.8%），由 CapEx +47.0% 直接造成。</b></div></div>
+<div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span>直营网络按<b>服务完成、控制权转移</b>确认收入（CAS 14），<b>无经销商压货机制</b>；合同负债/预收款项规模小，<b>无「预收蓄水池」</b>；营收 +5.89% 与票均 +3.3%、件量 −0.1% 可逐项验证。<b>国际货代按履约进度确认，需关注运价波动对确认节奏的影响</b>，但不构成激进确认。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span>① <b>担保</b>：为境外全资子公司发行的可转 H 股可转债（<b>29.09 亿港元</b>，2026-07-08 到期已全额清偿）及美元债提供担保；② <b>或有</b>：无重大未决诉讼披露，预计负债规模小；③ <b>投资承诺</b>：极兔认购（约 83 亿港元）与后续两只股权基金认缴（1,000 万美元 + 1 亿元）；④ <b>租赁承诺</b>：使用权资产 153.77 亿、租赁负债（含一年内）规模大，<b>未来最低租赁付款额未披露</b>；⑤ <b>汇率/利率</b>：已用<b>远期购汇 69.32 亿元</b>对美元债套保，但海外净资产折算（外币报表折算 −3.33 亿计入商誉调整）仍影响权益。</div></div>
+<div class="rf"><div class="k">运力成本与油价（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span>H1 营业成本约 <b>1,345.88 亿（+5.61%）</b>、购买商品接受劳务付现 <b>+6.88%（快于成本增速）</b>，反映<b>Q2 油价与运力成本的现金支付压力</b>；公司称「部分缓解油价高位对运力成本的传导压力」——<b>用词克制说明压力仍在</b>。燃油与外包运力难以完全转嫁，且 <b>CapEx（分拣中心 24.84 亿、飞机 13.63 亿）带来的折旧将在下半年起摊入成本</b>，<b>毛利率 +0.23pp 的改善能否延续高度依赖油价</b>（§2 / §7）。</div></div>
+<div class="rf"><div class="k">件量结构与单票提价的可持续性（行业特有·红旗）</div><div class="v"><span class="verdict down">红旗</span>H1 总件量 <b>78.09 亿票（−0.1%，首次零增长）</b>，而行业约 +5.0%、通达系约 +9.5%（圆通件量 +9.52%）——<b>份额持续让渡</b>；票均收入 <b>14.4 元（+3.3%）</b>虽提速，但<b>只够把收入做到 +5.89%</b>，「量价齐升」并未出现。更关键的是 <b>Q2 扣非仅 +3.1%（Q1 +17.42%）</b>，说明<b>提价带来的利润弹性正在被成本上行吃掉</b>；若票均见顶而件量继续下滑，收入将同时失去两个支撑（§0.5 / §3 / §8）。</div></div>
+
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li><b>毛利率逆势 +0.23pp 至 13.45%，结构优化见效</b>：在通达系单票普遍下滑（圆通单票 −1.04%）的环境中，顺丰靠<b>票均收入 +3.3%</b>、网络融通与资源分层，实现毛利额与毛利率双升——<b>这是「价值驱动」最硬的财务证据</b></li><li><b>扣非 +9.32%，盈利质量「真」</b>：扣非 49.75 亿高于归母 55.02 亿的增速，<b>归母 −4.11% 的差额 100% 可归因于去年同期 REIT 处置收益 5.9 亿</b>（非经营性），剔除后主业仍在增长</li><li><b>供应链及国际成为第二支柱</b>：分部收入 <b>412.98 亿元（占 26.56%）</b>，海外收入 160.38 亿（10.31%）已超一成；H1 国际空海运需求回稳 + 运价同比提升 + 中国企业出海三重驱动</li><li><b>分红比例提至 45% 并给出三年路线图</b>：中期每股 0.49 元（+6.5%）、总额约 25.0 亿，占 H1 归母 <b>45%</b>（2025 中期 40%）；规划 2026/2027/2028 年分红比例 <b>45%/50%/≥50%</b>，由 OCF 111.71 亿充分覆盖（占 22.4%），<b>非借钱分红</b></li><li><b>60 亿回购执行完毕并全部注销</b>：回购上限由 30 亿上调至 <b>60 亿元</b>、全部用于<b>注销减资</b>（增厚 EPS）；另首次推出 H 股回购方案（≤5 亿港元）；2026-01-01 至 07-31 累计 A+H 回购约 <b>46.5 亿元</b></li><li><b>经营质量指标仍健康</b>：收现比 <b>1.044</b>（销售收现 1,623.58 亿 / 营收 1,555.06 亿）、<b>OCF/归母 2.03×</b>、应收账款 323.23 亿（+5.61%，<b>慢于营收 +5.89%</b>）、坏账准备 9.23 亿（占应收 2.86%），<b>应收质量未见恶化</b></li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li><b>件量首次零增长，份额在让渡（核心风险）</b>：总件量 <b>78.09 亿票（−0.1%）</b>，而行业 +5.0%、通达系 +9.5%（圆通件量 +9.52%）——<b>「以量换价」的另一面是份额流失</b>；若票均提升见顶（H1 +3.3%，已由 Q1 的 +1.0% 提速），收入增长将失去唯一支点</li><li><b>Q2 扣非仅 +3.1%，增长明显换挡</b>：Q1 扣非 +17.42% → Q2 +3.1%，Q2 归母 <b>29.76 亿（−15.05%）</b>；<b>油价与运力成本上行在二季度集中体现</b>，下半年能否回到双位数决定全年成色</li><li><b>OCF −13.65%、FCF −42.8%，现金转换效率下滑</b>：OCF 111.71 亿（上年 129.37 亿），「收到其他与经营活动有关的现金」<b>由 511.92 亿降至 460.77 亿（−51.15 亿）</b>；<b>FCF 50.3 亿（上年约 88.0 亿）</b>，CapEx 由 41.38 亿增至 <b>60.83 亿（+47.0%）</b></li><li><b>杠杆上升、短债激增</b>：资产负债率 <b>50.08%（+1.05pp）</b>、总负债 +7.98% 快于总资产 +5.74%；<b>短期借款 172.54 亿（+146.04%）</b>为认购极兔举借过桥贷款，有息负债（含租赁）约 526.98 亿；虽净有息负债仅约 68 亿、现金短债比 1.71×，<b>但方向已由「降杠杆」转为「加杠杆」</b></li><li><b>商誉集中于 KLN，减值测试假设敏感</b>：商誉 93.51 亿（占归母净资产 9.10%），其中 <b>KLN（嘉里物流）56.91 亿、占六成</b>；KLN H1 贡献净利润 6.08 亿（归母 2.77 亿），<b>若国际货代运价持续波动，减值风险不可排除</b>（KEX 泰国快递 0.59 亿已全额计提）</li><li><b>国际业务暴露于多重外生风险</b>：燃油价格中长期波动、区域局势冲突扰乱空海运线路、关税与跨境监管政策变化、汇率与利率波动（已用远期购汇 69.32 亿元对美元债套保），<b>而供应链及国际正是增速最高、占比 26.56% 的一块</b></li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li><b>件量零增长与票均提升的赛跑（件量 78.09 亿票 −0.1%、票均 14.4 元 +3.3%）</b> → 下季看件量能否止跌、票均能否维持 +3% 以上、速运物流收入是否转负（§0.5 / §3 / §9 红旗 14）。</li><li><b>Q2 扣非失速能否修复（Q1 +17.42% → Q2 +3.1%、Q2 归母 −15.05%）</b> → 下季看油价回落后毛利率能否扩张、扣非增速是否回到双位数（§2）。</li><li><b>现金流与资本开支（OCF 111.71 亿 −13.65%、FCF 50.3 亿 −42.8%、CapEx 60.83 亿 +47.0%）</b> → 下季看往来款能否回补、CapEx 全年节奏、FCF 能否重新覆盖「分红 45% + 回购」（§5）。</li><li><b>杠杆与短债（资产负债率 50.08% +1.05pp、短借 172.54 亿 +146.04%、有息负债 526.98 亿）</b> → 下季看过桥贷款偿还进度、债务长期化安排、现金短债比（1.71×）是否回升（§4 / §9 红旗 4）。</li><li><b>第二曲线盈利性（供应链及国际 412.98 亿、占 26.56%，分部利润未披露）</b> → 下季看年报是否披露分部利润、国际运价与出海节奏、KLN 商誉（56.91 亿）减值测试假设（§3 / §9 红旗 1）。</li></ol></div>
+  </div>
+
+
+  <div class="foot">
+    <b>数据来源：</b>① <b>顺丰控股股份有限公司 2026 年半年度报告</b>（披露日 <b>2026-08-28</b>；同日在港交所披露 H 股版本、股份代号 <b>6936</b>）。报告<b>按中国企业会计准则编制、未经审计（审阅）</b>；公司披露按 CAS 与按 IFRS 编制的归母净利润及归母权益<b>并无差异</b>——<b>A/H 口径统一</b>。PDF 已归档 <code>data/pdf/002352.SZ_h1_2026.pdf</code>。<br/>② <b>多期序列</b>：H1 同半年度营收/归母取自公司历次半年度报告（2022H1 1,300.64 亿/25.12 亿、2023H1 1,243.66/41.76、2024H1 1,344.10/48.07、2025H1 1,468.58/57.38、2026H1 1,555.06/55.02 亿元）。<br/>③ <b>行业与市场数据</b>（WebSearch，统计时点 2026-08-28 至 2026-08-30）：行业 H1 件量约 +5.0%；同业半年度数据（中通 278.32 亿/51.69 亿、圆通 388.93/31.75、申通 324.91/10.35、韵达 264.39/9.98、极兔调整后净利 3.51 亿美元）；002352.SZ 2026-08-28 收 <b>33.67 元</b>、PE(TTM) 约 15.5×、PB(LF) 约 1.77×、PS(TTM) 约 0.57×、市值约 1,690 亿元、年内 −11.30%（区间 30.13–39.66 元）；中通 PE 12.24×/PB 1.81×/ROE 16.11%。<br/>④ <b>口径说明与估算标注</b>：本报告为<b>合并口径</b>（归母 55.02 亿元）；A 股 002352.SZ 与 H 股 06936.HK <b>同股同权</b>，统一挂载于 A 股代码下、H 股仅作披露来源。<b>半年报不披露：分部利润、现金流量表补充资料（折旧摊销）、未来最低租赁付款额</b>——故 §2 的 EBIT 与利息费用（约 6.0 亿）、净利润（约 57.8 亿）、少数股东损益（约 2.8 亿）均为<b>估算</b>，§5 的 OCF 归因为<b>按项目变动倒算</b>，均已在正文标注为非审计/估算数。<br/>
+  </div>
+
+</div>
+</body>
+</html>

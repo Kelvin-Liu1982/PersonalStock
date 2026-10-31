@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>招商银行 2026 三季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">招商银行</div>
+      <div class="meta">
+        <span>600036.SH / 03968.HK</span><span>银行（股份制）</span><span>上交所 / 港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 三季报</div>
+      <div class="pdate">披露日期：2026-10-30</div>
+      <div class="badge up">正面 · 息差企稳、拨备逆势提升、资本内生强劲</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone up">偏积极（营收提速、NIM 环比企稳、拨备覆盖率逆势上行）</span>
+      <p class="oneliner">招商银行 2026 前三季度业绩呈现<b>「营收提速、利润稳增、质量分化」</b>三重特征：营业收入 <b>2,648.52 亿元（+5.34%）</b>、归母净利润 <b>1,164.76 亿元（+2.38%）</b>、扣非 1,163.48 亿元（+2.34%），<b>营收增速连续三个季度回升</b>（Q1 +4.7% / Q2 −0.9% / <b>Q3 单季 +6.41%</b>），Q3 单季归母 400.31 亿元（+3.06%）亦较 Q2 提速。<b>最重要边际变化是息差止跌</b>：净利息收益率 <b>1.82%</b>，同比仅降 5bp、<b>环比二季度持平</b>，其中生息资产收益率 2.80%（−28bp）与计息负债成本率 1.04%（<b>−27bp</b>）几乎等幅下行——负债端「降本」已基本对冲资产端「降价」，净利息收入因此 +5.83%。<b>非息收入 +4.48%</b>，其中财富管理手续费 <b>+13.71%</b>（代销理财 +8.77%、代理基金 <b>+31.63%</b>、代理信托 +32.27%）是亮点，但银行卡手续费 <b>−10.34%</b>（信用卡线下交易萎缩）形成对冲。<b>资产质量「对公改善、零售承压」</b>：不良率 <b>0.94%</b> 与上年末持平，对公不良降至 0.73%（−0.11pp）、房地产不良 <b>3.89%（−0.75pp）</b>；但零售不良升至 <b>1.19%（+0.11pp）</b>、信用卡不良 <b>1.93%（+0.19pp）</b>、信用卡关注率 4.98%、全行关注率 1.59%（<b>+0.16pp</b>）、逾期率 1.32%（+0.07pp）——<b>前瞻指标全面小幅恶化</b>。公司选择<b>主动加大计提</b>：信用减值损失 417.75 亿元（<b>+25.26%</b>）、信用成本 0.72%（+0.05pp），同时<b>拨备覆盖率逆势升至 389.39%</b>（较上半年 385.1% 提升 4.29pp，较上年末 −2.40pp），<b>没有靠释放拨备做利润</b>。<b>资本内生能力是硬底盘</b>：核心一级资本充足率 <b>14.39%</b>（上年末 14.16%、上年同期 13.93%），在贷款 +2.69%、风险资产扩张的同时继续内源积累；ROAE 13.49%（−0.47pp）、ROAA 1.16%（−0.06pp）。<b>估值</b>：2026-10-30 收 <b>43.55 元</b>（+1.42%）、总市值约 1.098 万亿元，PE(TTM) 7.24×、<b>PB 0.96×</b>（普通股口径 0.93×，处近 10 年 19% 分位）、股息率 TTM <b>4.63%</b>；机构一致目标价 53.45 元（+22.7%），分析师目标价均值 53.07 元（区间 49.22–58.35）。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li><b>息差止跌是本季最关键的变化</b>：净利息收益率 1.82%（同比 −5bp、<b>环比二季度持平</b>），生息资产收益率 2.80%（−28bp）与计息负债成本率 1.04%（<b>−27bp</b>）基本等幅下行；客户存款成本率降至 <b>0.95%</b>（−27bp）、活期日均占比 49.75%（+0.35pp），负债端优势在息差下行周期中被放大</li><li><b>营收连续三季提速</b>：营业收入 2,648.52 亿元（+5.34%），Q1 +4.7% → Q2 −0.9% → <b>Q3 +6.41%</b>；净利息收入 1,693.79 亿元（+5.83%）贡献主要增量，非息收入 954.73 亿元（+4.48%）</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li><b>零售资产质量全面走弱（核心风险）</b>：零售不良率 <b>1.19%（+0.11pp）</b>、信用卡不良 <b>1.93%（+0.19pp）</b>、信用卡关注率 <b>4.98%（+0.17pp）</b>、消费贷不良 1.26%、小微 1.39%；新生成不良中六成以上来自信用卡，而信用卡恰是零售中收益最高的资产</li><li><b>前瞻性指标同向恶化</b>：全行关注贷款率 <b>1.59%（+0.16pp）</b>、关注贷款余额 1,186.67 亿元（+148.07 亿元）；逾期贷款率 <b>1.32%（+0.07pp）</b>、逾期余额 985.34 亿元（+78.88 亿元）——「关注 + 逾期」双升通常领先不良 2–4 个季度</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">前三季度营业收入（亿元）</text><rect x="88.8" y="70.9" width="62.4" height="127.1" rx="3" fill="#13406b"/><text x="120.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">2650.6</text><text x="120.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2022</text><rect x="208.8" y="73.2" width="62.4" height="124.8" rx="3" fill="#13406b"/><text x="240.0" y="68.2" font-size="10.5" fill="#1f2733" text-anchor="middle">2602.8</text><text x="240.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023</text><rect x="328.8" y="77.1" width="62.4" height="120.9" rx="3" fill="#13406b"/><text x="360.0" y="72.1" font-size="10.5" fill="#1f2733" text-anchor="middle">2520.4</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024</text><rect x="448.8" y="77.4" width="62.4" height="120.6" rx="3" fill="#13406b"/><text x="480.0" y="72.4" font-size="10.5" fill="#1f2733" text-anchor="middle">2514.2</text><text x="480.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025</text><rect x="568.8" y="71.0" width="62.4" height="127.0" rx="3" fill="#c0392b"/><text x="600.0" y="66.0" font-size="10.5" fill="#1f2733" text-anchor="middle">2648.5</text><text x="600.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">前三季度归母净利润（亿元）</text><rect x="88.8" y="81.3" width="62.4" height="116.7" rx="3" fill="#13406b"/><text x="120.0" y="76.3" font-size="10.5" fill="#1f2733" text-anchor="middle">1069.1</text><text x="120.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2022</text><rect x="208.8" y="73.7" width="62.4" height="124.3" rx="3" fill="#13406b"/><text x="240.0" y="68.7" font-size="10.5" fill="#1f2733" text-anchor="middle">1138.8</text><text x="240.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023</text><rect x="328.8" y="74.5" width="62.4" height="123.5" rx="3" fill="#13406b"/><text x="360.0" y="69.5" font-size="10.5" fill="#1f2733" text-anchor="middle">1131.8</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024</text><rect x="448.8" y="73.8" width="62.4" height="124.2" rx="3" fill="#13406b"/><text x="480.0" y="68.8" font-size="10.5" fill="#1f2733" text-anchor="middle">1137.7</text><text x="480.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025</text><rect x="568.8" y="70.9" width="62.4" height="127.1" rx="3" fill="#c0392b"/><text x="600.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">1164.8</text><text x="600.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 前三季度同比增速（%）</text><line x1="60" y1="218.0" x2="660" y2="218.0" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="221.0" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="182.1" width="50.0" height="35.9" rx="3" fill="#c0392b"/><text x="110.0" y="176.1" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+5.34%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营业收入</text><rect x="185.0" y="202.0" width="50.0" height="16.0" rx="3" fill="#c0392b"/><text x="210.0" y="196.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+2.38%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母净利</text><rect x="285.0" y="178.8" width="50.0" height="39.2" rx="3" fill="#c0392b"/><text x="310.0" y="172.8" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+5.83%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">净利息收入</text><rect x="385.0" y="189.1" width="50.0" height="28.9" rx="3" fill="#c0392b"/><text x="410.0" y="183.1" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+4.29%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">净手续费</text><rect x="485.0" y="48.0" width="50.0" height="170.0" rx="3" fill="#c0392b"/><text x="510.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+25.26%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">信用减值</text><rect x="585.0" y="197.4" width="50.0" height="20.6" rx="3" fill="#c0392b"/><text x="610.0" y="191.4" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+3.06%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3归母</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+<div class="mcard"><div class="lab">营业收入</div><div class="val">2,648.52亿</div><div class="delta up">+5.34%</div></div>
+      <div class="mcard"><div class="lab">Q3单季营收</div><div class="val">866.71亿</div><div class="delta up">+6.41%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">1,164.76亿</div><div class="delta up">+2.38%</div></div>
+      <div class="mcard"><div class="lab">Q3单季归母</div><div class="val">400.31亿</div><div class="delta up">+3.06%</div></div>
+      <div class="mcard"><div class="lab">净利息收入</div><div class="val">1,693.79亿</div><div class="delta up">+5.83%</div></div>
+      <div class="mcard"><div class="lab">净手续费收入</div><div class="val">586.14亿</div><div class="delta up">+4.29%</div></div>
+      <div class="mcard"><div class="lab">净利息收益率</div><div class="val">1.82%</div><div class="delta flat">-5bp/环比持平</div></div>
+      <div class="mcard"><div class="lab">信用减值损失</div><div class="val">417.75亿</div><div class="delta down">+25.26%</div></div>
+      <div class="mcard"><div class="lab">不良率/关注率</div><div class="val">0.94%/1.59%</div><div class="delta down">+16bp</div></div>
+      <div class="mcard"><div class="lab">拨备覆盖率</div><div class="val">389.39%</div><div class="delta down">-2.40pp</div></div>
+      <div class="mcard"><div class="lab">核心一级资本</div><div class="val">14.39%</div><div class="delta up">+23bp</div></div>
+      <div class="mcard"><div class="lab">PE/PB/股息率</div><div class="val">7.24x/0.96x</div><div class="delta flat">4.63%</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+<tr><td>营业收入(亿元)</td><td class="num">2,648.52</td><td class="num">2,514.20</td><td class="num up">+5.34%</td></tr>
+        <tr><td>净利息收入(亿元)</td><td class="num">1,693.79</td><td class="num">1,600.42</td><td class="num up">+5.83%</td></tr>
+        <tr><td>净手续费收入(亿元)</td><td class="num">586.14</td><td class="num">562.02</td><td class="num up">+4.29%</td></tr>
+        <tr><td>业务及管理费(亿元)</td><td class="num">774.20</td><td class="num">750.43</td><td class="num down">+3.17%</td></tr>
+        <tr><td>信用减值损失(亿元)</td><td class="num">417.75</td><td class="num">333.51</td><td class="num down">+25.26%</td></tr>
+        <tr><td>归母净利润(亿元)</td><td class="num">1,164.76</td><td class="num">1,137.72</td><td class="num up">+2.38%</td></tr>
+        <tr><td>净利息收益率(%)</td><td class="num">1.82</td><td class="num">1.87</td><td class="num down">-5bp</td></tr>
+        <tr><td>不良贷款率(%)</td><td class="num">0.94</td><td class="num">0.93</td><td class="num down">+1bp</td></tr>
+        <tr><td>拨备覆盖率(%)</td><td class="num">389.39</td><td class="num">391.79</td><td class="num down">-2.40pp</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+<tr><td>营业收入</td><td class="num">2,648.52亿(+5.34%)</td><td class="num">五大行Q3均值+8.8%(花旗)</td><td class="num flat">Q3+6.41%略低于大行</td><td class="num flat">符合至略低预期</td></tr>
+        <tr><td>净利息收益率</td><td class="num">1.82%(环比持平)</td><td class="num">市场预期再降2-3bp</td><td class="num up">止跌时点超预期</td><td class="num up">超预期</td></tr>
+        <tr><td>归母净利润</td><td class="num">1,164.76亿(+2.38%)</td><td class="num">五大行Q3均值+5.5%</td><td class="num down">多提84亿减值压制</td><td class="num down">低于表面预期</td></tr>
+        <tr><td>拨备覆盖率</td><td class="num">389.39%(较上半年+4.29pp)</td><td class="num">市场担忧降拨备做利润</td><td class="num up">逆势加厚</td><td class="num up">超预期</td></tr>
+        <tr><td>全年进度</td><td class="num">前三季1,164.76亿</td><td class="num">季节性推算全年约1,536亿(+2.3%)</td><td class="num up">进度75.8%与上年同步</td><td class="num up">符合预期</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：预期差判断（2026-10-30 三季报发布当日，卖方点评尚未跟进，采用「同业横向 + 进度校验」替代单点一致预期，v2 修正 B）：① <b>机构一致预期</b>：目标价 <b>53.45 元</b>（较现价 +22.7%），分析师目标价均值 <b>53.07 元</b>（区间 49.22–58.35 元，25 位分析师，截至 2026-10-29），评级「强力推荐 70.37% / 买入 29.63%」，<b>无卖出评级</b>。② <b>行业基准</b>：花旗（Citi）在 2026-10 的报告中预计<b>五大行 Q3 营收同比 +8.8%、利润 +5.5%</b>（较 Q2 的 +7.5% / +3.3% 加速），驱动为「贷款韧性 + NIM 环比企稳 + 低基数下的交易收益」；并指出<b>大行与区域行继续跑赢股份行</b>。③ <b>横向对比</b>：招行 Q3 单季营收 <b>+6.41%</b>、归母 <b>+3.06%</b>，<b>低于五大行均值（+8.8% / +5.5%）、高于股份行同业（兴业 Q3 归母 −1.92%、平安 +0.2%）</b>，属「行业中上、股份行前列」。④ <b>进度校验</b>：前三季归母 1,164.76 亿元；按 2025 年季节性（前三季占全年 75.8%）推算 2026 全年约 <b>1,536 亿元（+2.3%）</b>，与前三季增速一致，<b>无「前高后低」风险，全年落在 1,520–1,550 亿元区间的概率较高</b>。<b>综合判定「<b>营收超预期（提速至 +5.34%、Q3 +6.41%）、NIM 超预期（环比持平，市场此前预期再降 2–3bp）、拨备超预期（389.39%，未靠释放拨备）、利润符合预期（+2.38%，被主动多提的 84 亿元减值压制）</b>」——本期业绩的「表观平淡」源于主动计提，而非经营失速。</b></p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>银行业 2026 年前三季度处于<b>「息差见底、营收修复、零售风险滞后暴露」</b>的转折期。核心变量：① <b>息差</b>——2025 年 LPR 下调对贷款重定价的冲击在 2026 年逐季衰减，叠加存款挂牌利率多轮下调的负债端红利释放，<b>行业净息差在三季度普遍环比企稳</b>（招行 1.82% 环比持平、宁波 1.71% 环比 +1bp），息差对营收的拖累由「主要负贡献」转为「中性」；② <b>规模</b>——信贷需求结构性分化，<b>对公强、零售弱</b>（招行对公 +10.59%、零售 −1.28%），行业普遍以对公补零售；③ <b>非息</b>——资本市场回暖带动财富管理手续费修复（招行财富管理 +13.71%、代理基金 +31.63%），但信用卡线下消费疲弱压制银行卡手续费（−10.34%）；④ <b>资产质量</b>——对公（尤其房地产）风险持续出清（招行房地产不良 −0.75pp），<b>零售风险滞后暴露</b>（信用卡、消费贷不良上行），行业呈「对公改善对冲零售恶化」格局；⑤ <b>政策</b>——监管持续引导让利实体、压降负债成本，同时要求中小机构风险处置，头部银行资本与拨备优势凸显。<b>行业坐标：招行处于「息差已见底 + 营收重回 5% 增长 + 零售风险上半场」的位置；相对同业的优势是 NIM（1.82% vs 宁波 1.71%、行业约 1.4%）与拨备（389% vs 兴业 223%），劣势是零售敞口最大、风险暴露最充分。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：总资产 137,604.56 亿元（+5.28%）、贷款 74,529.71 亿元（+2.69%）、金融投资 44,774.46 亿元（<b>+9.19%</b>）、存款 102,589.11 亿元（+4.30%）——<b>资产扩张靠投资与对公，零售信贷主动收缩</b>。价：净利息收益率 1.82%（同比 −5bp、环比持平）、净利差 1.76%（−1bp）；生息资产收益率 2.80%（−28bp）、计息负债成本率 1.04%（−27bp），<b>存款成本率 0.95%（−27bp）是息差企稳的主因</b>。成本：业务及管理费 774.20 亿元（+3.17%），<b>成本收入比 29.23%（−0.62pp）</b>，效率持续领先同业（行业普遍 30%–35%）。风险：不良率 0.94%、关注率 1.59%、逾期率 1.32%、拨备覆盖率 389.39%、信用成本 0.72%。政策：优先股于 2026-04-15 全部赎回（275 亿元），同期发行永续债补充其他一级资本 500 亿元，资本工具结构由「优先股 + 永续债」转为「纯永续债」。<b>同业参照（2026 三季报）</b>：宁波银行营收 612.12 亿元（+11.34%）、归母 251.49 亿元（+12.05%）、不良 0.76%、拨备 373.63%、NIM 1.71%；兴业银行营收 1,615.82 亿元、归母 606.91 亿元、不良 1.08%、拨备 222.68%；平安银行营收 1,031.0 亿元（+2.4%）、归母 391.9 亿元（+2.2%）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>银行<b>不适用 ROIC − WACC</b>（负债即「原材料」，投入资本口径无经济含义），改用 <b>ROE − COE</b> 与 ROA 衡量价值创造（v2 修正 C）。<b>ROE 侧</b>：年化加权平均 ROAE <b>13.49%</b>（同比 −0.47pp），年化 ROAA 1.16%（−0.06pp）；归母净利润 1,164.76 亿元 / 平均归母权益约 11.5 千亿元 ≈ 13.5%，与披露值一致。<b>COE 侧</b>：Re ≈ 无风险利率（10Y 国债约 1.8%）+ β（招行约 0.85，Beta 高于国有大行）× ERP 5.5% ≈ <b>6.5%</b>；考虑银行股特有的资产质量与政策风险溢价 1.5–2pp，合理 COE 约 <b>8.0%–8.5%</b>。<b>ROE − COE ≈ +5.0~5.5pp，仍显著创造价值</b>——即便在息差历史低位，招行的资本回报仍明显高于资本成本。<b>反推市场隐含 COE</b>：以 PB 0.96×、ROE 13.49% 计，<b>隐含 COE ≈ ROE / PB ≈ 14.0%</b>——即当前股价隐含市场要求约 14% 的回报率，远高于我们估算的 8%–8.5%，说明<b>市场对「13.5% 的 ROE 能否持续」定价极为谨慎</b>（隐含对零售风险、息差二次下行的担忧）。<b>结论：基本面（ROE − COE > 0）与估值（隐含 COE 14% ≫ 合理 COE 8.5%）之间存在明显预期差，这是招行最大的多头逻辑，也是最大的风险来源——若零售不良继续上行侵蚀 ROE，估值修复逻辑将失效。</b></p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>营收桥（Δ = 2,648.52 − 2,514.20 = +134.32 亿元）</b>：净利息收入 <b>+93.37 亿元</b>（+5.83%，量增 8.3% × 价微降 5bp，以量补价）、净手续费及佣金 <b>+24.12 亿元</b>（+4.29%，财富管理 +13.71% 为主力，银行卡 −10.34% 拖累）、其他净收入 <b>+16.83 亿元</b>（+4.78%，其中公允价值变动由上年 −88.27 亿元转为 <b>+23.36 亿元</b>，改善 111.63 亿元；但投资收益由 302.52 亿元降至 210.32 亿元，减少 92.20 亿元 —— <b>两者对冲后净贡献有限，属「结构切换」而非增量</b>）。<b>利润桥（Δ 利润总额 = 1,373.89 − 1,350.89 = +23.00 亿元）</b>：<b>正向</b>——营收 +134.32 亿元、所得税费用 <b>−3.15 亿元</b>（有效税率由 15.21% 降至 <b>14.73%</b>）、其他资产减值基本持平；<b>负向（吞掉八成增量）</b>——<b>信用减值损失多计提 84.24 亿元（+25.26%）</b>、业务及管理费 +23.77 亿元（+3.17%）、其他业务成本 +2.94 亿元、税金及附加 +0.79 亿元。<b>净利润 +26.15 亿元、归母 +27.04 亿元、少数股东 −0.89 亿元。</b><b>拆解结论</b>：<b>营收端改善 134 亿元，但公司主动把其中 84 亿元投入减值计提</b>（信用成本由 0.67% 升至 0.72%），最终只留下 23 亿元利润增量 —— <b>这是「以利润换质量」的主动选择，而非经营恶化</b>；若按上年 0.67% 的信用成本测算，利润总额本可多增约 84 亿元、同比 +8.7%。<b>Q3 单季放大特征</b>：Q3 营收 866.71 亿元（<b>+6.41%</b>，增速为年内最高）而归母仅 +3.06%，同样是减值（Q3 单季信用减值 125.98 亿元，上年 87.28 亿元，<b>+44.3%</b>）压制所致。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「真」且偏保守，是本期最值得肯定的一点。</b>① <b>非经常性损益极小</b>：1.34 亿元，其中影响归母 1.28 亿元、仅占归母净利润的 <b>0.11%</b>（处置固定资产净损益 0.25 亿元 + 其他净损益 1.51 亿元 − 所得税影响 0.42 亿元），<b>利润完全由主业驱动</b>；② <b>扣非与归母同步</b>：扣非归母 1,163.48 亿元（+2.34%）vs 归母 1,164.76 亿元（+2.38%），两者几乎重合；③ <b>不靠释放拨备做利润</b>：信用减值损失 <b>+25.26%</b>（多计提 84.24 亿元），信用成本 0.72%（+0.05pp），<b>拨备覆盖率由上半年的 385.1% 提升至 389.39%（+4.29pp）</b>——若像部分同业那样把拨备覆盖率降回 350%，可释放约 300 亿元拨备、利润增速立刻由 +2.38% 跳到 20% 以上，<b>公司没有这么做</b>；④ <b>资本内生验证</b>：核心一级资本充足率由上年末 14.16% 升至 <b>14.39%</b>，在风险资产扩张（总资产 +5.28%）的同时内源积累，说明利润的「现金/资本含量」真实。<b>须提示</b>：银行净利润可调节性天然较强（不良认定松紧、拨备计提节奏、核销与转让时点），本期「多提减值 + 提高拨备」属于保守会计处理，<b>反而为后续利润留存了释放空间</b>；但也要注意「拨备覆盖率较上年末下降 2.40pp」——<b>年度口径是在下降的，三季度只是在补上半年的缺口</b>，不宜简单外推为「持续加厚」。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">招行按<b>零售金融 / 批发金融 / 其他</b>分部披露，<b>⚠️ A 股季报不披露分部收入与分部利润，以下为 2026 半年报口径 + 三季报运营数据</b>，非季报原文。<br/>• <b>零售金融（基本盘，营收占比约 54.34%）</b>：三季报运营数据亮眼——零售客户数 <b>2.36 亿户（+5.36%）</b>、金葵花及以上客户 <b>650.26 万户（+9.63%）</b>、私人银行客户 <b>219,449 户（+10.10%）</b>，客群增速已接近 2025 年全年水平；但<b>零售贷款 36,726.77 亿元（−1.28%）</b>，其中信用卡余额上半年减少 482 亿元（主动压降高风险资产），<b>「客群增长 × 信贷收缩」是本期最核心的结构矛盾</b>。<br/>• <b>批发金融（接棒者）</b>：对公贷款 35,561.74 亿元（<b>+10.59%</b>，增加 3,404.24 亿元），增量主要投向制造业与一二线城市优质物业；对公存款 55,831.85 亿元（+4.55%）；对公不良率降至 <b>0.73%（−0.11pp）</b>。<br/>• <b>其他（财富管理、子公司、境外）</b>：财富管理手续费 235.04 亿元（<b>+13.71%</b>）、托管佣金 47.20 亿元（+19.89%）；8 家主要子公司总资产超 1 万亿元、营收占比 12.92%（半年报口径）；境外机构营收增长 30.56%（代理证券交易 +22.57% 印证港股交易活跃）。<br/><b>增量贡献（v2 修正 H）</b>：营收增量 134.32 亿元中，净利息 +93.37 亿元（<b>69.5%</b>）、净手续费 +24.12 亿元（18.0%）、其他净收入 +16.83 亿元（12.5%）——<b>本期增长仍以「息差企稳 + 规模扩张」的利息收入为主导，中收修复是第二引擎，尚未回到 2021 年「大财富管理驱动」的格局</b>。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>规模与结构</b>：总资产 <b>137,604.56 亿元（+5.28%）</b>、总负债 123,699.90 亿元（+4.92%）。资产端——贷款和垫款 74,529.71 亿元（<b>+2.69%</b>，占资产 54.16%，较上年末 −1.37pp）、<b>金融投资 44,774.46 亿元（+9.19%）</b>、存放同业 3,754.15 亿元（<b>+87.3%</b>）、拆出资金 4,735.16 亿元（−6.7%）、买入返售 2,046.79 亿元（−20.9%）——<b>资产扩张由「金融投资 + 对公贷款」承担，零售信贷与同业资产收缩，是典型的「资产荒下以投资补信贷」</b>。<br/><b>负债与存款</b>：客户存款 <b>102,589.11 亿元（+4.30%）</b>、占负债 82.93%；公司存款 55,831.85 亿元（+4.55%）、零售存款 46,757.26 亿元（+4.00%）；<b>活期占比 48.76%（时点）、活期日均占比 49.75%（较 2025 全年 +0.35pp）</b>——活期占比企稳是负债成本下降（存款成本率 0.95%，−27bp）的根本原因。同业和其他金融机构存放 10,254.13 亿元（+12.5%）、向央行借款 660.75 亿元（<b>−40.5%</b>，结构性工具到期归还）、应付债券 1,415.92 亿元（−1.3%）。<br/><b>资本（本期最重要变化）</b>：<b>核心一级资本充足率 14.39%</b>（上年末 14.16%、上年同期 13.93%）、一级资本充足率 16.89%、<b>资本充足率 18.65%</b>，高级法下全面高于监管要求（8.25% / 9.25% / 11.25%），<b>安全垫极厚</b>；杠杆率满足不低于 4.375% 的要求。<b>资本工具结构</b>：2026-04-15 <b>全部赎回境内优先股 274.68 亿元</b>，同期永续债余额增至 <b>1,999.89 亿元（+500 亿元）</b>，其他一级资本由「优先股 + 永续债」转为「纯永续债」，<b>降低资本成本、提升普通股股东权益占比</b>。<br/><b>股东权益</b>：归母权益 13,819.86 亿元（<b>+8.57%</b>），其中未分配利润 7,689.78 亿元（+13.12%）、其他综合收益 221.09 亿元（<b>−12.37%</b>，主因外币报表折算差额减少）；<b>归属于普通股股东的每股净资产 46.87 元（+7.92%）</b>，BVPS 增速快于净利润增速，是「留存收益 + 分红率 < 100%」的自然结果。<br/><b>流动性</b>：流动性覆盖率（LCR）季度均值 <b>180.30%</b>（环比 +0.34pp）、时点值 <b>201.23%</b>，远高于 100% 监管底线。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>银行的经营现金流不能用作盈利质量指标</b>（含客户存款净吸收、贷款投放、同业往来，波动极大且方向常与利润相反），v2 银行口径已明确改用「不良率 / 迁徙率 / 信用成本 / 拨备覆盖率」验证盈利质量（见第 4 章与排雷 10）。<b>本期 OCF 参考值</b>：经营活动产生的现金流量净额 <b>1,461.88 亿元（−17.00%）</b>，下降 314.46 亿元——<b>并非经营恶化</b>，而是资产端扩张占用现金：贷款和垫款净增约 1,878 亿元、金融投资净增约 3,769 亿元，负债端客户存款净增约 4,227 亿元未能完全覆盖，缺口由同业存放（+1,137 亿元）弥补。<b>更有意义的匹配指标</b>：① <b>营收现金含量无从判断，改用「净利息收入 / 生息资产」= 1.82%</b>（即 NIM，已被市场充分定价）；② <b>贷存比 72.65%</b>（贷款 74,529.71 / 存款 102,589.11），较上年末略降，<b>流动性宽松、无超额放贷</b>；③ <b>LCR 时点 201.23%、均值 180.30%</b>，远超监管底线；④ <b>核心一级资本充足率 14.39%（+23bp）</b>，说明利润的「资本留存」是真实的。<b>结论：OCF 下降属资产负债表的正常扩张结果，不作为质量判断依据；真正需要盯的是「信用成本 0.72% 与拨备覆盖率 389.39% 的组合」——这两项均在本期小幅走弱/走强，指向「风险仍在暴露但抵补在加厚」。</b></p>
+      <p><b>OCF 拆解归因：</b>银行 OCF 拆解（v2 修正 E 的银行口径改造）：<b>经营现金流 1,461.88 亿元（上年 1,761.34 亿元，−17.00%）</b>。驱动项：① <b>客户存款净增加约 4,227 亿元</b>（10,258,911 − 9,924,558，按账面口径 +4,118 亿元）→ 正向流入；② <b>贷款和垫款净增加约 1,878 亿元</b>（7,191,994 − 7,004,238，净额口径）→ 负向流出；③ <b>金融投资净增加约 3,769 亿元</b>（4,511,337 − 4,135,121，+9.10%）→ 负向流出（计入投资活动而非经营活动，但共同决定整体现金流缺口）；④ 同业和其他金融机构存放款项 <b>+1,137 亿元</b>、向中央银行借款 <b>−450 亿元</b>；⑤ 净利润 1,171.52 亿元（正向）。<b>投资活动</b>：金融投资净增 3,769 亿元是最大现金去向。<b>筹资活动</b>：<b>赎回优先股支付 275 亿元</b>、发行永续债净增 500 亿元、<b>派发普通股股利 511.02 亿元</b>、派发永续债利息 9.80 亿元、偿还同业存单 111.70 亿元；期末现金及现金等价物 5,490.73 亿元（上年 4,211.38 亿元，<b>+30.4%</b>）。<b>注：季报未披露现金流量表分项明细的完整调节表，上述拆解按资产负债表变动倒推，属估算、非审计数。</b></p>
+      <p><b>自由现金流与覆盖能力：</b><b>银行不适用自由现金流（FCF）</b>——资本开支与营运资本概念对银行无经济含义，v2 银行口径改为「<b>资本内生能力 + 分红覆盖 + 科技投入</b>」三项替代。<b>① 资本内生能力（核心）</b>：核心一级资本充足率 <b>14.39%</b>，较上年末 <b>+23bp</b>、较上年同期 +46bp；在总资产 +5.28%、风险加权资产同步扩张的前提下仍实现内源积累，<b>意味着不依赖外部股权融资即可支撑当前扩张速度</b>（内生资本增速 ≈ ROE ×(1−分红率) = 13.49% × 66% ≈ 8.9%，高于风险资产增速的可承受水平）。<b>② 分红覆盖</b>：2026 年内派发普通股股利 <b>511.02 亿元</b>（每股约 2.03 元），分红率约 <b>34%</b>；永续债利息 9.80 亿元、优先股股息已于 4 月赎回后不再发生（3.22 亿元为赎回前派发）。<b>分红完全由当年利润（1,164.76 亿元）覆盖，覆盖率 2.28×，不消耗资本</b>。<b>③ 科技投入</b>：业务及管理费 774.20 亿元（+3.17%），其中员工费用 505.62 亿元（+2.02%）、业务费用 268.58 亿元（+5.39%，含折旧摊销与科技投入），<b>成本收入比 29.23%（−0.62pp）</b>——在加大科技与风控投入的同时成本效率仍在改善，这是招行「轻型银行」模式的直接体现。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>A 股 600036（<b>2026-10-30 收盘 43.55 元，+1.42%</b>，10 月区间 40.52–43.55 元、近一月 +7.50%）：总股本 252.20 亿股，<b>总市值约 1.098 万亿元</b>。<b>估值倍数（腾讯财经 2026-10-30）</b>：<b>PE(TTM) 7.24×</b>、<b>PB 0.96×</b>（近 10 年百分位 <b>19.13%</b>）；按「归属于普通股股东的每股净资产 46.87 元」计算 PB 约 <b>0.93×</b>（0.96× 为含其他权益工具的 LF 口径）；<b>股息率 TTM 4.63%</b>（TTM 每股派息约 2.02 元）；PE 近 10 年百分位 35.36%。<b>机构预期</b>：一致目标价 <b>53.45 元（较现价 +22.7%）</b>；分析师目标价均值 <b>53.07 元</b>（区间 49.22–58.35 元，截至 2026-10-29）；评级分布「强力推荐 70.37% / 买入 29.63% / 持有 0%」。<b>横向对比</b>：PB 0.96× 高于兴业（约 0.6×）、平安（约 0.55×），低于宁波（约 1.1×）——<b>市场给招行的溢价来自 ROE（13.49% vs 兴业约 9%、平安约 9%）与拨备（389% vs 223%）的双重领先</b>。<b>须提示</b>：PB 已由 2024 年低点（约 0.7×）修复至 0.96×，<b>「破净修复」的最陡峭阶段已过</b>，后续空间更依赖 ROE 能否守住 13% 与分红率能否提升。</p>
+      <p><b>周期正常化估值：</b>银行估值的正确锚是 <b>PB − ROE</b>（而非单期 PE），并须做<b>信用成本的正常化调整</b>（v2 修正 F）。<b>正常化 ROE</b>：2026 前三季年化 ROAE <b>13.49%</b>，近三年（2023–2025）ROAE 约 15.0% / 14.6% / 14.0%，呈<b>每年约 0.5–0.6pp 的台阶式下行</b>；若信用成本维持在 0.72%（而非周期低点 0.5%），<b>正常化 ROE 约 13.0%–13.5%</b>。<b>合理 PB 测算</b>：以 ROE 13.2%、g 3.0%、COE 8.5% 代入 PB =(ROE−g)/(COE−g) ≈ <b>1.85×</b>；若 COE 取 10%（含银行股风险折价）则 PB ≈ <b>1.46×</b>——<b>两者均显著高于当前 0.96×</b>，说明市场给出的隐含 COE 高达 14%（详见第 6 章）。<b>情景锚（以信用成本与 NIM 为核心变量）</b>：<br/>• <b>悲观</b>：零售不良继续上行（信用卡不良破 2.2%）、信用成本升至 0.85%、NIM 再降 5bp → 2027 归母同比 −3%~0%，ROE 降至 12.6%，市场给 PB 0.80×→ <b>37.5 元</b>；<br/>• <b>中性</b>：信用成本 0.72% 持平、NIM 持平 1.82%、归母 +2%~4% → ROE 13.2%，PB 1.02×→ <b>48.2 元</b>；<br/>• <b>乐观</b>：零售风险见顶回落、财富管理延续 +13% 修复、分红率提至 40% → 归母 +6%，ROE 13.6%，PB 1.15×→ <b>54.4 元</b>（与机构一致目标价 53.45 元吻合）。<b>结论：当前 0.96× PB 对应「悲观–中性」之间的定价，赔率尚可但<b>不是深度低估</b>；真正的催化剂是「零售不良见顶 + 分红率上调」，而非息差——息差已基本被市场定价。</b></p>
+      <p><b>股东回报可持续性：</b><b>分红稳定、资本内生强，但分红率仍偏低</b>。<b>2026 年内实际派发</b>：普通股股利 <b>511.02 亿元</b>（现金流量表「派发普通股股利支付的现金」，对应 2025 年度分红，<b>每股约 2.03 元</b>），派发永续债利息 9.80 亿元；<b>优先股已于 2026-04-15 全部赎回</b>（赎回支付 275 亿元），此后普通股股东不再承担优先股股息摊薄。<b>分红率约 34%</b>（511.02 / 2025 年归母约 1,501 亿元），<b>TTM 股息率 4.63%</b>（按 43.55 元）。<b>可持续性</b>：① 分红由当年归母净利润 1,164.76 亿元覆盖，覆盖率 <b>2.28×</b>；② 核心一级资本充足率 14.39%（监管底线 8.25% + 系统重要性附加），<b>资本冗余充足，具备提高分红率的空间</b>；③ 内生资本增速 8.9% 已高于风险资产扩张需求，<b>「分红率上调」是可行且概率较高的正向催化</b>（当前 34% 低于国有大行 30%–35% 的中枢上限，但考虑到招行的成长性与资本消耗，34% 属合理）。<b>须提示</b>：招行<b>不实施中期分红</b>（年度一次派息），因此季度报告期内的股息现金流为零，与部分同业的中期分红节奏不同。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">管理层未在三季报中给出量化指引（银行季报惯例），可跟踪的前瞻线索：① <b>息差</b>——公司明确「年内资产收益率降幅逐步收窄、负债成本率稳步下降，<b>三季度净利息收益率环比持平</b>」，并指出存量债券投资收益率尚未筑底是资产端压力之一；管理层此前在中期业绩会上的判断是「息差降幅收窄、力争企稳」，三季度已兑现。② <b>资产质量</b>——「坚持稳健审慎的风险管理原则，严格认定资产风险分类」「从严资产分类，充分计提拨备，积极运用多种途径处置存量不良资产」，<b>语调偏保守，与本期多提 84 亿元减值的动作一致</b>。③ <b>零售</b>——「居民消费及购房需求仍处于复苏期，坚持稳健审慎原则，持续加强零售客户综合服务能力，推动零售贷款保持平稳运行」——<b>措辞未提「增长」，暗示零售信贷短期仍以「稳」为主</b>。④ <b>对公</b>——「进一步加强对公资产组织能力，有效把握客户融资需求，持续加大对实体经济的支持力度」，对公贷款 +10.59% 已验证。⑤ <b>房地产</b>——「以项目为中心」「聚焦优质城市群」「支持现房销售、保障性住房、城市更新」，85% 以上开发贷在一二线城市，<b>策略为「结构性择优」而非「总量扩张」</b>。⑥ <b>资本</b>——优先股全部赎回、永续债增至 2,000 亿元，核心一级 14.39%，<b>资本管理重心从「补充」转向「效率」</b>。<b>卖方一致判断</b>：机构目标价均值 53.07 元、评级「强力推荐」占 70%；主流逻辑是「息差企稳 + 资产质量领先 + 高股息」。<b>风险敏感（非承诺）</b>：零售不良继续上行、LPR 再度下调、房地产风险二次暴露、资本市场转弱拖累财富管理收入、监管让利要求。以上为前瞻性陈述，存在不确定性。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">股份制银行横向对比（2026 三季报口径）：<br/>• <b>招商银行（600036.SH）</b>：营收 2,648.52 亿元（<b>+5.34%</b>）、归母 1,164.76 亿元（+2.38%）、<b>NIM 1.82%</b>、不良 0.94%、<b>拨备 389.39%</b>、核心一级 14.39%、ROAE 13.49%、PB 0.96×、股息率 4.63% —— <b>NIM、拨备、ROE 三项均为股份行第一，规模第二（仅次兴业）</b>。<br/>• <b>兴业银行（601166.SH）</b>：营收 1,615.82 亿元、归母 606.91 亿元（Q3 单季 195.60 亿元，<b>−1.92%</b>）、<b>不良 1.08%（最高）</b>、<b>拨备 222.68%（最低）</b> —— 规模相近但盈利质量与风险抵补明显落后，PB 约 0.6×，<b>低估值反映的是「拨备薄 + 不良高」的折价而非错杀</b>。<br/>• <b>平安银行（000001.SZ）</b>：营收 1,031.0 亿元（+2.4%）、归母 391.9 亿元（+2.2%）、Q3 单季归母 134.9 亿元（+0.2%） —— 结束 2025 年连续三季营收负增长，但增速与 ROE 均低于招行，零售转型仍在消化期。<br/>• <b>宁波银行（002142.SZ）</b>：营收 612.12 亿元（<b>+11.34%</b>）、归母 251.49 亿元（<b>+12.05%</b>，<b>增速第一</b>）、<b>不良 0.76%（最低）</b>、拨备 373.63%、<b>NIM 1.71%</b>、ROAE 13.99% —— <b>成长性与资产质量最优，但 NIM 与拨备不及招行</b>，PB 约 1.1×（估值最高），市值 2,300 亿元。<br/><b>结论</b>：2026 年三季报股份行呈现「<b>招行守质量、宁波拼成长、兴业承压、平安修复</b>」的分层。招行的核心优势是<b>NIM（1.82%，高出宁波 11bp、高出行业约 40bp）+ 拨备（389%，高出兴业 167pp）+ ROE（13.49%）</b>的三重领先，代价是<b>零售敞口最大、风险暴露最充分、增速居中（+2.38%，低于宁波 +12.05%，高于兴业 −1.92%）</b>。<b>投资含义：若判断「零售风险已进上半场尾声」，招行是弹性最优的标的（拨备厚 → 有释放空间）；若判断「零售风险仍将恶化」，宁波的资产质量更安全、兴业的低估值更抗跌。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict amber">关注</span>商誉 <b>99.54 亿元</b>（9,954 百万元），较上年末零变动，占归母权益 <b>0.72%</b>、占 2025 年归母净利润约 0.7%——<b>绝对额与占比均远低于阈值（净资产 30% / 年利 5 倍）</b>。主要来自 2009 年收购永隆银行（香港）形成的商誉，历年减值测试均未出现减值。风险点在于<b>跨境经营</b>：永隆银行属香港市场，其资产质量与盈利受香港经济与商业地产周期影响，若香港市场显著恶化需重新评估；<b>须在年报核实永隆资产组减值测试的关键假设</b>。</div></div>
+      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span><b>银行不适用「研发资本化」</b>——招行的科技投入（IT 系统、金葵花 App、风控模型）全部计入<b>业务及管理费中的业务费用</b>（268.58 亿元，+5.39%），<b>资产负债表无「开发支出」与「数据资源」科目</b>，不存在资本化注水空间。<b>该项对银行属「制度性干净」，无需跟踪。</b></div></div>
+      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict down">红旗</span><b>本期最重要的利润压制项</b>：信用减值损失 <b>417.75 亿元（+25.26%，多计提 84.24 亿元）</b>，其中贷款和垫款减值 397.10 亿元（+46.05 亿元）、<b>非贷款类减值 20.65 亿元（上年仅 −17.54 亿元，同比多计提 38.19 亿元）</b>——后者主要由同业资产与表外业务规模结构变动导致，是新增的减值来源；其他资产减值 0.17 亿元。<b>信用成本（年化）0.72%，同比 +0.05pp</b>。<b>性质判断：属主动审慎计提而非风险失控</b>——同期拨备覆盖率由上半年 385.1% 升至 <b>389.39%</b>（+4.29pp），说明多提的减值留在了拨备池而非被核销消耗。<b>须警惕的是趋势</b>：信用成本已连续上行，若零售不良继续恶化，2027 年信用成本可能升至 0.8% 以上，对应利润增速将被压至 0 附近。</div></div>
+      <div class="rf"><div class="k">债务结构与资本充足</div><div class="v"><span class="verdict flat">低风险</span><b>资本与流动性均处行业最优档</b>：核心一级资本充足率 <b>14.39%</b>（监管底线 8.25% + 系统重要性附加）、一级 16.89%、<b>资本充足率 18.65%</b>（底线 11.25%），杠杆率满足不低于 4.375% 要求；<b>LCR 季度均值 180.30%、时点 201.23%</b>（底线 100%）。<b>负债结构</b>：客户存款 102,589.11 亿元占负债 <b>82.93%</b>、活期占比 48.76%（日均 49.75%，+0.35pp），存款成本率 <b>0.95%（−27bp）</b>——负债端护城河深厚。同业和其他金融机构存放 10,254.13 亿元（<b>+12.5%</b>）、向央行借款 660.75 亿元（−40.5%）、应付债券 1,415.92 亿元（−1.3%）。<b>资本工具</b>：优先股 274.68 亿元已于 2026-04-15 全额赎回、永续债增至 1,999.89 亿元（+500 亿元），一级资本的成本与摊薄结构优化。<b>唯一需留意</b>：同业存放 +12.5% 增速快于存款 +4.30%，若占比继续上升将抬升负债成本。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>季报按法定惯例<b>未经审计</b>（原文「本报告中的财务报表按中国会计准则编制且未经审计」），无审计意见；<b>董事会审计委员会已审议通过</b>并同意提交董事会，第十三届董事会第二十一次会议全票通过。董事长缪建民、行长王小青、副行长兼财务负责人彭家文、会计机构负责人孙智华共同声明保证财务信息真实、准确、完整。<b>CAS 与 IFRS 无差异</b>（归母净利润与股东权益均无差异），会计政策未变更。</div></div>
+      <div class="rf"><div class="k">关联交易与资金往来</div><div class="v"><span class="verdict amber">关注</span><b>股东结构高度集中于招商局与中远海运两大央企系</b>：香港中央结算（代理人）18.07%（H 股）、<b>招商局轮船 13.04%</b>、<b>中国远洋运输 6.24%</b>、香港中央结算 5.21%（沪股通）、深圳市晏清 4.99%、<b>招商局金融控股 4.55%</b>、和谐健康 4.48%、深圳市楚源 3.74%、中远海运（广州）2.76%、上汽集团 1.23%——<b>招商局集团系合计约 26.3%、中远海运系合计约 9.0%</b>；普通股股东 582,672 户（A 股 557,262 户、H 股 25,410 户）。<b>需跟踪的是子公司并表与内部交易</b>：招银理财、招银金租、招银国际、招商永隆、招银欧洲、招银投资、招商基金、招商信诺资管等 8 家主要子公司总资产超 1 万亿元、营收占比 12.92%（半年报），<b>须在年报核实内部资金往来定价公允性与并表范围稳定性</b>。</div></div>
+      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span><b>非息收入的「质量」需要拆开看</b>：其他净收入 368.59 亿元（+4.78%），表面平稳，但内部结构剧烈切换——<b>公允价值变动收益由上年 −88.27 亿元转为 +23.36 亿元（改善 111.63 亿元）</b>，而<b>投资收益由 302.52 亿元降至 210.32 亿元（减少 92.20 亿元）</b>，两者对冲后净贡献仅 +16.83 亿元。<b>这意味着非息的增长高度依赖「交易类损益」的科目腾挪与市场波动，可持续性弱于手续费</b>。净手续费 586.14 亿元（+4.29%）中，财富管理 +13.71%（资本市场景气驱动）、托管 +19.89%、结算清算 +7.91% 为正向，<b>但银行卡手续费 −10.34%、信贷承诺 −5.34%、代理保险 −7.00% 为负向</b>。<b>结论：营收 5.34% 的增长中，净利息贡献 69.5%（质量最高）、手续费 18.0%、交易类 12.5%（质量最低）；需跟踪资本市场转弱后的非息缺口。</b></div></div>
+      <div class="rf"><div class="k">金融资产分类与估值</div><div class="v"><span class="verdict amber">关注</span>（银行替代「存货」科目）<b>金融投资余额 44,774.46 亿元（+9.19%）</b>，分类结构：以摊余成本计量 22,280.02 亿元（+4.85%）、以公允价值计量且变动计入其他综合收益（FVOCI）14,815.12 亿元（<b>+10.73%</b>）、<b>以公允价值计量且变动计入当期损益（FVTPL）7,762.03 亿元（+19.83%，增速最快）</b>、指定为 FVOCI 的权益工具 256.20 亿元。<b>风险点</b>：① FVTPL 占比上升意味着<b>利润表对市场波动的敏感性提高</b>（本期公允价值变动由 −88.27 亿转为 +23.36 亿即为例证）；② <b>其他综合收益 221.09 亿元（−12.37%）</b>，主因外币报表折算差额减少，FVOCI 债券浮盈也在收窄——<b>这部分是「看不见的资本」，其收缩会削弱未来处置收益的空间</b>。须在年报核实 FVOCI 债券久期与浮盈厚度。</div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">低风险</span>非经常性损益合计 <b>1.34 亿元</b>（处置固定资产净损益 0.25 亿元 + 其他净损益 1.51 亿元 − 所得税影响 0.42 亿元），其中<b>影响归母净利润 1.28 亿元，仅占归母净利润的 0.11%</b>。<b>扣非归母 1,163.48 亿元（+2.34%）与归母 1,164.76 亿元（+2.38%）几乎完全重合</b>——利润 100% 由主业驱动，<b>无「卖资产保利润」、无政府补助粉饰</b>。这是本期利润质量最干净的一项，也是与部分依赖非经损益调节的同业的核心差异。</div></div>
+      <div class="rf"><div class="k">盈利质量与拨备计提</div><div class="v"><span class="verdict flat">低风险</span>（银行替代「现金流背离」）<b>银行的经营现金流不能作为盈利质量指标</b>（OCF 1,461.88 亿元、−17.00%，主因贷款与金融投资扩张占用现金，与利润方向无关）。<b>改用拨备与资本验证</b>：① <b>拨备覆盖率 389.39%</b>，较上半年 385.1% <b>提升 4.29pp</b>——在利润增速仅 +2.38% 的情况下反而加厚拨备，<b>说明没有靠释放拨备美化利润</b>；② 贷款拨备率 3.66%（−0.02pp）、信用成本 0.72%（+0.05pp）；③ <b>核心一级资本充足率 14.39%（+23bp）</b>，在风险资产扩张中仍内源积累，验证利润的资本真实性。<b>须提示</b>：拨备覆盖率<b>较上年末仍下降 2.40pp</b>（391.79% → 389.39%），年度维度是在消耗的，三季度只是回补了上半年的缺口，<b>不宜外推为「持续加厚」</b>。</div></div>
+      <div class="rf"><div class="k">贷款分类与不良认定（v2新增）</div><div class="v"><span class="verdict amber">关注</span>（银行替代「收入确认激进」）<b>不良率 0.94% 持平，但前瞻指标全面小幅恶化</b>：关注贷款率 <b>1.59%（+0.16pp）</b>、关注余额 1,186.67 亿元（<b>+148.07 亿元</b>）；逾期贷款率 <b>1.32%（+0.07pp）</b>、逾期余额 985.34 亿元（+78.88 亿元）。<b>不良认定的严格度</b>：集团「不良/逾期 90 天以上」= <b>1.23</b>（>1 说明不良认定未放松）、母行「不良/逾期 60 天以上」= 1.11，<b>认定标准在行业中属严格</b>。但<b>结构分化剧烈</b>：母行对公不良降至 0.73%（−0.11pp）、房地产 3.89%（−0.75pp），而<b>零售不良升至 1.19%（+0.11pp）、信用卡 1.93%（+0.19pp）、信用卡关注率 4.98%（+0.17pp）</b>。<b>结论：认定标准未松动（可排除「藏不良」），但零售资产质量的恶化是真实的，且关注+逾期的双升通常领先不良 2–4 个季度。</b></div></div>
+      <div class="rf"><div class="k">表外 / 理财 / 或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span>（银行替代「担保/或有负债」）<b>表外敞口结构清晰、但体量可观</b>：① <b>承担信用风险</b>的房地产相关业务（实有及或有信贷、自营债券投资、自营非标）合计 <b>3,784.98 亿元（+6.93%）</b>，其中房地产业贷款 3,170.31 亿元（+339.17 亿元）、占贷款 4.48%（+0.38pp），<b>85% 以上开发贷在一二线城市</b>，房地产业不良率 3.89%；② <b>不承担信用风险</b>的业务（理财资金出资、委托贷款、代销信托、主承销债务融资工具）合计 <b>1,656.11 亿元（−7.12%）</b>，<b>规模在压缩，方向正确</b>；③ 预计负债 193.91 亿元（+14.6%）、合同负债 36.71 亿元、租赁负债 103.19 亿元。<b>须跟踪</b>：理财产品回表风险（招银理财规模大，若净值波动引发刚兑压力）、代销信托的声誉风险（代理信托收入 +32.27%，规模扩张较快）。</div></div>
+      <div class="rf"><div class="k">零售资产质量周期（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span><b>这是招行当前最实质的风险，也是「零售之王」模式的代价</b>：① 零售不良率 <b>1.19%（+0.11pp）</b>、不良余额 427.58 亿元（+33.01 亿元）；② <b>信用卡不良 1.93%（+0.19pp）、关注率 4.98%（+0.17pp）</b>，新生成不良中<b>六成以上来自信用卡</b>；③ 消费贷不良 1.26%、小微 1.39%（+0.17pp）、个人住房 0.48%（仍低但关注率 1.99%）；④ <b>零售贷款余额 36,726.77 亿元（−1.28%）</b>——公司在主动压降高风险资产（信用卡余额上半年减少 482 亿元），<b>但「压降」本身即意味着放弃零售中最丰厚的收益</b>。<b>核心矛盾：零售贷款占贷款 50.96%、贡献营收过半，是招行 ROE 领先同业的根源；如今这一块既是风险源头、又在收缩，而接棒的对公业务议价能力弱、存款沉淀少，<b>难以复制零售的低成本负债与中收基础</b>。</b>须盯：信用卡不良是否在 2.2% 见顶、消费贷与小微的边际生成率、以及 2027 年零售信贷能否恢复正增长。</div></div>
+      <div class="rf"><div class="k">净息差二次下行与结构失衡（行业特有·红旗）</div><div class="v"><span class="verdict down">红旗</span><b>息差已企稳，但「企稳的成色」需要审视</b>：净利息收益率 1.82%（同比 −5bp、<b>环比持平</b>），净利差 1.76%（−1bp）。拆解看，<b>资产端收益率 2.80%（−28bp）仍在快速下行</b>，靠<b>负债端成本率 1.04%（−27bp）、存款成本率 0.95%（−27bp）几乎等幅下降</b>才勉强对冲——<b>这种「负债端让利空间」是有限的</b>：存款利率已多轮下调，活期占比 48.76% 已近极限，<b>2027 年负债成本下行空间大概率收窄至 10bp 以内，而资产端仍有 LPR 重定价压力</b>。同时<b>规模结构在恶化</b>：贷款仅 +2.69%（零售 −1.28%、对公 +10.59%），资产扩张靠金融投资 +9.19%——<b>投资类资产的收益率（2.64%）低于贷款（3.11%），结构切换本身就在稀释 NIM</b>。<b>结论：NIM 的「环比持平」更像是阶段性底部而非趋势反转，若 2027 年 LPR 再降，息差有二次下行风险，届时营收 5% 的增长将难以维持。</b></div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li><b>息差止跌是本季最关键的变化</b>：净利息收益率 1.82%（同比 −5bp、<b>环比二季度持平</b>），生息资产收益率 2.80%（−28bp）与计息负债成本率 1.04%（<b>−27bp</b>）基本等幅下行；客户存款成本率降至 <b>0.95%</b>（−27bp）、活期日均占比 49.75%（+0.35pp），负债端优势在息差下行周期中被放大</li><li><b>营收连续三季提速</b>：营业收入 2,648.52 亿元（+5.34%），Q1 +4.7% → Q2 −0.9% → <b>Q3 +6.41%</b>；净利息收入 1,693.79 亿元（+5.83%）贡献主要增量，非息收入 954.73 亿元（+4.48%）</li><li><b>财富管理修复明显</b>：财富管理手续费及佣金 235.04 亿元（<b>+13.71%</b>），其中代理基金 +31.63%、代理信托 +32.27%、代销理财 +8.77%、代理证券交易 +22.57%（港股交易需求）；托管佣金 +19.89%</li><li><b>对公资产质量持续改善</b>：对公不良率 0.73%（<b>−0.11pp</b>）、房地产不良率 <b>3.89%（−0.75pp）</b>，房地产贷款 3,170.31 亿元占贷款 4.48%（85% 以上开发贷在一二线城市），风险敞口「增量优质、存量出清」</li><li><b>拨备逆势加厚、利润未被「美化」</b>：信用减值损失 417.75 亿元（<b>+25.26%</b>）、信用成本 0.72%（+0.05pp），拨备覆盖率反而升至 <b>389.39%</b>（较上半年 385.1% +4.29pp）；贷款拨备率 3.66%，风险抵补充足</li><li><b>资本内生与股东回报</b>：核心一级资本充足率 <b>14.39%</b>（上年末 14.16%）、资本充足率 18.65%，未依赖外部补充；2026 年内已派发普通股股利 <b>511.02 亿元</b>（对应 2025 年度，每股约 2.03 元），TTM 股息率 4.63%，PB 0.96× 处近 10 年 19% 分位</li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li><b>零售资产质量全面走弱（核心风险）</b>：零售不良率 <b>1.19%（+0.11pp）</b>、信用卡不良 <b>1.93%（+0.19pp）</b>、信用卡关注率 <b>4.98%（+0.17pp）</b>、消费贷不良 1.26%、小微 1.39%；新生成不良中六成以上来自信用卡，而信用卡恰是零售中收益最高的资产</li><li><b>前瞻性指标同向恶化</b>：全行关注贷款率 <b>1.59%（+0.16pp）</b>、关注贷款余额 1,186.67 亿元（+148.07 亿元）；逾期贷款率 <b>1.32%（+0.07pp）</b>、逾期余额 985.34 亿元（+78.88 亿元）——「关注 + 逾期」双升通常领先不良 2–4 个季度</li><li><b>利润增速低于营收增速 2.96pp</b>：营收 +5.34% 而归母仅 +2.38%，差额来自信用减值 +25.26%（多计提 84.24 亿元）；若零售风险继续上行，减值将继续压制利润，2027 年利润增速可能进一步向 0 靠拢</li><li><b>零售信贷持续收缩、结构向对公偏移</b>：零售贷款 36,726.77 亿元（<b>−1.28%</b>，减少 475.14 亿元），对公贷款 35,561.74 亿元（<b>+10.59%</b>）——对公议价能力弱、存款沉淀少，长期将稀释「零售之王」的负债成本优势与中收基础</li><li><b>中收结构分化、银行卡手续费下滑</b>：银行卡手续费 94.38 亿元（<b>−10.34%</b>）、信贷承诺及佣金 −5.34%、代理保险 −7.00%；财富管理 +13.71% 的高增部分依赖资本市场景气（代理基金 +31.63%），若市场转弱则弹性反转</li><li><b>估值处于历史中枢偏上、分红率仍偏低</b>：PB 0.96×（近 10 年 19% 分位）、PE 7.24×（35% 分位），较 2024 年低点已修复；分红率约 34%（511.02 / 1,501 亿元），低于国有大行 30%–35% 上限但股息率 4.63% 不及部分高股息同业</li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li><b>零售不良是否见顶（第一优先级）</b>：零售不良率 1.19%（+0.11pp）、信用卡不良 1.93%（+0.19pp）、信用卡关注率 4.98%；跟踪 2026 年报零售不良率能否止升于 1.25% 以内，以及信用卡不良生成率</li><li><b>关注与逾期贷款（领先指标）</b>：关注率 1.59%（<b>+0.16pp</b>）、逾期率 1.32%（+0.07pp），关注贷款余额半年增加 148.07 亿元；这两项通常领先不良 2–4 个季度，是判断 2027 年信用成本的关键</li><li><b>信用成本与减值计提节奏</b>：前三季信用成本 0.72%（+0.05pp）、信用减值 417.75 亿元（+25.26%）；跟踪 Q4 是否继续加大计提（若继续多提，则 2027 年利润增速将逼近 0）</li><li><b>净息差能否真正企稳</b>：NIM 1.82%（同比 −5bp、<b>环比持平</b>）；跟踪 LPR 是否再度下调、存款成本率（0.95%）下行空间是否耗尽、存量债券收益率何时筑底</li><li><b>零售信贷收缩是否停止</b>：零售贷款 −1.28%（信用卡上半年减少 482 亿元）；跟踪零售贷款余额能否回正，以及对公 +10.59% 的接棒能否持续</li><li><b>财富管理修复的可持续性</b>：财富管理手续费 +13.71%（代理基金 +31.63%、代理信托 +32.27%）高度依赖资本市场景气；跟踪 A 股/港股成交与基金新发，若市场转弱将快速反转</li><li><b>分红率是否上调</b>：当前分红率约 34%、股息率 TTM 4.63%；在核心一级 14.39% 的冗余下，分红率若提至 38%–40% 将是估值最直接的催化（优先股已全部赎回，摊薄因素消除）</li></ol></div>
+  </div>
+
+
+  <div class="foot">
+    <b>数据来源：</b>招商银行股份有限公司《2026 年第三季度报告（A 股）》（2026-10-30 董事会审议通过，公告编号 2026-043，<b>按中国会计准则编制、未经审计</b>；原文 PDF：stockmc.xueqiu.com/202610/600036_20261031_5IA8.pdf，本地归档 <code>data/pdf/600036.SH_q3_2026.pdf</code>）。<b>口径说明（重要）</b>：① <b>本报告为集团合并口径</b>（招商银行及子公司），与「本公司（母行）」口径存在差异——如不良率：集团 0.94%、母行 0.94%；贷款总额：集团 74,529.71 亿元、母行 70,754.77 亿元；<b>文中涉及分行业/分产品不良数据均为母行口径</b>，已逐处标注。② <b>CAS 与 IFRS 无差异</b>：季报明确「按中国会计准则与按国际财务报告会计准则编制的归属于本行股东的净利润和股东权益均无差异」，故无需做准则调整。③ <b>「归属于本行普通股股东」口径</b>：计算 EPS（4.57 元）、每股净资产（46.87 元）、ROAE（13.49%）时已扣除优先股股息与永续债利息；<b>优先股已于 2026-04-15 全部赎回</b>，永续债余额 1,999.89 亿元。④ <b>季报不披露分部收入与分部利润</b>——零售/批发营收占比（54.34%）、AUM（18.44 万亿元）、子公司营收占比（12.92%）、境外机构营收增速（30.56%）均为 <b>2026 半年报口径</b>；三季报仅披露零售客户数、金葵花/私行客户数等运营指标。⑤ <b>净息差/净利差为年化数</b>（1.82% / 1.76%），Q3 单季同为 1.82% / 1.75%。⑥ <b>信用成本</b>（年化 0.72%）为公司披露口径。⑦ 银行不适用 FCF/ROIC，本报告按 v2 银行专项口径改用「资本内生 + 分红覆盖 + ROE − COE」（详见第 5/6 章）。⑧ <b>估值与行情</b>：2026-10-30 收盘 43.55 元、市值约 1.098 万亿元、PE(TTM) 7.24×、PB 0.96×（近 10 年 19.13% 分位）、股息率 TTM 4.63%，取自腾讯财经/腾讯自选股（10-30 盘中/收盘数据）；机构目标价与评级取自富途/moomoo（截至 2026-10-29）。⑨ <b>同业数据</b>：宁波银行（营收 612.12 亿元 +11.34%、归母 251.49 亿元 +12.05%、不良 0.76%、拨备 373.63%、NIM 1.71%）、兴业银行（营收 1,615.82 亿元、归母 606.91 亿元、不良 1.08%、拨备 222.68%）、平安银行（营收 1,031.0 亿元 +2.4%、归母 391.9 亿元 +2.2%），均取自三季报披露与公开报道。<b>免责声明</b>：基于公开数据的量化分析，仅供参考，不构成投资建议。<br/>
+  </div>
+
+</div>
+</body>
+</html>

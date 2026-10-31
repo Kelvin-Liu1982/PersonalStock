@@ -143,12 +143,15 @@ def make_line_svg(title, unit, labels, values, color, W=780, H=300, quarterly=Fa
         if v is None:
             continue
         o.append('<circle cx="%.1f" cy="%.1f" r="2.8" fill="%s"/>' % (X(i), Y(v), color))
-        # 数值标签：年度逐点；季度仅 Q1
+        # 数值标签：年度逐点；季度仅 Q1 + 始终标注末点（便于读最新值）
         if quarterly:
             q = int(str(labels[i]).split("Q")[1]) if "Q" in str(labels[i]) else 1
-            if q != 1:
+            if q != 1 and i != n - 1:
                 continue
-        o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="9" text-anchor="middle">%s</text>' % (X(i), Y(v) - 7, color, vfmt(v)))
+        if i == n - 1:
+            o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="9" text-anchor="end">%s</text>' % (X(i) - 2, Y(v) - 7, color, vfmt(v)))
+        else:
+            o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="9" text-anchor="middle">%s</text>' % (X(i), Y(v) - 7, color, vfmt(v)))
     o.append('</svg>')
     return "".join(o)
 

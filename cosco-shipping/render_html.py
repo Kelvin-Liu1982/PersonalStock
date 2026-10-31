@@ -5,6 +5,39 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DATA_JS = open(os.path.join(HERE, "_data_js.txt"), encoding="utf-8").read()
 OUT = os.path.join(HERE, "cosco-dashboard.html")
 
+
+def build_ha_block(csv_path, key):
+    """把 common/ha_premium.py 产出的 CSV 快照转成 <script id="haPremiumData"> 数据块。
+
+    快照生成：python common/ha_premium.py --a sh601919 --h hk01919 --csv <csv_path>
+    文件缺失时返回空串 → 看板里 ha-premium.js 会自动隐藏图表，不影响其它内容。
+    """
+    if not os.path.exists(csv_path):
+        return ""
+    import csv as _csv
+    import io as _io
+    import json as _json
+    meta, lines = {}, []
+    with open(csv_path, encoding="utf-8") as f:
+        for line in f:
+            if line.startswith("#"):
+                k, _, v = line[1:].partition(":")
+                meta[k.strip()] = v.strip()
+            else:
+                lines.append(line)
+    series = []
+    for r in _csv.DictReader(_io.StringIO("".join(lines))):
+        try:
+            series.append([r["date"], float(r["premium_pct"])])
+        except (KeyError, TypeError, ValueError):
+            continue
+    if not series:
+        return ""
+    payload = {key: {"a": meta.get("a_code", ""), "h": meta.get("h_code", ""),
+                     "unit": "%", "updated": series[-1][0], "series": series}}
+    body = _json.dumps(payload, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return '<script id="haPremiumData" type="application/json">' + body + "</script>"
+
 TEMPLATE = r"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -43,11 +76,29 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:18
 .quotebar .qv{font-size:15px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.25}
 .quotebar .qv.up{color:var(--acc)} .quotebar .qv.down{color:var(--ok)} .quotebar .qv.flat{color:var(--dim)}
 .quotebar .qv small{font-size:11px;font-weight:400;color:var(--dim);margin-left:2px}
+/* H/A 溢价率（日频）卡片内嵌图 —— 由 common/ha-premium.js 渲染 */
+.hachart{margin-top:2px;padding-top:10px;border-top:1px dashed var(--line);overflow:hidden}
+.hachart-hd{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.hachart-tt{order:1;flex:0 0 auto;font-size:12px;font-weight:700;color:var(--ink)}
+.hachart-tt::before{content:"";display:inline-block;width:3px;height:11px;background:var(--acc2);border-radius:2px;margin-right:6px;vertical-align:-1px}
+.hachart-val{order:2;margin-left:auto;flex:0 0 auto;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+.hachart-val.up{color:var(--acc)} .hachart-val.down{color:var(--ok)}
+.hachart-chg{order:3;flex:0 0 auto;font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums}
+.hachart-chg.up{color:var(--acc)} .hachart-chg.down{color:var(--ok)}
+.hachart-sub{order:4;flex:1 1 100%;min-width:0;font-size:10.5px;color:var(--todo);line-height:1.5}
+.hachart-body{position:relative;overflow:hidden}
+.hachart-body svg{display:block;width:100%;height:auto}
+.ha-tip{position:absolute;display:none;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-size:11px;color:var(--ink);white-space:nowrap;box-shadow:0 2px 6px rgba(20,30,50,.08);z-index:3}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:14px;align-items:start}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 1px 3px rgba(20,30,50,.04);display:flex;flex-direction:column}
 .card .hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .card .idx{width:26px;height:26px;border-radius:7px;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
 .card h3{font-size:15px;font-weight:700}
+.hd .al-btn{margin-left:auto;flex:none;white-space:nowrap}
+.al-status{font-size:10px;color:#7a8694;margin:-6px 0 8px;line-height:1.45;word-break:break-word}
+.al-status:empty{display:none}
+.al-status.ok{color:#15616d}
+.al-status.err{color:#c53030}
 .chip{margin-left:auto;font-size:10px;padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
 .chip.ok{background:#e7f6ee;color:var(--ok)} .chip.part{background:#fdf3e3;color:var(--warn)} .chip.todo{background:#f0f2f5;color:var(--todo)}
 .card .desc{font-size:12px;color:var(--dim);margin-bottom:10px}
@@ -111,6 +162,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
 </style>
 <script src="__REL__quote-live.js" defer></script>
 <script src="__REL__chart-zoom.js" defer></script>
+<script src="__REL__common/ha-premium.js" defer></script>
 </head>
 <body>
 <div class="wrap">
@@ -127,7 +179,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
       <div class="metric"><span class="k">单季货运量</span><span class="right"><span class="v" data-val="qvol25"></span><span class="spark" data-spark="qvol" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('qvol','季度航运货运量（单季）')">趋势</button></span></div>
       <div class="metric"><span class="k">舱位利用率</span><span class="right"><span class="v" data-val="util"></span><span class="spark" data-spark="util" data-color="#d98a14"></span><button class="tbtn" onclick="openChart('util','舱位利用率')">趋势</button></span></div>
       <div class="metric"><span class="k">航线结构占比</span><span class="right"><span class="v" style="font-size:11px;white-space:normal" data-val="route_mix25"></span><button class="tbtn" onclick="openChart('routemix','航线结构占比')">趋势</button></span></div>
-      <div class="note">传导逻辑：本主业收入 ≈ <b>货运量</b> × <b>单箱运价</b>，运价弹性主导利润。需求端，8月传统出货旺季前的赶舱推升<b>舱位利用率</b>与<b>单季货运量</b>，货量撑起收入底盘；价格端，船公司通过 <b>GRI（综合费率上涨附加费）</b> 主动提价，叠加旺季舱位偏紧，驱动 <b>SCFI / CCFI</b> 综合指数在连跌三周后全线强反弹。运价（价）的边际弹性远大于货量（量），故运价回暖对单箱收入乃至净利的杠杆效应最强；后续须盯紧出货节奏回落后运力复航（停航率下降）对运价的反向压力。</div>
+      <div class="note">传导逻辑：收入 ≈ <b>货运量</b> × <b>单箱运价</b>，运价弹性主导利润。三季度已兑现：量 721.15 万TEU（+4.5%）、单箱收入 1,381 美元/TEU（+31.3%），单季归母 172.30 亿元（+80.7%），利润几乎全由价格贡献。价格端 <b>SCFI</b> 近十周横盘于 3,660–3,690、<b>CCFI</b> 仅微涨，即期溢价 <b>θ 达 1.96</b>（97 分位），长协未重定价、补涨仍是后续 1–2 季利润来源。需求总量仍强但航线分化（欧地涨、美线跌、南美单周 −11.2%）。风险：<b>10 月停航率</b>拟升至美线 13%/欧线 17%，本身即需求转弱信号；闲置率 0.69% 的紧平衡依赖拥堵与绕航，叠加<b>订单/运力 40.2%</b>，压制 2027 年后运价。</div>
     </div>
 
     <!-- 2 港口码头业务 -->
@@ -160,7 +212,8 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
 
     <!-- 4 行业供需格局 -->
     <div class="card">
-      <div class="hd"><div class="idx">4</div><h3>行业供需格局</h3></div>
+      <div class="hd"><div class="idx">4</div><h3>行业供需格局</h3><button class="tbtn al-btn" id="al-btn" onclick="syncAlphaliner(this)" title="从 Alphaliner PublicTop100 抓取最新数据并写入 Excel（需本机运行 alphaliner_server.py）">同步</button></div>
+      <div class="al-status" id="al-status"></div>
       <div class="desc">运力、闲置率与停航调控，决定运价的中长期天花板。</div>
       <div class="metric"><span class="k">全球船队运力</span><span class="right"><span class="v" data-val="fleet"></span><span class="spark" data-spark="fleet" data-color="#15616d"></span><button class="tbtn" onclick="openChart('supply_fleet','全球集装箱船队总运力（季频）')">趋势</button></span></div>
       <div class="metric"><span class="k">闲置率</span><span class="right"><span class="v" data-val="idle"></span><span class="spark" data-spark="idle_r" data-color="#d98a14"></span><button class="tbtn" onclick="openChart('supply_idle','闲置运力比例（季频）')">趋势</button></span></div>
@@ -217,6 +270,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
         <div class="svg-grid">
           <div class="imgbox" id="chart-scfi" data-img="scfi"></div>
           <div class="imgbox" id="chart-ccfi" data-img="ccfi"></div>
+          <div class="imgbox" id="chart-theta" data-img="theta"></div>
         </div>
         <div class="svg-grid">
           <div class="imgbox" id="chart-route-eu" data-img="route_eu"></div>
@@ -419,7 +473,15 @@ const COLORS={scfi:"#c8102e",ccfi:"#15616d",thru:"#15616d",util:"#d98a14",fleet:
     +'<div class="qgroup"><span class="qg-title">H股</span>'
     +'<div class="qitem"><span class="ql">最新价</span><span class="qv '+cls(h.pct)+'">'+h.price.toFixed(2)+'<small>港元</small></span></div>'
     +'<div class="qitem"><span class="ql">涨跌幅</span><span class="qv '+cls(h.pct)+'">'+pct(h.pct)+'</span></div>'
-    +'<div class="qitem"><span class="ql">AH溢价</span><span class="qv flat">'+pct(h.ah)+'</span></div>'
+    +'<div class="qitem"><span class="ql" title="H股价格×港元兑人民币汇率÷A股价格−1">H/A溢价率</span><span class="qv '+cls(h.ah)+'">'+pct(h.ah)+'</span></div>'
+    +'</div>'
+    +'</div>'
+    +'<div class="hachart" data-ha-key="601919">'
+    +'<div class="hachart-hd"><span class="hachart-tt">H/A 溢价率 · 日频</span>'
+    +'<span class="hachart-val" data-ha-latest>—</span>'
+    +'<span class="hachart-chg" data-ha-chg></span>'
+    +'<span class="hachart-sub" data-ha-sub></span></div>'
+    +'<div class="hachart-body"><div class="ha-tip"></div><div class="ha-svg"></div></div>'
     +'</div>'
     +'</div>';
   document.getElementById("quotebar").innerHTML=html;
@@ -481,14 +543,53 @@ window.openChart = function(id, title){
 window.closeChart = function(){ window.trendModal.close(); };
 
 // 自动给每个指标名追加更新频率（周/月/季/年）：频率来自各 SVG 的 FREQ 参数（build_tracker.py 注入 __FREQ__），不在模板手写
+// ===== Alphaliner 同步（本地服务 → 写入 Excel 两个 sheet） =====
+// 依赖：本机运行  .venv/bin/python alphaliner_server.py  （默认 127.0.0.1:8765）
+const AL_SYNC_URL = (localStorage.getItem('alSyncUrl') || 'http://127.0.0.1:8765/sync');
+function alSetStatus(text, cls){
+  const el = document.getElementById('al-status');
+  if(!el) return;
+  el.textContent = text || '';
+  el.className = 'al-status' + (cls ? ' ' + cls : '');
+  el.title = text || '';
+}
+async function syncAlphaliner(btn){
+  const old = btn.textContent;
+  btn.disabled = true; btn.textContent = '同步中…'; alSetStatus('正在从 Alphaliner PublicTop100 抓取…');
+  try{
+    const r = await fetch(AL_SYNC_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
+    const j = await r.json();
+    if(!j.ok) throw new Error(j.error || ('HTTP ' + r.status));
+    const g = j.global, c = j.cosco;
+    const pd = j.publish_date || (j.fetched_at || '').slice(0, 10);
+    alSetStatus(pd + ' · 全球 ' + (g.active_teu/1e4).toFixed(0) + ' 万TEU／中远 ' +
+                (c.total_teu/1e4).toFixed(0) + ' 万TEU（订单 ' + c.order_pct + '%）', 'ok');
+    btn.textContent = '已同步 ' + pd.slice(5);
+    btn.title = '写入：' + j.sheets.join(' / ') + '；第 ' + j.global_row + '、' + j.cosco_row + ' 行；耗时 ' + j.elapsed_ms + 'ms';
+  }catch(e){
+    const msg = /Failed to fetch|NetworkError|load failed/i.test(e.message || '')
+      ? '未连接本地服务：请先运行 .venv/bin/python alphaliner_server.py'
+      : ('同步失败：' + e.message);
+    alSetStatus(msg, 'err');
+    btn.textContent = '未连接';
+    btn.title = '请先在本机启动服务：\n  cd cosco-shipping\n  .venv/bin/python alphaliner_server.py\n（默认 http://127.0.0.1:8765）';
+  }finally{
+    btn.disabled = false;
+    setTimeout(function(){ btn.textContent = old; }, 9000);
+  }
+}
 // 由 common/charts.js 的 appendFreq 提供（读取全局 __FREQ__）
 CommonCharts.appendFreq();
 </script>
+__HA_BLOCK__
 </body>
 </html>
 """
 
-html = TEMPLATE.replace("__DATA_JS__", DATA_JS)
+ha_block = build_ha_block(os.path.join(HERE, "数据源", "ha_premium_601919.csv"), "601919")
+print("HA_BLOCK", "ok" if ha_block else "missing（跳过 H/A 溢价率图）")
+
+html = TEMPLATE.replace("__DATA_JS__", DATA_JS).replace("__HA_BLOCK__", ha_block)
 # 脚本/资源路径按输出文件所在深度生成相对前缀，使三种打开方式都能解析：
 #   cosco-shipping/cosco-dashboard.html   深度 1 -> ../
 #   cosco-shipping/public/index.html      深度 2 -> ../../

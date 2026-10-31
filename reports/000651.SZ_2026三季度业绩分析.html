@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>格力电器 2026 三季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">格力电器</div>
+      <div class="meta">
+        <span>000651.SZ</span><span>家用电器（白电）</span><span>深交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 三季报</div>
+      <div class="pdate">披露日期：2026-10-27</div>
+      <div class="badge flat">中性偏谨慎 · 行业需求与成本双杀，低估值+高股息+回购托底</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性偏谨慎（Q3 单季归母 −43%，需求与成本双杀；低估值与股东回报是主要支撑）</span>
+      <p class="oneliner">格力电器 2026 年前三季度呈<b>「营收两位数承压、单季利润断崖」</b>的深度调整格局：营业总收入 <b>1,265.44 亿元（−8.07%）</b>、归母净利润 <b>172.74 亿元（−19.51%）</b>、扣非 164.03 亿元（−20.32%）。<b>最刺眼的是 Q3 单季：营收 366.78 亿元（−7.97%）、归母仅 39.96 亿元（−43.31%）、扣非 36.96 亿元（−44.32%）、单季毛利率 23.10%（同比 −5.6pp）</b>。<b>三重压力同时落地</b>：① <b>需求</b>——产业在线数据显示 2026 前三季中国家用空调销量 1.50 亿台（−8.4%），且<b>降幅逐季扩大</b>（Q1 −2.8% → Q2 −9.3% → <b>Q3 −15.1%</b>）；② <b>成本与价格策略</b>——铜铝等原材料价格高企，公司坚持「<b>卷品质不卷价格</b>」、售价相对稳定，<b>成本无法向下游转嫁直接压缩毛利</b>（Q3 毛利率 −5.6pp、毛销差 −6.5pp）；③ <b>税率</b>——有效税率由 14.07% 升至 <b>17.36%（+3.29pp）</b>，Q3 单季达 19.1%，进一步放大利润降幅。<b>积极信号集中在三处</b>：① <b>份额逆势提升</b>——内销出货降幅 −14% 显著好于行业 −28%，全渠道份额持续上行，龙头抗压能力仍在；② <b>费用端已收紧</b>——销售费用 −11.41%、研发费用 −11.66%、管理费用 −1.51%，三项降幅均大于营收；③ <b>股东回报加码</b>——中期分红<b>每 10 股派 10 元（含税）</b>、合计约 56 亿元，力度超市场预期；回购 50–100 亿元（<b>≥70% 用于注销</b>）推进中；第二大股东京海互联（经销商持股平台）拟增持 6–12 亿元。<b>现金流需拆开看</b>：OCF 240.63 亿元（<b>−47.38%</b>），其中票据/保函保证金等受限资金变动影响 −136.17 亿元，<b>剔除后同比减少 80.48 亿元（−24.71%）</b>，主要系销售收现减少。<b>估值已计入较多悲观预期</b>：2026-10-30 收 <b>38.49 元</b>（+2.42%）、总市值 2,155.98 亿元，<b>PE(TTM) 8.69×、PB 1.43×（近 10 年 1.35% 分位，处历史最低区间）、股息率 TTM 7.79%</b>；券商维持「买入」但下调目标价 2% 至 44.70 元（对应 10× 2027 PE）。<b>核心矛盾：短期基本面仍在恶化（Q3 归母 −43%），但估值与股息已提供极强安全垫——这更像「用时间换空间」的底部区域，而非趋势反转的起点。</b></p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li><b>份额逆势提升，龙头地位未动摇</b>：内销出货量降幅 <b>−14%</b> 显著好于行业 <b>−28%</b>，全渠道份额持续提升；出口 −34% 主要受地缘与航运扰动，属短期冲击。在行业销量 −8.4% 的背景下守住份额，说明渠道控制力与品牌溢价仍在</li><li><b>费用端主动收紧，三项费率全部下降</b>：销售费用 67.23 亿元（<b>−11.41%</b>）、研发费用 49.66 亿元（<b>−11.66%</b>）、管理费用 42.39 亿元（−1.51%），降幅均大于营收 −8.10%，说明公司在需求下行期主动收缩投入而非被动失血</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li><b>Q3 单季利润断崖式下滑（核心风险）</b>：归母 39.96 亿元（<b>−43.31%</b>）、扣非 36.96 亿元（−44.32%），单季净利率 10.84%（同比 −6.8pp）；利润降幅是营收降幅（−7.97%）的 <b>5.4 倍</b>，经营杠杆在需求下行期反向放大</li><li><b>毛利率被「铜价 + 不降价」双向挤压</b>：Q3 单季毛利率 <b>23.10%（−5.6pp）</b>、毛销差 18.4%（−6.5pp）；铜铝价格高企而公司坚持「卷品质不卷价格」，成本无法转嫁；若原材料继续高位，2027 年毛利率仍将承压</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 分季度营业收入（亿元）</text><rect x="108.0" y="79.6" width="104.0" height="118.4" rx="3" fill="#13406b"/><text x="160.0" y="74.6" font-size="10.5" fill="#1f2733" text-anchor="middle">432.4</text><text x="160.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q1</text><rect x="308.0" y="70.9" width="104.0" height="127.1" rx="3" fill="#13406b"/><text x="360.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">464.3</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q2</text><rect x="508.0" y="97.6" width="104.0" height="100.4" rx="3" fill="#c0392b"/><text x="560.0" y="92.6" font-size="10.5" fill="#1f2733" text-anchor="middle">366.8</text><text x="560.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 分季度归母净利润（亿元）</text><rect x="108.0" y="90.5" width="104.0" height="107.5" rx="3" fill="#13406b"/><text x="160.0" y="85.5" font-size="10.5" fill="#1f2733" text-anchor="middle">60.8</text><text x="160.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q1</text><rect x="308.0" y="70.9" width="104.0" height="127.1" rx="3" fill="#13406b"/><text x="360.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">72.0</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q2</text><rect x="508.0" y="127.4" width="104.0" height="70.6" rx="3" fill="#c0392b"/><text x="560.0" y="122.4" font-size="10.5" fill="#1f2733" text-anchor="middle">40.0</text><text x="560.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 前三季度 / Q3 同比增速（%）</text><line x1="60" y1="43.2" x2="660" y2="43.2" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="46.2" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="43.2" width="50.0" height="27.1" rx="3" fill="#1f8a4c"/><text x="110.0" y="83.4" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-8.10%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">前三季营收</text><rect x="185.0" y="43.2" width="50.0" height="65.4" rx="3" fill="#1f8a4c"/><text x="210.0" y="121.6" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-19.51%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">前三季归母</text><rect x="285.0" y="43.2" width="50.0" height="26.7" rx="3" fill="#1f8a4c"/><text x="310.0" y="82.9" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-7.97%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3营收</text><rect x="385.0" y="43.2" width="50.0" height="145.1" rx="3" fill="#1f8a4c"/><text x="410.0" y="201.4" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-43.31%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3归母</text><rect x="485.0" y="43.2" width="50.0" height="4.8" rx="3" fill="#1f8a4c"/><text x="510.0" y="61.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-1.42pp</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">毛利率</text><rect x="585.0" y="43.2" width="50.0" height="158.8" rx="3" fill="#1f8a4c"/><text x="610.0" y="215.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-47.38%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">经营现金流</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+<div class="mcard"><div class="lab">营业收入</div><div class="val">1,260.75亿</div><div class="delta down">-8.10%</div></div>
+      <div class="mcard"><div class="lab">Q3单季营收</div><div class="val">366.78亿</div><div class="delta down">-7.97%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">172.74亿</div><div class="delta down">-19.51%</div></div>
+      <div class="mcard"><div class="lab">Q3单季归母</div><div class="val">39.96亿</div><div class="delta down">-43.31%</div></div>
+      <div class="mcard"><div class="lab">扣非归母净利</div><div class="val">164.03亿</div><div class="delta down">-20.32%</div></div>
+      <div class="mcard"><div class="lab">综合毛利率</div><div class="val">27.03%</div><div class="delta down">-1.42pp</div></div>
+      <div class="mcard"><div class="lab">Q3单季毛利率</div><div class="val">23.10%</div><div class="delta down">-5.60pp</div></div>
+      <div class="mcard"><div class="lab">其他收益(补助)</div><div class="val">5.14亿</div><div class="delta down">-49.26%</div></div>
+      <div class="mcard"><div class="lab">有效税率</div><div class="val">17.36%</div><div class="delta down">+3.29pp</div></div>
+      <div class="mcard"><div class="lab">经营现金流净额</div><div class="val">240.63亿</div><div class="delta down">-47.38%</div></div>
+      <div class="mcard"><div class="lab">加权ROE</div><div class="val">11.43%</div><div class="delta down">-3.73pp</div></div>
+      <div class="mcard"><div class="lab">PE/PB/股息率</div><div class="val">8.69x/1.43x</div><div class="delta flat">7.79%</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+<tr><td>营业收入(亿元)</td><td class="num">1,260.75</td><td class="num">1,371.80</td><td class="num down">-8.10%</td></tr>
+        <tr><td>营业成本(亿元)</td><td class="num">919.94</td><td class="num">981.68</td><td class="num up">-6.29%</td></tr>
+        <tr><td>综合毛利率(%)</td><td class="num">27.03</td><td class="num">28.45</td><td class="num down">-1.42pp</td></tr>
+        <tr><td>销售费用(亿元)</td><td class="num">67.23</td><td class="num">75.89</td><td class="num up">-11.41%</td></tr>
+        <tr><td>研发费用(亿元)</td><td class="num">49.66</td><td class="num">56.22</td><td class="num up">-11.66%</td></tr>
+        <tr><td>营业利润(亿元)</td><td class="num">211.30</td><td class="num">250.82</td><td class="num down">-15.76%</td></tr>
+        <tr><td>归母净利润(亿元)</td><td class="num">172.74</td><td class="num">214.61</td><td class="num down">-19.51%</td></tr>
+        <tr><td>加权ROE(%)</td><td class="num">11.43</td><td class="num">15.16</td><td class="num down">-3.73pp</td></tr>
+        <tr><td>经营现金流净额(亿元)</td><td class="num">240.63</td><td class="num">457.32</td><td class="num down">-47.38%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+<tr><td>前三季营收</td><td class="num">1,260.75亿(-8.10%)</td><td class="num">券商全年预测-6%</td><td class="num flat">进度略低</td><td class="num flat">基本符合</td></tr>
+        <tr><td>Q3单季归母</td><td class="num">39.96亿(-43.31%)</td><td class="num">市场预期下降20%-30%</td><td class="num down">降幅超预期</td><td class="num down">低于预期</td></tr>
+        <tr><td>Q3单季毛利率</td><td class="num">23.10%(-5.60pp)</td><td class="num">铜价高企+坚持不降价</td><td class="num down">成本未转嫁</td><td class="num down">低于预期</td></tr>
+        <tr><td>中期分红</td><td class="num">每10股派10元</td><td class="num">历史以年度分红为主</td><td class="num up">力度超预期</td><td class="num up">超预期</td></tr>
+        <tr><td>回购与增持</td><td class="num">回购50-100亿+京海增持6-12亿</td><td class="num">≥70%回购用于注销</td><td class="num up">执行中</td><td class="num up">符合预期</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：预期差判断（2026-10-27 三季报发布，券商点评已跟进）：① <b>券商评级与目标价</b>：主流券商维持<b>「买入」</b>、<b>下调目标价 2% 至 44.70 元</b>（对应 10× 2027 年 PE，较现价 38.49 元 +16.1%）；核心逻辑为「需求承压下不降价拖累 Q3 利润率，但 4Q 有望边际改善，回购/分红/增持对股价形成支撑」。② <b>业绩归因已被市场充分理解</b>：Q3 毛利率 −5.6pp（铜价 + 不降价）、毛销差 −6.5pp、有效税率 +2.1pp、归母净利率 −6.8pp 至 10.9%——<b>券商测算与公司披露完全吻合，无「意外项」</b>。③ <b>预期差在「Q4 与 2027 年」</b>：产业在线数据显示 10/11 月内销排产环比改善（+3%/+18% vs 7–9 月 −30%/−28%/−24%），叠加 4Q24/4Q25 营收低基数（−13%/−22%），<b>券商预计 4Q26 营收低个位数增长、全年营收 −6%、归母 −19%</b>——<b>即 Q3 的 −43% 大概率是单季低点，Q4 同比降幅将显著收窄</b>。④ <b>股东回报超预期</b>：中期分红每 10 股派 10 元（超市场预期）、回购 50–100 亿元（≥70% 注销）、京海增持 6–12 亿元，三项构成明确的股价支撑。<b>综合判定「<b>Q3 业绩低于预期（归母 −43.31%，超出市场对「下降 20%–30%」的预期）、但 Q4 指引与股东回报超预期</b>」——市场对「单季低点」已有共识，分歧焦点在于 2027 年铜价与需求的组合。</b></p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>家用空调行业 2026 年前三季度处于<b>「需求加速下行、成本高位、价格战克制」的三重挤压期</b>。核心变量：① <b>需求（量）</b>——产业在线数据显示前三季中国家用空调总销量 <b>1.50 亿台（−8.4%）</b>，且<b>降幅逐季扩大</b>（Q1 −2.8% → Q2 −9.3% → Q3 −15.1%），内销受地产竣工下滑、以旧换新政策效应递减、消费疲弱影响，出口受地缘与航运扰动（格力出口 −34%）；② <b>成本（价）</b>——<b>铜铝价格大幅上涨</b>，空调成本中铜占比约 20%–25%，直接压缩毛利；③ <b>竞争格局</b>——龙头（格力/美的/海尔）<b>普遍克制价格战</b>，格力明确「卷品质不卷价格」，短期牺牲份额保利润、长期维护品牌溢价，但这意味着<b>成本无法通过涨价转嫁，只能自己消化</b>；④ <b>政策</b>——家电以旧换新政策持续落地、高温天气催化补库，但边际效应递减。<b>行业坐标：家电行业正从「规模扩张」进入「存量博弈 + 成本挤压」阶段，格力的应对是「聚焦中高端 + 渠道改革 + 工业制品第二曲线」；短期业绩承压是行业性的，份额提升说明竞争力未失，但盈利能力修复需等待铜价回落与需求企稳。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：<b>家用空调前三季销量 1.50 亿台（−8.4%）</b>，Q1 −2.8% / Q2 −9.3% / <b>Q3 −15.1%</b>；格力内销出货 −14%（<b>优于行业 −28%</b>，份额提升）、出口 −34%。价：格力坚持「卷品质不卷价格」，产品售价相对稳定，Q3 单季毛利率 23.10%（−5.6pp）、毛销差 18.4%（−6.5pp）。成本：铜铝价格大幅上涨是毛利率下滑主因；公司营业成本 919.94 亿元（−6.29%），降幅小于营收（−8.10%），成本刚性明显。产品结构（H1 2026）：消费电器 740.74 亿元（<b>82.86%</b>）、工业制品及绿色能源 86.52 亿元（9.68%）、其他主营 21.56 亿元；内销 725.12 亿元（81.11%）、外销 127.44 亿元（14.26%）。<b>前瞻</b>：10/11 月空调内销排产环比改善（+3%/+18%），叠加 4Q24/4Q25 低基数（营收 −13%/−22%），Q4 有望低个位数增长。<b>同业参照</b>：美的集团、海尔智家同样受内需与出口扰动，但格力空调收入占比最高（超 80%），对行业景气与铜价的敏感度最大。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>家电属<b>轻资产、高周转、强现金</b>行业，用 <b>ROE − COE</b> 与隐含 COE 判断价值创造（v2 修正 C）。<b>ROE 侧</b>：前三季加权平均 ROE <b>11.43%（−3.73pp）</b>，年化约 15.2%；归母净利润 172.74 亿元 / 平均归母权益约 1,482 亿元 ≈ 11.7%（前三季），全年口径约 13%（2025 年为 15.5%）。<b>COE 侧</b>：Re ≈ 无风险利率（10Y 国债约 1.8%）+ β（家电约 0.9）× ERP 5.5% ≈ <b>6.8%</b>，加地产链与需求风险溢价 1.5pp，合理 COE 约 <b>8.3%</b>。<b>ROE − COE ≈ +4.7pp，仍在创造价值</b>，但溢价空间已较 2024 年（ROE 15.5%、差额 +7.2pp）明显收窄。<b>反推市场隐含 COE</b>：以 PB 1.43×、ROE 13% 计，<b>隐含 COE ≈ ROE / PB ≈ 9.1%</b>——略高于我们估算的合理 COE 8.3%，<b>说明市场对格力的定价已包含「盈利继续下修」的预期</b>（PB 处近 10 年 1.35% 分位，为历史最低区间）。<b>结论：格力的价值创造能力（ROE − COE > 0）尚未被破坏，但市场已按「盈利能力下台阶」定价；若 Q4 与 2027 年毛利率企稳，当前 PB 1.43× 存在修复空间，反之若 ROE 跌破 10%，则隐含 COE 将超过 10%、估值仍有下修压力。</b></p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>营收桥（Δ 营业总收入 = 1,265.44 − 1,376.54 = −111.10 亿元）</b>：<b>量</b>——空调行业销量 −8.4%（Q3 单季 −15.1%），格力内销出货 −14%（份额提升但总量下滑）、出口 −34%；<b>价</b>——坚持不降价，售价相对稳定，故营收降幅（−8.07%）基本等于销量降幅而非价格因素。<b>利润桥（Δ 营业利润 = 211.30 − 250.82 = −39.52 亿元）</b>：<b>负向（主因）</b>——<b>毛利减少 −49.36 亿元</b>（营业总收入 −111.10 亿元、营业成本 −61.74 亿元；<b>毛利率由 28.45% 降至 27.03%，−1.42pp</b>，Q3 单季更降至 23.10%、−5.6pp）、<b>财务费用净收益减少 −8.78 亿元</b>（利息收入 −10.69 亿元，主因利率下行与存款结构变化）、其他收益 −4.99 亿元（政府补助减少，−49.26%）、资产减值 −0.60 亿元、营业外支出 +0.80 亿元。<b>正向（对冲）</b>——销售费用 <b>−8.66 亿元</b>（−11.41%）、研发费用 <b>−6.56 亿元</b>（−11.66%）、管理费用 −0.65 亿元、投资收益 <b>+4.86 亿元</b>（+344.7%，金融资产处置）、公允价值变动 +0.68 亿元。<b>所得税 +1.20 亿元（有效税率 14.07% → 17.36%，+3.29pp）</b>，使净利润降幅（−19.38%）大于利润总额降幅（−16.17%）；归母 −41.88 亿元、少数股东 +0.06 亿元。<b>Q3 单季放大特征</b>：Q3 营收 −7.97% 而归母 −43.31%，<b>经营杠杆（固定成本 + 刚性费用）与毛利率 −5.6pp 共同作用，使利润降幅达营收降幅的 5.4 倍</b>——这是「不降价保品牌」策略在需求下行期的必然代价。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「中性偏弱」：非经贡献 5%，返利蓄水池未释放</b>。非经常性损益 <b>8.71 亿元，占归母净利润 5.04%</b>——主要构成为<b>金融资产公允价值变动及处置损益 8.17 亿元</b>（+52.7%，交易性金融资产 369.05 亿元带来）、政府补助 2.75 亿元、非流动资产处置 0.39 亿元、减值转回 0.06 亿元，减其他营业外收支 −0.72 亿元、所得税影响 1.91 亿元、少数股东影响 0.09 亿元。<b>扣非归母 164.03 亿元（−20.32%）低于归母 172.74 亿元（−19.51%）</b>，说明非经对利润有正向贡献（约 5%），<b>但幅度可控、不构成「靠非经保利润」</b>。<b>更值得关注的是「返利蓄水池」</b>：其他流动负债 592.38 亿元（较年初 <b>仅 −1.6%</b>），<b>公司基本未通过释放销售返利来平滑本季利润</b>——这是会计审慎的正面信号，但也意味着<b>后续若需求继续恶化，缺乏可释放的利润缓冲</b>。<b>现金流质量需拆开看</b>：OCF 240.63 亿元 / 归母 172.74 亿元 = <b>1.39×</b>，表面健康；但其中票据/保函保证金等受限资金变动影响 <b>−136.17 亿元</b>，剔除后 OCF 同比 −24.71%，<b>真实经营获现能力的收缩幅度大于表观</b>。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">格力为<b>「家用 + 工业」双轮</b>结构，按<b>产品 / 地区</b>拆解（<b>⚠️ 季报不披露分部数据，以下为 2026 半年报口径</b>）：<br/>• <b>消费电器 740.74 亿元（占主营 82.86%）</b>——以家用空调为核心（含冰洗、生活电器），是营收与利润的绝对主体；前三季唯一披露的经营线索是「<b>消费电器业务同比下降</b>」，即空调需求下滑是本期营收 −8.07% 的主因。<br/>• <b>工业制品及绿色能源 86.52 亿元（占 9.68%）</b>——含压缩机、电机、精密模具、钛酸锂/储能等，是「第二曲线」，毛利率与周期性优于家电但体量尚小。<br/>• <b>其他主营 21.56 亿元（2.41%）</b>。<br/>• <b>分地区</b>：内销 725.12 亿元（<b>81.11%</b>）、外销 127.44 亿元（14.26%）——<b>内销占比高意味着对国内地产竣工与消费景气高度敏感</b>；出口 −34%（地缘与航运扰动），但体量小、影响可控。<br/><b>增量贡献（v2 修正 H）</b>：季报不披露分部利润，以收入端代理——<b>本期营收 −111.10 亿元几乎全部来自消费电器（空调）下滑</b>；工业制品虽增速不明，但占比不足 10%，无法对冲。<b>结论：格力的业绩弹性高度绑定空调单一品类，这是「份额第一」的护城河，也是「行业下行」时最直接的放大器。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（净现金极厚、杠杆低位）</b>：总资产 <b>3,881.74 亿元（−0.82%）</b>、总负债 2,337.85 亿元（−3.21%）→ <b>资产负债率 60.23%</b>（上年末 61.73%，−1.50pp）。<b>类现金资产约 2,675 亿元</b>：货币资金 1,175.16 亿元（+6.29%）、交易性金融资产 369.05 亿元（+17.77%）、其他债权投资 354.70 亿元（<b>+47.41%</b>）、一年内到期非流动资产 159.10 亿元（−52.28%）、其他非流动资产 448.11 亿元（+5.16%）、其他流动资产 169.12 亿元。<b>有息负债仅约 834 亿元</b>（短期借款 807.62 亿元 +18.84%、长期借款 6.61 亿元 −78.91%、一年内到期非流动负债 13.57 亿元 −90.07%、租赁负债 6.60 亿元）→ <b>净现金约 1,840 亿元，占市值（2,156 亿元）的 85%</b>。<b>营运资本异动</b>：<b>合同负债 77.91 亿元（较年初 −48.76%）</b>、其他应付款 51.52 亿元（−54.17%，含应付股利由 55.92 亿元降至 0.39 亿元，系分红已派发）、应付票据 258.18 亿元（<b>+66.09%</b>，以票据替代现金支付上游）、应收账款 150.89 亿元（−5.62%）、<b>应收款项融资 90.03 亿元（+38.60%）</b>、存货 263.76 亿元（−6.41%）。<b>资产质量</b>：固定资产 330.41 亿元（−3.94%）、商誉 13.24 亿元（占净资产 0.88%，无减值）、长期股权投资 26.67 亿元（−37.03%）、递延所得税资产 167.45 亿元。<b>其他综合收益 −17.59 亿元</b>（年初 +1.26 亿元），主因权益法下不能转损益的其他综合收益 −12.20 亿元与其他权益工具投资公允价值变动 −4.75 亿元——<b>这是本期净资产增长（+3.12%）被压低的主要原因，也是「利润之外的隐形失血」</b>。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>现金流大幅收缩，但需区分「真实经营」与「受限资金」两部分</b>。经营活动现金流净额 <b>240.63 亿元（−47.38%）</b>，OCF / 归母净利润 = 240.63 / 172.74 = <b>1.39×</b>（表面仍健康）。<b>公司已明确拆解原因</b>：① <b>票据、保函保证金等经营活动有关受限资金变动，导致 OCF 同比减少 136.17 亿元</b>——这属于保证金账户的资金占用变化，不是经营能力的直接恶化；② <b>剔除该影响后，OCF 同比减少 80.48 亿元（−24.71%）</b>，主因「销售商品、提供劳务收到的现金减少」，即<b>真实的经营获现能力随收入下滑而收缩</b>。<b>判断</b>：① 表观 −47.38% 的降幅被受限资金放大，不应简单解读为「现金流崩塌」；② 但剔除后的 −24.71% 仍显著大于营收降幅（−8.10%），<b>说明回款质量在恶化</b>（应收款项融资 +38.60%、合同负债 −48.76% 亦印证）；③ 公司口径「净利润 173.95 亿元与 OCF 240.63 亿元基本匹配」，即 OCF 仍能覆盖利润，<b>没有出现「纸面利润、无现金」的极端情况</b>。</p>
+      <p><b>OCF 拆解归因：</b>OCF 拆解归因（v2 修正 E，按公司披露口径 + 报表倒推）：<b>起点</b>净利润 173.95 亿元 + 折旧摊销等非现金项（固定资产 330.41 亿元、无形资产 96.34 亿元，年折旧摊销约 40–45 亿元级）+ 资产减值 2.77 亿元 − 投资收益权益法部分 1.08 亿元 ± 营运资金变动。<b>营运资金关键项（较年初）</b>：① <b>合同负债 77.91 亿元（−48.76%，减少 74.15 亿元）</b>——经销商预收款大幅下降，直接减少经营现金流入，是 OCF 下滑的核心营运资金因素；② <b>其他应付款 51.52 亿元（−54.17%，减少 60.88 亿元）</b>，含应付股利从 55.92 亿元降至 0.39 亿元（分红已派发，属筹资性现金流的时间差）；③ <b>应付票据 258.18 亿元（+66.09%，增加 102.73 亿元）</b>——以票据替代现金支付上游，对经营现金流是正向；④ 应收账款 150.89 亿元（−5.62%，回款改善）、应收款项融资 90.03 亿元（<b>+38.60%</b>，票据结算增加、现金回笼减少）；⑤ 存货 263.76 亿元（−6.41%，去库存释放现金）。<b>另需单列</b>：<b>票据/保函保证金等受限资金变动 −136.17 亿元</b>（公司披露），这是 OCF 表观降幅（−216.69 亿元）中最大的一块，但属于保证金账户的时点性占用而非经营亏损。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>自由现金流仍充裕，但「净现金厚度」才是格力的真正底牌</b>。以 OCF 240.63 亿元为起点，扣除资本开支（制造维持性支出，固定资产 330.41 亿元、在建工程 10.55 亿元，年化 CapEx 约 20–30 亿元级）与中期分红约 56 亿元，<b>自由现金流仍为正、约 150–160 亿元量级</b>。<b>更关键的是资产负债表</b>：<b>类现金资产约 2,675 亿元 vs 有息负债约 834 亿元 → 净现金约 1,840 亿元，相当于当前市值（2,156 亿元）的 85%</b>。<b>覆盖能力</b>：① 中期分红约 56 亿元，仅占前三季 OCF 的 23%，<b>分红由经营现金流轻松覆盖、非借钱分红</b>；② 回购 50–100 亿元的规模相对于 2,675 亿元类现金亦无压力；③ 即使 2027 年盈利继续下滑，<b>净现金 1,840 亿元 + 年 OCF 200 亿元级</b>的组合足以支撑「高分红 + 回购注销」的股东回报政策。<b>结论：格力的 FCF 问题不在「有没有钱」，而在「钱能不能变回增长的利润」——巨额净现金既是安全垫，也是资产回报率（ROE）的拖累项（低收益的存款与理财拉低整体资本回报）。</b></p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>A 股 000651（<b>2026-10-30 收盘 38.49 元，+2.42%</b>；年内区间 34.27–40.48 元、年初至今 +2.56%）：总股本 56.01 亿股，<b>总市值 2,155.98 亿元</b>。<b>估值倍数</b>：<b>PE(TTM) 8.69×</b>（近 10 年 48.37% 分位）、<b>PB 1.43×（近 10 年 <u>1.35% 分位</u>，处历史最低区间）</b>、<b>股息率 TTM 7.79%</b>（TTM 每股派息约 3.0 元）、市销率 1.35×。<b>机构预期</b>：券商维持「买入」，<b>下调目标价 2% 至 44.70 元</b>（对应 10× 2027 年 PE，较现价 +16.1%）；预计 4Q26 营收低个位数增长、<b>全年营收 −6%、归母 −19%</b>。<b>剔除净现金后的估值（券商口径）</b>：剔除 716 亿元净现金与 1,175 亿元现金后，当前市值分别对应 <b>5.3× / 3.5× 2027 年 PE</b>——<b>这是格力最核心的估值论据：市场为「空调主业 + 工业制品」付出的价格，扣除账上现金后已极其便宜。</b><b>须提示</b>：PB 1.43× 虽处 10 年 1.35% 分位，但 PE 8.69× 处 48% 分位——<b>「PB 极低、PE 中性」的组合说明市场认为 ROE 已下台阶（PB = PE × ROE），低 PB 反映的是盈利质量而非单纯低估</b>；估值修复的前提是毛利率企稳，而非情绪修复。</p>
+      <p><b>周期正常化估值：</b>家电是<b>弱周期但强地产链</b>的行业，且格力盈利受铜价与渠道返利影响，<b>应以「正常化盈利 + 净现金价值」双锚定价</b>（v2 修正 F）。<b>正常化盈利</b>：2022–2025 年归母净利润 245.07 / 290.17 / 321.85 / 290.03 亿元，<b>四年中枢约 286.78 亿元</b>；2026 年按券商预测约 235 亿元（−19%），<b>低于中枢约 18%，属周期底部而非新常态</b>。<b>以正常化 280 亿元计，正常化 PE ≈ 2,155.98 / 280 ≈ 7.7×</b>，处历史低位。<b>拆解估值（净现金法）</b>：市值 2,156 亿元 − 净现金 1,840 亿元 = <b>主业隐含市值仅约 316 亿元</b>，对应正常化归母 280 亿元 → <b>主业隐含 PE 约 1.1×</b>——即便考虑「净现金有部分为经营性占用（保证金、票据）」，<b>扣除 1,000 亿元净现金后主业隐含 PE 也仅 4.1×</b>。<b>情景锚</b>：<br/>• <b>悲观</b>：铜价维持高位 + 空调需求再降 5% → 2027 归母 200 亿元，PE 10.8×、股息率（按 50% 分红）约 4.6%，PB 1.2×；<br/>• <b>中性</b>：铜价高位企稳 + 需求小幅回暖 → 2027 归母 250 亿元，PE 8.6×、股息率约 5.8%，PB 1.4×；<br/>• <b>乐观</b>：铜价回落 + 以旧换新发力 + 工业制品放量 → 2027 归母 290 亿元，PE 7.4×、股息率约 6.7%，PB 1.6×。<b>结论：格力当前价格的「安全边际」来自三重支撑——净现金 1,840 亿元（占市值 85%）、股息率 7.79%、PB 10 年 1.35% 分位；但「向上弹性」取决于毛利率能否企稳，这需要铜价回落与需求见底两个外生条件。属于「下有极强保护、上待催化」的典型低估值红利股。</b></p>
+      <p><b>股东回报可持续性：</b><b>股东回报是当前最强的支撑逻辑</b>。<b>中期分红</b>：拟<b>每 10 股派发现金红利 10 元（含税）</b>，即每股 1.00 元，按 56.01 亿股计约 <b>56 亿元</b>——<b>中期分红力度超市场预期</b>，凸显现金流底气与回报决心（格力历史上以年度分红为主，中期分红体现政策加码）。<b>回购</b>：计划 <b>50–100 亿元</b>，且<b>不低于 70% 用于注销并减少注册资本</b>、剩余不超 30% 用于员工持股计划或股权激励——注销式回购直接增厚 EPS，是比现金分红更具估值支撑力的方式。<b>股东增持</b>：第二大股东<b>京海互联（经销商持股平台，持股 7.83%）</b>未来半年内拟以自有资金与金融机构增持专项贷款增持 <b>6–12 亿元</b>，经销商与公司利益绑定进一步加深。<b>股息率</b>：TTM 股息率 <b>7.79%</b>（按 38.49 元），显著高于 10Y 国债（约 1.8%）与家电同业；分红由 OCF（240.63 亿元）与净现金（1,840 亿元）双重保障，<b>非借钱分红，可持续性强</b>。<b>须提示</b>：高股息的前提是「净利润不再大幅下滑」——若 2027 年归母跌至 200 亿元以下且分红率维持 50%，每股派息将降至 1.8 元、股息率回落至 4.7%。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">管理层在三季报中给出了明确的归因（原文）：① <b>需求</b>——「2026 年前三季度中国家用空调行业总销量 1.50 亿台（−8.4%），<b>降幅逐季扩大</b>（Q1 −2.8%、Q2 −9.3%、Q3 −15.1%），家电行业整体承压，下行压力持续加大，行业竞争进一步加剧」；② <b>策略</b>——「公司采取<b>差异化竞争策略，以技术和质量优势聚焦中高端市场</b>，营收规模有所下降；同时面对<b>原材料价格高企</b>影响，公司坚持『<b>卷品质不卷价格</b>』的经营理念，产品销售价格相对稳定，对公司利润产生了一定影响」——即<b>公司明确承认「以短期利润换品牌与份额质量」是主动选择</b>；③ <b>现金流</b>——「票据、保函保证金等经营活动有关受限资金变动导致 OCF 同比减少 136.17 亿元，剔除后减少 80.48 亿元（−24.71%），主要系销售商品、提供劳务收到的现金减少」；公司强调「<b>净利润 173.95 亿元与经营活动净现金流基本匹配</b>」。<b>前瞻（券商口径，非公司指引）</b>：10/11 月空调内销排产环比改善（+3%/+18%），叠加 4Q24/4Q25 营收低基数（−13%/−22%），预计 4Q26 营收低个位数增长、<b>全年营收 −6%、归母 −19%</b>。<b>管理层未给出全年量化指引</b>；<b>风险敏感（非承诺）</b>：铜铝价格走势、空调需求能否见底、以旧换新政策力度、出口地缘扰动、渠道改革成效。以上为前瞻性陈述，存在不确定性。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">白电三巨头横向对比（2026 前三季 / 最新可得口径）：<br/>• <b>格力电器（000651.SZ）</b>：前三季营收 1,265.44 亿元（−8.07%）、归母 172.74 亿元（<b>−19.51%</b>）、Q3 单季归母 −43.31%、毛利率 27.03%（−1.42pp）、ROE 11.43%、PE 8.69×、<b>PB 1.43×</b>、<b>股息率 7.79%</b>、净现金约 1,840 亿元 —— <b>空调单一品类占比最高（超 80%），对行业景气与铜价最敏感，因此业绩降幅最大；但估值与股息率也最便宜</b>。<br/>• <b>美的集团（000333.SZ）</b>：多元化程度最高（暖通空调 + 消费电器 + 机器人与自动化 + 楼宇科技），B 端业务占比已超 25%，抗周期能力强于格力，营收体量约格力的 2 倍，估值（PE 约 13–14×）高于格力。<br/>• <b>海尔智家（600690.SH）</b>：全球化布局最均衡（海外收入占比约 50%），受国内地产链影响最小，但海外盈利受汇率与关税扰动；估值（PE 约 13×）高于格力。<br/>• <b>海信家电（000921.SZ）</b>：中央空调 + 冰洗，体量小于格力，弹性更大。<br/><b>结论</b>：2026 年白电行业的共性是「内需疲弱 + 铜价高企」，<b>格力因空调收入占比最高、且坚持不降价，成为三家中业绩降幅最大的一家</b>（归母 −19.51% vs 美的、海尔预计个位数到双位数下滑）。<b>投资含义：格力的「低估值 + 高股息 + 巨额净现金」是防御性配置的极致表达；但若追求成长与抗周期性，美的（B 端+机器人）与海尔（全球化）的结构更优。格力的弹性来自「铜价回落 + 需求见底」的戴维斯双击，属于高赔率、低胜率的底部博弈。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">低风险</span>商誉 <b>13.24 亿元</b>，较年初零变动，占归母净资产 <b>0.88%</b>、占 2025 年归母净利润（290.03 亿元）0.05 倍——<b>绝对值与占比均远低于阈值</b>。主要来自历史收购（如格力钛/银隆等），历年减值测试未出现大额减值。<b>须提示</b>：格力钛（钛酸锂）业务体量虽小但持续亏损，若新能源业务战略调整，其资产组（含商誉）存在减值可能，须在年报核实。</div></div>
+      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发费用 <b>49.66 亿元（−11.66%）</b>，占营业收入 <b>3.94%</b>（家电行业较高水平），<b>资产负债表「开发支出」科目为空、全部费用化</b>，不存在资本化注水空间。研发以空调能效、压缩机、储能、工业机器人为主，属真实技术投入。<b>该项干净。</b></div></div>
+      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span>资产减值损失 <b>2.77 亿元（+27.9%）</b>、信用减值损失 <b>转回 1.43 亿元</b>（上年转回 1.36 亿元），合计净影响 −1.34 亿元，占利润总额 0.6%，<b>金额不大、无「洗大澡」迹象</b>。风险点在于<b>存货（263.76 亿元）与应收账款（150.89 亿元）</b>的减值计提是否充分——在需求下行、空调售价承压的背景下，存货跌价准备与应收坏账准备的计提比例需在年报核实（尤其渠道改革期的经销商应收）。</div></div>
+      <div class="rf"><div class="k">债务结构与财务杠杆</div><div class="v"><span class="verdict flat">低风险</span><b>资产负债表极度稳健，是格力最硬的一张牌</b>：资产负债率 <b>60.23%</b>（上年末 61.73%，−1.50pp），但<b>有息负债仅约 834 亿元</b>（短期借款 807.62 亿元、长期借款 6.61 亿元、一年内到期非流动负债 13.57 亿元、租赁负债 6.60 亿元），<b>类现金资产约 2,675 亿元 → 净现金约 1,840 亿元，相当于市值的 85%</b>。流动负债的主体是<b>经营性负债</b>——应付账款 417.35 亿元、应付票据 258.18 亿元、其他流动负债 592.38 亿元（销售返利计提），<b>属对上游与渠道的无息占款，不构成偿债压力</b>。<b>须留意</b>：短期借款较年初 +18.84%（+127.6 亿元），在账上现金 1,175 亿元的情况下仍增加短借，属集团资金归集与利率套利安排，但需在年报核实资金成本与用途。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>季报按法定惯例<b>未经审计</b>（原文「第三季度财务会计报告是否经过审计：□是 否」），无审计意见；公司负责人董明珠、主管会计工作负责人廖建雄、会计机构负责人刘炎姿声明保证财务信息真实、准确、完整。<b>本期无追溯调整或重述（「是否需追溯调整或重述以前年度会计数据：□是 否」）</b>，会计政策未变更。</div></div>
+      <div class="rf"><div class="k">关联交易与资金往来</div><div class="v"><span class="verdict amber">关注</span><b>股权结构与经销商深度绑定，是格力治理的特殊之处</b>：① <b>珠海明骏投资合伙企业持股 15.35%（第一大股东），且其 8.60 亿股<b>全部质押</b></b>；② <b>京海互联网科技（经销商持股平台）持股 7.83%</b>，本期公告拟增持 6–12 亿元；③ 珠海格力集团（国资）3.46%；④ 董明珠持股 2.22%（其中 9,313.86 万股为限售股），<b>与明骏为一致行动人</b>；⑤ 前十大股东中含中邮人寿、瑞众人寿、阳光人寿等险资，<b>机构持股分散、无绝对控股方</b>。<b>需跟踪</b>：明骏高比例质押的平仓风险（股价若大幅下跌可能触发）、经销商持股平台的利益一致性、集团财务公司存贷款与关联采购的公允性。</div></div>
+      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span><b>收入真实但回款质量在弱化</b>：① 应收账款 150.89 亿元（−5.62%，回款改善）；② <b>应收款项融资 90.03 亿元（+38.60%）</b>——票据结算增加意味着<b>现金回笼减少、以票据替代</b>，这与 OCF 下滑相印证；③ <b>合同负债 77.91 亿元（较年初 −48.76%）</b>，经销商预收款大幅下降，<b>打款与备货意愿明显走弱</b>。<b>正面证据</b>：收现比仍 >1（销售商品收到现金与营收基本匹配）、无大额应收坏账、收入按「发货确认」而非压货。<b>结论：营收真实性无问题（空调先款后货、渠道透明），但「预收下降 + 票据替代现金」是需求走弱的领先信号。</b></div></div>
+      <div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">低风险</span>存货 <b>263.76 亿元（较年初 −6.41%）</b>，在营收 −8.10% 的背景下同步去化，<b>存货/营收约 20.9%</b>（家电行业正常水平）；结构以原材料（铜、铝、钢板）、在产品与库存商品为主。<b>风险点</b>：① 铜价高企时原材料存货存在跌价风险（若铜价回落，高价库存将拖累毛利）；② 空调旺季过后库存商品去化压力。<b>当前存货规模与周转均正常，无积压滞销迹象。</b></div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict amber">关注</span>非经常性损益 <b>8.71 亿元，占归母净利润 5.04%</b>——构成为<b>金融资产公允价值变动及处置损益 8.17 亿元</b>（交易性金融资产 369.05 亿元所产生）、政府补助 2.75 亿元、非流动资产处置 0.39 亿元、减值转回 0.06 亿元，减其他营业外收支 −0.72 亿元、所得税影响 1.91 亿元、少数股东影响 0.09 亿元。<b>扣非归母 164.03 亿元（−20.32%）低于归母 172.74 亿元（−19.51%）</b>，即非经对利润有 5% 的正向贡献。<b>判断：幅度可控、不构成「靠非经保利润」，但金融资产收益（8.17 亿元）的可重复性弱</b>，若 2027 年资本市场转弱，该项将转为拖累。</div></div>
+      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict down">红旗</span><b>本期最需要拆解的一项</b>：OCF <b>240.63 亿元（−47.38%）</b>，而归母净利润 172.74 亿元（−19.51%），<b>OCF 降幅是利润降幅的 2.4 倍</b>。公司已明确拆分：① <b>票据、保函保证金等受限资金变动影响 −136.17 亿元</b>（时点性占用，非经营亏损）；② <b>剔除后 OCF 同比减少 80.48 亿元（−24.71%）</b>，主因「销售商品、提供劳务收到的现金减少」，<b>即真实经营获现能力随收入与回款质量同步弱化</b>。<b>结论：表观 −47.38% 被受限资金放大，不应直接解读为「现金流崩塌」；但剔除后的 −24.71% 仍显著大于营收降幅（−8.10%），说明「预收下降 + 票据替代」正在侵蚀现金流——这是本期的实质红旗，须连续跟踪 Q4 与 2027 年 OCF 能否随收入企稳回升。</b></div></div>
+      <div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict amber">关注</span>空调行业为「<b>先款后货、以销定产</b>」模式，收入按发货/控制权转移确认，<b>无完工百分比法、无长周期合同</b>，收入操纵空间天然较小。但两个信号需警惕：① <b>合同负债 77.91 亿元（较年初 −48.76%）</b>——预收款大幅下降，若公司放宽「先款后货」政策以促出货，将带来应收上升与收入质量下降；② <b>其他流动负债 592.38 亿元（较年初仅 −1.6%）</b>——销售返利计提<b>未释放</b>，说明公司没有通过「少提返利」虚增当期利润（会计审慎的正面信号）。<b>综合判断：收入确认无激进迹象，但需跟踪「返利政策 + 渠道库存」的组合变化。</b></div></div>
+      <div class="rf"><div class="k">表外 / 担保 / 或有负债（v2新增）</div><div class="v"><span class="verdict flat">低风险</span><b>预计负债为 0</b>，季报未披露重大对外担保、未决诉讼或明股实债事项；递延收益 32.53 亿元（政府补助递延）、递延所得税负债 24.41 亿元、长期应付职工薪酬 2.12 亿元，均在正常范围。<b>少数股东权益 39.03 亿元</b>（占净资产 2.5%），本期少数股东损益 1.22 亿元，结构稳定。<b>或有事项</b>：格力钛（新能源）的历史诉讼与经营承诺、渠道改革中的经销商补偿安排，需在年报核实。</div></div>
+      <div class="rf"><div class="k">空调需求下行与行业价格战（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span><b>这是格力业绩下滑的第一原因，且尚未见底</b>：产业在线数据显示 2026 前三季中国家用空调销量 <b>1.50 亿台（−8.4%）</b>，且<b>降幅逐季扩大</b>——Q1 −2.8% → Q2 −9.3% → <b>Q3 −15.1%</b>。格力内销出货 −14%（<b>优于行业 −28%，份额提升</b>）、出口 −34%（地缘与航运扰动）。<b>行业困境的本质</b>：① 地产竣工下滑压制新增需求；② 以旧换新政策边际效应递减；③ 消费疲弱下「更新周期」拉长。<b>格力的应对是「差异化竞争、聚焦中高端、不参与价格战」</b>——这在短期直接体现为「营收下滑 + 毛利率下滑」，是<b>主动选择而非被动失守</b>。<b>须盯</b>：Q4 排产能否兑现（10/11 月内销排产 +3%/+18%）、2027 年以旧换新政策是否延续、行业是否出现「以价换量」的恶性竞争。</b></div></div>
+      <div class="rf"><div class="k">铜价成本与渠道改革（行业特有·红旗）</div><div class="v"><span class="verdict down">红旗</span><b>两大变量决定格力能否走出底部</b>：① <b>成本</b>——铜铝价格大幅上涨，空调成本中铜占比约 20%–25%，<b>Q3 单季毛利率 23.10%（−5.60pp）</b>、毛销差 18.4%（−6.5pp）即为直接体现；公司坚持「卷品质不卷价格」、售价稳定，<b>成本无法向下游转嫁，只能自己消化</b>。若铜价维持高位，2027 年毛利率仍将承压；若铜价回落，毛利率弹性可观（每回落 5% 约提升毛利率 0.8–1pp）。② <b>渠道改革</b>——扁平化、直播电商、经销商体系重构的阵痛仍在，<b>合同负债 −48.76%、其他应付款 −54.17%</b> 反映渠道打款与返利结算的变化；改革成效需看「份额能否守住 + 渠道库存是否健康」。<b>结论：成本与渠道是格力的「双变量」，任一改善都将带来利润弹性，但同时恶化则业绩继续下探。</b></div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li><b>份额逆势提升，龙头地位未动摇</b>：内销出货量降幅 <b>−14%</b> 显著好于行业 <b>−28%</b>，全渠道份额持续提升；出口 −34% 主要受地缘与航运扰动，属短期冲击。在行业销量 −8.4% 的背景下守住份额，说明渠道控制力与品牌溢价仍在</li><li><b>费用端主动收紧，三项费率全部下降</b>：销售费用 67.23 亿元（<b>−11.41%</b>）、研发费用 49.66 亿元（<b>−11.66%</b>）、管理费用 42.39 亿元（−1.51%），降幅均大于营收 −8.10%，说明公司在需求下行期主动收缩投入而非被动失血</li><li><b>中期分红超预期</b>：拟每 10 股派发现金红利 <b>10 元（含税）</b>，对应约 56 亿元，中期分红力度超市场预期，凸显现金流底气与股东回报决心</li><li><b>回购与增持双管齐下</b>：回购计划 <b>50–100 亿元</b>（不低于 70% 用于注销并减少注册资本、剩余不超 30% 用于员工持股/股权激励）推进中；第二大股东京海互联（经销商持股平台）未来半年内拟以自有资金与专项贷款增持 <b>6–12 亿元</b></li><li><b>资产负债表极度稳健</b>：类现金资产约 2,675 亿元（货币资金 1,175.16 + 交易性金融 369.05 + 其他债权投资 354.70 + 一年内到期非流动 159.10 + 其他非流动资产 448.11 等），<b>有息负债仅约 834 亿元 → 净现金约 1,840 亿元</b>；资产负债率 60.23%（较年初 −1.50pp），归母权益 1,504.85 亿元（+3.12%）</li><li><b>Q4 有望边际改善</b>：产业在线数据显示 10/11 月空调内销排产环比改善（<b>+3% / +18%</b>，vs 7–9 月 −30%/−28%/−24%），叠加 4Q24/4Q25 营收低基数（−13%/−22%），券商预计 4Q26 营收低个位数增长、全年营收 −6%、归母 −19%</li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li><b>Q3 单季利润断崖式下滑（核心风险）</b>：归母 39.96 亿元（<b>−43.31%</b>）、扣非 36.96 亿元（−44.32%），单季净利率 10.84%（同比 −6.8pp）；利润降幅是营收降幅（−7.97%）的 <b>5.4 倍</b>，经营杠杆在需求下行期反向放大</li><li><b>毛利率被「铜价 + 不降价」双向挤压</b>：Q3 单季毛利率 <b>23.10%（−5.6pp）</b>、毛销差 18.4%（−6.5pp）；铜铝价格高企而公司坚持「卷品质不卷价格」，成本无法转嫁；若原材料继续高位，2027 年毛利率仍将承压</li><li><b>行业需求降幅逐季扩大，尚未见底</b>：家用空调销量 Q1 −2.8% → Q2 −9.3% → <b>Q3 −15.1%</b>；内需疲软、出口下滑（−34%）叠加，行业性下行尚未确认拐点</li><li><b>合同负债腰斩、渠道打款意愿走弱</b>：合同负债 77.91 亿元（较年初 <b>−48.76%</b>），其他应付款 51.52 亿元（−54.17%）——虽有年初返利计提的季节性因素，但预收款大幅下降反映经销商打款与备货意愿减弱</li><li><b>经营现金流大幅收缩</b>：OCF 240.63 亿元（<b>−47.38%</b>），其中受限资金变动影响 −136.17 亿元，剔除后仍 −24.71%；且公司明确<b>其他流动负债较年初仅 −1.6%，基本未释放返利平滑利润</b>——意味着后续若需求继续走弱，缺乏「返利蓄水池」缓冲</li><li><b>有效税率上行侵蚀利润</b>：前三季有效税率 17.36%（+3.29pp）、Q3 单季 19.1%（+2.1pp），与政府补助减少（其他收益 5.14 亿元，<b>−49.26%</b>）叠加，进一步压低净利率</li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li><b>空调需求能否见底（第一优先级）</b>：行业销量 Q1 −2.8% → Q2 −9.3% → Q3 −15.1%，降幅持续扩大；跟踪 10/11 月内销排产（+3%/+18%）能否兑现为实际出货，以及 2027 年以旧换新政策力度</li><li><b>铜铝价格与毛利率</b>：Q3 单季毛利率 23.10%（−5.6pp）是利润断崖的主因；跟踪 LME 铜价、公司成本传导与「不降价」策略是否松动</li><li><b>份额与渠道改革</b>：内销出货 −14% 优于行业 −28%，份额提升能否延续；渠道改革（扁平化、直播电商）的成效与经销商打款意愿（合同负债 77.91 亿元、−48.76%）</li><li><b>返利蓄水池与合同负债</b>：其他流动负债 592.38 亿元（较年初仅 −1.6%，未释放返利）、合同负债 −48.76%；跟踪 Q4 是否释放返利平滑利润（会计审慎的正面信号，但也是未来的变量）</li><li><b>现金流真实性</b>：OCF 240.63 亿元（−47.38%），剔除受限资金影响后 −24.71%；跟踪票据保证金变动、销售收现与应收款项融资（+38.60%）的走向</li><li><b>股东回报执行</b>：中期分红每 10 股派 10 元（约 56 亿元）、回购 50–100 亿元（≥70% 注销）、京海互联增持 6–12 亿元，跟踪实际执行进度与年度分红方案</li><li><b>工业制品与第二曲线</b>：工业制品及绿色能源占主营 9.68%（H1 口径），跟踪压缩机、储能、精密模具的收入增速与毛利率，判断能否对冲空调周期</li></ol></div>
+  </div>
+
+
+  <div class="foot">
+    <b>数据来源：</b>珠海格力电器股份有限公司《2026 年第三季度报告》（2026-10-27 披露，公告编号 2026-047，<b>按中国会计准则编制、未经审计</b>；原文 PDF：static.cninfo.com.cn/finalpage/2026-10-27/1225627217.PDF，本地归档 <code>data/pdf/000651.SZ_q3_2026.pdf</code>）。<b>口径说明（重要）</b>：① <b>营业总收入 vs 营业收入</b>——前三季营业总收入 1,265.44 亿元（含利息收入 4.69 亿元）、营业收入 1,260.75 亿元；本报告除特别说明外采用<b>营业收入</b>口径（与公司「主要会计数据」一致）。② <b>行业与份额数据</b>引自公司季报原文引用的<b>产业在线</b>数据（空调销量 1.50 亿台 −8.4%、分季 −2.8%/−9.3%/−15.1%）与券商调研（内销出货 −14%、出口 −34%、10/11 月排产 +3%/+18%），<b>非公司披露的经营数据</b>。③ <b>季报不披露分部（分产品/分地区）数据</b>——消费电器 740.74 亿元（82.86%）、工业制品 86.52 亿元（9.68%）、内销 725.12 亿元 / 外销 127.44 亿元为 <b>2026 半年报口径</b>。④ <b>单季数据</b>（Q1/Q2/Q3 营收与归母）为「累计 − 上一累计」倒算或第三方整理，已与累计数交叉验证。⑤ <b>OCF 拆解</b>：公司明确披露「受限资金变动影响 −136.17 亿元、剔除后 −80.48 亿元（−24.71%）」，其余拆解按资产负债表变动倒推，<b>属估算、非审计数</b>。⑥ <b>类现金与净现金</b>：类现金约 2,675 亿元为「货币资金 + 交易性金融资产 + 其他债权投资 + 一年内到期非流动资产 + 其他流动资产 + 其他非流动资产」合计，<b>其中部分为经营性受限资金</b>，故净现金 1,840 亿元为上限口径；券商另用「716 亿元净现金」口径，差异源于是否扣除经营占用。⑦ <b>估值与行情</b>：2026-10-30 收盘 38.49 元、市值 2,155.98 亿元、PE(TTM) 8.69×、PB 1.43×（10 年 1.35% 分位）、股息率 TTM 7.79%，取自腾讯财经/腾讯自选股；目标价 44.70 元与「全年 −6%/−19%」预测取自券商研报。⑧ <b>历史序列</b>：2022–2025 营业总收入 1,901.51 / 2,050.18 / 1,900.38 / 1,711.18 亿元、归母 245.07 / 290.17 / 321.85 / 290.03 亿元（同花顺/腾讯财经）。<b>免责声明</b>：基于公开数据的量化分析，仅供参考，不构成投资建议。<br/>
+  </div>
+
+</div>
+</body>
+</html>

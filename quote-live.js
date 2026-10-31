@@ -52,6 +52,8 @@
       '股息率TTM': ['divYield', 'pct2',    false],
       '股息率':    ['divYield', 'pct2',    false],
       '溢价(H/A)': ['__premium__','pctFrac', true],
+      // 口径：H价(CNY)/A价 − 1。负值=H股折价。旧标签「AH溢价」与此方向相反，仅为兼容保留。
+      'H/A溢价率': ['__premium__','pctFrac', true],
       'AH溢价':    ['__premium__','pctFrac', true],
       '总市值':    ['totalCap', 'yi',      false],
     },
@@ -138,6 +140,12 @@
       dateEl.classList.remove('qdate-off');
     }
     bar.setAttribute('data-quote-state', 'live');
+
+    // 供其它模块（如 common/ha-premium.js）联动：留存本次数据并广播事件
+    bar._quoteData = data;
+    try {
+      document.dispatchEvent(new CustomEvent('quote:updated', { detail: { bar: bar, data: data } }));
+    } catch (e) { /* 老浏览器不支持 CustomEvent 时静默降级 */ }
   }
 
   /* ---------------- 拉取 ---------------- */

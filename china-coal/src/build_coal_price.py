@@ -9,6 +9,10 @@
       trend_qhd5500_weekly.svg   (模态框趋势图)
       spark_qhd5500.svg          (卡片内 mini sparkline)
 - 若需更新价格，请直接编辑 xlsx，再运行本脚本刷新图表即可。
+- x 轴标签取 B 列「年份-周」，口径 = 周结束日（周五）实际所属的该年周数（ISO 8601 周编号，
+  可用 Python date.isocalendar() 或 Excel ISOWEEKNUM() 复算）。2026-01-09=2026-W2、
+  2026-10-23=2026-W43；点较多，每 4 个点标注一次并确保末点有标签。
+  数据周有缺失时编号不连续（如 W38→W41），属正常。
 """
 import os
 import re
@@ -42,12 +46,13 @@ def _fmt_date(d):
 
 
 def load_series(path):
-    """读取 xlsx，返回 (dates, vals)。
+    """读取 xlsx，返回 (dates, vals, week_labels)。
     - 跳过表头行与底部汇总行（这些行价格列为 None 或非数值）；
     - 价格列缺失/非数值 → 跳过；
     - 价格 = 0 的行（文件中 1 月无 CCTD 披露的周）保留为 0 占位，绘图时跳过，
       以保证 x 轴按真实周序连续。
     - 日期列可为 str('YYYY-MM-DD') 或 datetime（周结束日），两种都接受。
+    - week_labels 取 B 列「年份-周」（如 '2026-W37'）；若为空则回退为空串。
     """
     wb = openpyxl.load_workbook(path, data_only=True)
     ws = wb["秦皇岛5500周度"]
@@ -60,7 +65,7 @@ def load_series(path):
     if hdr_row is None:
         raise RuntimeError("未在 xlsx 中找到表头行（周结束日）")
 
-    dates, vals = [], []
+    dates, vals, wlabels = [], [], []
     for r in range(hdr_row + 1, ws.max_row + 1):
         d = ws.cell(row=r, column=1).value
         v = ws.cell(row=r, column=3).value
@@ -74,12 +79,14 @@ def load_series(path):
         ds = _fmt_date(d)
         if ds is None:
             continue
+        b = ws.cell(row=r, column=2).value
         dates.append(ds)
         vals.append(vf)
-    return dates, vals
+        wlabels.append(str(b).strip() if b is not None else "")
+    return dates, vals, wlabels
 
 
-def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
+def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None, week_labels=None):
     ml, mr, mt, mb = 60, 24, 42, 56
     pw, ph = W - ml - mr, H - mt - mb
     n = len(vals)
@@ -114,14 +121,31 @@ def build_trend_svg(dates, vals, fname, W=1000, H=420, title=None):
     svg.append(f'<path d="M{" L".join(pts)}" fill="none" stroke="#c53030" stroke-width="2.5"/>')
     for i in valid_idx:
         svg.append(f'<circle cx="{xs_all[i]:.1f}" cy="{yp(vals[i]):.1f}" r="2.6" fill="#c53030" stroke="#fff" stroke-width="1"/>')
-    # x 标签：仅标注「每月第一个日期」（数据中出现的最早日），格式 YYYY/MM/DD
-    last_month = None
-    for i in range(n):
-        cur_month = dates[i][:7]  # 'YYYY-MM'
-        if cur_month != last_month:
-            lab = dates[i].replace("-", "/")  # 'YYYY/MM/DD'
-            svg.append(f'<text x="{xs_all[i]:.1f}" y="{mt+ph+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{lab}</text>')
-            last_month = cur_month
+    # x 轴标签：优先用 B 列「年份-周」（如 2026-W37）；点较多，每 4 点标注一次，
+    # 并确保末点也标注。无周标签时回退为「每月第一个日期」(YYYY/MM/DD)。
+    if week_labels and len(week_labels) == n:
+        idxs = list(range(0, n, 4))
+        if idxs[-1] != n - 1:
+            idxs.append(n - 1)
+        for i in idxs:
+            lab = week_labels[i]
+            x = xs_all[i]
+            # 首/末标签贴近绘图区边缘时改用 start/end 对齐，
+            # 否则 text-anchor="middle" 会让文字溢出 viewBox 被裁掉（如 2026-W43）。
+            anchor = "middle"
+            if x - ml < 34:
+                anchor = "start"
+            elif ml + pw - x < 34:
+                anchor = "end"
+            svg.append(f'<text x="{x:.1f}" y="{mt+ph+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="{anchor}">{lab}</text>')
+    else:
+        last_month = None
+        for i in range(n):
+            cur_month = dates[i][:7]  # 'YYYY-MM'
+            if cur_month != last_month:
+                lab = dates[i].replace("-", "/")  # 'YYYY/MM/DD'
+                svg.append(f'<text x="{xs_all[i]:.1f}" y="{mt+ph+18:.1f}" font-size="10.5" fill="#6b7280" text-anchor="middle">{lab}</text>')
+                last_month = cur_month
     # 底部图例（色块 + 指标名）已按用户要求移除，保持全看板下方无图例
     svg.append('</svg>')
     with open(fname, "w", encoding="utf-8") as f:
@@ -190,10 +214,11 @@ def patch_dashboard(latest, ytd_avg, color, band_label):
 
 
 def main():
-    dates, vals = load_series(OUT_XLSX)
+    dates, vals, wlabels = load_series(OUT_XLSX)
     print(f"📊 从 xlsx 读取 {len(dates)} 个周度观测点（价格=0 为无数据占位，不绘制）")
     build_trend_svg(dates, vals, OUT_SVG,
-                    title="秦皇岛港5500动力煤现货价（2026·周度·仅CCTD口径）")
+                    title="秦皇岛港5500动力煤现货价（2026·周度·仅CCTD口径）",
+                    week_labels=wlabels)
     build_spark(vals, OUT_SPARK)
     # 当年截止目前均价 + 最新周度 → 名称分档着色（替代原「情景假设框架」）
     ytd = [(d, v) for d, v in zip(dates, vals)

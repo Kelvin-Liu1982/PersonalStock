@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中国平安 2026 三季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">中国平安</div>
+      <div class="meta">
+        <span>601318.SH / 02318.HK</span><span>综合金融（保险·银行·资产管理）</span><span>上交所 / 港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 三季报</div>
+      <div class="pdate">披露日期：2026-10-28</div>
+      <div class="badge flat">中性偏积极 · 营运利润稳增、估值处历史低位</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性偏积极</span>
+      <p class="oneliner">中国平安 2026 前三季度<b>「表观利润下滑、经营底盘向好」的背离式答卷</b>：归母净利润 966.45 亿元（<b>−27.3%</b>）、Q3 单季仅 40.60 亿元（<b>−93.7%</b>），主因<b>权益市场回调导致公允价值变动损益由上年 +480.27 亿元转为 −643.12 亿元（反向差额约 1,123 亿元）</b>，叠加寿险短期投资波动 −339.57 亿元（上年 +261.22 亿元）。<b>但剔除非经营噪声的归母营运利润 1,259.05 亿元（+8.3%）、基本每股营运收益 7.23 元（+9.2%）、非年化营运 ROE 11.0% 持平</b>——主业真实增速稳健。分部明显分化：<b>寿险及健康险营运利润 872.38 亿（+5.7%）、资管分部归母营运利润由 26.54 亿跃升至 194.23 亿、银行净利 391.86 亿（+2.2%）</b>，而产险营运利润 47.17 亿（−68.9%，承保端 CoR 反而优化 1.4pp 至 95.6%，利润降主因投资端）。核心隐患是<b>寿险新业务价值 309.87 亿元（−13.3%）、Q3 单季同比 −54%</b>（高基数 + 银保报行合一 + 主动结构优化）与<b>投资端对权益市场的高度敏感</b>。估值端：A 股 52.89 元、PB 0.92×（破净）、PE(TTM) 9.61×、股息率 TTM 5.22%，中金口径 <b>0.6× 26e P/EV</b>，处历史低位；安全边际来自破净与派息，而非盈利增长。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li>营运利润稳健增长，主业底盘扎实：归母营运利润 1,259.05 亿（<b>+8.3%</b>）、基本每股营运收益 7.23 元（+9.2%）、非年化营运 ROE 11.0% 持平；Q3 单季税后营运利润 417 亿（+8.3%）</li><li>财险承保超预期：综合成本率 <b>95.6%（优化 1.4pp）</b>，Q3 单季改善约 3.8–3.9pp；在大灾多于去年同期下仍改善，新能源车险保费 +21.2% 且保持承保盈利</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li>投资端高度敏感：公允价值变动损益 −643.12 亿（上年 +480.27 亿），寿险短期投资波动 −339.57 亿；非年化综合投资收益率 2.3%（<b>−3.1pp</b>）、净投资收益率 2.5%（−0.3pp），权益市场波动直接决定表观利润</li><li>寿险新业务价值下滑：NBV 309.87 亿（<b>−13.3%</b>）、Q3 单季同比 <b>−54%</b>；用来计算 NBV 的首年保费 −9.1%、NBV 率（首年保费）24.0%（−1.2pp），负债端动能转弱</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">分部归母营运利润（前三季度，亿元）</text><rect x="96.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#13406b"/><text x="135.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">825</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">寿险健康险</text><rect x="246.0" y="163.0" width="78.0" height="35.0" rx="3" fill="#13406b"/><text x="285.0" y="158.0" font-size="10.5" fill="#1f2733" text-anchor="middle">227</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">银行</text><rect x="396.0" y="168.1" width="78.0" height="29.9" rx="3" fill="#13406b"/><text x="435.0" y="163.1" font-size="10.5" fill="#1f2733" text-anchor="middle">194</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">资管</text><rect x="546.0" y="190.8" width="78.0" height="7.2" rx="3" fill="#13406b"/><text x="585.0" y="185.8" font-size="10.5" fill="#1f2733" text-anchor="middle">47</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">产险</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">归母净利润 vs 归母营运利润（亿元）</text><rect x="96.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#13406b"/><text x="135.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">1329</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">25归母</text><rect x="246.0" y="86.8" width="78.0" height="111.2" rx="3" fill="#13406b"/><text x="285.0" y="81.8" font-size="10.5" fill="#1f2733" text-anchor="middle">1163</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">25营运</text><rect x="396.0" y="105.6" width="78.0" height="92.4" rx="3" fill="#13406b"/><text x="435.0" y="100.6" font-size="10.5" fill="#1f2733" text-anchor="middle">966</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">26归母</text><rect x="546.0" y="77.6" width="78.0" height="120.4" rx="3" fill="#c0392b"/><text x="585.0" y="72.6" font-size="10.5" fill="#1f2733" text-anchor="middle">1259</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">26营运</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">前三季度同比增速（%）</text><line x1="60" y1="157.3" x2="660" y2="157.3" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="160.3" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="157.3" width="50.0" height="44.7" rx="3" fill="#1f8a4c"/><text x="110.0" y="215.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-27.3%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母净利</text><rect x="185.0" y="143.7" width="50.0" height="13.6" rx="3" fill="#c0392b"/><text x="210.0" y="137.7" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+8.3%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营运利润</text><rect x="285.0" y="157.3" width="50.0" height="20.6" rx="3" fill="#1f8a4c"/><text x="310.0" y="190.9" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-12.6%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营收</text><rect x="385.0" y="157.3" width="50.0" height="21.8" rx="3" fill="#1f8a4c"/><text x="410.0" y="192.1" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-13.3%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">寿险NBV</text><rect x="485.0" y="153.7" width="50.0" height="3.6" rx="3" fill="#c0392b"/><text x="510.0" y="147.7" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+2.2%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">银行净利</text><rect x="585.0" y="48.0" width="50.0" height="109.3" rx="3" fill="#c0392b"/><text x="610.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+66.7%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">OCF</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+<div class="mcard"><div class="lab">营业收入(1-9月)</div><div class="val">7,281亿</div><div class="delta down">-12.6%</div></div>
+      <div class="mcard"><div class="lab">Q3单季营收</div><div class="val">1,530亿</div><div class="delta down">-54.0%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">966亿</div><div class="delta down">-27.3%</div></div>
+      <div class="mcard"><div class="lab">Q3单季归母</div><div class="val">41亿</div><div class="delta down">-93.7%</div></div>
+      <div class="mcard"><div class="lab">归母营运利润</div><div class="val">1,259亿</div><div class="delta up">+8.3%</div></div>
+      <div class="mcard"><div class="lab">每股营运收益</div><div class="val">7.23元</div><div class="delta up">+9.2%</div></div>
+      <div class="mcard"><div class="lab">扣非归母净利</div><div class="val">916亿</div><div class="delta down">-35.5%</div></div>
+      <div class="mcard"><div class="lab">寿险新业务价值</div><div class="val">310亿</div><div class="delta down">-13.3%</div></div>
+      <div class="mcard"><div class="lab">产险综合成本率</div><div class="val">95.6%</div><div class="delta up">优化1.4pp</div></div>
+      <div class="mcard"><div class="lab">经营现金流净额</div><div class="val">5,669亿</div><div class="delta up">+66.7%</div></div>
+      <div class="mcard"><div class="lab">加权ROE(非年化)</div><div class="val">9.4%</div><div class="delta down">-4.3pp</div></div>
+      <div class="mcard"><div class="lab">PB / 股息率(TTM)</div><div class="val">0.92x / 5.22%</div><div class="delta flat">已破净</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+<tr><td>营业收入(亿元)</td><td class="num">7,281</td><td class="num">8,329</td><td class="num down">-12.6%</td></tr>
+        <tr><td>营业支出(亿元)</td><td class="num">5,966</td><td class="num">6,511</td><td class="num up">-8.4%</td></tr>
+        <tr><td>利润总额(亿元)</td><td class="num">1,311</td><td class="num">1,810</td><td class="num down">-27.6%</td></tr>
+        <tr><td>归母净利润(亿元)</td><td class="num">966</td><td class="num">1,329</td><td class="num down">-27.3%</td></tr>
+        <tr><td>归母营运利润(亿元)</td><td class="num">1,259</td><td class="num">1,163</td><td class="num up">+8.3%</td></tr>
+        <tr><td>扣非归母净利润(亿元)</td><td class="num">916</td><td class="num">1,421</td><td class="num down">-35.5%</td></tr>
+        <tr><td>寿险新业务价值(亿元)</td><td class="num">310</td><td class="num">357</td><td class="num down">-13.3%</td></tr>
+        <tr><td>加权ROE(非年化,%)</td><td class="num">9.4</td><td class="num">13.7</td><td class="num down">-4.3pp</td></tr>
+        <tr><td>经营现金流净额(亿元)</td><td class="num">5,669</td><td class="num">3,401</td><td class="num up">+66.7%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+<tr><td>归母净利润</td><td class="num">966.45亿(-27.3%)</td><td class="num">中金/花旗：基本符合预期</td><td class="num flat">一致</td><td class="num flat">符合预期</td></tr>
+        <tr><td>归母营运利润</td><td class="num">1,259.05亿(+8.3%)</td><td class="num">大摩预期(Q3 +8.3%)</td><td class="num up">高2个百分点</td><td class="num up">略超预期</td></tr>
+        <tr><td>寿险新业务价值</td><td class="num">309.87亿(-13.3%)，Q3单季-54%</td><td class="num">市场预期受高基数拖累</td><td class="num down">Q3降幅超预期</td><td class="num down">低于预期</td></tr>
+        <tr><td>产险综合成本率</td><td class="num">95.6%(优化1.4pp)</td><td class="num">中金/花旗：优于市场预期</td><td class="num up">Q3单季改善约3.8pp</td><td class="num up">超预期</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：卖方一致预期与点评（2026-10-29，中金/花旗/大摩）：① <b>中金</b>：9M26 归母 −27.3%「基本符合我们和市场预期」，营运利润 +8.3% 稳健；维持 26e/27e 盈利预测与 A/H 目标价 89.8 元 / 99.4 港元（1.0×/1.0× 26e P/EV）。② <b>大摩</b>：Q3 税后营运利润 417 亿（+8.3%），<b>较该行预期高 2%</b>；业绩大致符合市场预期；但 Q3 VNB −54%「偏弱」，维持增持、目标价 85 港元。③ <b>花旗</b>：业绩大致符合预期，营运利润 +8% 由寿险、银行及资管带动；NBV −13% 受高基数与银保监管调整影响；维持买入、目标价 83 港元。④ 财险 CoR 改善 1.4pp「优于市场预期」（中金、花旗一致）。<b>预期差结论（v2 修正 B：保险股卖方以全年预测为主，无单季一致预期可逐项比对，故采用「卖方定性校验 + 分部相对校验」）：表观净利润符合预期（市场已充分计入权益回调）；营运利润略超预期（大摩口径高 2%）；财险承保超预期；唯一明确低于预期的是 Q3 单季 NBV（−54%）。综合判定「符合预期、结构分化」。</b></p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>保险行业 2026 年前三季度处于<b>「负债端转型深化、资产端波动加剧」的分化期</b>。核心变量：① <b>负债端</b>——预定利率下调后的高基数效应显现，行业 NBV 普遍承压；银保渠道「报行合一」监管深化压缩费用空间；产品向分红险/长交期转型（平安代理人渠道长交期占比提升超 10pp）；② <b>资产端</b>——权益市场三季度回调，险企表观利润普遍受投资拖累（中国太保 Q3 单季归母同比 <b>−68.4%</b>、中国人寿 Q1 同比 −32.3%），平安 Q3 归母 −93.7% 但<b>仍优于多数同业录得净亏损</b>（大摩），体现多元业务组合（资管 + 银行）的对冲价值；③ <b>利率</b>——低利率环境压制净投资收益率，险企增配长久期利率债与高股息 OCI 资产。对公司的传导：平安「综合金融 + 医疗养老」双轮模式下，<b>寿险（价值）承压、财险（承保）改善、银行与资管（利润）补位</b>，集团营运利润仍能 +8.3%。<b>行业坐标：处「投资端逆风、承保端顺风」的组合期，须以营运利润而非净利润评判经营；同时须警惕「利润表波动常态化」——新准则下权益敞口放大了净利润的季节性噪声。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：寿险用来计算 NBV 的首年保费 1,288.64 亿（−9.1%）；产险原保费 2,652.15 亿（+3.5%，车险 1,660.62 亿持平、新能源车险 +21.2%、非车 991.53 亿 +10.0%）；银行吸收存款 36,923.27 亿（+3.1%）、贷款 34,314.80 亿（+1.2%）。价：NBV 率（首年保费）24.0%（−1.2pp）、（标准保费）28.9%（−1.7pp）；产险 CoR 95.6%（−1.4pp）；银行净息差 1.80%（+1bp）。资产端：保险资金投资组合 6.83 万亿（较年初 +5.2%），非年化净投资收益率 2.5%（−0.3pp）、综合投资收益率 2.3%（−3.1pp）；近 10 年平均净/综合投资收益率 4.8%/4.9%。政策/监管：偿付能力监管规则（II）、银保报行合一、预定利率动态调整、保险新准则（IFRS17/9）；平安寿险核心偿付能力充足率 137.7%、综合 187.6%，均显著高于监管底线（50%/100%）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>保险集团 ROIC 口径不适用（负债为原材料、浮存金杠杆无法按传统投入资本拆分），改用 <b>ROE − COE 与营运 ROE 对照</b>（v2 允许定性/区间）。<b>ROE 侧</b>：非年化加权 ROE 9.4%（年化约 12.5%）、<b>非年化营运 ROE 11.0%（同比持平，年化约 14.7%）</b>——营运口径更能代表主业回报。<b>COE 侧</b>：10Y 国债约 1.7%–1.8%、β 约 1.0（综合金融对权益市场敏感）、ERP 5.5%–6.0% → <b>COE 约 7.2%–7.8%</b>。<b>ROE（营运口径年化 ~14.7%）− COE（~7.5%）≈ +7pp，持续创造价值</b>。<b>反推隐含 COE（v2 银行/保险口径）</b>：隐含 COE ≈ 营运 ROE / PB ＝ 14.7% / 0.92 ≈ <b>16.0%</b>，显著高于估算 COE 7.5%——即<b>市场定价隐含的对平安要求回报率高达约 16%，远超出合理水平，说明破净状态反映的是极度悲观预期而非基本面真实风险</b>。注：保险价值创造核心来自寿险 EV 复利与浮存金杠杆，非传统 ROIC 口径；上述为区间估算、非审计数。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>三口径必须分开看（本期核心）</b>：① 归母净利润 966.45 亿（<b>−27.3%</b>）；② 归母营运利润 1,259.05 亿（<b>+8.3%</b>）；③ 扣非归母 915.87 亿（−35.5%）。<b>利润桥（集团净利润 1,550.67 → 1,185.67，Δ = −365.00 亿元）</b>：营运利润（A）1,382.91 → 1,480.63 亿（<b>+97.72 亿，主业正贡献</b>）；短期投资波动（B）+261.22 → <b>−339.57 亿（−600.79 亿，最大负项）</b>；一次性重大项目（C）−93.47 → +44.62 亿（+138.09 亿，正贡献，主为美元/港元可转债转股权价值重估）。<b>利润表层面佐证</b>：公允价值变动损益 −643.12 亿（上年 +480.27 亿，<b>反向差额约 1,123 亿</b>）是营收 −12.6% 的直接原因（保险服务收入 4,229.44 亿仅 +0.3%、保费现金 7,847.11 亿 +0.1% 均平稳）；部分被承保财务损益改善（−1,549.41 → −919.44 亿，+630 亿）与所得税下降（有效税率 14.3% → 9.6%，少缴 134 亿）对冲。<b>分部增量（归母营运利润口径）</b>：寿险及健康险 787.68 → 824.92 亿（+37.24 亿）、资管 26.54 → 194.23 亿（<b>+167.69 亿，最大增量源</b>）、银行 222.21 → 227.13 亿（+4.92 亿）、其他及抵销 −35.70 → −29.13 亿（+6.57 亿）；<b>负项为产险 150.74 → 46.96 亿（−103.78 亿）与金融赋能 11.16 → −5.06 亿</b>。<b>结论：营运利润 +8.3% 由「资管跃升 + 寿险稳增 + 银行微增」驱动，被产险投资端拖累部分抵消；净利润 −27.3% 则完全由短期投资波动与公允价值变动造成，非经营恶化。</b></p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>「表观下滑、经营为真」，关键在于识别口径</b>。① <b>归母净利润 −27.3%</b> 含权益市场市值波动（公允价值变动 −643.12 亿 + 寿险短期投资波动 −339.57 亿）；② <b>归母营运利润 +8.3%</b> 剔除短期投资波动，并将寿险投资回报率锁定为 4.0% 假设，代表主业真实盈利能力；③ <b>扣非 915.87 亿（−35.5%）低于归母 966.45 亿</b>，非经常性损益 <b>+50.58 亿（占归母 5.2%）</b>，其中「其他符合非经常性损益定义的损益项目」+56.35 亿、捐赠支出 −5.10 亿、政府补助 +0.08 亿。<b>方向判断：非经为正贡献但占比仅 5.2%，不存在「靠非经保利润」；扣非增速低于归母系投资波动计入经常性损益（平安作为综合金融集团，金融资产公允价值变动与投资收益按证监会规定属经常性损益）</b>。反向验证：<b>综合收益总额 1,228.84 亿（−9.4%）远好于净利润 −23.5%</b>——因 FVOCI 债务工具公允价值变动由 −1,007.46 亿转为 <b>+739.16 亿</b>（债市走强），印证「权益浮亏、债券浮盈」的结构，净资产的真实变动远好于利润表。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">六大分部（2026 前三季度，人民币）：<br/>• <b>寿险及健康险</b>：营运利润 872.38 亿（<b>+5.7%</b>）、归母营运利润 824.92 亿（+4.7%）；NBV 309.87 亿（<b>−13.3%</b>）、首年保费 1,288.64 亿（−9.1%）、NBV 率（首年保费）24.0%（−1.2pp）；净利润 532.81 亿（−51.0%，短期投资波动 −339.57 亿）。代理人 32.3 万人、大专及以上占比 51.3%（+2.1pp）；非代理人渠道 NBV 贡献 36.9%（+1.8pp）。<br/>• <b>财产保险</b>：营运利润 47.17 亿（<b>−68.9%</b>）、归母 46.96 亿；原保费 2,652.15 亿（+3.5%）、保险服务收入 2,630.35 亿（+3.8%）、<b>CoR 95.6%（优化 1.4pp，Q3 单季改善约 3.8pp）</b>；<b>承保端改善、利润下滑主因投资端</b>。<br/>• <b>银行（平安银行）</b>：营收 1,031.00 亿（+2.4%）、净利润 391.86 亿（+2.2%）、净息差 1.80%（+1bp）、非息 +6.5%；AUM 43,923.27 亿（较年初 +3.6%）、财富管理手续费 46.80 亿（<b>+17.6%</b>）；不良率 1.05% 持平、拨备覆盖率 214.75%（−6.13pp）、核心一级 9.61%（+0.25pp）。<br/>• <b>资产管理</b>：营运利润 201.20 亿（2025 同期 32.47 亿，<b>+519.6%</b>）、归母营运利润 <b>26.54 → 194.23 亿</b>；管理规模近 9.3 万亿——本期最大增量来源。<br/>• <b>金融赋能</b>：营运利润 −9.98 亿（2025 同期 +13.33 亿）、归母 −5.06 亿，仍处投入期（AI 坐席服务 14.84 亿次、覆盖 82% 客服量）。<br/>• <b>其他业务及合并抵销</b>：归母营运利润 −29.13 亿（2025 同期 −35.70 亿）。<br/><b>增量贡献（v2 修正 H，归母营运利润口径）</b>：集团增量 +96.41 亿中，<b>资管 +167.69 亿（174%）、寿险 +37.24 亿（39%）、银行 +4.92 亿（5%）、其他及抵销 +6.57 亿（7%）</b>；负向为<b>产险 −103.78 亿（−108%）、金融赋能 −16.22 亿（−17%）</b>。<b>结论：资管跃升是本期营运利润增长的第一引擎，产险投资端是唯一显著拖累。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card">资本结构：总资产 144,553.13 亿（较年初 +4.0%）、负债 129,802.43 亿（+4.0%）→ 资产负债率 <b>89.80%</b>（上年末 89.17%，+0.63pp；<b>保险/银行天然高杠杆，负债以保险合同负债 58,573.31 亿（+9.3%）与吸收存款 36,893.64 亿（+2.8%）为主，属经营型负债而非融资性杠杆</b>）。归母净资产 10,443.66 亿（<b>+4.4%</b>）、少数股东权益 4,307.04 亿（+3.6%）。商誉 379.71 亿（−0.4%），占归母净资产 3.6%、为归母净利 0.39 倍，极低。<b>负债端异动</b>：应付债券 6,328.84 亿（<b>−25.9%，−2,207.77 亿</b>，主动压降）、向中央银行借款 1,113.92 亿（<b>−50.2%</b>）、预收保费 78.60 亿（−75.1%）；同期银行同业存放 7,306.26 亿（<b>+38.3%</b>）、拆入资金 1,561.18 亿（+32.0%）、以公允价值计量的金融负债 2,624.84 亿（+18.3%）。<b>资产端异动</b>：其他权益工具投资 7,967.83 亿（<b>+30.7%</b>，OCI 权益底仓大幅扩张）、其他债权投资 36,051.86 亿（+11.6%）、长期应收款 2,844.27 亿（+10.2%）；FVTPL 金融资产 25,706.19 亿（−5.3%）。<b>偿付能力</b>：平安寿险核心 137.7%/综合 187.6%、产险 163.9%/216.9%、养老险 294.2%/409.5%、健康险 238.3%/280.2%，均远超监管底线（50%/100%）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>OCF 净额 5,668.72 亿（+66.7%）</b>，OCF / 归母净利润 ＝ 5,668.72 / 966.45 ≈ <b>5.87×</b>；<b>但保险集团 OCF 不可作为盈利质量指标</b>（含客户存款净吸收、同业往来、卖出回购等银行业务现金流，波动极大且与利润无关），须以<b>保费现金收款与偿付能力</b>验证：收到签发保险合同保费现金 7,847.11 亿（+0.1%，与保险服务收入 +0.3% 匹配）、支付赔款 3,370.71 亿（−0.2%），<b>保险主业现金流入稳健、赔付节奏正常</b>。OCF 大幅增长的构成：客户存款和银行同业存放款项净增加 3,175.02 亿（上年 551.36 亿，<b>+475.9%</b>）、卖出回购资金净增加 671.73 亿（上年为净减少 532.79 亿），部分被向中央银行借款净减少 1,118.99 亿（上年为净增加 258.01 亿）抵消。<b>结论：OCF 大增属银行端负债结构变化，非经营质量改善信号，亦非「利润有真金白银支撑」的证据，解读时须剔除银行业务影响。</b></p>
+      <p><b>OCF 拆解归因：</b>OCF 拆解归因（v2 修正 E，估算）：<b>保险主业</b>保费现金流入 7,847.11 亿（+0.1%）− 赔款支付 3,370.71 亿（−0.2%）− 手续费佣金及利息支付 1,249.25 亿 − 职工薪酬 726.11 亿 − 税费 461.71 亿 ≈ 保险端净流入约 2,039 亿（与上年基本持平）。<b>银行端</b>：客户存款与同业存放净增加 +3,175.02 亿（上年 +551.36 亿）、卖出回购净变动由 −532.79 亿转为 +671.73 亿、向中央银行借款由 +258.01 亿转为 −1,118.99 亿、发放贷款净增加 −1,027.55 亿 —— <b>银行端合计贡献约 +1,700 亿，是 OCF 同比多增 2,267 亿的绝大部分</b>。<b>其他</b>：融资租赁长期应收款净增加 −250.16 亿、为交易目的持有金融资产净增加 −187.38 亿。投资活动净流出 1,791.61 亿（上年 4,468.46 亿，收窄 60%）；筹资活动由净流入 1,305.14 亿转为净流出 4,280.26 亿（应付债券压降、卖出回购净偿还 1,346.78 亿）；现金及等价物净减少 446.81 亿至期末 6,055.43 亿。<b>注：季报未披露现金流量表补充资料（折旧摊销/营运资金明细），上述拆分为按报表科目直接归类估算，非审计数。</b></p>
+      <p><b>自由现金流与覆盖能力：</b>保险集团<b>不适用传统 FCF 口径</b>（投资支付现金 32,347.11 亿属资产配置而非资本开支），替代为「<b>资本内生能力 + 分红覆盖 + 科技投入</b>」三维度：① <b>资本内生</b>：归母净资产较年初 +4.4%（10,004.19 → 10,443.66 亿），在支付 2025 年末期股息后仍实现内生增长，资本未被侵蚀；偿付能力四家子公司核心充足率 137.7%–294.2%，资本缓冲厚。② <b>分红覆盖</b>：2025 全年现金分红 488.91 亿（每股 2.70 元），基于归母营运利润的分红比例 36.4%；以本期年化营运利润约 1,679 亿测算，分红覆盖倍数充足，非借钱分红。③ <b>科技投入</b>：前三季度购建固定资产等仅 52.43 亿（+8.8%），资本开支极低；投入主要在费用端（AI in ALL，日均 Token 消耗超 3,300 亿、较 2025 年 12 月增长超 10 倍）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>A 股 601318（<b>2026-10-29 收 ¥52.89，+1.1%</b>；10-28 收 52.31 元）：<b>PE(TTM) 约 9.61×、PE(动) 7.35×、PB 约 0.92×（每股净资产 56.78 元，已破净）、股息(TTM) 2.73 元、股息率 TTM 5.22%</b>；总市值约 9,472 亿元。52 周区间 ¥46.08–71.19，现价处区间下沿。<b>H 股 02318 收 HK$49.88（+3.1%）</b>，10-29 盘中曾创 52 周新低 HK$47.68；A 股对 H 股溢价约 23.8%。券商口径（2026-10-29）：<b>中金 A/H 对应 0.6×/0.5× 26e P/EV，维持跑赢行业、目标价 89.8 元 / 99.4 港元（对应 1.0× 26e P/EV）</b>；花旗维持买入、目标价 83 港元；大摩维持增持、目标价 85 港元。<b>中金测算 A/H 全年股息率 5.6%/7.0%</b>。相对自身历史：PB 0.92×、PEV 0.6× 均处历史低位区间。</p>
+      <p><b>周期正常化估值：</b>保险<b>非强周期</b>，但新准则下净利润受权益市场波动放大（本期 Q3 归母 −93.7% 即为例证），故<b>禁止用单期 PE 判贵贱</b>，应以<b>营运利润正常化 + PEV/PB</b> 估值（v2 修正 F）。<b>情景锚（以全年归母营运利润与 NBV 为核心变量）</b>：<br/>• <b>悲观</b>：Q4 权益市场继续回调、NBV 全年 −15%，全年归母营运利润约 1,640 亿（+2%）、归母净利约 1,150 亿 → PE(TTM) 约 8.2×、PB 约 0.90×、股息率维持 5.2%；<br/>• <b>中性</b>：Q4 市场企稳、NBV 降幅收窄至 −8%（中金判断 Q4 低基数下全年好于 9M），全年归母营运利润约 1,700 亿（+6%）、归母净利约 1,300 亿 → PE(TTM) 约 7.3×、PB 约 0.93×；<br/>• <b>乐观</b>：权益回暖 + NBV 2027 恢复双位数增长（管理层指引），全年归母营运利润约 1,750 亿（+9%）→ PEV 修复至 0.8×，对应股价约 70 元。<br/><b>正常化：以营运利润年化约 1,679 亿（1,259.05 ÷ 3 × 4）为锚，正常化 PE ≈ 9,472 / 1,679 ≈ 5.6×</b>，处历史极低水平。<b>结论：当前 PB 0.92× 破净、PEV 0.6×，市场定价隐含 COE 高达约 16%（远高于估算 COE 7.5%），已充分反映投资端与 NBV 压力；安全边际应归因于破净、稳定派息机制（营运利润 36.4% 分红比例）与承保端改善，而非盈利增长。关键变量是权益市场走向与 2027 年 NBV 能否恢复正增长。</b></p>
+      <p><b>股东回报可持续性：</b><b>派息机制稳定、可持续</b>：2025 全年股息每股 2.70 元（+5.9%，末期 1.75 元）、现金分红总额 488.91 亿，<b>连续 14 年上涨</b>；基于归母营运利润的分红比例为 <b>36.4%</b>（平安已建立「以营运利润为基础」的稳定分红机制，使派息不受投资端波动扰动）。2026 年 A/H 对应全年股息率约 <b>5.6% / 7.0%</b>（中金测算）；大摩预计全年每股派息可实现<b>中单位数增长</b>。可持续性：归母营运利润 1,259.05 亿（+8.3%）为派息提供稳定基础，偿付能力充足率远超监管底线，非借钱分红。<b>本期三季报未披露中期/三季度分红方案</b>（平安惯例为中期 + 末期两次派息，末期股息随年报披露）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">管理层展望（三季报 §3.5）：外部环境变化影响加深，短期内国内经济仍面临一定挑战，但长期看高质量发展大势未变；公司将坚持深化「<b>综合金融 + 医疗养老</b>」双轮并行、科技驱动战略，践行「高值增长、服务创新、科技引领、守法合规」经营方针，持续优化结构、夯实增长动力。<b>可跟踪的前瞻要点</b>：① 管理层对 2027 年业务展望保持乐观，认为<b>中期实现 NBV 双位数增长仍有望达成</b>（花旗/大摩转述）；② 管理层表示目前资产负债匹配良好，各项投资指标满足资负新规要求，<b>未来 3–5 年净投资收益均有望覆盖负债保证成本</b>（中金转述）；③ 银保渠道严格落实报行合一、聚焦可持续价值经营；④ 寿险主动优化交期结构、推进长交期产品转型（代理人渠道长交期占比已提升超 10pp）；⑤ 科技侧「AI in ALL」：2026 年 9 月日均 Token 消耗超 3,300 亿（较 2025 年 12 月增长超 10 倍）、单位算力 Token 产出 +509%、单位 Token 成本 −81%。<b>风险敏感（非承诺）：权益市场波动、长端利率下行、NBV 恢复节奏、自然灾害（财险赔付）、监管政策变化。以上为前瞻性陈述，存在不确定性。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">上市险企 2026 三季报横向（同业三季报陆续披露，以已披露数据 + 券商口径比较）：<br/>• <b>中国平安（601318.SH）</b>：前三季度归母 966.45 亿（−27.3%）、归母营运利润 1,259.05 亿（<b>+8.3%</b>）、NBV −13.3%、产险 CoR 95.6%（−1.4pp）；PB 0.92×、PEV 0.6×、股息率 5.22%/5.6%。<b>Q3 单季 GAAP 盈利 −94% 但仍优于多数同业录得净亏损</b>（大摩），因业务组合多元（资管 + 银行对冲）。<br/>• <b>中国太保（601601.SH）</b>：Q3 单季归母 56.28 亿（<b>同比 −68.40%</b>）、营收 794.28 亿；前三季度亦受投资端拖累，纯保险业务组合下波动更剧烈。<br/>• <b>中国人寿（02628.HK / 601628.SH）</b>：纯寿险、权益敞口弹性最大，Q1 归母同比 −32.28%，全年 NBV 与利润对权益市场高度敏感。<br/><b>结论</b>：平安在本轮权益回调中<b>表观降幅小于纯保险同业</b>，核心原因是「资管 + 银行」分部贡献（资管归母营运利润由 26.54 亿升至 194.23 亿、银行净利 +2.2%）形成对冲；<b>这是综合金融模式在本季度的实质性验证，而非会计巧合</b>。估值端平安 PB 0.92×、PEV 0.6× 处同业与自身历史低位，破净提供资产安全边际；代价是 NBV 增速（−13.3%）弱于部分同业，负债端动能仍需观察。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">低风险</span>商誉 <b>379.71 亿元</b>（上年末 381.30 亿元，−0.4%，主要为汇率折算与小幅调整），来自历史并购（平安银行整合、汽车之家等）。<b>占归母净资产 10,443.66 亿元的 3.6%、为归母净利润的 0.39 倍</b>，远低于「占净资产 30% 或超年利润 5 倍」阈值，无减值迹象，安全垫极厚。</div></div>
+      <div class="rf"><div class="k">研发资本化（保险集团不适用）</div><div class="v"><span class="verdict flat">低风险</span>无形资产 <b>209.17 亿元</b>（上年末 221.96 亿元，−5.8%），<b>资产负债表无「开发支出」科目</b>——保险集团科技投入（AI in ALL、医疗大模型、快捷服务）全额费用化，计入业务及管理费（597.48 亿，−0.5%），<b>无资本化注水空间</b>。资本开支极低（购建固定资产等仅 52.43 亿元），投入以费用化为主，会计处理审慎。</div></div>
+      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span>信用减值损失 <b>554.21 亿元</b>（上年 421.82 亿元，<b>+31.4%</b>），主要为银行信贷与债权资产计提；其他资产减值损失 17.04 亿元（上年 3.82 亿元，<b>+346%</b>）。合计 571.25 亿元，占归母净利润 59%，<b>但保险/银行业减值计提属常规经营项、并非一次性「洗大澡」</b>；结合银行不良率 1.05% 持平、拨备覆盖率 214.75%（−6.13pp）看，计提力度上升反映<b>风险抵御缓冲的主动增厚而非资产质量急剧恶化</b>。需在年报核实减值对象构成（信贷/债权/不动产）。</div></div>
+      <div class="rf"><div class="k">债务结构与偿付能力</div><div class="v"><span class="verdict amber">关注</span>资产负债率 <b>89.80%</b>（上年末 89.17%，+0.63pp）——<b>保险/银行天然高杠杆</b>，负债以保险合同负债 58,573.31 亿（+9.3%）与吸收存款 36,893.64 亿（+2.8%）为主，属经营型负债而非融资性杠杆。负债端异动：应付债券 6,328.84 亿（<b>−25.9%，−2,207.77 亿</b>，主动压降为正面）、向中央银行借款 −50.2%、预收保费 −75.1%；同期银行同业存放 +38.3%、拆入资金 +32.0%、以公允价值计量的金融负债 +18.3%。<b>偿付能力充裕</b>：平安寿险核心 137.7%/综合 187.6%、产险 163.9%/216.9%、养老险 294.2%/409.5%、健康险 238.3%/280.2%，均远超监管底线（50%/100%）。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>季报按法定惯例<b>未经审计</b>，无审计意见；报表由董事长马明哲、首席财务官付欣及副首席财务执行官李佩锋共同保证真实、准确、完整。<b>报告第 2.2 节明确：按中国会计准则编制的净利润与股东权益，与按国际财务报告准则编制的并无差异</b>，不存在准则口径背离（区别于煤炭专项基金导致的巨大差异）。</div></div>
+      <div class="rf"><div class="k">关联交易与子公司并表</div><div class="v"><span class="verdict flat">低风险</span>长期股权投资 1,323.12 亿元（−6.3%）、其他资产 1,753.83 亿元（+1.9%）、长期应收款 2,844.27 亿元（+10.2%，主要为融资租赁业务，属正常经营性增长）。<b>少数股东权益 4,307.04 亿元（+3.6%）</b>，主要来自平安银行（集团持股约 58%）等子公司，结构透明、历年稳定；本期少数股东损益 219.22 亿元（−1.3%）占比稳定。<b>担保方面：对外担保余额为 0，对子公司担保余额 148.94 亿元（占净资产仅 1.4%）</b>，无异常关联资金占用迹象。</div></div>
+      <div class="rf"><div class="k">营收质量（保险口径）</div><div class="v"><span class="verdict flat">低风险</span><b>保险集团无传统应收周转概念，改用「保费现金回款 + 保险服务收入匹配度」验证</b>：保险服务收入 4,229.44 亿元（+0.3%）、收到签发保险合同保费现金 7,847.11 亿元（+0.1%），<b>两者高度匹配，保费现金回款扎实</b>；应收账款 486.65 亿元（年初 436.78 亿元，+11.4%，规模相对总资产 14.46 万亿可忽略）。营收 −12.6% 的主因是公允价值变动损益 −643.12 亿元（非收入质量问题），<b>剔除后保险主业收入端平稳，无营收质量红旗</b>。</div></div><div class="rf"><div class="k">存货 → 投资性房地产与不动产敞口</div><div class="v"><span class="verdict amber">关注</span>保险集团无存货科目。对应关注<b>不动产相关敞口</b>：投资性房地产 1,486.41 亿元（−1.8%）；保险资金投资组合中<b>不动产投资余额 2,048.27 亿元，占总投资资产 3.0%</b>（物权投资占 83.9%，以成本法计量，投向商业办公、物流地产、产业园、长租公寓等收租型物业以匹配负债久期；债权投资 5.9%、其他股权投资 10.2%）。<b>占比低、以成本法计量、租金/分红现金流稳定，不构成重大减值风险</b>，但需跟踪商业地产景气度与估值假设。</div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">低风险</span>前三季度非经常性损益合计 <b>+50.58 亿元（占归母 5.2%）</b>：其他符合非经常性损益定义的损益项目 +56.35 亿、捐赠支出 −5.10 亿、政府补助 +0.08 亿、所得税影响 −0.52 亿、少数股东承担 −0.23 亿。<b>归母 966.45 亿 &gt; 扣非 915.87 亿，非经为正贡献但占比仅 5.2%，不存在「靠非经保利润」</b>。特别说明：<b>平安作为综合性金融集团，投资业务属主营业务之一，持有或处置金融资产及股权投资产生的公允价值变动损益或投资收益均列为经常性损益</b>（证监会公告〔2023〕65 号），故投资波动不进非经、而直接体现在扣非口径内。</div></div>
+      <div class="rf"><div class="k">现金流背离（保险口径须重定义）</div><div class="v"><span class="verdict flat">—</span>OCF 5,668.72 亿元 / 归母净利润 966.45 亿元 ＝ <b>5.87×</b>，OCF 同比 +66.7% 而净利 −27.3%，<b>表面方向背离，但保险集团 OCF 不可作为盈利质量指标</b>（含客户存款净吸收、同业往来、卖出回购等银行业务现金流，波动极大且与利润无关）。构成拆解：客户存款与同业存放净增加 3,175.02 亿（上年 551.36 亿）、卖出回购由净减少 532.79 亿转为净增加 671.73 亿，被向中央银行借款由净增加 258.01 亿转为净减少 1,118.99 亿部分抵消。<b>改用保险专属指标验证：保费现金 7,847.11 亿（+0.1%）与保险服务收入（+0.3%）匹配、赔款支付 3,370.71 亿（−0.2%）节奏正常、偿付能力四家子公司核心充足率 137.7%–294.2% → 保险主业现金流健康，无背离信号。</b></div></div>
+      <div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span>保险收入按 <b>IFRS17 / 新保险合同准则</b>以保险服务收入确认（履约义务随保险期间逐期释放），<b>不存在渠道压货、完工百分比法或提前确认空间</b>；银行利息收入按实际利率法、手续费按服务完成时点确认。交叉验证：保险服务收入 +0.3% 与原保费 +3.5%、保费现金 +0.1% 相互印证；银行业务利息净收入 +0.7% 与净息差 1.80%（+1bp）、存贷款规模增长匹配。<b>无收入确认激进迹象。</b></div></div>
+      <div class="rf"><div class="k">表外/担保/或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span><b>对外担保余额为 0</b>；对子公司担保余额 148.94 亿元，<b>占净资产 1.4%</b>，其中为资产负债率超 70% 的被担保对象提供 36.11 亿元；无超过净资产 50% 部分的担保金额，无明股实债迹象。<b>最大「或有负债」为保险合同负债 58,573.31 亿元（+9.3%，行业特有，即保单未来给付义务）</b>，由 6.83 万亿投资组合对应匹配。衍生金融负债 334.21 亿元（−28.7%，套保规模收缩）。<b>外币折算：其他综合收益中外币财务报表折算差额 −25.01 亿元</b>，汇兑损益 −2.89 亿元；公司持有 35 亿美元 2029 到期可转债与 117.65 亿港元 2030 到期可转债（均未转股），存在转股摊薄与汇率敞口，需跟踪。</div></div>
+      <div class="rf"><div class="k">寿险新业务价值与价值率（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span><b>NBV 309.87 亿元（−13.3%）、Q3 单季同比 −54%</b>；用来计算 NBV 的首年保费 1,288.64 亿元（<b>−9.1%</b>）、NBV 率（首年保费）24.0%（−1.2pp）、（标准保费）28.9%（−1.7pp）。成因三重：① <b>2025 年三季度预定利率下调带来的销售端高基数</b>；② <b>银保渠道「报行合一」监管调整</b>压缩费用与产品结构；③ 公司<b>主动优化交期结构</b>（代理人渠道长交期占比提升超 10pp）+ 假设调整。<b>这是本期最实质的经营红旗</b>——NBV 是寿险内含价值增长的唯一源头，连续下滑将压制 EV 复利与 PEV 估值修复；积极面是渠道多元化（非代理人渠道贡献 36.9%，+1.8pp）与队伍质态改善（大专及以上占比 51.3%，+2.1pp）。<b>须紧盯 Q4 低基数下的全年降幅收窄与 2027 年双位数增长指引的兑现。</b></div></div>
+      <div class="rf"><div class="k">投资端波动与低利率（行业特有·红旗）</div><div class="v"><span class="verdict down">红旗</span><b>公允价值变动损益 −643.12 亿元（上年 +480.27 亿元，反向差额约 1,123 亿元）</b>是归母 −27.3% 与营收 −12.6% 的直接主因；寿险短期投资波动 −339.57 亿元（上年 +261.22 亿元）。收益率：非年化净投资收益率 <b>2.5%（−0.3pp）</b>、综合投资收益率 <b>2.3%（−3.1pp）</b>。<b>敞口变化</b>：其他权益工具投资（OCI 权益底仓）7,967.83 亿元（<b>+30.7%</b>），权益敞口显著扩大；FVOCI 债务工具公允价值变动 +739.16 亿元（上年 −1,007.46 亿元）形成对冲，故<b>综合收益总额仅 −9.4%，远好于净利润 −23.5%</b>。<b>风险本质</b>：新准则下权益资产以公允价值计量且变动进损益，表观利润波动被制度性放大；叠加低利率压制净投资收益率与 EV 4.0% 长期回报假设的可实现性。<b>须以营运利润而非净利润评估经营，并跟踪权益市场走向与资产负债久期匹配。</b></div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li>营运利润稳健增长，主业底盘扎实：归母营运利润 1,259.05 亿（<b>+8.3%</b>）、基本每股营运收益 7.23 元（+9.2%）、非年化营运 ROE 11.0% 持平；Q3 单季税后营运利润 417 亿（+8.3%）</li><li>财险承保超预期：综合成本率 <b>95.6%（优化 1.4pp）</b>，Q3 单季改善约 3.8–3.9pp；在大灾多于去年同期下仍改善，新能源车险保费 +21.2% 且保持承保盈利</li><li>资管与银行双轮贡献：资管分部归母营运利润 26.54 亿 → <b>194.23 亿</b>；平安银行营收 1,031.00 亿（+2.4%）、净利 391.86 亿（+2.2%）、净息差 1.80%（+1bp）、不良率 1.05% 持平、核心一级资本充足率 9.61%（+0.25pp）</li><li>渠道与客群结构优化：非代理人渠道 NBV 贡献占比 36.9%（<b>+1.8pp</b>）、代理人渠道新业务长交期占比提升超 10pp、个险大专及以上人力占比 51.3%（+2.1pp）；个人客户 2.56 亿（+1.9%）、价值客户 4,151 万（+3.1%）</li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li>投资端高度敏感：公允价值变动损益 −643.12 亿（上年 +480.27 亿），寿险短期投资波动 −339.57 亿；非年化综合投资收益率 2.3%（<b>−3.1pp</b>）、净投资收益率 2.5%（−0.3pp），权益市场波动直接决定表观利润</li><li>寿险新业务价值下滑：NBV 309.87 亿（<b>−13.3%</b>）、Q3 单季同比 <b>−54%</b>；用来计算 NBV 的首年保费 −9.1%、NBV 率（首年保费）24.0%（−1.2pp），负债端动能转弱</li><li>产险营运利润大幅下滑：47.17 亿（<b>−68.9%</b>），虽承保端改善但投资端拖累显著；信用减值损失 554.21 亿（<b>+31.4%</b>）、其他资产减值 17.04 亿（+346%）计提加大</li><li>低利率与资产负债匹配：10 年期国债处历史低位，净投资收益率下行压制 EV 假设（长期投资回报 4.0%）；其他权益工具投资 7,967.83 亿（<b>+30.7%</b>）加大权益敞口</li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li>寿险 NBV 拐点：9M26 NBV 309.87 亿（−13.3%）、Q3 单季 −54%，跟踪 Q4 低基数下全年降幅能否收窄，以及 2027 年双位数增长指引的兑现</li><li>投资端与公允价值：公允价值变动损益 −643.12 亿、寿险短期投资波动 −339.57 亿，跟踪四季度权益市场走向与综合投资收益率（2.3%）修复</li><li>产险利润与承保背离：营运利润 47.17 亿（−68.9%）而 CoR 优化 1.4pp，跟踪投资端拖累是否缓解、大灾赔付与新能源车险承保盈利</li><li>资管分部高增可持续性：归母营运利润 26.54 → 194.23 亿（+631.8%），跟踪其收益来源是否可重复（是否为一次性投资收益）</li><li>银行资产质量：不良率 1.05% 持平但拨备覆盖率 214.75%（−6.13pp）、信用减值损失 554.21 亿（+31.4%），跟踪零售与对公资产质量迁徙</li><li>OCI 权益敞口：其他权益工具投资 7,967.83 亿（+30.7%），跟踪高股息底仓的市值波动与 FVOCI 债务工具公允价值变动（+739.16 亿）方向</li><li>分红与资本：全年每股派息（2025 为 2.70 元）与末期股息方案，跟踪营运利润 36.4% 分红比例是否维持</li></ol></div>
+  </div>
+
+
+  <div class="foot">
+    <b>数据来源：</b>中国平安保险（集团）股份有限公司《2026 年第三季度报告》（2026-10-28 董事会审议通过、2026-10-29 披露，<b>未经审计</b>；雪球 PDF：stockmc.xueqiu.com/202610/601318_20261029_0BZZ.pdf），按<b>中国企业会计准则（CAS）</b>编制。<b>口径说明（重要）：① 报告第 2.2 节明确「按中国会计准则编制的合并财务报表中列示的净利润以及股东权益，与按国际财务报告准则编制的并无差异」，故不存在煤炭/石油类公司的准则背离问题。② 营运利润为非会计准则指标，剔除短期投资波动（寿险及健康险业务按 4.0% 长期投资回报假设锁定）与管理层认为不属于日常营运收支的一次性重大项目（本期 +44.62 亿元，主为美元/港元可转债转股权价值重估；上年同期 −93.47 亿元）。③ 平安作为综合金融集团，持有或处置金融资产及股权投资产生的公允价值变动损益或投资收益均属经常性损益（证监会公告〔2023〕65 号）。④ 「前三季度」为 1–9 月累计，「Q3 单季」为 7–9 月；分部数据为归母口径与含少数股东口径并存，文中已标注。⑤ 保险集团 OCF 含客户存款净吸收与同业往来，不可作盈利质量指标。</b>行情与估值取自 2026-10-28/29（雪球、东方财富、etnet、香港商报）；券商观点引自中金公司（2026-10-29）、花旗、摩根士丹利。声明：基于公开数据量化分析，仅供参考，不构成投资建议。<br/>
+  </div>
+
+</div>
+</body>
+</html>

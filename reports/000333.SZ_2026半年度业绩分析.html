@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>美的集团 2026 半年度 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">美的集团</div>
+      <div class="meta">
+        <span>000333.SZ</span><span>家用电器（白电）</span><span>深交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 半年度</div>
+      <div class="pdate">披露日期：2026-08-29</div>
+      <div class="badge flat">中性 · H1 营收净利双增但扣非受汇兑+商誉减值拖累，主业平稳、减值信号需警惕</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性（H1 营收 +3.55%、归母 +1.66% 双增，但扣非 −25.31% 系汇兑损失与商誉减值所致、非主业整体恶化）</span>
+      <p class="oneliner">美的集团 2026 年上半年呈<b>「归母 +1.66% 与扣非 −25.31% 深度背离」</b>的表象：营业收入 <b>2,600.42 亿元（+3.55%）</b>、归母净利润 <b>264.46 亿元（+1.66%）</b>、<b>扣非归母 195.95 亿元（−25.31%）</b>、基本 EPS 3.52 元（+3.23%）、加权 ROE 11.33%（+0.04pp）、经营现金流净额 <b>375.52 亿元（+0.73%）</b>。<b>核心矛盾（与一季报/三季报同源，但幅度放大且出现新变量）</b>：归母与扣非的剪刀差<b>由两股力量造成</b>——① <b>汇率套期会计错配</b>：H1 人民币升值加剧，外币货币性项目汇兑损失计入「经常性损益」（财务费用由净收益 +59.88 亿转为净支出 −32.73 亿，变动 <b>−92.61 亿</b>），而衍生金融工具处置收益（投资收益 +30.40 亿、+370.70%）计入「非经常性损益」；② <b>商誉减值 10.96 亿元（上年同期为零）</b>，主要系库卡等海外资产组，这是 Q1 未出现的新减值信号。此外<b>权益工具投资公允价值变动浮盈 +49.97 亿（+464.83%）</b>亦计入非经常性损益，推高归母。三者叠加使非经常性损益 <b>68.51 亿元（占归母 25.91%）</b>。<b>真实主业温度看「对冲后」口径</b>：<b>营业利润 316.84 亿元（+1.39%）微增</b>、毛利率 25.26%（−0.36pp）、净利率 10.22%（−0.39pp），叠加<b>第二曲线（楼宇科技 +10.84%、机器人与自动化 +10.27%）</b>，主业平稳。<b>积极信号</b>：① 营收净利<b>连续 6 个半年度双增长</b>；② B 端第二曲线双位数增长；③ 经营现金流净现比 <b>142%</b>、含金量高；④ 回购 69 亿 + 中期分红预案每 10 股派 5 元。<b>需警惕</b>：① 汇兑损失（人民币升值）拖累扣非；② <b>商誉减值 10.96 亿（库卡等，Q1 无）</b>；③ <b>应收账款 +53.16% 远超营收 +3.55%</b>；④ 少数股东损益 −78.41%；⑤ 权益工具浮盈 +49.97 亿的非持续性。估值（2026-08-28）：收 86.23 元、总市值约 6,565 亿元，<b>PE(TTM) 14.82×、PB(LF) 3.09×、股息率 TTM 4.88%</b>。核心结论：<b>美的 H1 主业平稳、营收净利连续双增，但扣非 −25.31% 反映「汇兑损失 + 商誉减值」两大真实拖累，归母靠权益工具浮盈 +49.97 亿与衍生工具处置收益支撑；须盯紧汇兑对冲有效性、库卡减值趋势与应收账款回款三件事。</b></p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li><b>H1 营收净利连续 6 个半年度双增长</b>：营业收入 2,600.42 亿元（+3.55%）、归母净利润 264.46 亿元（+1.66%），在「以旧换新补贴效应递减 + 高基数 + 铜价上涨 + 人民币升值」的多重压力下仍实现双增；<b>营业利润 316.84 亿元（+1.39%）微增，说明核心经营无恶化</b>——扣非 −25.31% 主因是汇兑损失 + 商誉减值，而非主业整体下滑</li><li><b>第二曲线成增长引擎，B 端双位数增长</b>：分业务板块营业收入中，<b>楼宇科技 216.25 亿元（+10.84%）、机器人与自动化 166.21 亿元（+10.27%）</b>双位数增长，对冲工业技术 131.38 亿元（−12.72%）的下滑；库卡中国国内市场销量份额达 9.7%、升至行业前二，300kg 以上负载机器人国内份额突破 50%</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li><b>归母/扣非深度剪刀差（口径 + 减值风险）</b>：归母 +1.66% 与扣非 −25.31% 背离，主因<b>汇兑损失（计经常）+ 商誉减值 10.96 亿 + 权益工具浮盈（计非经常）</b>——H1 财务费用由净收益 59.88 亿转为净支出 32.73 亿（变动 −92.61 亿），而非经常性损益 68.51 亿元（占归母 25.91%）。若人民币升值趋势延续，汇兑损失将持续侵蚀扣非</li><li><b>商誉减值（Q1 无、H1 新出现，第一新增风险）</b>：H1 资产减值损失 <b>16.53 亿元（+351.18%）</b>，其中<b>商誉减值损失 10.96 亿元（上年同期为零）</b>、存货跌价 4.42 亿元、长期股权投资减值 0.66 亿元；主要系库卡等海外资产组减值测试触发，须在年报持续核实减值测试假设与库卡经营</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">近 4 年半年度营业收入（亿元）</text><rect x="96.0" y="101.7" width="78.0" height="96.3" rx="3" fill="#13406b"/><text x="135.0" y="96.7" font-size="10.5" fill="#1f2733" text-anchor="middle">1969.9</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023H1</text><rect x="246.0" y="91.8" width="78.0" height="106.2" rx="3" fill="#13406b"/><text x="285.0" y="86.8" font-size="10.5" fill="#1f2733" text-anchor="middle">2172.7</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024H1</text><rect x="396.0" y="75.2" width="78.0" height="122.8" rx="3" fill="#13406b"/><text x="435.0" y="70.2" font-size="10.5" fill="#1f2733" text-anchor="middle">2511.2</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025H1</text><rect x="546.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#c0392b"/><text x="585.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">2600.4</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026H1</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">近 4 年半年度归母净利润（亿元）</text><rect x="96.0" y="110.4" width="78.0" height="87.6" rx="3" fill="#13406b"/><text x="135.0" y="105.4" font-size="10.5" fill="#1f2733" text-anchor="middle">182.3</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023H1</text><rect x="246.0" y="98.0" width="78.0" height="100.0" rx="3" fill="#13406b"/><text x="285.0" y="93.0" font-size="10.5" fill="#1f2733" text-anchor="middle">208.0</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024H1</text><rect x="396.0" y="73.0" width="78.0" height="125.0" rx="3" fill="#13406b"/><text x="435.0" y="68.0" font-size="10.5" fill="#1f2733" text-anchor="middle">260.1</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025H1</text><rect x="546.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#c0392b"/><text x="585.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">264.5</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026H1</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 半年度同比增速（%）</text><line x1="60" y1="54.7" x2="660" y2="54.7" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="57.7" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="48.0" width="50.0" height="6.7" rx="3" fill="#c0392b"/><text x="110.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+3.55%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营业收入</text><rect x="185.0" y="51.6" width="50.0" height="3.1" rx="3" fill="#c0392b"/><text x="210.0" y="45.6" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+1.66%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母净利</text><rect x="285.0" y="54.7" width="50.0" height="47.6" rx="3" fill="#1f8a4c"/><text x="310.0" y="115.2" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-25.31%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">扣非归母</text><rect x="385.0" y="48.6" width="50.0" height="6.1" rx="3" fill="#c0392b"/><text x="410.0" y="42.6" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+3.23%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">基本EPS</text><rect x="485.0" y="53.3" width="50.0" height="1.4" rx="3" fill="#c0392b"/><text x="510.0" y="47.3" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+0.73%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">经营现金流</text><rect x="585.0" y="54.7" width="50.0" height="147.3" rx="3" fill="#1f8a4c"/><text x="610.0" y="215.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-78.41%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">少数股东损益</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+<div class="mcard"><div class="lab">营业收入</div><div class="val">2,600.42亿</div><div class="delta up">+3.55%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">264.46亿</div><div class="delta up">+1.66%</div></div>
+      <div class="mcard"><div class="lab">扣非归母净利</div><div class="val">195.95亿</div><div class="delta down">-25.31%</div></div>
+      <div class="mcard"><div class="lab">营业利润</div><div class="val">316.84亿</div><div class="delta up">+1.39%</div></div>
+      <div class="mcard"><div class="lab">基本EPS</div><div class="val">3.52元</div><div class="delta up">+3.23%</div></div>
+      <div class="mcard"><div class="lab">加权ROE</div><div class="val">11.33%</div><div class="delta up">+0.04pp</div></div>
+      <div class="mcard"><div class="lab">综合毛利率</div><div class="val">25.26%</div><div class="delta down">-0.36pp</div></div>
+      <div class="mcard"><div class="lab">经营现金流净额</div><div class="val">375.52亿</div><div class="delta up">+0.73%</div></div>
+      <div class="mcard"><div class="lab">非经常性损益</div><div class="val">68.51亿</div><div class="delta down">占归母25.91%</div></div>
+      <div class="mcard"><div class="lab">资产负债率</div><div class="val">64.90%</div><div class="delta down">+3.73pp</div></div>
+      <div class="mcard"><div class="lab">应收账款</div><div class="val">619.55亿</div><div class="delta down">+53.16%</div></div>
+      <div class="mcard"><div class="lab">PE/PB/股息率</div><div class="val">14.82x/3.09x</div><div class="delta flat">4.88%</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+<tr><td>营业收入(亿元)</td><td class="num">2,600.42</td><td class="num">2,511.24</td><td class="num up">+3.55%</td></tr>
+        <tr><td>营业成本(亿元)</td><td class="num">1,943.67</td><td class="num">1,867.86</td><td class="num down">+4.06%</td></tr>
+        <tr><td>毛利率(%)</td><td class="num">25.26</td><td class="num">25.62</td><td class="num down">-0.36pp</td></tr>
+        <tr><td>归母净利润(亿元)</td><td class="num">264.46</td><td class="num">260.14</td><td class="num up">+1.66%</td></tr>
+        <tr><td>扣非归母净利(亿元)</td><td class="num">195.95</td><td class="num">262.35</td><td class="num down">-25.31%</td></tr>
+        <tr><td>基本EPS(元)</td><td class="num">3.52</td><td class="num">3.41</td><td class="num up">+3.23%</td></tr>
+        <tr><td>加权ROE(%)</td><td class="num">11.33</td><td class="num">11.29</td><td class="num up">+0.04pp</td></tr>
+        <tr><td>经营现金流净额(亿元)</td><td class="num">375.52</td><td class="num">372.81</td><td class="num up">+0.73%</td></tr>
+        <tr><td>期末现金等价物(亿元)</td><td class="num">746.14</td><td class="num">816.66</td><td class="num down">-8.64%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+<tr><td>H1营收</td><td class="num">2,600.42亿(+3.55%)</td><td class="num">行业下行中稳健微增</td><td class="num up">超行业</td><td class="num up">略超预期</td></tr>
+        <tr><td>H1归母</td><td class="num">264.46亿(+1.66%)</td><td class="num">TTM中枢约443亿</td><td class="num flat">进度59.7%</td><td class="num flat">符合预期</td></tr>
+        <tr><td>H1扣非</td><td class="num">195.95亿(-25.31%)</td><td class="num">汇兑损失+商誉减值</td><td class="num down">口径+减值</td><td class="num down">需辨口径</td></tr>
+        <tr><td>H1营业利润</td><td class="num">316.84亿(+1.39%)</td><td class="num">主业平稳</td><td class="num flat">基本持平</td><td class="num flat">符合预期</td></tr>
+        <tr><td>B端增长</td><td class="num">楼宇+10.84%/机器人+10.27%</td><td class="num">第二曲线双位数增长</td><td class="num up">工业技术-12.72%拖累</td><td class="num up">超预期</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：预期差判断（2026-08-29 半年报发布，<b>无统一的券商一致预期数字，故按模型 v2 修正 B 采用 TTM 进度校验，不冒充预期差</b>）：① <b>营收/归母双增长超行业</b>：H1 营收 +3.55%、归母 +1.66%，在行业景气回落下实现双增，<b>显著强于格力（H1 营收与净利双降），属「行业性下行中的相对强者」</b>；② <b>进度校验</b>：H1 归母 264.46 亿元 ÷ TTM 归母约 443 亿元 ≈ 59.7%，符合白电「H1 约占全年 55–60%」的历史中枢；③ <b>口径提示（核心预期差）</b>：市场对「扣非 −25.31%」的解读存在分歧——<b>谨慎者视为主业下滑，本报告认为正确口径是「对冲后 + 剥离权益浮盈」看主业（营业利润 +1.39% 微增、营收 +3.55%），即「真实经营平稳、表观扣非被汇兑损失 + 商誉减值压低」</b>；④ <b>商誉减值超预期（新变量）</b>：H1 商誉减值 10.96 亿是市场未充分预期的减值信号，是本期最大「预期差」所在。<b>综合判定：「H1 业绩符合稳健增长预期、但扣非口径差异 + 商誉减值构成解读分歧；B 端双位数增长是超预期项」——市场焦点在全年汇率走势、库卡减值趋势与 B 端增速的持续性。</b></p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>白电行业 2026 年上半年处于<b>「内需疲弱 + 铜价高企 + 人民币升值 + 地缘贸易扰动」的多重挤压期</b>，但美的通过「多元化 + 全球化 + B 端第二曲线」实现了对单一品类周期的显著对冲。核心变量：① <b>需求（量）</b>——「以旧换新」补贴效应递减 + 高基数使国内家电需求显著承压，但美的以全品类 + 出口（占比约 43%）对冲，H1 营收仍 +3.55%；② <b>成本（价）</b>——铜、塑料等原材料价格上涨，但美的毛利率仅 −0.36pp 至 25.26%，得益于 B 端高毛利 + 结构升级；③ <b>汇率</b>——<b>人民币升值是 H1 利润的最大「账面扰动源」</b>，外币货币性项目产生汇兑损失（财务费用变动 −92.61 亿），但公司用衍生工具对冲，会计上把「对冲收益」与「汇兑损失」拆到不同口径，造成归母/扣非背离；④ <b>第二曲线</b>——楼宇科技、机器人与自动化处于成长扩张期，是差异化增长来源。<b>行业坐标：家电行业进入「存量博弈 + 结构性分化」，美的靠「家电基本盘 + B 端第二曲线 + 全球化」四轮驱动，抗周期性与成长性在白电三巨头中最强；汇率、商誉减值（海外并购）与应收账款是三大潜在扰动源。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：国内家电需求因补贴递减与高基数承压，但美的全品类布局使其 H1 营收仍 +3.55%，显著好于格力（同期空调单一品类承压）。价：毛利率 25.26%（−0.36pp），逆势基本持平，反映产品结构与降本能力。成本：营业成本 1,943.67 亿元（+4.06%），略快于营收增幅，是毛利率微降的主因。产品结构（2026 H1 原文）：<b>智能家居 1,743.41 亿元（+4.27%）、楼宇科技 216.25 亿元（+10.84%）、机器人与自动化 166.21 亿元（+10.27%）、工业技术 131.38 亿元（−12.72%）、其他业务 152.82 亿元（+2.55%）</b>；海外销售占总销售 43%。<b>汇率（本期核心扰动）</b>：人民币升值 → 汇兑损失约 61.35 亿元（估算），公司用衍生工具对冲（收益计非经常），会计口径错配致扣非 −25.31%。<b>同业参照</b>：美的多元化程度最高、抗周期最强；格力空调单一品类占比超 80% 对行业最敏感；海尔全球化最均衡但受汇率与关税扰动。<b>前瞻</b>：B 端楼宇/机器人维持双位数增长，工业技术（含汽车部件）与库卡减值趋势是待观察项。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>美的为<b>「轻资产家电 + 中资产 B 端制造」混合结构</b>，用 <b>ROE − COE</b> 判断价值创造（v2 修正 C）。<b>ROE 侧</b>：H1 加权平均 ROE <b>11.33%（+0.04pp）</b>（半年），年化约 22.7%，为白电三巨头最高；投入资本回报率（ROIC）<b>7.96%（+0.52pp，半年）</b>亦同步改善。<b>COE 侧</b>：Re ≈ 无风险利率（10Y 国债约 1.8%）+ β（家电约 0.9）× ERP 5.5% ≈ <b>6.8%</b>，加出海/汇率/商誉减值风险溢价 1.2pp，合理 COE 约 <b>8.0%</b>。<b>ROE − COE ≈ +14.7pp（年化），显著创造价值</b>。<b>反推市场隐含 COE</b>：以 PB 3.09×（2026-08-28）、年化 ROE 约 22.7% 计，隐含 COE ≈ ROE/PB ≈ 7.3%——<b>略低于合理 COE 8%，说明 H1 时点市场定价已基本反映美的的价值创造能力，PB 3.09× 处合理区间</b>。须提示：ROE 中约 25.9% 的利润来自非经常性损益（权益工具浮盈 49.97 亿 + 衍生工具处置收益），<b>若按「对冲后」口径并剥离权益浮盈，可持续 ROE 中枢约 15–17%，但仍高于资本成本、价值创造能力扎实</b>。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>营收桥（Δ 营业收入 = 2,600.42 − 2,511.24 = +89.18 亿元，+3.55%）</b>：<b>量</b>——家电全品类出货相对稳定（对冲行业下行），B 端楼宇科技（+10.84%）与机器人与自动化（+10.27%）贡献主要增量；<b>价</b>——产品结构升级（海外自有品牌 + B 端高毛利）对冲原材料上涨；<b>地区</b>——海外（占比 43%）对冲国内疲弱。<b>利润桥（Δ 营业利润 = 316.84 − 312.49 = +4.35 亿元，+1.39%）</b>：<b>正向</b>——<b>公允价值变动收益 +49.97 亿元（+464.83%，权益工具投资浮盈，去年 −13.70 亿）</b>、<b>投资收益 +30.40 亿元（+370.70%，处置衍生金融资产及负债）</b>、其他收益 +14.83 亿、销售费用 −6.54%、研发费用 −3.41%；<b>负向</b>——<b>财务费用由净收益 59.88 亿转为净支出 32.73 亿（变动 −92.61 亿，汇兑损失）</b>、<b>资产减值 −16.53 亿（商誉减值 10.96 亿）</b>、信用减值 −6.06 亿、管理费用 +4.94%。<b>关键结论</b>：<b>营业利润 +4.35 亿的微增，本质是「汇兑损失 −92.61 亿 + 商誉减值 −10.96 亿」被「权益工具浮盈 +63.67 亿、投资收益 +30.40 亿」等金融性/非经常收益大体抵消</b>——<b>一正一负，但这次的正向含「权益工具浮盈」这一非对冲的一次性收益</b>。<b>剥离这些金融性损益后，核心经营利润（毛利 − 三费）同比基本持平，与营收 +3.55% 匹配，主业平稳、无整体恶化。</b></p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「表虚里实、且含一次性浮盈」：非经占比 25.91%，主因是汇率套期会计错配 + 权益工具浮盈、非利润粉饰但需警惕</b>。非经常性损益 <b>68.51 亿元，占归母净利润 25.91%</b>——构成为：① <b>金融资产/衍生工具公允价值变动 + 处置收益 67.46 亿元</b>（其中公允价值变动收益 +49.97 亿为权益工具投资浮盈、投资收益 +30.40 亿为处置衍生金融资产及负债）；② 非流动资产处置损益 5.64 亿元；③ 政府补助等其他 7.44 亿元；减所得税影响 9.68 亿元、少数股东影响 2.35 亿元。<b>扣非归母 195.95 亿元（−25.31%）远低于归母 264.46 亿元（+1.66%）</b>。<b>性质判断（关键）</b>：① <b>权益工具投资浮盈 49.97 亿元属「一次性金融收益」</b>，既非对冲、也非经常；② <b>衍生工具处置收益（约 25.30 亿，投资收益 30.40 亿 − 联营合营 5.10 亿）实质是「对冲汇兑损失的对价」</b>，应与汇兑损失合并看；③ <b>商誉减值 10.96 亿元已真实计入扣非</b>。<b>真实盈利质量判断</b>：<b>剥离权益工具浮盈 49.97 亿后，H1 归母仅约 214 亿元，同比下滑约 8–9%；合并对冲后（汇兑损失 −61.35 亿 + 衍生对冲收益 +25.30 亿 ≈ 净 −36 亿），主业盈利质量较 Q1 边际走弱，核心拖累是「汇兑未完全对冲 + 商誉减值」。</b></p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">美的为<b>「智能家居 + 商业及工业解决方案」双主业</b>结构，<b>半年报原文披露了分业务板块营业收入</b>（单位：亿元）：<br/>• <b>智能家居 1,743.41（+4.27%）</b>——家用空调、冰箱、洗衣机、厨电等，基本盘稳健。<br/>• <b>楼宇科技 216.25（+10.84%）</b>——中央空调、楼宇自控、电梯、热泵等，是 B 端增长主力。<br/>• <b>机器人与自动化 166.21（+10.27%）</b>——库卡（KUKA）+ 瑞仕格物流自动化，双位数增长。<br/>• <b>工业技术 131.38（−12.72%）</b>——压缩机、电机、汽车部件（威灵汽车部件），是 B 端唯一拖累项。<br/>• <b>其他业务 152.82（+2.55%）</b>——含新能源、健康医疗、智慧物流等。<br/><b>增量贡献（v2 修正 H）</b>：半年报不披露分部利润，以收入端代理——<b>H1 营收 +89.18 亿元的增量主要由「智能家居（+71.39 亿）+ 楼宇科技（+21.15 亿）+ 机器人与自动化（+15.48 亿）」贡献，工业技术（−19.14 亿）是主要拖累</b>。<b>结论：美的的增长引擎已从「单一空调」切换到「B 端 + 全球化」，楼宇科技与机器人的双位数增长是本期结构性亮点，也是其抗周期性强于格力的根本原因；工业技术下滑与库卡减值需持续跟踪。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（杠杆上升、现金仍充裕但净现金收窄）</b>：总资产 <b>6,431.02 亿元（+5.64%）</b>、总负债 4,173.09 亿元（+12.07%）→ <b>资产负债率 64.90%</b>（上年末 61.17%，+3.73pp，杠杆上升）。<b>货币资金 906.43 亿元（+6.33%）</b>，另交易性金融资产 31.56 亿元（+343.98%）、衍生金融资产 47.80 亿元（+115.03%）；<b>有息负债约 744.51 亿元</b>（短期借款 473.05 亿 + 长期借款 154.17 亿 + 应付债券 66.66 亿 + 一年内到期非流动 50.63 亿）→ <b>净现金约 162 亿元（较 Q1 的 378 亿大幅收窄，因中期分红 + 回购 + 有息负债扩张）</b>。<b>营运资本异动</b>：<b>应收账款 619.55 亿元（+53.16%，需关注回款）</b>、应收款项融资 76.60 亿元（−48.72%）、<b>应付票据 475.19 亿元（+75.21%，以票据替代现金）</b>、应付账款 1,095.17 亿元（+5.63%）、<b>合同负债 454.58 亿元（−3.27%）</b>、存货 554.41 亿元（−14.22%，去库存）。<b>资产质量</b>：<b>商誉 315.77 亿元（−7.82%，其中商誉减值 10.96 亿 + 外币折算缩水）</b>、固定资产 443.21 亿元、无形资产 201.57 亿元。<b>其他综合收益 −44.40 亿元</b>（年初 −4.69 亿元），主因<b>外币报表折算差额 −40.04 亿元</b>——人民币升值使海外净资产折算「缩水」。<b>股东权益</b>：归母净资产 <b>2,128.61 亿元（−4.64%）</b>，因中期分红 + 回购 + 其他综合收益恶化共同压低权益；库存股 −151.18 亿元（较年初 −85.49%，回购大幅推进）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>现金流稳健、含金量高，但应收账款扩张需盯回款</b>。经营活动现金流净额 <b>375.52 亿元（+0.73%）</b>，OCF / 净利润 = 375.52 / 265.83 = <b>1.41×</b>、OCF / 归母净利润 = 375.52 / 264.46 = <b>1.42×</b>（净现比 >1，<b>盈利「含金量」高、无「纸面利润、无现金」的背离</b>）。<b>结构</b>：销售商品收到现金 2,292.62 亿元（+1.76%）基本匹配营收增长，购买商品付现 1,399.79 亿元（−0.70%），支付职工 236.26 亿元（−3.75%）、支付税费 115.33 亿元（+8.34%）。<b>判断</b>：H1 现金流质量优良，净现比 142% 说明利润均有现金支撑（且部分来自非现金的权益工具浮盈被剔除后仍有现金支撑）；<b>唯一需盯的是「应收增速（+53.16%）远超营收（+3.55%）」</b>——若 Q3 应收不能回款，将转化为现金流压力。</p>
+      <p><b>OCF 拆解归因：</b>OCF 拆解归因（v2 修正 E）：<b>起点</b>净利润 265.83 亿元 + 折旧摊销等非现金项（固定资产 443.21 亿、无形资产 201.57 亿，H1 折旧摊销约 25–30 亿元）− <b>非现金的公允价值变动收益 49.97 亿元（权益工具浮盈、无现金流入）</b>− 投资收益权益法部分 5.10 亿元 ± 营运资金变动。<b>营运资金关键项（较年初）</b>：① <b>应收账款 +215.05 亿元（+53.16%）</b>——<b>占用经营现金流的最主要因素</b>；② 应付账款 +58.36 亿元（+5.63%）——对上游占款略增；③ <b>应付票据 +203.97 亿元（+75.21%）</b>——以票据替代现金支付，对现金流正向（递延付现）；④ 合同负债 −15.35 亿元（−3.27%，预收款减少）；⑤ <b>存货 −91.88 亿元（−14.22%）</b>——去库存释放现金，正向项；⑥ 交易性金融资产 +24.45 亿元（+343.98%）。<b>结论：H1 的 OCF（375.52 亿）高于净利润（265.83 亿），净现比 142%，说明「折旧摊销 + 存货去化 + 应付票据递延」共同支撑了现金流；应收扩张是唯一需警惕的负向项。</b></p>
+      <p><b>自由现金流与覆盖能力：</b><b>自由现金流充裕，覆盖能力无虞</b>。FCF = OCF 375.52 亿元 − 购建固定资产/无形资产等支付现金 26.34 亿元 = <b>349.18 亿元</b>（H1，为正且体量可观）。<b>覆盖能力验证</b>：H1 分配股利、利润或偿付利息支付现金 268.91 亿元（含年度分红）——<b>FCF 349.18 亿元覆盖当期分红付息后仍有盈余，股东回报（分红 + 回购）由经营现金流充分覆盖、非借钱分红</b>。<b>资本开支温和</b>：购建长期资产付现 26.34 亿元（−16.25%），美的作为轻资产制造业，维持性 CapEx 需求低。<b>投资与筹资</b>：投资活动净流出 158.72 亿元（去年净流入 75.50 亿元，主因收回投资减少 + 投资支付现金增加）、筹资活动净流出 151.56 亿元（去年净流出 191.13 亿元，主因分配股利 268.91 亿 + 取得借款减少）。<b>结论：H1 现金流健康度高——FCF 349.18 亿为正且覆盖分红轻松，叠加账上货币资金 906.43 亿元，股东回报有充分内生现金支撑；需盯的是应收账款扩张对后续 OCF 的持续占用。</b></p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>A 股 000333（<b>2026-08-28 收盘 86.23 元</b>，报告披露日 08-29 为周六未开盘）：总股本约 76.13 亿股，<b>总市值约 6,565 亿元</b>。<b>估值倍数</b>：<b>PE(TTM) 14.82×</b>、PE(静态)约 14.91×（按 2025 归母 439.45 亿）、<b>PB(LF) 3.09×</b>、市销率(TTM) 1.41×、<b>股息率 TTM 4.88%</b>。<b>H 股（00300.HK，2026-08 约 87 港元）与 A 股基本平价</b>。<b>估值结论</b>：H1 时点 PE(TTM) 14.82× 处白电龙头合理区间（格力约 8–9×、海尔约 13×），<b>溢价来自三方面</b>——① 多元化 + B 端第二曲线的成长性（楼宇/机器人 +10% 以上）；② 盈利稳定性（营收净利连续 6 个半年度双增）；③ AI + 工业科技的期权价值（人形机器人、AIDC 温控、与阿里合作）。<b>PB 3.09× 隐含 ROE/COE 约 7.3%，略低于合理 COE 8%，说明 H1 时点市场定价已基本反映其价值创造能力</b>。须提示：PE(TTM) 14.82× 的分母（TTM 归母约 443 亿元）已含权益工具浮盈与衍生工具收益等非经常项，<b>若按「对冲后」口径并剥离权益浮盈，正常化 PE 约 16–17×，估值处「合理」区间而非深度低估——这是理解美的估值的关键口径差异。</b></p>
+      <p><b>周期正常化估值：</b>家电是<b>弱周期但强地产链 + 汇率敏感</b>行业，且美的归母含金融性/非经常收益，<b>应以「正常化盈利（剥离金融浮盈 + 对冲口径）+ PB 锚」双锚定价</b>（v2 修正 F）。<b>正常化盈利</b>：2022–2025 年归母净利润 295.54 / 337.20 / 385.37 / 439.45 亿元，<b>四年中枢约 364 亿元、且逐年抬升</b>；TTM 归母约 443 亿元（含非经常收益），<b>剥离权益工具浮盈与衍生工具处置收益后正常化 TTM 约 390–400 亿元</b>。<b>以正常化 395 亿元计，正常化 PE ≈ 6,565 / 395 ≈ 16.6×</b>，处历史中位偏上。<b>PB 锚</b>：PB 3.09×、ROE 年化约 22.7%（对冲后并剥离浮盈约 15–17%），<b>隐含 COE ≈ 7.3%，略低于合理 COE 8%，PB 未见泡沫</b>。<b>情景锚（变量：人民币汇率 / 铜价 / B 端增速 / 商誉减值）</b>：<br/>• <b>悲观</b>：人民币续升 + 库卡减值扩大 + B 端增速回落 → 2026 归母 430 亿元，PE 15.3×、股息率约 4.6%；<br/>• <b>中性</b>：汇率企稳 + 对冲有效 + B 端 +10% → 2026 归母 480 亿元，PE 13.7×、股息率约 5.1%；<br/>• <b>乐观</b>：汇率回落 + 库卡转好 + B 端放量 → 2026 归母 530 亿元，PE 12.4×、股息率约 5.6%。<b>结论：美的的估值安全边际来自「成长性（B 端第二曲线）+ 盈利稳定性 + 股东回报（4.88% 股息 + 回购注销）」，H1 时点 PE 14.82× 处合理区间、PB 3.09× 无泡沫，属「优质成长龙头」的合理定价，而非深度低估。</b></p>
+      <p><b>股东回报可持续性：</b><b>股东回报是美的的核心亮点，且「回购注销 + 中期分红」力度行业罕见</b>。<b>回购</b>：H1 继续实施股份回购（报告期内回购总金额超 69 亿元），历史累计回购超 450 亿元，为 A 股历史上累计回购金额最高的公司；期末库存股 −151.18 亿元（较年初 −85.49%）。<b>分红</b>：<b>中期分红预案每 10 股派现 5 元（含税）</b>（约 38 亿元），叠加年度分红，<b>股息率 TTM 4.88%</b>（2026-08-28）；自 2013 年上市以来累计派现超 1,600 亿元。<b>可持续性</b>：H1 FCF 349.18 亿元为正且覆盖分红付息轻松，叠加账上货币资金 906.43 亿元，<b>分红与回购均由经营现金流与净现金双重支撑、非借钱分红，可持续性强</b>。<b>须提示</b>：回购注销是「一次性的股本缩减红利」，长期回报仍取决于盈利能否持续增长；且若应收账款扩张导致 OCF 持续收缩，股东回报力度或有边际调整。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">管理层在半年报中给出的关键归因：① <b>财务费用变动 −154.66%（+59.88 亿 → −32.73 亿）主因「汇兑损失增加」</b>；② <b>投资收益 +370.70% 主因「处置衍生金融资产及负债的投资收益增加」</b>；③ <b>公允价值变动收益 +464.83% 主因「权益工具投资的公允价值变动」</b>；④ <b>资产减值损失 −351.18% 主因「商誉减值损失增加」</b>；⑤ <b>分部</b>——「智能家居、楼宇科技、机器人与自动化、工业技术、其他业务收入分别同比增长 4.27%、10.84%、10.27%、−12.72%、2.55%」。<b>公司未给出全年量化指引</b>（半年报惯例）。<b>前瞻（券商/媒体口径，非公司指引）</b>：① 海外 OBM 与海外电商渠道持续扩张；② 加速向「AI + 工业科技集团」转型（智能体、AIDC 温控、人形机器人「美罗 U」「美拉 X2」、与阿里巴巴战略合作）；③ 继续实施回购与分红。花旗预计 2026 年股东现金回报将达到净利润的 100%。<b>风险敏感（非承诺）</b>：人民币汇率走势、铜价、国内家电需求、库卡等海外资产减值、B 端（工业技术）增速。以上为前瞻性陈述，存在不确定性。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">白电三巨头横向对比（2026 H1 / 最新可得口径）：<br/>• <b>美的集团（000333.SZ）</b>：H1 营收 2,600.42 亿元（+3.55%）、归母 264.46 亿元（+1.66%）、毛利率 25.26%（−0.36pp）、加权 ROE 11.33%（半年）、PE(TTM) 14.82×、<b>PB 3.09×</b>、股息率 4.88% —— <b>营收净利连续 6 个半年度双增长，多元化 + B 端 + 全球化使其抗周期最强、但扣非受汇兑与商誉减值拖累</b>。<br/>• <b>格力电器（000651.SZ）</b>：空调单一品类占比超 80%，H1 营收与净利受行业景气与铜价冲击（营收、归母双降），毛利率承压，但估值（PE 约 8×）与股息率（7%+）最便宜、净现金最厚。<br/>• <b>海尔智家（600690.SH）</b>：全球化布局最均衡（海外收入占比约 50%），受国内地产链影响最小，但海外盈利受汇率与关税扰动；估值介于两者之间。<br/><b>结论</b>：2026 年白电行业的共性是「内需疲弱 + 铜价高企 + 汇率扰动」，<b>美的因「B 端第二曲线 + 全球化 + 全品类」成为三家中 H1 业绩最强（营收净利双增）的一家</b>，但估值溢价也最充分。<b>投资含义：美的是「成长 + 稳定性」的白电首选，格力是「低估值 + 高股息 + 高赔率」的防御品种；美的的核心变量是「B 端增速能否延续 + 汇兑对冲是否有效 + 库卡减值趋势」，格力是「铜价与需求何时见底」。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict amber">关注</span>商誉 <b>315.77 亿元</b>，较年初 342.57 亿元减少 26.80 亿元（−7.82%），占归母净资产 <b>14.83%</b>、占 2025 年归母净利润（439.45 亿元）0.72 倍——<b>占比未超阈值但需关注</b>。商誉减少主因两部分：<b>① 商誉减值损失 10.96 亿元（上年同期为零，见「资产减值」）</b>；② 人民币升值导致外币商誉（库卡 KUKA、东芝家电、Clivet 等海外并购以欧元/美元计价）折算缩水。商誉主要来自库卡、东芝家电、Clivet、菱王电梯等海外并购。<b>风险点</b>：H1 已现商誉减值 10.96 亿，若库卡等海外资产组经营继续承压（少数股东损益 −78.41% 已现端倪），年报存在继续减值的可能，须核实减值测试的假设与结果。</div></div>
+      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发费用 <b>84.67 亿元（−3.41%）</b>，占营业收入 <b>3.26%</b>（白电龙头较高水平），<b>资产负债表无「开发支出」科目、研发全部费用化</b>，不存在资本化注水。研发投入聚焦 AI 智能体（H1 孵化超 2 万个智能体、累计提效超 900 万小时）、人形机器人（美罗 U、美拉 X2）、AIDC 温控、磁悬浮压缩机等高壁垒领域。<b>该项干净。</b></div></div>
+      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span>资产减值损失 <b>16.53 亿元（较上年同期 3.66 亿元大增 351.18%）</b>，其中<b>商誉减值损失 10.96 亿元（上年同期为零）</b>、存货跌价 4.42 亿元、长期股权投资减值 0.66 亿元、合同资产减值 0.28 亿元；信用减值损失 6.06 亿元（+75.07%，主因应收账款坏账增加）。<b>这是 H1 相比 Q1 最重要的新增信号</b>——Q1 资产减值仅 1.51 亿元、无商誉减值，H1 商誉减值 10.96 亿系库卡等海外资产组减值测试触发。<b>须在年报持续核实库卡的减值测试假设、可收回金额与经营情况。</b></div></div>
+      <div class="rf"><div class="k">债务结构与财务杠杆</div><div class="v"><span class="verdict flat">低风险</span><b>杠杆上升但现金仍充裕</b>：资产负债率 <b>64.90%</b>（+3.73pp，杠杆上升），<b>有息负债约 744.51 亿元</b>（短期借款 473.05 亿 + 长期借款 154.17 亿 + 应付债券 66.66 亿 + 一年内到期非流动 50.63 亿）vs <b>货币资金 906.43 亿元 → 净现金约 162 亿元</b>（较 Q1 的 378 亿大幅收窄）。流动负债主体为<b>经营性无息占款</b>（应付账款 1,095.17 亿 + 应付票据 475.19 亿 + 合同负债 454.58 亿），<b>对上游与渠道的占款能力极强、不构成偿债压力</b>；但应付票据 +75.21% 的扩张反映公司以票据替代现金支付，需关注流动性管理。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>半年度报告按法定惯例<b>未经审计</b>，无审计意见；公司负责人方洪波、主管会计工作负责人钟铮、会计机构负责人陈丽红声明保证财务信息真实、准确、完整。<b>本期无追溯调整或重述</b>（原文「公司是否需追溯调整或重述以前年度会计数据：□是 √否」），会计政策未变更。</div></div>
+      <div class="rf"><div class="k">关联交易与资金往来</div><div class="v"><span class="verdict amber">关注</span><b>美的含金融业务（吸收存款、发放贷款），须关注集团内资金归集与关联占用</b>：① 资产负债表含「发放贷款和垫款 144.81 亿元 + 4.49 亿元」（美的财务公司向集团内/产业链客户放贷）；② 「其他应收款 31.73 亿元」规模不大；③ <b>交易性金融资产 +343.98%（31.56 亿）、衍生金融资产 +115.03%（47.80 亿）</b>，需核实金融资产与衍生工具的对手方是否为关联方、公允价值计量是否公允。<b>正面证据</b>：美的控股（实际控制人）持股 28.53% 无质押，治理结构清晰；无资金占用迹象。</div></div>
+      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span><b>收入真实但「应收大幅扩张」需高度关注</b>：① <b>应收账款 619.55 亿元（+53.16%）</b>，增速远超营收 +3.55%，应收票据及应收账款合计 +49.22%、占总资产比重上升 3.1pp——<b>是本期现金流的实质压力点</b>；② 应收款项融资 76.60 亿元（−48.72%）；③ <b>合同负债 454.58 亿元（−3.27%）</b>，经销商预收款下降。<b>正面证据</b>：营业收入现金比约 92.72%、净现比 142%（利润含金量高）、无大额坏账。<b>结论：收入真实性无问题，但「应收 +53.16% + 合同负债 −3.27%」是需求端边际走弱与回款节奏变化的领先信号，须连续跟踪 Q3 回款。</b></div></div>
+      <div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">低风险</span>存货 <b>554.41 亿元（较年初 −14.22%）</b>，在营收 +3.55% 的背景下同步去化，<b>存货/营收约 21.3%</b>（白电正常水平）；结构以原材料（铜、铝、钢、塑料）、在产品与库存商品为主，公司通过「以零售实销为中心」的智能补货使日均自有库存同比降低 16%。<b>风险点</b>：铜价高企时原材料存货存在跌价风险（H1 已计提存货跌价 4.42 亿）；但<b>当前存货规模与周转均正常、无积压滞销迹象，去库存反而释放了经营现金流。</b></div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict amber">关注</span><b>需辨明口径的一项：非经常性损益 68.51 亿元、占归母净利润 25.91%</b>——构成为<b>金融资产/衍生工具公允价值变动 + 处置收益 67.46 亿元</b>（公允价值变动收益 +49.97 亿为权益工具投资浮盈、投资收益 +30.40 亿为处置衍生金融资产及负债）、非流动资产处置 5.64 亿、政府补助等其他 7.44 亿，减所得税影响 9.68 亿、少数股东影响 2.35 亿。<b>性质判断（关键）</b>：① <b>权益工具投资浮盈 49.97 亿元属「一次性金融收益」</b>，既非对冲、也非经常；② <b>衍生工具处置收益约 25.30 亿元实质是「对冲汇兑损失的对价」</b>，应与汇兑损失合并看；③ <b>剥离权益工具浮盈后，非经占比仍约 18–19%，且商誉减值 10.96 亿已真实计入扣非</b>。<b>结论：H1 归母 +1.66% 与扣非 −25.31% 都不是主业真实温度——「对冲后 + 剥离权益浮盈」口径的主业基本持平、但盈利质量较 Q1 边际走弱。这是本报告最核心的口径提示。</b></div></div>
+      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">低风险</span>OCF <b>375.52 亿元（+0.73%）</b>，而净利润 265.83 亿元（−0.24%），<b>OCF/净利润 = 1.41×，未出现「纸面利润、无现金」的背离，反而现金流显著优于利润</b>。结构上：销售收现 2,292.62 亿元（+1.76%）与营收同步，购买付现 1,399.79 亿元（−0.70%），支付职工 236.26 亿元（−3.75%）、税费 115.33 亿元（+8.34%）。<b>结论：H1 现金流质量优良、净现比 142%，利润均有现金支撑（含非现金权益浮盈被剔除后仍有现金支撑）；唯一需盯的是「应收账款 +53.16% 扩张」对后续现金流的持续占用。</b></div></div>
+      <div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span>白电行业为「<b>先款后货、以销定产</b>」模式，收入按发货/控制权转移确认，<b>无完工百分比法、无长周期合同</b>，收入操纵空间天然较小。<b>两个信号需留意</b>：① <b>合同负债 454.58 亿元（−3.27%）</b>——预收款下降，若公司放宽「先款后货」政策以促出货，将带来应收上升与收入质量下降（应收账款 +53.16% 已现迹象）；② <b>其他流动负债 1,045.12 亿元（+12.94%）</b>——含销售返利计提，未见通过「少提返利」虚增利润的迹象。<b>综合判断：收入确认无激进迹象，但需跟踪「返利政策 + 渠道库存 + 应收」的组合变化。</b></div></div>
+      <div class="rf"><div class="k">表外 / 担保 / 或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span><b>集团内担保额度较大，须关注</b>：据公司《关于对下属控股子公司担保额度调整的公告》（2026-10-30 披露），公司及控股子公司为控股子公司提供担保的总金额 <b>1,742.79 亿元、占 2025 年经审计归母净资产的 78.07%</b>（均为对控股子公司担保），截至 2026-06-30 已提供担保余额 <b>670.92 亿元、占净资产的 30.06%</b>，部分被担保子公司资产负债率超 70%。<b>性质</b>：属合并范围内集团担保（非对外担保），风险相对可控，公司通过「少数股东反担保 + 收取担保费」控制风险；但<b>额度规模大、且与衍生金融工具（+115.03%）叠加，需在年报核实担保的或有风险与衍生工具的对手方风险</b>。<b>预计负债 7.24 亿元</b>、递延所得税负债 63.70 亿元，均在正常范围。</div></div>
+      <div class="rf"><div class="k">汇率与衍生工具敞口（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span><b>这是美的 H1 利润的第一扰动源，且双向波动</b>：① <b>人民币升值 → 外币货币性项目汇兑损失（财务费用由净收益 +59.88 亿转为净支出 −32.73 亿，变动 −92.61 亿）</b>，海外收入占比 43% 使公司对汇率高度敏感；② <b>衍生金融资产 47.80 亿元（+115.03%）、衍生金融负债 9.15 亿元</b>，对冲工具本身存在公允价值波动风险；③ <b>会计错配放大波动</b>——汇兑损失计经常（拖累扣非）、对冲收益计非经常（增厚归母），导致「归母 +1.66% vs 扣非 −25.31%」的表象失真。<b>核心风险</b>：若人民币升值趋势延续且对冲失效，汇兑损失将真实侵蚀利润；若人民币贬值，则海外资产折算收益又会反向抬升利润——<b>汇率是美的盈利的「高波动变量」，需通过「对冲后」口径观察真实经营趋势。本期「净未对冲缺口」约 36 亿元（汇兑损失约 61.35 亿 − 衍生工具处置收益约 25.30 亿，均为估算）。</b></div></div>
+      <div class="rf"><div class="k">商誉减值与海外并购整合（行业特有·红旗）</div><div class="v"><span class="verdict down">红旗</span><b>库卡（KUKA）等海外并购的减值与整合风险，是美的中期最大的潜在雷区，H1 已实际计提</b>：① 商誉 315.77 亿元（占归母净资产 14.83%），主要来自库卡、东芝家电、Clivet 等；② <b>H1 商誉减值损失 10.96 亿元（上年同期为零）</b>，主因库卡等海外资产组减值测试触发；③ <b>少数股东损益 1.37 亿元（−78.41%）</b>，非全资子公司（含库卡）利润贡献大幅下滑；④ 工业技术收入 −12.72%。<b>风险逻辑</b>：库卡所处的机器人与自动化行业竞争加剧，若库卡市场份额或盈利持续下滑，将触发进一步商誉减值。<b>须盯</b>：库卡收入与订单、商誉减值测试假设、海外并购的业绩承诺与整合进度。</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li><b>H1 营收净利连续 6 个半年度双增长</b>：营业收入 2,600.42 亿元（+3.55%）、归母净利润 264.46 亿元（+1.66%），在「以旧换新补贴效应递减 + 高基数 + 铜价上涨 + 人民币升值」的多重压力下仍实现双增；<b>营业利润 316.84 亿元（+1.39%）微增，说明核心经营无恶化</b>——扣非 −25.31% 主因是汇兑损失 + 商誉减值，而非主业整体下滑</li><li><b>第二曲线成增长引擎，B 端双位数增长</b>：分业务板块营业收入中，<b>楼宇科技 216.25 亿元（+10.84%）、机器人与自动化 166.21 亿元（+10.27%）</b>双位数增长，对冲工业技术 131.38 亿元（−12.72%）的下滑；库卡中国国内市场销量份额达 9.7%、升至行业前二，300kg 以上负载机器人国内份额突破 50%</li><li><b>现金流含金量高、净现比 142%</b>：经营现金流净额 <b>375.52 亿元（+0.73%）</b>，净现比（OCF/净利润）<b>142%</b>、OCF/归母 1.42×，利润均有现金支撑；FCF ≈ 349.18 亿元（OCF 375.52 亿 − 购建长期资产付现 26.34 亿），覆盖分红与回购无虞</li><li><b>股东回报力度行业罕见</b>：H1 回购总金额超 69 亿元（历史累计回购超 450 亿元，为 A 股历史累计回购最高公司）；叠加<b>中期分红预案每 10 股派现 5 元（含税）</b>，自 2013 年上市累计派现超 1,600 亿元，构成明确的 EPS 增厚与股价支撑</li><li><b>毛利率基本稳定、成本控制出色</b>：H1 毛利率 <b>25.26%（−0.36pp）</b>，在铜、塑料等原材料价格进一步上涨的背景下仅微降；销售费用 −6.54%、研发费用 −3.41%，费用端同步优化</li><li><b>全球化与海外 OBM</b>：海外销售占总销售 43%，海外 OBM（自有品牌）营收占比超 50%；欧洲热浪下 PortaSplit 便携式分体空调成现象级爆款，H1 销量与销售额同比均突破 +200%</li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li><b>归母/扣非深度剪刀差（口径 + 减值风险）</b>：归母 +1.66% 与扣非 −25.31% 背离，主因<b>汇兑损失（计经常）+ 商誉减值 10.96 亿 + 权益工具浮盈（计非经常）</b>——H1 财务费用由净收益 59.88 亿转为净支出 32.73 亿（变动 −92.61 亿），而非经常性损益 68.51 亿元（占归母 25.91%）。若人民币升值趋势延续，汇兑损失将持续侵蚀扣非</li><li><b>商誉减值（Q1 无、H1 新出现，第一新增风险）</b>：H1 资产减值损失 <b>16.53 亿元（+351.18%）</b>，其中<b>商誉减值损失 10.96 亿元（上年同期为零）</b>、存货跌价 4.42 亿元、长期股权投资减值 0.66 亿元；主要系库卡等海外资产组减值测试触发，须在年报持续核实减值测试假设与库卡经营</li><li><b>汇兑损失（人民币升值）</b>：H1 人民币持续升值，外币货币性项目产生汇兑损失（财务费用净支出 32.73 亿元 vs 上年净收益 59.88 亿元）；衍生金融资产 47.80 亿元（+115.03%），对冲工具本身存在公允价值波动风险，且对冲收益被归为非经常、无法稳定覆盖汇兑损失</li><li><b>应收账款显著扩张</b>：应收账款 <b>619.55 亿元（+53.16%）</b>，增速远超营收 +3.55%，应收票据及应收账款合计 +49.22%、占总资产比重上升 3.1pp，是本期现金流的潜在压力点；需跟踪 Q3 回款</li><li><b>少数股东损益大幅下滑 + 权益工具浮盈非持续</b>：少数股东损益 <b>1.37 亿元（−78.41%）</b>，非全资子公司（含库卡等海外并购）利润贡献明显下降；同时归母中含<b>权益工具投资公允价值变动浮盈 +49.97 亿元</b>（一次性金融收益、非对冲），剥离后归母质量下降</li><li><b>杠杆上升 + 应付票据扩张</b>：资产负债率 <b>64.90%（+3.73pp）</b>、应付票据 475.19 亿元（+75.21%）、应付债券 66.66 亿元（+108.64%）、长期借款 +21.79%；以票据与债券替代现金支付，需关注流动性管理</li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li><b>商誉减值趋势（第一优先级，H1 新出现）</b>：H1 商誉减值 10.96 亿元（上年同期零），主要系库卡等海外资产组；跟踪库卡收入订单、商誉减值测试假设，判断是否延续至年报</li><li><b>汇兑对冲的有效性</b>：人民币走势与衍生工具收益能否覆盖汇兑损失（H1 净未对冲约 36 亿）；跟踪财务费用（汇兑损益）、投资收益（衍生处置）、公允价值变动收益的变化</li><li><b>扣非能否企稳</b>：扣非 −25.31% 主因汇兑 + 商誉减值；跟踪剔除汇兑影响后的核心经营利润（本期基本持平），验证主业是否真正稳健</li><li><b>应收账款回款与 OCF</b>：应收账款 +53.16% 远超营收 +3.55%；跟踪 Q3 应收回款与 OCF 能否随收入企稳</li><li><b>B 端第二曲线</b>：楼宇科技 +10.84%、机器人与自动化 +10.27%、工业技术 −12.72%；跟踪工业技术能否转正、楼宇/机器人增长能否维持</li><li><b>海外 OBM 与全球化</b>：海外电商与自有品牌扩张（海外占比 43%、OBM 占比超 50%）；跟踪海外收入占比、汇率与关税对海外盈利的影响</li><li><b>股东回报执行</b>：回购（含注销式）进度、中期分红（每 10 股派 5 元）落地，跟踪回购注销对 EPS 的增厚</li></ol></div>
+  </div>
+
+
+  <div class="foot">
+    <b>数据来源：</b>美的集团股份有限公司《2026 年半年度报告全文》（2026-08-29 披露，<b>按中国会计准则编制、未经审计</b>；原文 PDF：static.cninfo.com.cn/finalpage/2026-08-29/1225531404.PDF，本地归档 <code>data/pdf/000333.SZ_h1_2026.pdf</code>）。<b>口径说明（重要）</b>：① <b>营收口径</b>——H1 营业总收入 2,610.52 亿元（含利息收入 10.10 亿、手续费 0.002 亿）、营业收入 2,600.42 亿元；本报告以<b>营业收入（2,600.42 亿元，+3.55%）</b>为主要口径，毛利率 =（营业收入−营业成本）/营业收入。② <b>归母/扣非剪刀差</b>——非经常性损益 68.51 亿元（占归母 25.91%），主因「汇兑损失计经常、衍生对冲收益 + 权益工具浮盈计非经常」的会计错配，以及商誉减值 10.96 亿，详见「盈利质量」章节。③ <b>分部数据</b>——智能家居/楼宇科技/机器人与自动化/工业技术/其他业务为半年报原文披露的分业务板块营业收入。④ <b>商誉减值 10.96 亿元</b>为半年报附注（附注四(54)资产减值损失明细）原文，上年同期为零。⑤ <b>估值与行情</b>：2026-08-28 收盘 86.23 元、市值约 6,565 亿元、PE(TTM) 14.82×、PB(LF) 3.09×、股息率 TTM 4.88%，取自中证智能财讯/同花顺；TTM 归母约 443 亿元。⑥ <b>汇兑损失约 61.35 亿元</b>为按「财务费用（含利息净收入 + 汇兑损益）变动 −92.61 亿」倒推的估算值（净利息收入约 28.62 亿），<b>属估算、非审计数</b>。⑦ <b>历史序列</b>：2022–2025 营业总收入 3,457.09 / 3,737.10 / 4,090.84 / 4,585.02 亿元、归母 295.54 / 337.20 / 385.37 / 439.45 亿元；2023–2026 H1 营收 1,969.88 / 2,172.74 / 2,511.24 / 2,600.42 亿元、归母 182.32 / 208.04 / 260.14 / 264.46 亿元（腾讯财经/公司半年报）。<b>免责声明</b>：基于公开数据的量化分析，仅供参考，不构成投资建议。<br/>
+  </div>
+
+</div>
+</body>
+</html>

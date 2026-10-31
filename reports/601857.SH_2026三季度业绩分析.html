@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中国石油 2026 三季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">中国石油</div>
+      <div class="meta">
+        <span>601857.SH / 00857.HK</span><span>石油石化</span><span>上交所 / 港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 三季报</div>
+      <div class="pdate">披露日期：2026-10-29</div>
+      <div class="badge up">偏积极 · 油价上行、业绩创新高</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone up">偏积极</span>
+      <p class="oneliner">中国石油 2026 前三季度营收 23,210.64 亿元（+7.0%）、归母 1,557.73 亿元（+21.9%）、扣非 1,588.99 亿元（+23.7%），<b>前三季度业绩创历史同期新高</b>；Q3 单季归母 518.39 亿元（同比 +21.6%、环比 −6.8%）。核心驱动是<b>国际油价大幅上行</b>（布伦特均价 88.86 美元/桶、+27.1%，公司原油实现价 77.65 美元/桶、+18.5%），叠加<b>四大业务分部全面增长</b>——油气和新能源经营利润 +19.7%、天然气销售 +6.4%、炼油 +24.7%、化工 +185.7%、销售 +24.7%。盈利质量扎实：<b>扣非 1,588.99 亿元高于归母 1,557.73 亿元（非经常性 −31.26 亿元拖累表观利润）</b>，OCF 3,735 亿元（+8.8%）、FCF 2,141 亿元（+29.4%）、货币资金 3,056 亿元。<b>隐忧在于强周期顶部特征</b>：①油价处高位、业绩弹性高度依赖油价，须用周期正常化估值而非单期 PE；②应收账款 +53.3%、其他应收款 +120.5%、其他应付款 +240.7%、存货 +24.7%（油价上涨推高营运资金占用）；③资产负债率 40.58%（+4.52pp）、短期借款 +63.0%、衍生金融负债 +590.8%（油价套保敞口）；④PB 1.54× 处近 10 年 100% 分位、估值已不便宜。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li>业绩创历史同期新高、四板块全面增长：归母 1,557.73 亿（<b>+21.9%</b>）；油气和新能源经营利润 1,520 亿（+19.7%）、化工经营利润 +185.7%、炼油 +24.7%、销售 +24.7%、天然气销售 +6.4%</li><li>盈利质量「真」：扣非 1,588.99 亿 <b>高于</b>归母 1,557.73 亿（非经常性 −31.26 亿元），利润全靠主业油价上行，无粉饰</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li>油价强周期顶部风险：布伦特均价 +27.1% 至 88.86 美元/桶处高位，业绩弹性高度依赖油价；若地缘缓和油价回落，利润将同步下探</li><li>营运资金占用激增：应收账款 1,194 亿（<b>+53.3%</b>）、其他应收款 642 亿（+120.5%）、其他应付款 955 亿（<b>+240.7%</b>）、存货 1,878 亿（+24.7%），资产负债率升至 40.58%</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">四大业务分部经营利润（前三季度，亿元）</text><rect x="96.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#13406b"/><text x="135.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">1520</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">油气新能源</text><rect x="246.0" y="170.2" width="78.0" height="27.8" rx="3" fill="#13406b"/><text x="285.0" y="165.2" font-size="10.5" fill="#1f2733" text-anchor="middle">333</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">天然气销售</text><rect x="396.0" y="178.7" width="78.0" height="19.3" rx="3" fill="#13406b"/><text x="435.0" y="173.7" font-size="10.5" fill="#1f2733" text-anchor="middle">231</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">炼化新材料</text><rect x="546.0" y="185.9" width="78.0" height="12.1" rx="3" fill="#13406b"/><text x="585.0" y="180.9" font-size="10.5" fill="#1f2733" text-anchor="middle">145</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">销售</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">前三季度：归母 vs 扣非（亿元）</text><rect x="96.0" y="95.8" width="78.0" height="102.2" rx="3" fill="#13406b"/><text x="135.0" y="90.8" font-size="10.5" fill="#1f2733" text-anchor="middle">1278</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">25归母</text><rect x="246.0" y="95.3" width="78.0" height="102.7" rx="3" fill="#13406b"/><text x="285.0" y="90.3" font-size="10.5" fill="#1f2733" text-anchor="middle">1284</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">25扣非</text><rect x="396.0" y="73.4" width="78.0" height="124.6" rx="3" fill="#13406b"/><text x="435.0" y="68.4" font-size="10.5" fill="#1f2733" text-anchor="middle">1558</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">26归母</text><rect x="546.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#c0392b"/><text x="585.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">1589</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">26扣非</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">前三季度同比增速（%）</text><line x1="60" y1="208.0" x2="660" y2="208.0" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="211.0" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="202.0" width="50.0" height="6.0" rx="3" fill="#c0392b"/><text x="110.0" y="196.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+7.0%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营收</text><rect x="185.0" y="189.2" width="50.0" height="18.9" rx="3" fill="#c0392b"/><text x="210.0" y="183.2" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+21.9%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母</text><rect x="285.0" y="187.6" width="50.0" height="20.4" rx="3" fill="#c0392b"/><text x="310.0" y="181.6" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+23.7%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">扣非</text><rect x="385.0" y="200.4" width="50.0" height="7.6" rx="3" fill="#c0392b"/><text x="410.0" y="194.4" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+8.8%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">OCF</text><rect x="485.0" y="191.1" width="50.0" height="17.0" rx="3" fill="#c0392b"/><text x="510.0" y="185.1" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+19.7%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">油气新能源利润</text><rect x="585.0" y="48.0" width="50.0" height="160.0" rx="3" fill="#c0392b"/><text x="610.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+185.7%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">化工利润</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+<div class="mcard"><div class="lab">营业收入(1-9月)</div><div class="val">23,211亿</div><div class="delta up">+7.0%</div></div>
+      <div class="mcard"><div class="lab">Q3单季营收</div><div class="val">7,936亿</div><div class="delta up">+10.4%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">1,558亿</div><div class="delta up">+21.9%</div></div>
+      <div class="mcard"><div class="lab">Q3单季归母</div><div class="val">518亿</div><div class="delta up">+21.6% 环比-6.8%</div></div>
+      <div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">1,589亿</div><div class="delta up">+23.7%</div></div>
+      <div class="mcard"><div class="lab">经营现金流净额</div><div class="val">3,735亿</div><div class="delta up">+8.8%</div></div>
+      <div class="mcard"><div class="lab">加权ROE</div><div class="val">9.4%</div><div class="delta up">+1.4pp</div></div>
+      <div class="mcard"><div class="lab">基本EPS</div><div class="val">0.85元</div><div class="delta up">+21.9%</div></div>
+      <div class="mcard"><div class="lab">原油实现价格</div><div class="val">77.65美元</div><div class="delta up">+18.5%</div></div>
+      <div class="mcard"><div class="lab">油气当量产量</div><div class="val">1,377百万桶</div><div class="delta flat">基本持平</div></div>
+      <div class="mcard"><div class="lab">资产负债率</div><div class="val">40.58%</div><div class="delta down">+4.5pp</div></div>
+      <div class="mcard"><div class="lab">股息率(TTM)</div><div class="val">3.73%</div><div class="delta flat">中期每股0.26元</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+<tr><td>营业收入(亿元)</td><td class="num">23,211</td><td class="num">21,690</td><td class="num up">+7.0%</td></tr>
+        <tr><td>营业成本(亿元)</td><td class="num">18,040</td><td class="num">17,096</td><td class="num down">+5.5%</td></tr>
+        <tr><td>综合毛利率(%)</td><td class="num">22.28</td><td class="num">21.18</td><td class="num up">+1.10pp</td></tr>
+        <tr><td>利润总额(亿元)</td><td class="num">2,172</td><td class="num">1,831</td><td class="num up">+18.6%</td></tr>
+        <tr><td>归母净利润(亿元)</td><td class="num">1,558</td><td class="num">1,278</td><td class="num up">+21.9%</td></tr>
+        <tr><td>扣非归母净利润(亿元)</td><td class="num">1,589</td><td class="num">1,284</td><td class="num up">+23.7%</td></tr>
+        <tr><td>加权ROE(%)</td><td class="num">9.4</td><td class="num">8.0</td><td class="num up">+1.4pp</td></tr>
+        <tr><td>基本EPS(元)</td><td class="num">0.85</td><td class="num">0.70</td><td class="num up">+21.9%</td></tr>
+        <tr><td>经营现金流净额(亿元)</td><td class="num">3,735</td><td class="num">3,434</td><td class="num up">+8.8%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+<tr><td>前三季度归母</td><td class="num">1,557.73亿(+21.9%)</td><td class="num">全年预测1,881.57亿(占82.8%)</td><td class="num up">进度略超前</td><td class="num up">符合至略超预期</td></tr>
+        <tr><td>Q3归母净利润</td><td class="num">518.39亿(+21.6%)</td><td class="num">里昂口径全年预测约89%进度</td><td class="num up">略超预期</td><td class="num up">全年盈利有上行空间</td></tr>
+        <tr><td>前三季度OCF</td><td class="num">3,735.39亿(+8.8%)</td><td class="num">3,433.66亿(上年同期)</td><td class="num up">+8.8%</td><td class="num up">现金流稳健</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：机构一致预期（28 家，腾讯自选股/富途，统计时点 2026-10-29）：<b>2026E 净利润 1,881.57 亿元（+19.61%）、营收 32,371.63 亿元（+13.01%）、EPS 1.03 元，综合目标价 14.87 元（+12.14%）</b>。前三季度归母 1,557.73 亿元占全年预测约 82.8%，进度略超前；里昂（10-29）称「首九月纯利 1580 亿元相当于全年预测约 89%」，并认为全年盈利及股息有上行空间，上调 A 股目标价至 16 元。光大证券（10-29）「前三季度业绩再创新高」。<b>预期差结论：前三季度 +21.9% 略超机构全年 +19.61% 的增速预期，业绩符合至略超预期，但超预期幅度温和（市场已充分计入油价上行）。</b></p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>石油石化行业 2026 年前三季度处于<b>「油价上行、盈利扩张、但强周期顶部特征显现」的景气高位段</b>。核心变量：① 油价——受中东地缘局势影响国际油价宽幅震荡、均价比上年同期大幅增长，布伦特 88.86 美元/桶（+27.1%）、WTI 83.76 美元/桶（+25.7%）；② 供需——全球原油与成品油库存处于低位、供应刚性使油价抗跌，但国内新能源替代加速、成品油需求减少、天然气消费小幅下降；③ 政策——能源保供与「双碳」并进，油气增储上产 + 新能源（风光/地热）转型。对公司的传导：中国石油作为全球最大石油公司之一、上下游一体化龙头，「量（油气当量 1,376.8 百万桶基本持平）稳价（原油实现价 +18.5%）升」直接放大上游利润弹性，同时炼化「减油增化」、化工新材料放量（乙烯 +26.4%、新材料 +58.5%）提供第二增长曲线。<b>行业坐标：当前处「上行段高位」，业绩创历史同期新高但须警惕油价见顶回落——本报告必须用周期正常化估值而非单期 PE 判贵贱。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：原油产量 698.6 百万桶（−2.2%，海外 −12.0%）、可销售天然气 4,069.4 十亿立方英尺（+2.3%）、油气当量 1,376.8 百万桶（基本持平）；原油加工量 1,002.2 百万桶（−3.7%）、成品油产量 8,336.8 万吨、化工产品商品量 3,289.2 万吨（+11.2%）；风光发电量 78.4 亿千瓦时（+35.5%）。价：布伦特 88.86 美元/桶（+27.1%）、公司原油实现价 77.65 美元/桶（+18.5%）、国内天然气均价 9.40 美元/千立方英尺（剔除汇率 +1.7%）。供需/价格位置：油价处历史偏高区间，库存低位、地缘风险溢价支撑。政策：能源保供中长期合同、增储上产、减油增化、新能源转型。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>重资产石油石化，以 ROIC − WACC 衡量价值创造（v2 修正 C，允许定性/区间）。估算：NOPAT ≈ EBIT（利润总额 2,171.85 亿 + 利息费用 129.16 亿 ≈ 2,301.01 亿）×（1 − 有效税率 20.8%）≈ 1,822 亿元（1–9 月），年化约 2,429 亿；投入资本 IC ≈ 归母权益 16,322.78 亿 + 少数股东权益 2,136.95 亿 + 有息负债 4,059.06 亿（短期借款 562.37 + 长期借款 1,637.71 + 应付债券 150 + 租赁负债 1,487.51 + 一年内到期 221.47）− 货币资金 3,056.46 亿 ≈ 19,462 亿 → <b>年化 ROIC 约 12.5%</b>。WACC：Re ≈ 无风险利率（10Y 国债约 1.7%）+ β（石油约 0.7–0.9）× ERP 6% ≈ 5.9%–7.1%，债权占比低（净现金、财务费用仅 83 亿）→ <b>WACC 约 6.3%–6.8%</b>。<b>ROIC − WACC 约 +5.7~6.2pp，持续创造价值</b>——但当前 ROIC 高位主要由油价上行贡献（油气和新能源经营利润 +19.7%），<b>周期正常化后（油价回落至 60–70 美元）ROIC 或回落至 9%–11%，仍高于 WACC</b>，价值创造为正但弹性随油价波动（2020 油价暴跌时一度接近资本成本）。注：货币资金与「超额现金」切分存在主观性，为区间估算、非审计数。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>价（第一驱动）</b>：国际油价大幅上行——布伦特均价 88.86 美元/桶（+27.1%）、公司原油实现价 77.65 美元/桶（+18.5%），直接放大上游利润弹性。<b>量（稳中有降）</b>：原油产量 −2.2%（海外 −12.0% 受地缘影响）、油气当量基本持平（−0.02%）、天然气 +2.3%；原油加工量 −3.7%、化工产品商品量 +11.2%。<b>成本</b>：营业成本 18,039.82 亿（+5.5%，慢于营收 +7.0%）→ <b>毛利率 22.28%（+1.10pp）</b>；研发费用 168.75 亿（+17.4%，加码新材料/新能源）。<b>利润桥（Δ利润总额 +341.26 亿元）</b>：正向主源是<b>毛利扩张</b>（营收 +1,520.01 亿、成本仅 +944.10 亿 → 毛利 +575.91 亿）+ 投资收益 +32.23 亿；负向拖累为资产减值多提 −29.41 亿、公允价值变动 −64.36 亿（油价套保/金融资产）、研发费用 −25.00 亿、税金及附加 −139.08 亿（油价升致特别收益金/资源税增加）；有效税率下降（20.8% vs 22.6%）贡献约 +39 亿。<b>结论：利润增长由「油价驱动的毛利扩张」主导，四业务分部全面增利，属典型周期上行量价齐升。</b></p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b>扣非 vs 归母：前三季度归母 1,557.73 亿（+21.9%）<b>低于</b>扣非 1,588.99 亿（<b>+23.7%</b>），<b>非经常性损益 −31.26 亿元（拖累归母）</b>——其中其他营业外收支 −49.37 亿（油价上涨相关税费/专项支出）、非流动资产处置 −5.57 亿为负项，政府补助 +8.05 亿、金融资产/负债损益 +4.67 亿为正项。<b>结论：扣非增速（+23.7%）高于归母增速（+21.9%），非经常性损益是「负贡献」，即主业盈利被非经项目轻微拖累，利润质量「真、干净」</b>——利润来源就是油气主业油价上行，含金量高，无靠非经保利润的问题。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">中国石油按<b>四大业务分部</b>披露（2026 前三季度，人民币）：<br/>• <b>油气和新能源（核心上游）</b>：营收 6,664.94 亿（+6.5%）、<b>经营利润 1,520.23 亿（+19.7%）</b>——原油实现价 +18.5%、天然气产量 +2.3%、大力控制油气生产成本；风光发电量 78.4 亿千瓦时（+35.5%）、地热供暖面积超 8,000 万平米。<br/>• <b>天然气销售</b>：营收 4,649.88 亿（+3.9%）、经营利润 332.93 亿（+6.4%）——天然气销量 2,313.02 亿方（+3.0%）。<br/>• <b>炼油化工和新材料</b>：营收 9,033.28 亿（+9.4%）、经营利润 231.32 亿（<b>+42.4%</b>，增利 68.92 亿）——其中<b>炼油 180.27 亿（+24.7%）</b>（炼油产品单位毛利增加）、<b>化工 51.05 亿（+185.7%）</b>（化工产品销量及单位毛利增加，乙烯 +26.4%、新材料 +58.5%）。<br/>• <b>销售</b>：营收 19,387.66 亿（+9.3%）、经营利润 145.00 亿（+24.7%）——国际贸易利润增加。<br/><b>增量贡献（v2 修正 H，以经营利润口径近似）</b>：集团经营利润增量（分部加总）≈ 油气新能源 +250.14 亿 + 天然气 +20.14 亿 + 炼化新材料 +68.92 亿 + 销售 +28.74 亿 ≈ <b>+367.94 亿元</b>，其中<b>油气和新能源贡献约 68%，是利润增量的绝对主源</b>；化工（+33.18 亿）与炼油（+35.74 亿）为第二梯队。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card">资本结构：资产负债率 <b>40.58%</b>（上年末 36.06%，+4.52pp）。有息负债 4,059.06 亿元（短期借款 562.37 + 长期借款 1,637.71 + 应付债券 150 + 租赁负债 1,487.51 + 一年内到期 221.47）；货币资金 3,056.46 亿元 → <b>净有息负债约 1,002.60 亿元（轻度杠杆，杠杆率极低）</b>。流动性：流动比率 ≈ 1.13（流动资产 8,091.93 / 流动负债 7,165.49），现金短债比（货币 / 短期有息 ≈ 562.37 + 221.47 ≈ 783.84 亿）≈ 3.9×，短期偿债无虞。<b>结构异动（重点排雷线索）</b>：负债 +22.0%（10,326.84 → 12,604.06 亿）显著快于资产 +8.5%，主因——<b>其他应付款 955.11 亿（+240.7%，+674.72 亿）</b>、衍生金融负债 375.74 亿（+590.8%，油价套保）、短期借款 562.37 亿（+63.0%）、应付职工薪酬 202.69 亿（+159.2%，年终计提）、应交税费 689.93 亿（+35.3%）；资产端货币资金 +27.9%、应收账款 +53.3%、其他应收款 +120.5%、存货 +24.7%（油价上涨）。商誉 69.63 亿（−4.1%）、油气资产 8,083.21 亿（−6.6%，折耗）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b>现金流匹配度优秀：OCF 3,735.39 亿 / 净利润 1,719.74 亿 ＝ <b>2.17×</b>；/ 归母 1,557.73 亿 ＝ 2.40×。销售商品收到现金 24,532.44 亿 vs 营收 23,210.64 亿，<b>收现比 1.057（略高于 1）</b>，回款良好；但应收账款 +53.3% 与其他应收款 +120.5% 提示 Q3 油价高位下的营运资金占用，需跟踪回款。OCF 同比 +8.8%（多增 301.73 亿元），盈利有真金白银支撑，无借钱分红。</p>
+      <p><b>OCF 拆解归因：</b>拆解归因（估算）：净利润 1,719.74 亿 + 折旧折耗摊销约 1,826.64 亿（IFRS 口径「折旧、折耗及摊销」182,664 百万，非现金，加回）+ 资产减值损失 35.71 亿（非现金，加回）− 投资收益 159.55 亿（对联营合营 162.46 亿，权益法不产生现金）− <b>营运资金净占用约 1,680 亿</b>（应收账款 +415.12 亿 + 其他应收款 +350.96 亿 + 存货 +372.28 亿 + 预付款 +80.12 亿，部分被应付账款 +130.18 亿、其他应付款 +674.72 亿、应付职工薪酬 +124.50 亿、应交税费 +179.87 亿抵消）≈ <b>3,735.39 亿</b>。<b>注：季报未披露现金流量表补充资料，折旧摊销与营运资金变动系倒推估算，非审计数。</b></p>
+      <p><b>自由现金流与覆盖能力：</b>自由现金流 FCF ＝ OCF 3,735.39 − 购建固定资产、油气资产等支付的现金 1,594.63 ＝ <b>2,140.76 亿元</b>；上年同期为 3,433.66 − 1,779.32 ＝ 1,654.34 亿元，<b>FCF 同比 +29.4%</b>。前三季度「分配股利、利润或偿付利息支付的现金」1,076.11 亿元，<b>FCF 对分红付息覆盖约 1.99×</b>，分红可持续性无忧。资本开支 1,594.63 亿元（−10.4%）总量收缩、结构向新能源/新材料倾斜，短期 FCF 大幅改善。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>A 股 601857（<b>2026-10-29 收 ¥13.69，+3.24%</b>）：<b>PE(TTM) 约 13.52×、PE(静) 14.9×、PE(动) 11.2×、PB 约 1.54×（每股净资产 8.95 元）、股息率 TTM 约 3.73%</b>；总市值约 25,056 亿元。<b>52 周区间 ¥7.75–13.69，现价创阶段新高；年初至今 +38.28%</b>。估值分位（2026-10-19）：<b>PB 处近 10 年 100% 分位（近 3 年 100%）、PE(TTM) 处近 3 年 95.2% 分位、PS 处近 10 年 92.5% 分位——综合「偏高估值」</b>。H 股 00857.HK 约 HK$10.3，A-H 溢价 −36.5%（H 股显著折价，里昂认为 H 股被错误定价）。<b>2026 中期分红每股 0.26 元</b>；机构 28 家综合目标价 14.87 元（+12.14%），里昂 A 股目标 16 元、维持「跑赢大市」。</p>
+      <p><b>周期正常化估值：</b>石油强周期，<b>禁止用单期 PE 判贵贱</b>（油价高位 → 利润高 → PE 看似不贵，实为周期顶部），须用周期正常化估值（v2 修正 F）。<b>情景锚（以全年归母为核心变量，前三季度 1,557.73 亿元）</b>：<br/>• <b>悲观</b>：Q4 油价回落至 70 美元（地缘缓和、OPEC+ 增产），全年归母约 1,900–1,950 亿元 → PE(TTM) 约 13.1–13.4×、股息率约 3.8%；<br/>• <b>中性</b>：Q4 油价高位震荡（80–85 美元），全年归母约 2,050–2,100 亿元 → PE 约 12.2–12.5×、股息率约 3.9%；<br/>• <b>乐观</b>：Q4 油价续强（90 美元以上），全年归母约 2,200 亿元 → PE 约 11.6×、股息率约 4.0%。<br/><b>周期正常化：取 2022–2025 归母中枢（约 1,400–1,600 亿元）为稳态盈利，正常化 PE ≈ 25,056 亿 / 1,500 亿 ≈ 16.7×</b>，显著高于当前 PE(TTM) 13.5×——即当前低 PE 是「周期顶部高利润」的产物。<b>结论：当前 PE(TTM) 13.5× 看似不贵，但 PB 1.54× 处近 10 年 100% 分位、正常化 PE 约 16.7×，估值已不便宜；安全边际应归因于股息率 3.7% 与一体化抗周期能力，而非盈利高增长。关键变量是 2026Q4 及 2027 年油价中枢。</b></p>
+      <p><b>股东回报可持续性：</b>高分红、稳回报：<b>2026 中期分红每股 0.26 元（含税）</b>，按总股本 183.02 亿股计约 47.59 亿元；叠加 2025 年度末期股息，股息率 TTM 约 3.73%（TTM 股息每股 0.51 元）。机构强调「三桶油派息率长期稳定、长期高分红公司较为稀缺」。<b>分红可持续：前三季度 FCF 2,140.76 亿元对分红付息覆盖约 1.99×，OCF/归母 2.40×，非借钱分红</b>；货币资金 3,056 亿元 + 净有息负债仅约 1,003 亿元，派息现金基础坚实。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">管理层展望（三季报）：积极应对中东地缘局势动荡、国际油价宽幅波动、新能源替代、成品油需求下降等形势变化，进一步加大油气勘探开发力度、多元化开展资源筹措、确保炼化装置高负荷运行；大力发展新能源、新材料等新兴业务，持续推动业务转型升级；深入开展精细化市场营销。战略：上游「增储上产」+ 炼化「减油增化、减油增特」+ 天然气「做大终端」+ 新能源（风光/地热/CCUS）。<b>风险敏感（非承诺）：油价（地缘/OPEC+ 供给）、新能源替代、成品油需求下降、汇率。以上为前瞻性陈述，存在不确定性。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">「三桶油」可比（2026 三季报/最新，A 股）：<br/>• <b>中国石油（601857.SH）</b>：前三季度归母 1,557.73 亿（+21.9%）、OCF 3,735 亿（+8.8%）；PE(TTM) 13.5×、PB 1.54×、股息率 3.73%、市值 2.51 万亿——上游+下游一体化，规模最大、抗周期能力最强。<br/>• <b>中国海油（600938.SH）</b>：纯上游、油价弹性最大，PE(TTM) 12.3×、PB 1.99×、股息率 3.60%——资源禀赋与桶油成本更优。<br/>• <b>中国石化（600028.SH）</b>：下游炼化占比高、油价上涨时受成本挤压，PE(TTM) 18.9×、PB 0.81×、股息率 3.85%——估值最低但盈利弹性最弱。<br/><b>结论：中国石油「上下游一体化」在油价上行期四板块全面增利、盈利弹性居中；财务最稳健（净有息负债仅约 1,003 亿）、分红稳定。但 PB 1.54× 处历史高位，相对中石化（PB 0.81×）明显溢价，估值已反映一体化与油价上行预期。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">低风险</span>商誉 69.63 亿元（上年末 72.63 亿元，−4.1%，汇率折算），主要来自历史并购。<b>占归母权益 16,322.78 亿元的 0.43%、为归母净利润的 0.045 倍</b>，极低，远低于「占净资产 30% 或超年利润 5 倍」阈值，无减值迹象。</div></div>
+      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发费用 168.75 亿元（+17.4%，费用率 0.73%），<b>资产负债表无「开发支出」科目</b>——石油公司研发投入（油气勘探技术、炼化工艺、新材料/新能源）全额费用化，无资本化注水空间；研发费用增长反映「减油增化」与新能源转型投入加大。</div></div>
+      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span>资产减值损失 −35.71 亿元（上年 −6.30 亿元，<b>多提 29.41 亿元，+467%</b>），信用减值转回 +1.55 亿元。<b>绝对值占归母 2.3%、占利润总额 1.6%，不构成洗大澡</b>，但增幅显著，需在年报核实减值对象（油气资产/固定资产/在建工程）；结合油气资产 −6.6%（折耗+减值）跟踪。</div></div>
+      <div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict amber">关注</span>资产负债率 <b>40.58%</b>（上年末 36.06%，<b>+4.52pp</b>）；有息负债 4,059.06 亿元（短期借款 562.37 + 长期借款 1,637.71 + 应付债券 150 + 租赁负债 1,487.51 + 一年内到期 221.47），货币资金 3,056.46 亿元 → <b>净有息负债约 1,002.60 亿元（杠杆率仍低）</b>。<b>短期借款 +63.0%（+217.24 亿）、衍生金融负债 +590.8% 推升流动负债</b>；现金短债比约 3.9×，短期偿债无虞，但负债增速（+22%）快于资产（+8.5%）需跟踪。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>季报按法定惯例<b>未经审计</b>，无审计意见；报表由董事长戴厚良、董事兼总裁任立新、财务总监王华共同保证真实、准确、完整。公司同时按 CAS 与 IFRS 编制，两口径净利润差异仅 0.03 亿元，会计政策透明。</div></div>
+      <div class="rf"><div class="k">关联交易</div><div class="v"><span class="verdict amber">关注</span>其他应收款 642.14 亿元（年初 291.18 亿元，<b>+120.5%</b>），增幅显著；预付款项 226.85 亿元（+54.6%）。石油公司存在集团内财务公司、管道/炼化关联往来，属行业常态但金额较大，<b>需在年报核实其他应收款/其他应付款的具体构成与关联方往来性质</b>，警惕资金占用或利益输送。</div></div>
+      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span><b>应收账款 1,194.41 亿元较年初 779.29 亿元增长 53.3%，而营收 +7.0%</b>；应收款项融资 52.81 亿元（+183.3%）。成因：Q3 油价高位下销售放量 + 部分客户结算周期 + 国际贸易业务扩张。收现比 1.057（略高于 1）显示整体回款尚可，但应收增速远超营收是需跟踪的财务信号；石油下游客户（加油站/化工企业）账期较短，历史坏账率低。</div></div><div class="rf"><div class="k">存货</div><div class="v"><span class="verdict amber">关注</span>存货 1,878.26 亿元（年初 1,505.98 亿元，<b>+24.7%</b>），主要为原油、成品油、化工产品与在途物资。成因：国际油价大幅上行（布伦特 +27.1%）推高存货账面价值 + 冬季保供备库。<b>属成本驱动而非滞销，但若油价回落将面临存货跌价风险</b>，需跟踪油价与存货周转。</div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">低风险</span>前三季度非经常性损益 <b>−31.26 亿元（占归母 −2.0%）</b>，其中其他营业外收支 −49.37 亿、非流动资产处置 −5.57 亿为负项，政府补助 +8.05 亿、金融资产/负债损益 +4.67 亿为正项。<b>结果：扣非 1,588.99 亿高于归母 1,557.73 亿，非经常性损益「负贡献」，盈利质量「真、干净」</b>——主业盈利被非经项目轻微拖累，无靠非经保利润问题。</div></div>
+      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict up">健康</span>OCF 3,735.39 亿元 / 净利润 1,719.74 亿元 ＝ <b>2.17×</b>，长期远高于 1；OCF 同比 +8.8% 与利润增长方向一致，无背离。货币资金 3,056 亿元持续累积，<b>盈利有真金白银支撑，非借钱分红</b>（中期分红 47.59 亿仅占 OCF 1.3%）。</div></div>
+      <div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span>石油销售按交货/控制权转移确认，无渠道压货或完工百分比法空间；营收 +7.0% 与原油实现价 +18.5%、成品油销量 −5.1% 相匹配。<b>但应收账款 +53.3% 与国际贸易业务扩张相关，需关注贸易业务收入确认与回款时点</b>，暂不构成激进确认。</div></div>
+      <div class="rf"><div class="k">表外/担保/或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span><b>预计负债 1,760.16 亿元（油气资产弃置义务/环境恢复，行业特有）</b>；衍生金融负债 375.74 亿元（<b>+590.8%，油价套保头寸大幅扩张</b>，对应公允价值变动损失 −39.13 亿元）；无重大违规对外担保、无明股实债。少数股东权益 2,136.95 亿元（子公司并表，结构透明）。<b>外币折算：其他综合收益 −181.14 亿元（外币折算差额 −32.89 亿 + 现金流量套期储备 −112.39 亿）</b>，套保与汇率敞口需跟踪。</div></div>
+      <div class="rf"><div class="k">油价周期波动（行业特有·核心红旗）</div><div class="v"><span class="verdict amber">关注</span>石油强周期，业绩与油价高度绑定。本期布伦特均价 88.86 美元/桶（+27.1%）处历史偏高区间，直接放大上游利润（油气新能源经营利润 +19.7%）；但<b>地缘局势缓和、OPEC+ 增产或需求走弱均可能导致油价回落，利润随之收缩</b>。当前行情属油价上行段而非永续，「低 PE 顶部陷阱」是核心风险（油价高位 → 利润高 → PE 看似不贵 → 实为周期顶部），须以周期正常化估值看待。</div></div>
+      <div class="rf"><div class="k">其他应付款激增（行业特有·红旗）</div><div class="v"><span class="verdict amber">关注</span><b>其他应付款 955.11 亿元（年初 280.39 亿元，+240.7%，+674.72 亿元）</b>——本期最突出的负债异动，是资产负债率上升 4.52pp 的主要来源。季报未披露明细，可能含应付工程款/质保金/预提费用/财务公司及集团内往来/应付股利等。<b>需在年报核实具体构成，警惕隐藏负债或资金占用</b>。</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li>业绩创历史同期新高、四板块全面增长：归母 1,557.73 亿（<b>+21.9%</b>）；油气和新能源经营利润 1,520 亿（+19.7%）、化工经营利润 +185.7%、炼油 +24.7%、销售 +24.7%、天然气销售 +6.4%</li><li>盈利质量「真」：扣非 1,588.99 亿 <b>高于</b>归母 1,557.73 亿（非经常性 −31.26 亿元），利润全靠主业油价上行，无粉饰</li><li>现金流强劲、股东回报稳：OCF 3,735 亿（+8.8%）、FCF 2,141 亿（+29.4%）、货币资金 3,056 亿；2026 中期分红每股 0.26 元、股息率 TTM 约 3.7%</li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li>油价强周期顶部风险：布伦特均价 +27.1% 至 88.86 美元/桶处高位，业绩弹性高度依赖油价；若地缘缓和油价回落，利润将同步下探</li><li>营运资金占用激增：应收账款 1,194 亿（<b>+53.3%</b>）、其他应收款 642 亿（+120.5%）、其他应付款 955 亿（<b>+240.7%</b>）、存货 1,878 亿（+24.7%），资产负债率升至 40.58%</li><li>估值不便宜：PB 1.54× 处近 10 年 100% 分位，PE(TTM) 13.5× 处近 3 年 95% 分位，股价年初至今 +38% 已创新高，安全边际收窄</li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li>油价走势：布伦特 88.86 美元/桶处高位，跟踪地缘局势与 OPEC+ 供给、Q4 油价能否维持，及其对上游利润的传导</li><li>营运资金回款：应收账款 1,194 亿（+53.3%）、其他应收款 642 亿（+120.5%）、其他应付款 955 亿（+240.7%），跟踪回款与往来款性质</li><li>存货跌价：存货 1,878 亿（+24.7%，油价上涨），若油价回落需关注原油/成品油库存跌价</li><li>套保敞口：衍生金融负债 375.74 亿（+590.8%），跟踪油价套保头寸与公允价值变动（−39.13 亿）</li><li>炼化与化工景气：化工经营利润 +185.7%（乙烯 +26.4%、新材料 +58.5%），跟踪「减油增化」转型兑现</li><li>分红与资本配置：中期分红 0.26 元/股、全年派息率，跟踪资本开支（−10.4%）向新能源倾斜的节奏</li></ol></div>
+  </div>
+
+
+  <div class="foot">
+    <b>数据来源：</b>中国石油天然气股份有限公司《2026 年第三季度报告》（2026-10-29 披露，未经审计；雪球 PDF：stockmc.xueqiu.com/202610/601857_20261029_4IX0.pdf），按<b>中国企业会计准则（CAS）</b>编制（国际财务报告会计准则 IFRS 口径净利润 1,719.77 亿元与 CAS 差异仅 0.03 亿元，可忽略）。<b>口径说明（重要）：A 股 601857 与 H 股 00857 同股同权、同一合并报表；估值部分 A 股与 H 股分别列示。「前三季度」为 1–9 月累计，「Q3 单季」为 7–9 月。公司自 2026 年 1 月起合并储气库并追溯调整比较期数据。石油为强周期行业，业绩与油价高度绑定。</b>行情与估值取自 2026-10-29（腾讯自选股、证券时报、雪球、getstockcheck）；同业与机构目标价引自里昂（10-29）、光大证券（10-29）、公开财经媒体（格隆汇、新浪财经、财联社）。声明：基于公开数据量化分析，仅供参考，不构成投资建议。<br/>
+  </div>
+
+</div>
+</body>
+</html>

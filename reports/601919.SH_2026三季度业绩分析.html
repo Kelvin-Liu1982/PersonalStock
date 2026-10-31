@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中远海控 2026 三季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">中远海控</div>
+      <div class="meta">
+        <span>601919.SH / 01919.HK</span><span>航运（集装箱航运）</span><span>上交所 / 港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 三季报</div>
+      <div class="pdate">披露日期：2026-10-29</div>
+      <div class="badge up">偏积极 · 周期上行、量价齐升</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone up">偏积极</span>
+      <p class="oneliner">中远海控 2026 前三季度营收 1,876.14 亿元（+11.94%）、归母 306.49 亿元（+13.22%）、扣非 305.68 亿元（+13.36%），<b>Q3 单季业绩大爆发——归母 172.30 亿元（同比 +80.73%、环比 +128.45%）</b>，主因集装箱航运市场运价加速回暖（CCFI 综合指数均值同比 +19.46%，Q3 跨太平洋航线收入 +61.20%、美元口径 +68.53%），货运量（2,149 万 TEU，+6.47%）与单箱收入（国际航线 1,342.77 美元/TEU，+113.17）量价齐升。<b>最突出的正面因素是盈利质量与现金流的双重扎实</b>：扣非 305.68 亿元几乎等于归母（非经常性仅 +0.81 亿元、占比 0.26%）、OCF 479.09 亿元（+19.83%）、FCF 约 250 亿元、货币资金 1,525 亿元净现金近 800 亿元、资产负债率 41.36%；叠加中期分红每股 0.43 元（派息率约 50%）+ 回购注销，股东回报扎实。隐忧在于：①应收账款 +57.3%（Q3 旺季放量 + 运价高位账期放大）与存货 +35.2%（燃油涨价）的营运资金占用；②在建工程 +60.4%（造船资本开支）于周期高点扩张；③强周期属性下 Q3 利润暴增对应「低 PE 顶部陷阱」，须用周期正常化估值而非单期 PE 判贵贱。</p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li>量价齐升、Q3 爆发：前三季度货运量 2,149 万 TEU（+6.47%）、国际航线单箱收入 1,342.77 美元（+113.17），CCFI 均值 +19.46%；Q3 单季归母 172.30 亿元（<b>+80.73%</b>、环比 +128.45%），跨太平洋航线收入 +61.20%</li><li>盈利质量极干净：扣非 305.68 亿 vs 归母 306.49 亿，非经常性仅 +0.81 亿元（占比 0.26%），无依赖资产处置/补助粉饰</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li>强周期顶部风险：CCFI +19.46% 处周期高位，Q3 美线收入 +61% 为阶段性运价红利，2027 年新船交付高峰或致运力过剩、运价回落</li><li>营运资金占用：应收账款 126.78 亿元（较年初 <b>+57.3%</b>）远超营收 +11.94%、存货 85.26 亿元（+35.2%），需跟踪回款与燃油库存</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">分航线收入（前三季度，亿元）</text><rect x="88.8" y="70.9" width="62.4" height="127.1" rx="3" fill="#13406b"/><text x="120.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">511</text><text x="120.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">跨太平洋</text><rect x="208.8" y="114.2" width="62.4" height="83.8" rx="3" fill="#13406b"/><text x="240.0" y="109.2" font-size="10.5" fill="#1f2733" text-anchor="middle">337</text><text x="240.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">亚欧</text><rect x="328.8" y="86.8" width="62.4" height="111.2" rx="3" fill="#13406b"/><text x="360.0" y="81.8" font-size="10.5" fill="#1f2733" text-anchor="middle">447</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">亚洲区内</text><rect x="448.8" y="133.8" width="62.4" height="64.2" rx="3" fill="#13406b"/><text x="480.0" y="128.8" font-size="10.5" fill="#1f2733" text-anchor="middle">258</text><text x="480.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">其他国际</text><rect x="568.8" y="172.9" width="62.4" height="25.1" rx="3" fill="#13406b"/><text x="600.0" y="167.9" font-size="10.5" fill="#1f2733" text-anchor="middle">101</text><text x="600.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">中国大陆</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">前三季度：归母 vs 扣非（亿元）</text><rect x="96.0" y="85.4" width="78.0" height="112.6" rx="3" fill="#13406b"/><text x="135.0" y="80.4" font-size="10.5" fill="#1f2733" text-anchor="middle">271</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">25归母</text><rect x="246.0" y="85.8" width="78.0" height="112.2" rx="3" fill="#13406b"/><text x="285.0" y="80.8" font-size="10.5" fill="#1f2733" text-anchor="middle">270</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">25扣非</text><rect x="396.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#13406b"/><text x="435.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">306</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">26归母</text><rect x="546.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#c0392b"/><text x="585.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">306</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">26扣非</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">前三季度同比增速（%）</text><line x1="60" y1="276.6" x2="660" y2="276.6" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="279.6" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="138.9" width="50.0" height="137.6" rx="3" fill="#c0392b"/><text x="110.0" y="132.9" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+11.94%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营收</text><rect x="185.0" y="124.2" width="50.0" height="152.4" rx="3" fill="#c0392b"/><text x="210.0" y="118.2" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+13.22%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母</text><rect x="285.0" y="122.6" width="50.0" height="154.0" rx="3" fill="#c0392b"/><text x="310.0" y="116.6" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+13.36%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">扣非</text><rect x="385.0" y="155.4" width="50.0" height="121.1" rx="3" fill="#c0392b"/><text x="410.0" y="149.4" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+10.51%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">利润总额</text><rect x="485.0" y="48.0" width="50.0" height="228.6" rx="3" fill="#c0392b"/><text x="510.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+19.83%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">OCF</text><rect x="585.0" y="202.0" width="50.0" height="74.6" rx="3" fill="#c0392b"/><text x="610.0" y="196.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+6.47%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">货运量</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+<div class="mcard"><div class="lab">营业收入(1-9月)</div><div class="val">1,876亿</div><div class="delta up">+11.94%</div></div>
+      <div class="mcard"><div class="lab">Q3单季营收</div><div class="val">757亿</div><div class="delta up">+29.39%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">306亿</div><div class="delta up">+13.22%</div></div>
+      <div class="mcard"><div class="lab">Q3单季归母</div><div class="val">172亿</div><div class="delta up">+80.73% 环比+128%</div></div>
+      <div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">306亿</div><div class="delta up">+13.36%</div></div>
+      <div class="mcard"><div class="lab">经营现金流净额</div><div class="val">479亿</div><div class="delta up">+19.83%</div></div>
+      <div class="mcard"><div class="lab">加权ROE</div><div class="val">12.74%</div><div class="delta up">+1.37pp</div></div>
+      <div class="mcard"><div class="lab">基本EPS</div><div class="val">2.01元</div><div class="delta up">+15.52%</div></div>
+      <div class="mcard"><div class="lab">货运量(1-9月)</div><div class="val">2,149万TEU</div><div class="delta up">+6.47%</div></div>
+      <div class="mcard"><div class="lab">国际航线单箱收入</div><div class="val">1,343美元</div><div class="delta up">+113美元</div></div>
+      <div class="mcard"><div class="lab">资产负债率</div><div class="val">41.36%</div><div class="delta flat">基本持平</div></div>
+      <div class="mcard"><div class="lab">股息率(TTM)</div><div class="val">5.35%</div><div class="delta flat">中期派息率约50%</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+<tr><td>营业收入(亿元)</td><td class="num">1,876</td><td class="num">1,676</td><td class="num up">+11.94%</td></tr>
+        <tr><td>营业成本(亿元)</td><td class="num">1,437</td><td class="num">1,308</td><td class="num down">+9.85%</td></tr>
+        <tr><td>综合毛利率(%)</td><td class="num">23.43</td><td class="num">21.98</td><td class="num up">+1.45pp</td></tr>
+        <tr><td>利润总额(亿元)</td><td class="num">408</td><td class="num">369</td><td class="num up">+10.51%</td></tr>
+        <tr><td>归母净利润(亿元)</td><td class="num">306</td><td class="num">271</td><td class="num up">+13.22%</td></tr>
+        <tr><td>扣非归母净利润(亿元)</td><td class="num">306</td><td class="num">270</td><td class="num up">+13.36%</td></tr>
+        <tr><td>加权ROE(%)</td><td class="num">12.74</td><td class="num">11.37</td><td class="num up">+1.37pp</td></tr>
+        <tr><td>基本EPS(元)</td><td class="num">2.01</td><td class="num">1.74</td><td class="num up">+15.52%</td></tr>
+        <tr><td>经营现金流净额(亿元)</td><td class="num">479</td><td class="num">400</td><td class="num up">+19.83%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+<tr><td>Q3归母净利润</td><td class="num">172.30亿(+80.73%)</td><td class="num">约92亿港币(+5.55%)</td><td class="num up">大幅超预期</td><td class="num up">运价加速上行</td></tr>
+        <tr><td>前三季度归母</td><td class="num">306.49亿(+13.22%)</td><td class="num">270.70亿(上年同期)</td><td class="num up">+13.22%</td><td class="num up">超预期</td></tr>
+        <tr><td>前三季度OCF</td><td class="num">479.09亿(+19.83%)</td><td class="num">399.82亿(上年同期)</td><td class="num up">+19.83%</td><td class="num up">现金流强劲</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：机构盈利预测样本极小（1–2 家，港股/港币口径），按 v2 修正 B 显式声明，仅作参考：市场此前对 2026Q3 预测归母约 91.826 亿港币（同比 +5.55%）、EPS 0.592 港币（+18.94%）；<b>实际 Q3 归母 172.30 亿元人民币（同比 +80.73%），大幅超预期</b>——主因 Q3 运价加速上行（美线收入 +61.20%）远超机构保守预测。同时用「同比 + 前三季度已超上年全年」做进度校验：前三季度归母 306.49 亿元已达 2025 全年 308.60 亿元的 99%，全年归母预计 400 亿元以上，将创 2022 年（约 1,096 亿元历史峰值）之后的周期次高点。不以上市公司未披露的全年指引或搜索碎片冒充一致预期。</p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>集装箱航运行业 2026 年前三季度处于<b>「运价回暖、盈利修复、但供给过剩隐忧未消」的周期上行段</b>。核心变量：① 运价——CCFI 综合指数均值同比 +19.46%，Q3 单季加速（跨太平洋航线收入美元口径 +68.53%），红海绕行（吸收有效运力）、地缘风险（美伊局势）、港口拥堵、关税前抢运共同推升运价；② 供需——全球商品贸易总体保持韧性，但 2027 年新船交付高峰临近，供给端压力悬而未决；③ 成本——燃油价格宽幅震荡、环保/碳税成本上行。对公司的传导：中远海控作为全球第一梯队班轮公司（自营船队 610 艘、约 366 万 TEU），「量（货运量 +6.47%）+ 价（单箱收入 +9.2%）」双升直接放大业绩弹性，Q3 单季利润暴增即运价周期上行的典型表现。<b>行业坐标：当前处「上行段」，业绩向好但须警惕周期顶部——这正是本报告必须用周期正常化估值而非单期 PE 的原因。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：前三季度货运量 2,149.10 万 TEU（+6.47%），其中跨太平洋 401.51 万（+10.83%）、亚欧 334.74 万（+13.19%）、亚洲区内 709.79 万（+4.15%）、其他国际 238.10 万（+0.94%）、中国大陆 464.96 万（+4.95%）；码头总吞吐量 12,242.36 万 TEU（+8.07%）。价：CCFI 均值 +19.46%；国际航线单箱收入 1,342.77 美元/TEU（+113.17 美元，+9.2%）。供给：自营船队 610 艘、约 366 万 TEU，在建工程 +60.4%（新船交付在途）。成本：燃油价格宽幅震荡（存货 +35.2% 含燃油备货）。政策/事件：红海绕行、地缘风险、港口拥堵、环保碳税。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>重资产航运，以 ROIC − WACC 衡量价值创造（v2 修正 C，允许定性/区间）。估算：NOPAT ≈ EBIT（前三季度 428.11 亿元）×（1 − 有效税率 14.30%）≈ 366.9 亿元（1–9 月），年化约 489 亿元；投入资本 IC ≈ 归母权益 2,423.96 亿 + 少数股东权益 520.20 亿 + 有息负债 728.56 亿（短期借款 7.62 + 长期借款 219.05 + 租赁负债 314.97 + 一年内到期 186.92）− 货币资金 1,525.40 亿 ≈ 2,147.32 亿（含净现金口径另算：归母权益 − 净现金 796.84 亿 ≈ 1,627 亿）。→ <b>年化 ROIC 约 22%–30%（宽区间，因净现金巨大与 Q3 运价暴升推高年化）</b>。WACC：Re ≈ 无风险利率（10Y 国债约 1.7%）+ β（航运约 1.0–1.2）× ERP 6% ≈ 7.7%–8.9%，债权占比低（净现金状态）、Rd 影响小 → <b>WACC 约 7.5%–8.5%</b>。<b>ROIC − WACC 约 +14~22pp，大幅创造价值</b>——但须强调：当前 ROIC 高位主要来自 Q3 运价暴升，<b>周期正常化后（取近三年利润中枢）ROIC 或回落至 12%–15%，仍高于 WACC</b>，价值创造为正但弹性随运价大幅波动（2022 峰值 ROE>50%、2023 谷底约 10%）。注：货币资金与交易性金融资产的「超额现金」切分存在主观性，为区间估算、非审计数。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：货运量 2,149.10 万 TEU（+6.47%），码头总吞吐量 12,242.36 万 TEU（+8.07%）。<b>价</b>：CCFI 均值 +19.46%、国际航线单箱收入 1,342.77 美元/TEU（+113.17 美元，+9.2%）——<b>「价」是本期利润弹性的第一驱动</b>，Q3 单季跨太平洋航线收入 +61.20%（美元口径 +68.53%）、亚欧 +25.74%。<b>成本</b>：营业成本 1,436.54 亿（+9.85%，慢于营收 +11.94%）→ <b>毛利率 23.43%（+1.45pp）</b>，运价涨幅大于成本涨幅；管理费用 63.38 亿（+13.4%）、研发费用 8.37 亿（+5.0%）。<b>财务费用恶化是最大拖累</b>：财务费用 0.43 亿元（去年同期为净收益 −24.93 亿元，<b>同比恶化约 25.36 亿元</b>），主因利息收入 29.05 亿元（−13.66 亿元，存款余额与利率下降）+ 汇兑影响。<b>利润桥（Δ利润总额 +38.78 亿元）</b>：正向主源是<b>毛利扩张</b>（营收 +200.15 亿、成本仅 +128.86 亿 → 毛利 +71.29 亿）；负向拖累为财务费用 −25.36 亿、管理费用 −7.50 亿、信用减值多提 −1.19 亿；投资收益 +1.15 亿（对联营合营 43.53 亿）基本持平、有效税率下降（14.30% vs 16.56%）+2.26pp 贡献约 9 亿。<b>结论：利润增长由「运价驱动的毛利扩张」主导，被财务费用（利息收入减少）部分对冲，属典型周期上行量价齐升。</b></p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b>扣非 vs 归母：前三季度归母 306.49 亿（+13.22%）≈ 扣非 305.68 亿（+13.36%），<b>非经常性损益仅 +0.81 亿元（80,632,966.78 元，占归母 0.26%）</b>——其中非流动资产处置损益 +1.19 亿、政府补助 +0.27 亿、金融资产公允价值变动及处置 −0.08 亿、其他营业外收支 −0.07 亿为正向，扣除所得税影响与少数股东影响后合计 +0.81 亿。<b>结论：扣非增速（+13.36%）略高于归母增速（+13.22%），盈利质量「极干净、真」，几乎无非经常性损益粉饰</b>；利润来源就是集运主业运价上行，含金量高。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">中远海控按<b>业务分部</b>披露（2026 前三季度，人民币）：<br/>• <b>集装箱航运业务（核心主业）</b>：收入 1,805.93 亿元（同比 +195.62 亿元，+12.14%），其中「除海运以外的供应链收入」371.45 亿元（+42.51 亿元）；<b>EBIT 362.94 亿元（+30.38 亿元）、EBIT margin 20.10%（−0.55pp）、净利润 298.13 亿元（+37.73 亿元）</b>。量价双升：货运量 +6.47%、国际航线单箱收入 +113.17 美元。自营（中远海运集运）收入 1,260.68 亿元（+130.02 亿）、净利润 187.32 亿元（+21.42 亿）。<br/>• <b>码头业务（中远海运港口 01199.HK）</b>：总吞吐量 12,242.36 万 TEU（+8.07%），其中控股码头 2,565.78 万（+2.46%）、参股码头 9,676.58 万（+9.67%）；海外地区吞吐量 +18.53% 为拉动主力。<br/><b>增量贡献（v2 修正 H，以净利润口径近似）</b>：集团归母增量 = 306.49 − 270.70 = <b>+35.79 亿元</b>；集运业务净利润增量 <b>+37.73 亿元</b>（自营 +21.42 亿）——<b>集运主业几乎解释了全部利润增量，码头与供应链为协同补充</b>；财务费用 −25.36 亿为集团层面负向抵消。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card">资本结构：资产负债率 <b>41.36%</b>（上年末 41.41%，基本持平）。有息负债 728.56 亿元（短期借款 7.62 + 长期借款 219.05 + 租赁负债 314.97 + 一年内到期 186.92）；货币资金 1,525.40 亿元 → <b>账面净现金约 796.84 亿元</b>。流动性：流动比率 ≈ 1.44（流动资产 1,813.33 / 流动负债 1,262.70）；现金短债比（货币 / 短期有息 ≈ 7.62 + 186.92 ≈ 194.54 亿）≈ <b>7.8×</b>，短期偿债无虞。结构变化：<b>短期借款 −63.1%、长期借款 −13.3%（债务收缩），股本 −1.43% 与库存股 −68.1%（回购注销）</b>；应收账款 126.78 亿（<b>+57.3%</b>）、存货 85.26 亿（+35.2%）、合同资产 4.14 亿（+66.8%）、<b>在建工程 267.22 亿（+60.4%，造船）</b>、其他应付款 169.18 亿（+76.9%，其中应付股利 75.28 亿为中期分红待付）、应交税费 47.84 亿（+102.1%，利润增）；其他综合收益 −32.48 亿（上年末 +27.32 亿，外币报表折算差额 −62.23 亿所致）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b>现金流匹配度优秀：OCF 479.09 亿 / 净利润 349.43 亿 ＝ <b>1.37×</b>；/ 归母 306.49 亿 ＝ 1.56×。销售商品收到现金 1,860.78 亿 vs 营收 1,876.14 亿，<b>收现比 0.992（略低于 1，与应收账款 +57.3% 相互印证，Q3 旺季放量 + 运价高位账期放大，需跟踪回款）</b>。OCF 同比 +19.83%（多增 79.27 亿元），盈利有真金白银支撑，无借钱分红。</p>
+      <p><b>OCF 拆解归因：</b>拆解归因（估算）：净利润 349.43 亿 + 折旧摊销（固定资产 1,484.98 亿 + 使用权资产 416.95 亿，按航运重资产折旧率估算约 230–280 亿）+ 信用减值损失 1.27 亿（非现金，加回）− 投资收益 45.46 亿（对联营合营 43.53 亿，权益法不产生现金）− <b>营运资金净占用约 110–150 亿</b>（应收账款 +46.19 亿 + 存货 +22.18 亿 + 合同资产 +1.66 亿，部分被应付职工薪酬 +17.79 亿、应交税费 +24.17 亿、其他应付款 +73.55 亿抵消）≈ <b>479.09 亿</b>。<b>注：季报未披露现金流量表补充资料，折旧摊销与营运资金变动系倒推估算，非审计数。</b></p>
+      <p><b>自由现金流与覆盖能力：</b>自由现金流 FCF ＝ OCF 479.09 − 购建固定资产/无形资产等支付的现金 228.98 ＝ <b>250.11 亿元</b>；上年同期为 399.82 − 170.18 ＝ 229.64 亿元，<b>FCF 同比 +8.9%</b>。前三季度「分配股利、利润或偿付利息支付的现金」87.88 亿元，<b>FCF 对分红付息的覆盖约 2.85×</b>，分红可持续性无忧。资本开支 228.98 亿元（<b>+34.6%</b>，造船扩张）在周期高位加码，短期 FCF 仍正、中长期若运价回落则承压。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>A 股 601919（<b>2026-10-23 除净后约 ¥16.25</b>，10-21 除净前收 ¥16.59）：<b>PE(TTM) 约 9.29×、PE(静) 8.17×、PB 约 1.08×（资产净值 14.99 元）、股息率 TTM 约 5.35%</b>，派息比率 50.25%；A 股市值约 2,473 亿元。52 周区间 ¥13.08–17.52，现价贴近区间上沿；年初至今 +9.29%、近 3 年 +73.54%。<b>H 股 01919.HK 于 2026-10-23 收 HK$16.32</b>，机构（9 家）目标均价 HK$17.03（最高 21.11 / 最低 12.37），10 月买入/增持占比 33%、持有 44%。<b>2026 中期股息每股 0.43 元（每 10 股 4.3 元），除净日 2026-10-23、派送日 2026-10-23</b>。</p>
+      <p><b>周期正常化估值：</b>集运强周期，<b>禁止用单期 PE 判贵贱</b>（Q3 利润暴增 → PE 最低 → 实为周期顶部陷阱），须用周期正常化估值（v2 修正 F）。<b>情景锚（以全年归母为核心变量，前三季度 306.49 亿元已超 2025 全年 308.60 亿元）</b>：<br/>• <b>悲观</b>：Q4 运价回落（新船交付提前、红海复航），全年归母约 350–370 亿元 → PE(TTM) 约 7.7–8.1×、股息率约 5.5%；<br/>• <b>中性</b>：Q4 运价高位震荡，全年归母约 400–420 亿元 → PE 约 6.9–7.2×、股息率约 5.9%；<br/>• <b>乐观</b>：Q4 运价续强（旺季+地缘），全年归母约 450 亿元 → PE 约 6.4×、股息率约 6.4%。<br/><b>周期正常化：取近 3 年（2023 归母 165.61/2024 168.70/2025 308.60 亿）中枢约 214 亿元，正常化 PE ≈ 2,473 亿 / 214 亿 ≈ 11.6×</b>；PB 1.08× 接近净资产，且有净现金近 800 亿元 + 高股息托底。<b>结论：当前 PE(TTM) 9.3× 已处周期低端，但这是「周期顶部低 PE」的典型形态——安全边际应归因于 PB 1.08×、净现金与派息率，而非盈利高增长；估值修复的关键变量是 2027 年新船交付后运价中枢能否维持。</b></p>
+      <p><b>股东回报可持续性：</b>高分红 + 回购注销，股东回报扎实：<b>2026 中期股息每股 0.43 元（含税）</b>，按 152.68 亿股计约 65.65 亿元，<b>派息率约 50%（延续 50% 左右高派息）</b>，已于 2026-10-23 派发；股息率 TTM 约 5.35%，显著高于 10 年期国债（约 1.7%）。回购：2026 年 7 月启动<b>第五轮回购</b>，累计回购 50,017,457 股 A 股并于 2026-10-08 完成注销，五轮回购累计注销 A 股及 H 股 9.61 亿股。<b>分红可持续：前三季度 FCF 250.11 亿元对分红付息覆盖 2.85×，OCF/归母 1.56×，非借钱分红</b>。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">管理层展望（三季报）：全球集装箱航运市场需求有望保持一定韧性，「全球南方」贸易和区域内贸易仍将为市场增长提供重要引擎；公司持续优化全球航线网络布局与运力配置，深化港航协同和全链数智绿色服务，强化成本精益管控。战略：围绕「以集装箱航运为核心的全球数字化供应链运营和投资平台」定位，沿全球化、规模化、全链化、数智化、绿色化、融合化路径推进。<b>风险敏感（非承诺）：运价周期（2027 新船交付高峰 → 运力过剩）、地缘（红海绕行/美伊）、贸易政策（关税）、燃油价格、汇率（美元贬值致外币折算 −62.23 亿）。以上为前瞻性陈述，存在不确定性。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">集运/港口板块可比（2026 三季报/最新）：<br/>• <b>中远海控（601919.SH / 01919.HK）</b>：前三季度归母 306.49 亿（+13.22%）、OCF 479.09 亿（+19.83%）；A 股 PE(TTM) 9.29×、PB 1.08×、股息率 5.35%、净现金近 800 亿——财务最稳健、分红最高。<br/>• <b>东方海外国际（00316.HK，同集团双品牌之一）</b>：随 Q3 运价上行弹性更大，但为集团并表子公司，不独立比较归母。<br/>• <b>国际同业（马士基/达飞/赫伯罗特）</b>：2026 年普遍受益运价回暖，但 2027 供给过剩担忧一致；中远海控相对国际同业 PE 偏低、PB 近净资产。<br/>• <b>中远海运港口（01199.HK）</b>：码头板块，吞吐量 +8.07%，参股码头 +9.67% 为增长主源。<br/><b>结论：中远海控在 A/H 航运股中「财务最稳健（净现金、负债率 41%）+ 分红最高 + 估值处周期低端（PB 1.08× 近净资产）」；强周期属性决定其估值中枢随运价波动，Q3 业绩爆发后需以正常化估值看安全边际。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">低风险</span>商誉 60.71 亿元（上年末 63.59 亿元，−4.5%，系汇率折算变动），主要来自东方海外、港口等并购。<b>占归母权益 2,423.96 亿元的 2.5%、为归母净利润的 0.20 倍</b>，远低于「占净资产 30% 或超年利润 5 倍」阈值；无减值迹象（本期为小幅下降），资产质量干净。</div></div>
+      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发费用 8.37 亿元（+5.0%，费用率 0.45%），<b>开发支出为空（资产负债表无开发支出）</b>——研发投入全额费用化，航运以运维/技改/数智化（AI 智能供应链管家）为主，无资本化注水空间。</div></div>
+      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">低风险</span>信用减值损失 −1.27 亿元（上年 −0.08 亿元，多提 1.19 亿元）、资产减值损失 −0.03 亿元（上年 −0.03 亿元），<b>合计仅 1.30 亿元、占归母 0.42%</b>，无大额一次性减值（洗大澡/平滑利润），应收坏账计提充分。</div></div>
+      <div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict up">健康</span>资产负债率 41.36%（上年末 41.41%）；有息负债 728.56 亿元（短期借款 7.62 + 长期借款 219.05 + 租赁负债 314.97 + 一年内到期 186.92），货币资金 1,525.40 亿元 → <b>净现金约 796.84 亿元</b>。<b>短期借款 −63.1%、长期借款 −13.3%（债务主动收缩）</b>；现金短债比约 7.8×，无流动性风险；租赁负债 314.97 亿为经营租赁并表（已显性，非隐性债务）。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>季报按法定惯例<b>未经审计</b>，无审计意见；报表由董事长万敏、总会计师潘志刚及会计机构负责人徐宏伟共同保证真实、准确、完整，未见会计政策异常变更提示（「2026 年起首次执行新会计准则」不适用）。</div></div>
+      <div class="rf"><div class="k">关联交易</div><div class="v"><span class="verdict amber">关注</span>其他应收款 32.82 亿元（年初 32.10 亿元，+2.3%）无畸高；但<b>其他应付款 169.18 亿元（年初 95.64 亿元，+76.9%），其中应付股利 75.28 亿元</b>（年初仅 0.59 亿元）——主要系 2026 中期分红待付（0.43 元/股，已于 10-23 派发），属正常分红负债而非资金占用。关联往来为集团内港口/物流协同，历史上金额透明、定价公允。</div></div>
+      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span><b>应收账款 126.78 亿元较年初 80.59 亿元增长 57.3%，而营收 +11.94%</b>；合同资产 4.14 亿元（+66.8%）。前三季度应收周转天数约 15 天（2025 全年约 11 天），拉长约 4 天。成因：Q3 旺季放量 + 运价高位账期放大 + 部分客户结算周期。收现比 0.992（略低于 1）与应收激增相互印证，<b>是本期最需跟踪的财务信号</b>，但航运 B2B 大客户、回款历史良好，暂无坏账恶化迹象。</div></div><div class="rf"><div class="k">存货</div><div class="v"><span class="verdict amber">关注</span>存货 85.26 亿元（年初 63.08 亿元，<b>+35.2%</b>），主要为燃油/船用备件/物料。航运「即产即运、无库存商品积压」，存货上升主因<b>国际油价宽幅震荡下的燃油采购备货</b>（中报亦明确存货 +34.08% 主因燃油成本升），属成本驱动而非滞销；但需跟踪油价走势与存货周转，避免高油价下备货的跌价风险。</div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">低风险</span>前三季度非经常性损益 <b>+0.81 亿元（占归母 0.26%）</b>，其中非流动资产处置损益 +1.19 亿、政府补助 +0.27 亿、金融资产公允价值变动及处置 −0.08 亿、其他营业外收支 −0.07 亿。<b>结果：扣非 305.68 亿几乎等于归母 306.49 亿，无依赖资产处置/补助粉饰</b>，盈利质量极干净——这是本期归母利润真实性的最强证明。</div></div>
+      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict up">健康</span>OCF 479.09 亿元 / 净利润 349.43 亿元 ＝ <b>1.37×</b>，长期高于 1；OCF 同比 +19.83% 与利润增长方向一致，无背离。货币资金 1,525.40 亿元、净现金近 800 亿元持续累积，<b>盈利有真金白银支撑，非借钱分红</b>（中期分红 65.65 亿仅占 OCF 14%）。</div></div>
+      <div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span>航运收入按航次完成/提单交货、客户取得控制权时确认（标准控制权转移模型），无渠道压货或完工百分比法空间；营收 +11.94% 与箱量（货运量 +6.47%）、运价（CCFI +19.46%）匹配。<b>但应收账款 +57.3% 提示需关注回款时点是否因运价高位账期放大而延后</b>，属需持续跟踪的关联信号，暂不构成激进确认。</div></div>
+      <div class="rf"><div class="k">表外/担保/或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span>预计负债 60.25 亿元（船舶环境恢复/或有事项，年初 62.28 亿元）；无重大对外担保（无明股实债），少数股东权益 520.20 亿元主要为中远海运港口（01199.HK）并表、结构透明，并表范围稳定。<b>外币折算：其他综合收益 −74.79 亿元（上年 −8.15 亿元），其中外币财务报表折算差额 −62.23 亿元（上年 −10.23 亿元，大幅扩大）</b>——美元功能货币（东方海外/海外港口收入以美元计价）、人民币升值致海外净资产折算损失，拖累其他综合收益由 +27.32 亿转 −32.48 亿，占归母权益 2.6%，需关注美元/人民币汇率与套保有效性。</div></div>
+      <div class="rf"><div class="k">运价周期波动（行业特有·核心红旗）</div><div class="v"><span class="verdict amber">关注</span>集运强周期，业绩与 CCFI/SCFI 高度绑定。本期 CCFI 均值 +19.46%、Q3 美线收入 +61.20% 属运价上行红利；但<b>2027 年新船交付高峰 → 运力过剩隐忧</b>，运价或重回下行通道。当前行情属运价周期上行段而非永续成长，<b>「低 PE 顶部陷阱」是核心风险</b>（周期顶部利润高 → PE 最低 → 实为最贵），须以周期正常化估值看待。</div></div>
+      <div class="rf"><div class="k">地缘/贸易政策（行业特有·红旗）</div><div class="v"><span class="verdict amber">关注</span>红海绕行（吸收有效运力、航程拉长）、美伊局势、港口拥堵、关税（贸易政策不确定性）多重扰动双向影响运价与成本；<b>燃油价格宽幅震荡 + 环保/碳税成本上行</b>（存货 +35.2% 含燃油备货）亦受地缘传导。这些变量若逆转（如红海复航释放运力），将直接压制运价与利润，是运价周期之外的第二大不确定因素。</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li>量价齐升、Q3 爆发：前三季度货运量 2,149 万 TEU（+6.47%）、国际航线单箱收入 1,342.77 美元（+113.17），CCFI 均值 +19.46%；Q3 单季归母 172.30 亿元（<b>+80.73%</b>、环比 +128.45%），跨太平洋航线收入 +61.20%</li><li>盈利质量极干净：扣非 305.68 亿 vs 归母 306.49 亿，非经常性仅 +0.81 亿元（占比 0.26%），无依赖资产处置/补助粉饰</li><li>现金流与资产负债表扎实：OCF 479.09 亿元（<b>+19.83%</b>）、FCF 约 250 亿元，货币资金 1,525 亿元、净现金近 800 亿元、资产负债率 41.36%；中期分红 0.43 元/股 + 第五轮回购注销</li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li>强周期顶部风险：CCFI +19.46% 处周期高位，Q3 美线收入 +61% 为阶段性运价红利，2027 年新船交付高峰或致运力过剩、运价回落</li><li>营运资金占用：应收账款 126.78 亿元（较年初 <b>+57.3%</b>）远超营收 +11.94%、存货 85.26 亿元（+35.2%），需跟踪回款与燃油库存</li><li>周期高点资本开支扩张：在建工程 267.22 亿元（+60.4%，造船）在盈利高位加码，若运价回落将面临产能与折旧双重压力；财务费用因利息收入减少恶化 25.36 亿元</li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li>运价持续性：CCFI +19.46%、Q3 美线收入 +61%，跟踪 Q4 旺季运价能否维持，及 2027 年新船交付对运力的冲击（周期顶部风险）</li><li>应收账款的回款：应收账款 126.78 亿元（+57.3%）远超营收 +11.94%，跟踪 Q4 回款与信用政策</li><li>燃油成本与存货：存货 85.26 亿元（+35.2%）含燃油备货，跟踪油价与存货周转</li><li>造船资本开支：在建工程 267.22 亿元（+60.4%）转固节奏及其在运价回落时的折旧压力</li><li>财务费用：利息收入减少致财务费用恶化 25.36 亿元，跟踪存款利率与资金配置</li><li>股东回报：中期派息率约 50%、第五轮回购注销，跟踪全年派息率与回购接续</li></ol></div>
+  </div>
+
+  
+  <div class="foot">
+    <b>数据来源：</b>中远海运控股股份有限公司《2026 年第三季度报告》（2026-10-29 披露，未经审计；雪球 PDF：stockmc.xueqiu.com/202610/601919_20261030_BXEW.pdf），按<b>中国企业会计准则（CAS）</b>编制。<b>口径说明（重要）：A 股 601919 与 H 股 01919 同股同权、同一合并报表；估值部分 A 股与 H 股分别列示。「前三季度」为 1–9 月累计，「Q3 单季」为 7–9 月。航运为强周期行业，业绩与 CCFI/SCFI 运价高度绑定。</b>行情与估值取自 2026-10-23（除净日）及 2026-10-29（东方财富、腾讯自选股、阿斯达克、富途）；同业与机构目标价引自公开财经媒体（同花顺、新华财经、新浪财经、腾讯新闻，统计时点 2026-10-29）。历史数据（H1 同半年度多年序列、2025 全年）引自公司历次定期报告。声明：基于公开数据量化分析，仅供参考，不构成投资建议。<br/>
+  </div>
+
+</div>
+</body>
+</html>

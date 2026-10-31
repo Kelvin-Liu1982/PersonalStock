@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>中联重科 2026 三季报 财报分析</title>
+
+<style>
+  :root{
+    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
+    --line:#e7ebf1; --line-2:#eef1f6;
+    --brand:#13406b; --brand-soft:#eaf1f8;
+    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
+    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
+    --flat:#6b7280; --flat-soft:#f1f3f6;
+    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
+    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
+  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
+    justify-content:space-between;align-items:flex-start;}
+  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
+  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
+  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
+  .head .right{text-align:right;min-width:200px;}
+  .period{font-size:15px;font-weight:700;color:var(--brand);}
+  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
+  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
+  .badge.up{background:var(--up-soft);color:var(--up);}
+  .badge.down{background:var(--down-soft);color:var(--down);}
+  .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
+  .sec{margin-top:26px;}
+  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
+  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
+  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
+  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
+  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
+  .mcard .delta{font-size:13px;font-weight:700;}
+  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
+  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
+  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
+  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
+  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
+  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
+  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
+  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
+  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
+  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
+    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
+  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
+  .summary .tone.up{background:var(--up-soft);color:var(--up);}
+  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
+  .summary .tone.down{background:var(--down-soft);color:var(--down);}
+  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
+  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
+  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
+  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
+  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
+  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
+  .rf:last-child{border-bottom:none;}
+  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
+  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
+  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
+  .verdict.up{background:var(--up-soft);color:var(--up);}
+  .verdict.down{background:var(--down-soft);color:var(--down);}
+  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
+  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
+  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
+  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
+  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
+  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
+  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
+    border-top:1px dashed var(--line);padding-top:14px;}
+  .foot b{color:var(--ink-2);}
+  @media(max-width:640px){
+    .two{grid-template-columns:1fr;}
+    .summary .grid{grid-template-columns:1fr;}
+    .head .right{text-align:left;}
+    .rf{flex-direction:column;gap:4px;}
+    .rf .k{max-width:none;}
+  }
+  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+  <div class="head">
+    <div>
+      <div class="co">中联重科</div>
+      <div class="meta">
+        <span>000157.SZ / 01157.HK</span><span>机械设备（工程机械）</span><span>深交所 / 港交所</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="period">2026 三季报</div>
+      <div class="pdate">披露日期：2026-10-30</div>
+      <div class="badge flat">中性 · 主业承压但汇兑可还原，Q3 扣非环比拐点显现</div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心结论摘要</div>
+    <div class="summary">
+      <span class="tone flat">中性（表观利润被汇兑与高非经基数扭曲，扣非与现金流揭示真实经营）</span>
+      <p class="oneliner">中联重科 2026 前三季度呈<b>「增收不增利、但被三重会计因素放大」</b>的复杂图景：营业收入 <b>400.19 亿元（+7.71%）</b>，境内 168.82 亿元（+6.57%）、境外 231.37 亿元（+8.55%）<b>双增长</b>，境外占比升至 <b>57.81%</b>；但归母净利润 <b>29.61 亿元（−24.46%）</b>、扣非仅 <b>15.88 亿元（−39.92%）</b>。<b>表观下滑的三个成因，两个属「会计扰动」而非经营恶化</b>：① <b>汇兑反转</b>——2026 年人民币阶段性升值，财务费用由上年 <b>−1.23 亿元（净收益）转为 +11.84 亿元（净支出）</b>，同比恶化 <b>+13.06 亿元</b>（+1066%），是利润下滑的第一大因子；<b>剔除税后汇兑影响后归母为 37.81 亿元（+1.87%）</b>，公司口径明确「相关项目大部分期末尚未结算，不直接对应当期经营性现金流出」。② <b>资产处置高基数</b>——上年同期资产处置收益 5.51 亿元，本期 −0.08 亿元，同比减少 <b>5.59 亿元</b>。③ <b>销售费用前置</b>——销售费用 37.70 亿元（<b>+21.89%</b>，多支出 6.77 亿元），系海外本地化（30 余个一级业务航空港、550 多个销服网点、海外本地员工约 7,000 人）的前置投入。<b>但有一项是真正的质量问题</b>：<b>非经常性损益 13.73 亿元，占归母净利润的 46.4%</b>（资产处置 6.36 亿 + 政府补助 8.17 亿 + 其他 0.94 亿 + 公允价值 0.87 亿，减税 2.52 亿），<b>即近一半利润来自非主业</b>——这是本期最需要警惕的红旗。<b>积极信号集中在三处</b>：① <b>Q3 单季扣非 7.57 亿元（+5.39%）、环比大增 229.89%</b>，<b>单季毛利率回升至 27.76%（环比 +1.73pp）</b>、扣非净利率环比 +4.26pp，<b>盈利拐点初现</b>；② <b>经营现金流 35.52 亿元（+23.94%）</b>，<b>收现率 103.65%（+1.06pp）</b>，现金流增速高于营收，造血能力未受损；③ <b>海外多区域均衡</b>（欧洲、东南亚、非洲、南美、中东、中亚、南亚），降低单一市场波动。<b>资产负债表转为「扩张模式」</b>：总资产 1,471.35 亿元（<b>+10.51%</b>）、存货 282.22 亿元（<b>+37.56%</b>）、应收账款 376.61 亿元（+8.93%）、应付票据 165.35 亿元（<b>+74.94%</b>）、应付债券 99.45 亿元（<b>+397.27%</b>，发行可转债），<b>资产负债率由 55.03% 升至 58.94%（+3.91pp）</b>。<b>估值已充分反映悲观</b>：2026-10-30 收 <b>5.89 元</b>、总市值 509.40 亿元、<b>PE(TTM) 13.06×、PB 0.88×（破净）、股息率 6.79%</b>、年初至今 <b>−28.43%</b>，AH 溢价 −28.19%。<b>核心矛盾：主业（扣非）仍在下滑，但 Q3 已出现环比拐点、现金流改善、汇兑可还原——这是一个「表观很差、内在在修复」的组合，股价的赔率主要来自 0.88× PB 与 6.79% 股息率。</b></p>
+      <div class="grid">
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li><b>剔除汇兑后归母转正增长</b>：汇兑使财务费用同比恶化 13.06 亿元（−1.23 → +11.84 亿元），<b>剔除税后汇兑影响后归母 37.81 亿元、同比 +1.87%</b>；公司明确相关项目多数期末未结算，不直接对应现金流出</li><li><b>Q3 单季盈利拐点明确</b>：扣非归母 <b>7.57 亿元（+5.39%）</b>、<b>环比大增 229.89%</b>；单季毛利率 <b>27.76%（环比 +1.73pp）</b>、扣非归母净利率环比 +4.26pp——在营收环比基本持平下实现利润率修复（动态调价 + 提质增效 + 强化汇兑管理）</li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li><b>非经常性损益占比高达 46.4%（核心质量问题）</b>：非经 13.73 亿元 vs 归母 29.61 亿元，其中资产处置 6.36 亿元、政府补助 8.17 亿元；<b>扣非 15.88 亿元（−39.92%）才是主业真实盈利</b>，若 2027 年无同类资产处置与补助，归母将大幅下修</li><li><b>汇兑敞口随海外占比提升而放大</b>：境外收入占比 57.81%，人民币升值周期中财务费用剧烈波动（本期 +13.06 亿元）；虽为账面扰动，但若人民币持续升值，未来季度仍将重复拖累</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">关键指标可视化</div>
+    <div class="charts">
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 分季度营业收入（亿元）</text><rect x="108.0" y="81.9" width="104.0" height="116.1" rx="3" fill="#13406b"/><text x="160.0" y="76.9" font-size="10.5" fill="#1f2733" text-anchor="middle">129.5</text><text x="160.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q1</text><rect x="308.0" y="70.9" width="104.0" height="127.1" rx="3" fill="#13406b"/><text x="360.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">141.8</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q2</text><rect x="508.0" y="82.5" width="104.0" height="115.5" rx="3" fill="#c0392b"/><text x="560.0" y="77.5" font-size="10.5" fill="#1f2733" text-anchor="middle">128.8</text><text x="560.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 分季度归母净利润（亿元）</text><rect x="108.0" y="105.7" width="104.0" height="92.3" rx="3" fill="#13406b"/><text x="160.0" y="100.7" font-size="10.5" fill="#1f2733" text-anchor="middle">8.8</text><text x="160.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q1</text><rect x="308.0" y="70.9" width="104.0" height="127.1" rx="3" fill="#13406b"/><text x="360.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">12.2</text><text x="360.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q2</text><rect x="508.0" y="108.3" width="104.0" height="89.7" rx="3" fill="#c0392b"/><text x="560.0" y="103.3" font-size="10.5" fill="#1f2733" text-anchor="middle">8.6</text><text x="560.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026 前三季度 / Q3 同比增速（%）</text><line x1="60" y1="105.7" x2="660" y2="105.7" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="108.7" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="87.1" width="50.0" height="18.6" rx="3" fill="#c0392b"/><text x="110.0" y="81.1" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+7.71%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营业收入</text><rect x="185.0" y="105.7" width="50.0" height="59.0" rx="3" fill="#1f8a4c"/><text x="210.0" y="177.7" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-24.46%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母净利</text><rect x="285.0" y="105.7" width="50.0" height="96.3" rx="3" fill="#1f8a4c"/><text x="310.0" y="215.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-39.92%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">扣非归母</text><rect x="385.0" y="105.7" width="50.0" height="2.3" rx="3" fill="#1f8a4c"/><text x="410.0" y="121.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-0.94pp</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">毛利率</text><rect x="485.0" y="48.0" width="50.0" height="57.7" rx="3" fill="#c0392b"/><text x="510.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+23.94%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">经营现金流</text><rect x="585.0" y="92.7" width="50.0" height="13.0" rx="3" fill="#c0392b"/><text x="610.0" y="86.7" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+5.39%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q3扣非</text></svg></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">核心财务指标变动</div>
+    <div class="metrics">
+<div class="mcard"><div class="lab">营业收入</div><div class="val">400.19亿</div><div class="delta up">+7.71%</div></div>
+      <div class="mcard"><div class="lab">归母净利润</div><div class="val">29.61亿</div><div class="delta down">-24.46%</div></div>
+      <div class="mcard"><div class="lab">扣非归母净利</div><div class="val">15.88亿</div><div class="delta down">-39.92%</div></div>
+      <div class="mcard"><div class="lab">Q3单季营收</div><div class="val">128.84亿</div><div class="delta up">+4.74%</div></div>
+      <div class="mcard"><div class="lab">Q3单季扣非</div><div class="val">7.57亿</div><div class="delta up">+5.39%</div></div>
+      <div class="mcard"><div class="lab">综合毛利率</div><div class="val">27.12%</div><div class="delta down">-0.94pp</div></div>
+      <div class="mcard"><div class="lab">Q3单季毛利率</div><div class="val">27.76%</div><div class="delta up">+1.73pp环比</div></div>
+      <div class="mcard"><div class="lab">财务费用</div><div class="val">11.84亿</div><div class="delta down">+1066%</div></div>
+      <div class="mcard"><div class="lab">非经常性损益</div><div class="val">13.73亿</div><div class="delta down">占归母46.4%</div></div>
+      <div class="mcard"><div class="lab">经营现金流净额</div><div class="val">35.52亿</div><div class="delta up">+23.94%</div></div>
+      <div class="mcard"><div class="lab">境外收入占比</div><div class="val">57.81%</div><div class="delta up">+0.45pp</div></div>
+      <div class="mcard"><div class="lab">PE/PB/股息率</div><div class="val">13.06x/0.88x</div><div class="delta flat">6.79%</div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与历史同期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
+      <tbody>
+<tr><td>营业收入(亿元)</td><td class="num">400.19</td><td class="num">371.56</td><td class="num up">+7.71%</td></tr>
+        <tr><td>营业成本(亿元)</td><td class="num">291.64</td><td class="num">267.15</td><td class="num down">+9.17%</td></tr>
+        <tr><td>综合毛利率(%)</td><td class="num">27.12</td><td class="num">28.06</td><td class="num down">-0.94pp</td></tr>
+        <tr><td>销售费用(亿元)</td><td class="num">37.70</td><td class="num">30.93</td><td class="num down">+21.89%</td></tr>
+        <tr><td>财务费用(亿元)</td><td class="num">11.84</td><td class="num">-1.23</td><td class="num down">+13.06亿</td></tr>
+        <tr><td>投资收益(亿元)</td><td class="num">7.38</td><td class="num">2.03</td><td class="num up">+264.02%</td></tr>
+        <tr><td>归母净利润(亿元)</td><td class="num">29.61</td><td class="num">39.20</td><td class="num down">-24.46%</td></tr>
+        <tr><td>扣非归母净利润(亿元)</td><td class="num">15.88</td><td class="num">26.42</td><td class="num down">-39.92%</td></tr>
+        <tr><td>经营现金流净额(亿元)</td><td class="num">35.52</td><td class="num">28.66</td><td class="num up">+23.94%</td></tr>
+
+      </tbody>
+    </table>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">与市场预期对比</div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+<tr><td>营业收入</td><td class="num">400.19亿(+7.71%)</td><td class="num">市场预期个位数增长</td><td class="num up">境内外双增</td><td class="num up">符合预期</td></tr>
+        <tr><td>归母净利润</td><td class="num">29.61亿(-24.46%)</td><td class="num">市场预期受汇兑拖累</td><td class="num flat">降幅符合预期</td><td class="num flat">符合预期</td></tr>
+        <tr><td>剔除汇兑后归母</td><td class="num">37.81亿(+1.87%)</td><td class="num">公司还原口径</td><td class="num up">主业微增</td><td class="num up">超市场认知</td></tr>
+        <tr><td>Q3单季扣非</td><td class="num">7.57亿(+5.39%，环比+229.89%)</td><td class="num">市场预期Q2见底</td><td class="num up">拐点确认</td><td class="num up">超预期</td></tr>
+        <tr><td>非经常性损益</td><td class="num">13.73亿(占归母46.4%)</td><td class="num">市场未充分预期</td><td class="num down">占比过高</td><td class="num down">低于预期</td></tr>
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：预期差判断（2026-10-29/30 三季报发布，媒体与券商解读已跟进）：① <b>公司口径的「还原利润」</b>：<b>剔除税后汇兑影响后归母 37.81 亿元、同比 +1.87%</b>——这是管理层与主流财经媒体一致采用的口径，<b>即「主业没有下滑，只是被汇率掩盖」</b>。② <b>Q3 拐点被普遍强调</b>：单季扣非 7.57 亿元（+5.39%）、<b>环比 +229.89%</b>，毛利率 27.76%（环比 +1.73pp）、扣非净利率环比 +4.26pp，多家财经媒体以「盈利拐点」「盈利能力修复」定调。③ <b>现金流与收现率</b>：经营现金流 35.52 亿元（+23.94%）、收现率 103.65%（+1.06pp），被认为是「经营质量优于利润表」的证据。④ <b>市场定价的分歧</b>：股价年初至今 <b>−28.43%</b>、PB 0.88× 破净、AH 溢价 −28.19%——<b>市场用脚投票，显然不完全接受「汇兑一次性」的叙事，更担心的是非经占比 46.4% 与存货 +37.56%</b>。<b>综合判定「<b>表观业绩低于预期（归母 −24.46%、扣非 −39.92%）、还原后业绩符合预期（+1.87%）、Q3 边际超预期（扣非环比 +229.89%）</b>」——三个口径给出三种结论，分歧焦点在于「汇兑能否回补」与「非经能否持续」，这决定了 2027 年利润的中枢。</b></p>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">行业坐标与供需</div>
+    <div class="card">
+      <p><b>行业所处阶段与传导方向：</b>工程机械行业 2026 年前三季度处于<b>「国内弱复苏、海外高景气但汇率扰动、龙头加速出海本地化」</b>的分化期。核心变量：① <b>国内</b>——基建与地产投资偏弱，挖掘机、起重机国内销量温和复苏，价格竞争仍存；② <b>海外</b>——「一带一路」与新兴市场基建需求支撑出口，但<b>2026 年人民币阶段性升值对出口导向型企业形成集体冲击</b>，行业内上市公司普遍由「汇兑收益」转为「汇兑损失」；③ <b>竞争格局</b>——三一重工、徐工机械、中联重科三足鼎立，中联在<b>建筑起重机（全球市占第一）、混凝土机械</b>上优势突出，土方机械、矿山机械、高空机械、农机为第二曲线；④ <b>模式升级</b>——从「产品出口」转向「体系出海」（本地化制造 + 销服网络），短期费用前置、长期费用率下行。<b>行业坐标：工程机械正从「国内周期」转向「全球周期」，中联的境外收入占比已达 57.81%、为三家最高之一；短期汇率扰动掩盖了主业的边际改善（Q3 毛利率环比 +1.73pp、扣非环比 +229.89%），中期胜负取决于海外本地化能否跨过收入临界点。</b></p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：境外营收 231.37 亿元（+8.55%）、境内 168.82 亿元（+6.57%），<b>境外占比 57.81%（+0.45pp）</b>。价/结构：Q3 单季毛利率 27.76%（环比 +1.73pp、同比 −0.24pp），前三季毛利率 27.12%（同比 −0.94pp）；工程起重机超大吨位（4,000/2,400/1,600 吨）批量交付，产品结构上移。成本：营业成本 291.64 亿元（+9.17%），<b>增速快于营收（+7.71%）</b>，是毛利率下滑的直接原因；销售费用 37.70 亿元（+21.89%）为海外本地化前置投入。汇率：<b>财务费用 11.84 亿元 vs 上年 −1.23 亿元（+1066%）</b>，主因人民币升值带来的汇兑损失；剔除税后汇兑影响后归母 37.81 亿元（+1.87%）。<b>同业参照</b>：三一重工、徐工机械 2026 年前三季度同样受汇兑拖累（行业性），但中联境外占比最高、敞口最大；同时中联 2025 年 ROE 8.34%、毛利率 28.04%，在三家中偏低，估值（PB 0.88×）也最低。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">盈利质量与增长归因</div>
+    <div class="card">
+      <p><b>ROIC − WACC（创造价值判据）：</b>工程机械属<b>中重资产、强周期、高营运资本占用</b>行业，用 <b>ROE − COE</b> 与隐含 COE 判断价值创造（v2 修正 C）。<b>ROE 侧</b>：前三季加权平均 ROE <b>4.91%（−1.83pp）</b>，年化约 6.5%；全年口径约 7%（2025 年为 8.34%、2024 年 6.24%）——<b>ROE 长期在 6%–8% 的低位徘徊</b>，是重资产 + 高应收 + 低净利率的共同结果。<b>COE 侧</b>：Re ≈ 无风险利率（10Y 国债约 1.8%）+ β（工程机械约 1.1，周期属性强）× ERP 5.5% ≈ <b>7.9%</b>，加海外与汇率风险溢价 1pp，合理 COE 约 <b>8.9%</b>。<b>ROE − COE ≈ −2.4 ~ −1.9pp，即当前处于「价值微幅毁灭」区间</b>——这是中联与同类优质制造的核心差别：<b>它的资本回报尚未稳定超过资本成本</b>。<b>反推市场隐含 COE</b>：以 PB <b>0.88×</b>、ROE 7% 计，<b>隐含 COE ≈ ROE / PB ≈ 8.0%</b>，与我们估算的合理 COE 8.9% 相近甚至略低——<b>即市场已把「ROE 只有 7%」这一现实充分定价，PB 破净（0.88×）正是「ROE < COE」的必然结果</b>。<b>结论：中联不具备「低 PB 就有安全边际」的简单逻辑——破净反映的是资本回报不足；要打破这一循环，需要 ROE 回升至 9% 以上（对应毛利率修复 + 非经依赖下降 + 应收周转改善），这需要 2–3 个季度的验证。</b></p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>营收桥（Δ = 400.19 − 371.56 = +28.64 亿元）</b>：境内 +10.41 亿元（+6.57%）、境外 +18.23 亿元（+8.55%），<b>海外贡献 64% 的增量</b>，是增长主引擎。<b>利润桥（Δ 营业利润 = 33.16 − 46.41 = −13.25 亿元）</b>，可精确拆成五项：<b>负向（主因）</b>——① <b>财务费用恶化 −13.06 亿元</b>（−1.23 → +11.84 亿元，汇率升值导致的汇兑损失，<b>单项即解释了全部利润降幅</b>）；② <b>销售费用 −6.77 亿元</b>（30.93 → 37.70 亿元，+21.89%，海外本地化前置投入）；③ <b>资产处置收益 −5.59 亿元</b>（上年 5.51 亿元 → 本期 −0.08 亿元）；④ 税金及附加 −0.56 亿元、资产减值 −0.26 亿元。<b>正向（对冲）</b>——① <b>毛利 +4.15 亿元</b>（营收 +28.64 亿元、营业成本 +24.49 亿元，<b>毛利率由 28.06% 降至 27.12%，−0.94pp</b>）；② <b>投资收益 +5.35 亿元</b>（2.03 → 7.38 亿元，+264.02%，处置联营企业部分股权）；③ <b>其他收益 +2.28 亿元</b>（政府补助增加，+35.28%）；④ 管理费用 +0.30 亿元、研发费用 +0.20 亿元、信用减值 +0.36 亿元、公允价值 +0.35 亿元。<b>净利润 −10.65 亿元（所得税 −2.08 亿元，有效税率 12.34% → 10.84%）、归母 −9.59 亿元、少数股东 −1.06 亿元。</b><b>拆解结论</b>：<b>若剔除财务费用恶化的 13.06 亿元，营业利润本可同比 +5.1%</b>——即<b>「扣除汇兑后，主业是微增的」</b>，与公司「剔除汇兑后归母 +1.87%」的口径相互印证。<b>Q3 单季边际改善</b>：Q3 毛利率回升至 27.76%（环比 +1.73pp）、扣非 7.57 亿元（同比 +5.39%、环比 +229.89%），<b>说明二季度可能是本轮盈利低点</b>。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>本期利润质量的最大问题是「非经占比过高」</b>：非经常性损益 <b>13.73 亿元，占归母净利润 29.61 亿元的 <u>46.4%</u></b>——构成为<b>非流动资产处置损益 6.36 亿元</b>（处置土地/房产等）、<b>政府补助 8.17 亿元</b>、其他营业外收支 0.94 亿元、金融资产公允价值及处置 0.87 亿元、债务重组 −0.03 亿元，减所得税影响 2.52 亿元、少数股东影响 0.06 亿元。<b>对应扣非归母仅 15.88 亿元（−39.92%），与归母（−24.46%）的降幅差达 15.5pp</b>——<b>即「归母的韧性」有近一半来自卖资产与政府补助，而非主业</b>，这是解读本期业绩最需要警惕的一点（v2「靠非经保利润」的典型形态，虽未违规，但可持续性差）。<b>其他质量指标相对健康</b>：① <b>经营现金流 35.52 亿元（+23.94%）</b>，OCF/归母 = 1.20×，<b>现金含量高于利润，说明利润有现金支撑</b>；② <b>收现率 103.65%（+1.06pp）</b>，收入含金量高；③ 信用减值 3.63 亿元（上年 4.00 亿元，略改善）、资产减值 0.74 亿元（上年 0.48 亿元），<b>减值计提未见异常放大</b>。<b>须提示</b>：汇兑损失 13.06 亿元属「账面未结算」的时点性影响（公司口径），<b>若汇率反转将回补</b>；但它是计入当期损益的<b>经常性项目</b>，因此「扣非」也含此拖累 —— 这是理解「扣非 −39.92% 而经营只是微增」的关键。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务分部与地区拆解</div>
+    <div class="card">中联重科按<b>地区 / 产品</b>双维度披露（<b>⚠️ 季报仅披露分地区收入，产品分部为半年报口径</b>）：<br/>• <b>分地区（前三季，季报原文）</b>：<b>境外 231.37 亿元（占 57.81%，+8.55%）</b>、境内 168.82 亿元（42.19%，+6.57%）；境外占比同比 +0.45pp，<b>十大区域（欧洲、东南亚、非洲、南美、中东、中亚、南亚等）分布均衡</b>，单一市场波动影响被有效分散。<br/>• <b>分产品（2026 半年报口径）</b>：起重机械（工程起重机 + 建筑起重机，<b>建筑起重机全球市占率第一</b>）、混凝土机械（与意大利 CIFA 协同）、土方机械、<b>高空作业机械</b>、<b>矿山机械</b>（新能源矿卡、无人驾驶）、<b>农业机械</b>——后四者为「第二增长曲线」，上半年土方 +23.02%、矿山 +57.20%、其他机械 +20.77%，对冲起重机械（−6.56%）与农机（−15.26%）。<br/>• <b>重大产品突破（前三季）</b>：4,000 吨 / 2,400 吨 / 1,600 吨全地面起重机批量发货，超大吨位履带吊与大吨位折臂起重机批量出海——<b>超大吨位是毛利率最高的产品带，结构上移是 Q3 毛利率环比 +1.73pp 的重要来源</b>。<br/><b>增量贡献（v2 修正 H）</b>：营收增量 28.64 亿元中，<b>境外贡献 18.23 亿元（64%）、境内 10.41 亿元（36%）</b>；利润端则被汇兑（−13.06 亿）与销售费用（−6.77 亿）吞掉，<b>「收入靠海外、利润被海外费用与汇率反噬」是本期最核心的结构矛盾</b>。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">资产负债与周转效率</div>
+    <div class="card"><b>资本结构（由「稳健」转向「扩张」，杠杆抬升明显）</b>：总资产 <b>1,471.35 亿元（+10.51%）</b>、总负债 867.29 亿元（<b>+18.37%</b>）→ <b>资产负债率 58.94%</b>（上年末 55.03%，<b>+3.91pp</b>）。<b>负债端</b>：<b>应付债券 99.45 亿元（+397.27%）</b>——本期发行可转换公司债券；<b>应付票据 165.35 亿元（+74.94%）</b>、应付账款 142.49 亿元（+29.60%）——以票据与应付款占用上游，是营运资本扩张的主要资金来源；短期借款 41.00 亿元（+27.33%）、长期借款 162.71 亿元（<b>−18.57%</b>，以低息债券置换高息贷款）、一年内到期非流动负债 77.31 亿元、其他流动负债 56.29 亿元。<b>资产端（营运资本大幅扩张）</b>：<b>存货 282.22 亿元（+37.56%）</b>——增速 4.9 倍于营收，存货/营收升至 70.5%；<b>应收账款 376.61 亿元（+8.93%）</b>、长期应收款 87.46 亿元（−10.78%，信用销售安排）；货币资金 155.17 亿元（+12.60%）、<b>交易性金融资产 40.69 亿元（+96.51%，购买理财）</b>、其他流动资产 38.50 亿元；固定资产 150.79 亿元（+8.97%）、在建工程 76.35 亿元（+5.18%）、<b>长期股权投资 29.65 亿元（−27.31%，处置联营企业部分股权）</b>、商誉 26.34 亿元（−4.05%）。<b>权益端</b>：归母权益 582.07 亿元（+1.11%），<b>其他综合收益 −26.64 亿元（年初 −19.19 亿元，恶化 7.45 亿元，主因外币报表折算差额）</b>——这是汇率对净资产的第二重侵蚀；少数股东权益 21.99 亿元。<b>须留意</b>：其他应付款 71.52 亿元（−19.42%，含应付股利由 15.40 亿元降至 0.04 亿元，分红已派发）。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">现金流健康度</div>
+    <div class="card">
+      <p><b>现金流匹配度：</b><b>现金流是本期最健康的指标，且与利润形成「正背离」</b>。经营现金流净额 <b>35.52 亿元（+23.94%）</b>，而归母净利润 −24.46%——<b>现金流增速远高于利润，方向相反</b>；OCF / 归母 = 35.52 / 29.61 = <b>1.20×</b>。<b>更关键的收现率</b>：销售商品、提供劳务收到现金 <b>414.82 亿元（+8.82%）</b>，<b>收现率 103.65%（+1.06pp）</b>，高于 100% 意味着<b>当期回款超过当期收入，应收账款的增量被有效控制</b>。<b>利润下滑与现金流改善为何并存？</b>① 汇兑损失 13.06 亿元是<b>账面未结算损益，不产生现金流出</b>；② 资产处置、政府补助等非经项目虽增厚利润但现金流入有限（处置回款计入投资活动）；③ 公司加大回款力度，收现率提升。<b>结论：本期「利润难看、现金流好看」的组合，恰恰说明利润下滑的主因是会计与汇率因素，而非经营失血——这是判断「这是一次可还原的下滑」的核心证据。</b></p>
+      <p><b>OCF 拆解归因：</b>OCF 拆解归因（v2 修正 E，估算）：<b>起点</b>净利润 30.40 亿元 + 折旧摊销等非现金项（固定资产 150.79 亿元、在建工程 76.35 亿元，年折旧摊销约 15–18 亿元）+ 信用减值 3.63 亿元 + 资产减值 0.74 亿元 + <b>汇兑损失约 13 亿元（非现金，需加回）</b> − 投资收益权益法部分 0.47 亿元 ± 营运资金变动 ≈ 35.52 亿元。<b>营运资金关键项（较年初）</b>：① <b>存货 282.22 亿元（+61.71 亿元）</b>——大幅占用现金，是 OCF 的最大负向；② <b>应收账款 376.61 亿元（+30.87 亿元）</b>——同样占用现金；③ <b>应付票据 165.35 亿元（+70.83 亿元）</b>、<b>应付账款 142.49 亿元（+32.55 亿元）</b>——以票据与应付款占用上游，<b>合计提供 103.38 亿元现金流入，是 OCF 转正的关键</b>；④ 应付职工薪酬 −5.83 亿元（发放上年奖金）、其他应付款 −17.24 亿元（含分红派发）。<b>结论：本期 OCF +23.94% 的实现，本质是「营运资本的上游占用（应付票据 +70.83 亿）抵消了下游占用（存货 +61.71 亿、应收 +30.87 亿）」——这种结构在需求扩张期可行，但若下游回款放缓，OCF 将迅速承压。</b></p>
+      <p><b>自由现金流与覆盖能力：</b><b>自由现金流为正、覆盖分红有余，但资本开支已过高峰</b>。购建固定资产、无形资产及其他长期资产支付现金 <b>21.75 亿元（−31.38%）</b>，<b>FCF = OCF 35.52 − CapEx 21.75 = 13.77 亿元</b>（上年同期约 28.66 − 31.70 = −3.04 亿元，<b>由负转正</b>）。<b>覆盖能力</b>：2025 年度每股股利 0.40 元、按 86.49 亿股计约 <b>34.60 亿元</b>，分红率约 <b>71%</b>（2025 年归母 48.58 亿元）——<b>FCF 13.77 亿元无法覆盖全年分红 34.60 亿元，需动用账上现金或经营现金流的季节性结余</b>（Q4 通常是工程机械回款高峰，全年 OCF 显著高于前三季；2025 全年 OCF 48.74 亿元、CapEx 约 42 亿元，FCF 约 7 亿元，同样依赖账上现金补足分红）。<b>须提示</b>：中联的「高分红」（71% 分红率、6.79% 股息率）建立在<b>账面货币资金 155.17 亿元 + 交易性金融资产 40.69 亿元</b>的基础上，<b>而非自由的经营现金流</b>——若 2027 年存货去化不畅或回款放缓，分红的可持续性将取决于是否继续加杠杆（本期资产负债率已 +3.91pp）。</p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">估值与股东回报</div>
+    <div class="card">
+      <p><b>相对估值水位：</b>A 股 000157（<b>2026-10-30 收盘 5.89 元，−0.51%</b>；<b>年初至今 −28.43%</b>，在工程机械板块中跌幅居前）：总股本 86.49 亿股，<b>总市值 509.40 亿元</b>（流通市值 416.45 亿元）。<b>估值倍数</b>：<b>PE(TTM) 13.06×</b>、<b>PB 0.88×（破净）</b>、<b>股息率 6.79%</b>（2025 年度每股股利 0.40 元）。<b>AH 溢价 −28.19%</b>——H 股（01157.HK）相对 A 股折价近三成，说明<b>港股投资者对公司的定价更为保守</b>。<b>历史与国际对照</b>：PB 0.88× 处公司近 10 年低位区间；对比同业，三一重工 PB 约 1.8×、徐工机械约 1.1×，<b>中联的 PB 最低</b>，反映其 ROE（7% vs 三一 12%+）与盈利质量的差距。<b>须提示</b>：<b>「PB 0.88 破净 + 股息率 6.79%」表面上极具吸引力，但破净的根源是「ROE 7% < COE 8.9%」</b>——估值修复的前提是 ROE 回升，而非估值本身便宜；2026 年归母 −24.46%、扣非 −39.92%，<b>市场对「非经不可持续」已有预期，PE 13.06× 实际是建立在含 13.73 亿非经的利润之上，若按扣非 15.88 亿年化，PE 将升至 20× 以上</b>。</p>
+      <p><b>周期正常化估值：</b>工程机械是<b>强周期行业</b>，且本期利润被汇兑与高非经双重扭曲，<b>必须以「正常化归母 + 正常化 ROE」双锚定价</b>（v2 修正 F）。<b>正常化盈利</b>：2023–2025 年归母 35.06 / 35.20 / 48.58 亿元，<b>三年中枢约 39.6 亿元</b>；若剔除 2026 年的一次性汇兑（−13.06 亿）与高非经（13.73 亿），<b>2026 年「正常化归母」约 35–38 亿元</b>（公司口径剔除汇兑后 37.81 亿元）。<b>以正常化 37 亿元计，正常化 PE ≈ 509.40 / 37 ≈ 13.8×、正常化 ROE ≈ 6.3%、隐含 COE ≈ 7.2%</b>——<b>与合理 COE 8.9% 相比仍偏高，即正常化口径下估值并不便宜</b>。<b>情景锚（以汇兑、毛利率、海外费用率为核心变量）</b>：<br/>• <b>悲观</b>：人民币继续升值 + 海外费用率不降 + 存货减值 → 2027 归母 30 亿元，PE 17×、PB 0.75×、股息率（按 50% 分红）约 3.0%；<br/>• <b>中性</b>：汇率企稳 + Q3 毛利率修复延续 + 非经回落至 5 亿 → 2027 归母 40 亿元，PE 12.7×、PB 0.92×、股息率约 4.3%；<br/>• <b>乐观</b>：海外本地化跨过临界点（费用率下行）+ 国内更新周期启动 → 2027 归母 50 亿元，PE 10.2×、PB 1.05×、股息率约 5.0%。<b>结论：当前 5.89 元对应「悲观–中性」之间的定价，破净（0.88×）提供了资产端保护，但向上弹性取决于 ROE 能否从 7% 回到 9% 以上——这是一场关于「海外本地化何时盈亏平衡」的赌注，而非简单的低估值修复。</b></p>
+      <p><b>股东回报可持续性：</b><b>高分红（71% 分红率、6.79% 股息率）是当前最强支撑，但需关注可持续性</b>。<b>2025 年度</b>：每股派发现金红利 <b>0.40 元</b>，按 86.49 亿股计约 <b>34.60 亿元</b>，<b>分红率约 71%</b>（2025 年归母 48.58 亿元），已高于制造业平均水平；对应现价 5.89 元的<b>股息率 6.79%</b>，在工程机械板块中最高。<b>历史连续性</b>：2024 年度每股股利 0.30 元（分红率 74%）、2023 年亦有分红，<b>派息政策稳定且比率高</b>。<b>可持续性三问</b>：① <b>利润基础</b>——2026 年扣非仅 15.88 亿元，若按 71% 分红率仅能分 11 亿元（每股 0.13 元），<b>实际分红 34.60 亿元依赖含非经的归母以及账上现金</b>；② <b>现金基础</b>——货币资金 155.17 亿元 + 交易性金融资产 40.69 亿元，<b>可支撑 2–3 年维持派息</b>；③ <b>资本开支</b>——CapEx 21.75 亿元（−31.38%），在建工程 76.35 亿元，<b>扩张期已过，现金可腾挪空间较大</b>。<b>结论：短期（1–2 年）高分红可持续，中期取决于扣非盈利能否修复；对追求股息的资金而言，6.79% 的收益率 + 0.88× PB 构成了明确的防御价值，但需接受「分红可能随利润下修」的风险。</b></p>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">管理层指引与前瞻</div>
+    <div class="card">公司在三季报与配套披露中给出的经营线索：① <b>盈利修复举措</b>——「通过<b>动态调整产品价格、推进提质增效、结构优化以及强化汇兑管理</b>等多项举措」，使 Q3 扣非业绩较上半年显著改善（毛利率环比 +1.73pp、扣非净利率环比 +4.26pp）；② <b>海外本地化战略</b>——坚持「<b>端对端、数字化、本土化</b>」，截至三季度末全球建成 <b>30 余个一级业务航空港、550 多个销售服务网点、海外本地员工约 7,000 人、21 个智能工厂</b>，并在意大利、德国、匈牙利、土耳其、墨西哥、巴西、印度等地布局<b>十余个海外制造基地</b>；管理层口径：<b>短期以前置投入换市场份额，中长期看费用率的结构性下行</b>；③ <b>产品结构</b>——工程起重机超大吨位（4,000/2,400/1,600 吨全地面起重机）批量发货，建筑起重机全球市占率保持领先，土方、矿山、农机、高机为第二曲线；④ <b>汇兑管理</b>——明确本期汇兑损失为「阶段性账面汇率变动，相关项目大部分期末未结算，不直接对应当期经营性现金流出」<b>公司未给出全年量化指引</b>。<b>风险敏感（非承诺）</b>：人民币汇率走向、海外基建需求、国内更新周期、存货去化、非经损益的可持续性。以上为前瞻性陈述，存在不确定性。</div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">同业可比与相对表现</div>
+    <div class="card">工程机械三巨头横向对比（2026 前三季 / 最新可得口径）：<br/>• <b>中联重科（000157.SZ）</b>：营收 400.19 亿元（+7.71%）、归母 29.61 亿元（<b>−24.46%</b>）、扣非 15.88 亿元（<b>−39.92%</b>）、境外占比 <b>57.81%</b>、毛利率 27.12%、ROE 4.91%（前三季）、<b>PB 0.88×（破净）</b>、PE 13.06×、<b>股息率 6.79%</b>——<b>境外占比最高、汇兑敞口最大、估值最低</b>。<br/>• <b>三一重工（600031.SH）</b>：营收体量约为中联的 1.1 倍，挖掘机械（占比 38%+）与混凝土机械为双核心，海外收入占比约 60%；2025 年归母 84.08 亿元、ROE 12%+，<b>盈利能力与 ROE 显著高于中联</b>，PB 约 1.8×（估值溢价来自更高的资本回报）。<br/>• <b>徐工机械（000425.SZ）</b>：营收规模三家最大（2025 年约 900 亿元级），产品线最全（起重、土方、桩工、矿业），海外占比约 40%；ROE 约 9%，PB 约 1.1×。<br/><b>结论</b>：2026 年前三季度三家的共同压力是<b>人民币升值导致的汇兑损失</b>（行业性），差异在于：<b>中联的境外占比最高（57.81%）→ 汇兑敞口最大；ROE 最低（7% 级）→ 估值最低（PB 0.88×）</b>。<b>投资含义：中联是「高赔率、低胜率」的选项——PB 破净 + 6.79% 股息率提供下限，但要获得估值修复必须看到 ROE 回升；若判断行业景气回升，三一（ROE 高、弹性大）与徐工（规模大、产品全）的确定性更强；若纯粹追求股息与资产折价，中联的性价比最高。</b></div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">财务排雷</div>
+    <div class="redflags">
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">低风险</span>商誉 <b>26.34 亿元</b>（较年初 −4.05%），占归母净资产 <b>4.52%</b>、占 2025 年归母净利润（48.58 亿元）0.54 倍——<b>低于阈值（净资产 30% / 年利 5 倍）</b>。主要来自历史海外并购（意大利 CIFA、德国威尔伯特等），本期随外币折算小幅下降。<b>须留意</b>：海外子公司（尤其欧洲）若盈利不及预期，商誉减值测试（以海外现金流折现）将承压，需在年报核实各资产组的关键假设。</div></div>
+      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发费用 <b>20.26 亿元（−0.96%）</b>，占营业收入 <b>5.06%</b>（工程机械行业较高水平），<b>资产负债表「开发支出」仅 0.13 亿元</b>（占无形资产 2.7%），<b>基本全部费用化</b>，无资本化注水空间。研发投向大吨位起重机、新能源（电动化）、智能控制与矿山装备。<b>该项干净。</b></div></div>
+      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span>信用减值损失 <b>3.63 亿元</b>（上年 4.00 亿元，略改善）、资产减值损失 <b>0.74 亿元</b>（上年 0.48 亿元，+54.5%），<b>合计占利润总额 12.8%、无大额一次性减值</b>。<b>风险在于计提充分性</b>：应收账款 376.61 亿元 + 长期应收款 87.46 亿元（合计占净资产 79.7%），工程机械信用销售（首付 + 分期）模式下，若下游地产/基建客户现金流恶化，坏账计提需补提。<b>须在年报核实账龄结构与迁徙率。</b></div></div>
+      <div class="rf"><div class="k">债务结构与财务杠杆</div><div class="v"><span class="verdict amber">关注</span><b>杠杆快速抬升，是本期最需跟踪的资产负债表变化</b>：资产负债率 <b>58.94%</b>（上年末 55.03%，<b>+3.91pp</b>）。驱动项：① <b>应付债券 99.45 亿元（+397.27%）</b>——发行可转换公司债券，若转股将摊薄、若不转股将增加财务费用；② <b>应付票据 165.35 亿元（+74.94%）</b>——以票据占用上游，是营运资本的主要来源；③ 应付账款 142.49 亿元（+29.60%）；④ 长期借款 162.71 亿元（<b>−18.57%</b>，以低息债券置换高息贷款，方向正确）；⑤ 短期借款 41.00 亿元（+27.33%）。<b>有息负债合计约 380 亿元</b>（短借 41.00 + 长借 162.71 + 应付债券 99.45 + 一年内到期 77.31），<b>货币资金 155.17 亿元 + 交易性金融资产 40.69 亿元 → 净有息负债约 184 亿元</b>，绝对水平可控但趋势需警惕。</div></div>
+      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>季报按法定惯例<b>未经审计</b>（原文「第三季度财务会计报告是否经过审计：□是 否」），无审计意见；公司负责人詹纯新、主管会计工作负责人杜毅刚、会计机构负责人吕红波声明保证财务信息真实、准确、完整。<b>本期无追溯调整或重述</b>，会计政策未变更，可比性强。</div></div>
+      <div class="rf"><div class="k">关联交易与资金往来</div><div class="v"><span class="verdict amber">关注</span><b>股权结构分散、国资与产业资本并存</b>：① 香港中央结算（代理人）17.91%（H 股）；② <b>湖南兴湘投资控股（湖南省国资）14.53%</b>；③ <b>长沙中联和一盛投资合伙企业 7.89%，其中 4.55 亿股（占其持股 66.6%）处于质押状态</b>——这是产业资本杠杆运作的痕迹，需跟踪质押平仓风险（股价年初至今 −28.43%，接近风险区间）；④ <b>第二期核心经营管理层持股计划 4.90%</b>（管理层与股东利益绑定）；⑤ 香港中央结算（沪股通）4.44%；⑥ 第一期员工持股计划。普通股股东 230,306 户。<b>需跟踪</b>：和一盛的质押比例变化、兴湘投资的国资考核诉求（是否影响分红与资本开支决策）、与 CIFA 等海外子公司的关联交易定价。</div></div>
+      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span><b>收入真实但应收规模庞大</b>：① 应收账款 <b>376.61 亿元（+8.93%）</b>，增速略高于营收（+7.71%）；② 长期应收款 87.46 亿元（−10.78%，分期销售安排），<b>两者合计 464.07 亿元，相当于净资产的 79.7%</b>——这是工程机械「信用销售」模式的行业共性，不是舞弊，但<b>决定了利润的「含现量」需逐季验证</b>；③ <b>反证是正向的</b>：<b>收现率 103.65%（+1.06pp）</b>、经营现金流 +23.94%，<b>说明当期回款质量实际在改善</b>。④ 合同负债 16.01 亿元（+11.37%，预收款稳中有升）。<b>结论：营收质量无实质红旗，但应收规模与账龄结构需在年报核实。</b></div></div>
+      <div class="rf"><div class="k">存货</div><div class="v"><span class="verdict down">红旗</span><b>本期最突出的资产负债表异常</b>：存货 <b>282.22 亿元（+37.56%）</b>，较年初增加 77.05 亿元，<b>增速是营收增速（+7.71%）的 4.9 倍</b>；<b>存货/营收升至 70.5%</b>（2025 年末约 39.4%）。<b>可能解释</b>：① 为 Q4 与海外订单备货（工程机械 Q4 是交付高峰）；② 大吨位产品（4,000/2,400/1,600 吨全地形起重机）生产周期长、在制品占用大；③ 海外本地化制造基地的备料。<b>风险</b>：若下游需求转弱或海外发货延迟，<b>高企的存货将面临跌价压力</b>（本期资产减值仅 0.74 亿元，尚未体现）。<b>须盯 Q4 存货去化速度与跌价准备计提。</b></div></div>
+      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict down">核心红旗</span><b>本期利润质量的最大问题</b>：非经常性损益 <b>13.73 亿元，占归母净利润 29.61 亿元的 <u>46.4%</u></b>——构成为非流动资产处置损益 <b>6.36 亿元</b>、政府补助 <b>8.17 亿元</b>、其他营业外收支 0.94 亿元、金融资产公允价值及处置 0.87 亿元、债务重组 −0.03 亿元，减所得税影响 2.52 亿元、少数股东影响 0.06 亿元。<b>对应扣非归母仅 15.88 亿元（−39.92%）</b>，与归母（−24.46%）的降幅差达 <b>15.5pp</b>——<b>即「归母的韧性」近一半来自卖资产与政府补助</b>。<b>判断：虽未违反会计准则，但可持续性极差</b>；若 2027 年无同类处置与补助，归母将直接下修至 16–20 亿元区间。<b>这是本报告给予「中性」评级（而非「正面」）的核心理由。</b></div></div>
+      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">低风险</span><b>本期是「正背离」——现金流好于利润</b>：经营现金流净额 <b>35.52 亿元（+23.94%）</b>，而归母 −24.46%，OCF/归母 = <b>1.20×</b>；销售商品收到现金 414.82 亿元（+8.82%），<b>收现率 103.65%（+1.06pp）</b>。<b>背离的原因正是「利润被非现金项目压低」</b>：汇兑损失 13.06 亿元为账面未结算损益、不产生现金流出；资产处置与政府补助虽增厚利润但现金流入有限。<b>结论：现金流验证了「利润下滑主要是会计与汇率因素」的判断，这是本期最有力的正面证据。</b></div></div>
+      <div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span>工程机械按<b>发货/验收时点</b>确认收入，不存在完工百分比法或长周期合同的空间；<b>信用销售（首付+分期）虽拉长回款周期，但不影响收入确认时点</b>。反向证据：① 合同负债 16.01 亿元（<b>+11.37%</b>，预收款稳中有升，说明未提前确认）；② <b>收现率 103.65%（>100%）</b>，回款超收入；③ 存货 +37.56%，<b>若为压货式确认，存货应下降而非激增</b>——存货高企反而说明产品尚未确认收入。<b>综合：收入确认无激进迹象。</b></div></div>
+      <div class="rf"><div class="k">表外 / 担保 / 或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span><b>预计负债仅 0.34 亿元</b>（产品质量保证），规模正常；<b>长期应收款 87.46 亿元</b>（融资租赁/分期销售）实质是「表内化的信用敞口」，需与应收账款合并看待；<b>可转债 99.45 亿元</b>存在转股摊薄与回售条款的或有义务，需跟踪转股价与正股价格（现价 5.89 元，若转股价显著高于现价，回售压力将上升）；递延收益 6.69 亿元（政府补助递延）、其他非流动负债 6.05 亿元。<b>须在年报核实对外担保余额与未决诉讼。</b></div></div>
+      <div class="rf"><div class="k">汇兑损益与海外敞口（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span><b>这是本期业绩下滑的第一大因子，且是结构性的</b>：① <b>财务费用由上年 −1.23 亿元（净收益）转为 +11.84 亿元（净支出），同比恶化 13.06 亿元（+1066%）</b>，公司明确「主要系汇兑损益影响」；② 背后是<b>境外收入占比 57.81%</b>（231.37 亿元）——敞口在三家龙头中最大；③ <b>汇率影响是双重的</b>：利润表（汇兑损失）之外，<b>其他综合收益由 −19.19 亿元恶化至 −26.64 亿元（−7.45 亿元，外币报表折算差额）</b>，净资产同步受损。<b>需客观看待</b>：公司口径「相关项目大部分期末尚未结算，不直接对应当期经营性现金流出」，<b>剔除税后汇兑影响后归母 37.81 亿元（+1.87%）</b>——即汇兑是「账面时点损失」而非「真实经营亏损」，若人民币转弱将回补。<b>但只要人民币处于升值周期、海外占比又持续提升，这一扰动就会反复出现——这是中联商业模式的「结构性波动来源」，无法通过经营努力消除，只能靠对冲与本地化生产（当地币种结算）缓解。</b></div></div>
+      <div class="rf"><div class="k">海外本地化投入前置（行业特有·红旗）</div><div class="v"><span class="verdict amber">关注</span><b>「体系出海」是战略正确、短期却压制利润的选择</b>：销售费用 <b>37.70 亿元（+21.89%，多支出 6.77 亿元）</b>，主因海外本地化前置投入——截至三季度末全球建成 <b>30 余个一级业务航空港、550 多个销售服务网点、海外本地员工约 7,000 人、21 个智能工厂、十余个海外制造基地</b>（意大利、德国、匈牙利、土耳其、墨西哥、巴西、印度等）。<b>逻辑</b>：短期以费用换份额，中长期看费用率的结构性下行（制造业的边际成本递减）。<b>风险</b>：① 若海外收入规模迟迟跨不过「临界点」，高费用率将长期压制净利率；② 海外制造基地的产能利用率与本地供应链配套是新的不确定性。<b>须盯：海外收入增速 vs 海外费用增速的剪刀差——这是判断「临界点何时到来」的唯一量化指标。</b></div></div>
+
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">业务亮点与潜在风险</div>
+    <div class="two">
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li><b>剔除汇兑后归母转正增长</b>：汇兑使财务费用同比恶化 13.06 亿元（−1.23 → +11.84 亿元），<b>剔除税后汇兑影响后归母 37.81 亿元、同比 +1.87%</b>；公司明确相关项目多数期末未结算，不直接对应现金流出</li><li><b>Q3 单季盈利拐点明确</b>：扣非归母 <b>7.57 亿元（+5.39%）</b>、<b>环比大增 229.89%</b>；单季毛利率 <b>27.76%（环比 +1.73pp）</b>、扣非归母净利率环比 +4.26pp——在营收环比基本持平下实现利润率修复（动态调价 + 提质增效 + 强化汇兑管理）</li><li><b>境外收入占比 57.81%、多区域均衡</b>：境外营收 231.37 亿元（+8.55%），欧洲、东南亚、非洲、南美、中东、中亚、南亚等十大区域分布均衡，有效降低单一市场波动；30 余个一级业务航空港、550 多个销服网点、海外本地员工约 7,000 人、十余个海外制造基地</li><li><b>现金流与收现率双改善</b>：经营现金流净额 <b>35.52 亿元（+23.94%）</b>，增速高于营收（+7.71%）；<b>收现率 103.65%（+1.06pp）</b>——在利润下滑的同时现金回笼加速，说明利润下滑未侵蚀造血能力</li><li><b>传统优势板块结构性突破</b>：工程起重机超大吨位产品批量交付（4,000 吨、2,400 吨、1,600 吨全地面起重机），超大吨位履带吊与大吨位折臂起重机批量出海；建筑起重机全球市占率保持领先，销售收入环比提升</li><li><b>低估值 + 高股息提供安全垫</b>：PB <b>0.88×（破净）</b>、PE(TTM) 13.06×、<b>股息率 6.79%</b>、总市值 509.40 亿元；2025 年度每股股利 0.40 元，分红政策稳定</li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li><b>非经常性损益占比高达 46.4%（核心质量问题）</b>：非经 13.73 亿元 vs 归母 29.61 亿元，其中资产处置 6.36 亿元、政府补助 8.17 亿元；<b>扣非 15.88 亿元（−39.92%）才是主业真实盈利</b>，若 2027 年无同类资产处置与补助，归母将大幅下修</li><li><b>汇兑敞口随海外占比提升而放大</b>：境外收入占比 57.81%，人民币升值周期中财务费用剧烈波动（本期 +13.06 亿元）；虽为账面扰动，但若人民币持续升值，未来季度仍将重复拖累</li><li><b>存货激增 37.56%，远超营收增速</b>：存货 282.22 亿元（+37.56%）vs 营收 +7.71%，存货/营收升至 70.5%；若下游需求转弱或海外发货延迟，跌价与减值压力将显性化</li><li><b>杠杆快速抬升</b>：资产负债率 55.03% → <b>58.94%（+3.91pp）</b>；应付票据 +74.94%、应付账款 +29.60%、应付债券 +397.27%（可转债）；<b>有息负债率与财务费用双向上升</b></li><li><b>销售费用 +21.89% 压制利润</b>：销售费用 37.70 亿元，多支出 6.77 亿元，是海外本地化前置投入；若海外收入规模未达临界点，费用率将长期高位</li><li><b>应收账款 376.61 亿元（+8.93%）、长期应收款 87.46 亿元</b>：工程机械信用销售模式决定应收规模大，占净资产 65%，在收入增速仅 7.71% 的背景下需跟踪账龄与坏账计提充分性</li></ul></div>
+    </div>
+  </div>
+
+
+  <div class="sec">
+    <div class="sec-h">下季跟踪事项</div>
+    <div class="track"><ol><li><b>人民币汇率与汇兑损益（第一优先级）</b>：本期财务费用 11.84 亿元 vs 上年 −1.23 亿元（+1066%），单项解释了全部利润降幅；跟踪人民币走势与公司汇兑对冲（远期外汇）的效果</li><li><b>Q3 毛利率修复能否延续</b>：单季毛利率 27.76%（环比 +1.73pp）、扣非环比 +229.89%；跟踪 Q4 毛利率与产品结构（超大吨位起重机的占比）</li><li><b>非经常性损益占比</b>：13.73 亿元占归母 46.4%（资产处置 6.36 亿 + 政府补助 8.17 亿）；跟踪 2027 年是否还有同类处置/补助，否则归母将大幅下修</li><li><b>存货 282.22 亿元（+37.56%）的去化</b>：增速 4.9 倍于营收，存货/营收 70.5%；跟踪 Q4 发货与海外订单交付，警惕跌价准备计提</li><li><b>应收账款与长期应收款</b>：应收 376.61 亿元（+8.93%）+ 长期应收 87.46 亿元，合计占净资产 79.7%；跟踪账龄结构与坏账计提充分性（信用减值 3.63 亿元）</li><li><b>海外本地化盈亏平衡点</b>：销售费用 +21.89%（多支出 6.77 亿元）为前置投入；跟踪海外收入增速与海外费用率，判断「临界点」何时到来</li><li><b>分红可持续性</b>：2025 年度每股 0.40 元（分红率 71%、股息率 6.79%）远超 FCF 13.77 亿元；跟踪 2026 年度分红方案与货币资金（155.17 亿元）消耗节奏</li></ol></div>
+  </div>
+
+
+  <div class="foot">
+    <b>数据来源：</b>中联重科股份有限公司《2026 年第三季度报告》（2026-10-30 披露，公告编号 2026-036，<b>按中国会计准则编制、未经审计</b>；原文 PDF：static.cninfo.com.cn/finalpage/2026-10-30/1225639857.PDF，本地归档 <code>data/pdf/000157.SZ_q3_2026.pdf</code>）。<b>口径说明（重要）</b>：① <b>本报告为合并口径</b>（营收 400.19 亿元、归母 29.61 亿元、扣非 15.88 亿元）。② <b>「剔除汇兑后归母 37.81 亿元（+1.87%）」为公司披露口径</b>（税后还原），<b>非会计准则指标</b>，本报告已明示。③ <b>季报仅披露分地区收入</b>（境内 168.82 / 境外 231.37 亿元、境外占比 57.81%），<b>分产品（起重/混凝土/土方/高机/矿山/农机）为 2026 半年报口径或公开报道</b>，非季报原文。④ <b>汇率影响</b>：财务费用 11.84 亿元（上年 −1.23 亿元），公司说明「主要系汇兑损益影响」，<b>该损失计入当期损益，故「扣非」亦含此拖累</b>——这是理解「扣非 −39.92% 而经营微增」的关键。⑤ <b>非经常性损益 13.73 亿元</b>（资产处置 6.36 亿 + 政府补助 8.17 亿 + 其他营业外 0.94 亿 + 公允价值及处置 0.87 亿 + 债务重组 −0.03 亿 − 所得税 2.52 亿 − 少数股东 0.06 亿）。⑥ <b>OCF 拆解</b>中折旧摊销、营运资金变动按资产负债表变动倒推，<b>属估算、非审计数</b>。⑦ <b>估值与行情</b>：2026-10-30 收盘 5.89 元、总市值 509.40 亿元、PE(TTM) 13.06×、PB 0.88×、股息率 6.79%、年初至今 −28.43%、AH 溢价 −28.19%，取自腾讯财经/公开行情；<b>2025 年度每股股利 0.40 元、分红率约 71%</b>取自 2025 年报。⑧ <b>历史序列</b>：2023–2025 年归母 35.06 / 35.20 / 48.58 亿元；2025 年营收 521.07 亿元、毛利率 28.04%、ROE 8.34%。<b>免责声明</b>：基于公开数据的量化分析，仅供参考，不构成投资建议。<br/>
+  </div>
+
+</div>
+</body>
+</html>

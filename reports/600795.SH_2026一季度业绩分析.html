@@ -4,6 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>国电电力 2026 一季报 财报分析</title>
+
 <style>
   :root{
     --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
@@ -21,6 +22,7 @@
     font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
     line-height:1.6;-webkit-font-smoothing:antialiased;}
   .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
+  /* 头部 */
   .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
     box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
     justify-content:space-between;align-items:flex-start;}
@@ -34,16 +36,19 @@
   .badge.up{background:var(--up-soft);color:var(--up);}
   .badge.down{background:var(--down-soft);color:var(--down);}
   .badge.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 区块标题 */
   .sec{margin-top:26px;}
   .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
   .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
   .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
+  /* 指标卡 */
   .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
   .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
   .mcard .lab{font-size:12.5px;color:var(--ink-3);}
   .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
   .mcard .delta{font-size:13px;font-weight:700;}
   .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
+  /* 表格 */
   .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
     border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
   .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
@@ -52,11 +57,13 @@
   .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
   .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
   .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
+  /* 双栏：亮点 / 风险 */
   .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
   .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
   .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
   .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
   .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
+  /* 核心结论摘要（v2 结论置顶） */
   .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
     border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
   .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
@@ -68,8 +75,10 @@
   .summary .col h5{margin:0 0 6px;font-size:13.5px;}
   .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
   .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
+  /* 通用正文卡 */
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
   .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
+  /* 排雷清单（v2 第 9 章） */
   .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
   .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
   .rf:last-child{border-bottom:none;}
@@ -80,11 +89,14 @@
   .verdict.down{background:var(--down-soft);color:var(--down);}
   .verdict.amber{background:var(--amber-soft);color:var(--amber);}
   .verdict.flat{background:var(--flat-soft);color:var(--flat);}
+  /* 关键指标可视化（三图） */
   .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
   .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
   .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
+  /* 下季跟踪 */
   .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
   .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
+  /* 页脚 */
   .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
     border-top:1px dashed var(--line);padding-top:14px;}
   .foot b{color:var(--ink-2);}
@@ -101,290 +113,215 @@
 <body>
 <div class="wrap">
 
-  <!-- 头部 -->
+
   <div class="head">
     <div>
       <div class="co">国电电力</div>
       <div class="meta">
-        <span>600795.SH</span><span>电力</span><span>上交所</span>
+        <span>600795.SH</span><span>公用事业（电力 · 火电为主）</span><span>上交所</span>
       </div>
     </div>
     <div class="right">
-      <div class="period">2026年一季度报告</div>
+      <div class="period">2026 一季报</div>
       <div class="pdate">披露日期：2026-04-28</div>
-      <div class="badge down">偏谨慎</div>
+      <div class="badge flat">偏谨慎 · 电价下行与高基数双压，扣非降幅小于归母</div>
     </div>
   </div>
 
-  <!-- 核心结论摘要（v2 第 10 章提炼 · 结论置顶） -->
+
   <div class="sec">
     <div class="sec-h">核心结论摘要</div>
     <div class="summary">
-      <span class="tone down">偏谨慎</span>
-      <p class="oneliner">2026一季度国电电力营收 391.69 亿（−1.62%）、归母净利 13.98 亿（−22.79%）；下滑主因售电均价下行叠加上年同期转让子公司的一次性收益高基数，扣非口径降幅收窄至 −15.54%。经营现金流 88.54 亿（−36.88%）受电网回款节奏拖累，但盈利现金含量仍达 3.56 倍，属周期与基数共振下的阶段性承压，非趋势性恶化。</p>
+      <span class="tone flat">偏谨慎（营收 −1.62%、归母 −22.79% 主因电价下行与去年同期一次性处置收益高基数；扣非仅 −15.54%，主业韧性优于表观；但 OCF −36.88%、FCF 近乎归零，现金流是本季最大瑕疵）</span>
+      <p class="oneliner">国电电力 2026 年一季度营收 <b>391.69 亿元（−1.62%）</b>、归母净利润 <b>13.98 亿元（−22.79%）</b>、扣非归母 <b>13.58 亿元（−15.54%）</b>、基本 EPS 0.078 元（−23.53%）、加权 ROE <b>2.32%（−0.858pp）</b>。<b>「归母降 22.79%、扣非降 15.54%」的剪刀差是第一个读点</b>——差额来自上年同期转让<b>国能电力工程管理有限公司</b>的一次性收益抬高基数；<b>扣非口径（−15.54%）才反映主业真实降幅</b>，且<b>非经常性损益仅 0.40 亿元（占净利 2.9%）</b>，<b>利润质量「真」、无粉饰</b>。<b>下滑的根源在「价」不在「量」</b>：公司季报未披露电量电价（属季报披露惯例），但行业同期数据可佐证——1–3 月全国规上电厂发电量 <b>+3.4%</b>（火电 +3.7%），而主要火电公司上网电价普遍下降（华能 460.73 元/MWh、<b>−5.63%</b>；华电 504.28 元、−2.58%；大唐 438.78 元、−4.8%），<b>国电以火电为主（2025 年火电收入占 83.2%），对电价最敏感</b>；毛利率 <b>12.32%（−1.58pp）</b>即是直接结果。<b>成本端本季是缓冲而非拖累</b>：秦皇岛 5500 卡动力煤 Q1 约 <b>716–721 元/吨（同比 −1.4%）</b>、长协价 3 月 682 元/吨（较 2025 年末 −12 元），<b>煤价下行部分对冲了电价下滑——这与三季报「煤价 +35%」形成鲜明对比，正是 Q1 只跌 22.79%、Q3 却跌 69.34% 的根本原因</b>。<b>第二个拖累是投资收益</b>：对联营/合营企业投资收益 <b>3.24 亿元（−29.93%）</b>，参股资产贡献走弱。<b>现金流是本季最大瑕疵</b>：OCF <b>88.54 亿元（−36.88%）</b>、OCF/归母 <b>3.56×</b>（去年同期 4.37×）；销售收现 <b>435.13 亿元（−10.5%）</b>，降幅远大于营收 −1.62%——<b>印证「电网结算周期滞后、本期收回上年末应收电费减少」是 OCF 下滑主因</b>（公司 MD&A 口径），而<b>资本开支仍达 87.97 亿元（−17.6%）</b>，使 <b>FCF 仅 0.57 亿元（去年同期 33.45 亿）</b>、<b>单季自由现金流近乎归零</b>。<b>资产负债表维持高杠杆常态、并在小幅优化</b>：总资产 5,223.55 亿（+0.42%）、归母权益 610.82 亿（+2.71%）、<b>资产负债率 73.00%（较年初 −0.45pp）</b>；有息负债约 <b>2,963 亿元</b>（短借 289.85 ＋ 一年内到期 395.43 ＋ 长借 1,940.18 ＋ 应付债券 197.48 ＋ 租赁 37.16 ＋ 长期应付款 103.32）；<b>流动比率 0.42、现金短债比 0.22</b>、利息保障倍数 <b>3.19×</b>（去年 3.84×）——<b>重资产电力公司的典型结构，靠月度电费现金流与央企信用滚动短债</b>。<b>应收账款 276.74 亿（较年初 +5.25%）逆势增长、预付款项 33.08 亿（+54.6%）</b>，两项均需在后续季度跟踪（<b>预付款大概率为燃料采购预付</b>）。<b>估值处历史低位</b>：以 2026-04-28 前后股价 <b>4.6–4.9 元</b>计，市值约 <b>840–880 亿元</b>、<b>PE(TTM) 约 11.7–13.0×</b>、<b>PB 约 1.38–1.48×</b>、股息率 TTM <b>约 4.3%–5.1%</b>；2025 年度「10 派 2.41 元」（含中期 1.0 元）、<b>分红率约 60%</b>、分红总额约 43 亿元，<b>高股息是底部支撑的核心逻辑</b>。<b>核心判断：Q1 是「电价下行 + 高基数」的阶段性承压，但幅度尚属温和（扣非 −15.54%），真正需要警惕的是现金流——OCF −36.88%、FCF 近乎归零，说明「利润下滑 + 资本开支刚性」已开始挤压现金缓冲</b>；后续若煤价如三季报所示转为 +35% 的上行，本季「煤价缓冲」将反转为「成本拖累」，这是 Q1 报告必须提前标注的风险方向（<b>已被 Q3 数据验证</b>）。</p>
       <div class="grid">
-        <div class="col hl"><h5>✓ 核心利好</h5><ul>
-          <li>扣非净利降幅（−15.54%）远小于归母（−22.79%），主业韧性优于表观；非经常性损益仅占净利 2.9%，盈利质量「真」。</li>
-          <li>成本端煤价小幅下行（Q1 秦皇岛 Q5500 约 716–721 元/吨，同比 −1.4%）+ 容量电价机制托底，煤电点火价差同比改善（行业共性）。</li>
-          <li>负债率微降至 73.0%、现金短债比稳定；2025 全年分红率 60%（10 派 2.41 元），股息率 TTM 约 4.3%–5%，高股息提供底部支撑。</li>
-        </ul></div>
-        <div class="col rk"><h5>⚠ 核心风险</h5><ul>
-          <li>售电均价市场化持续下行（行业 Q1 普遍 −3% 至 −6%），毛利率 12.32%（−1.58pp），价格端尚未企稳。</li>
-          <li>对联营/合营企业投资收益 3.24 亿（−29.93%），参股资产贡献走弱，拖累利润。</li>
-          <li>Q1 自由现金流仅约 0.6 亿（去年同期 +33.5 亿），高资本开支下阶段性偏紧；应收账款、预付款走高需跟踪回款。</li>
-        </ul></div>
+        <div class="col hl"><h5>✓ 核心利好</h5><ul><li><b>扣非降幅（−15.54%）明显小于归母（−22.79%）</b>：归母差额来自上年同期转让国能电力工程管理有限公司的一次性收益高基数；<b>扣非才反映主业真实降幅，且降幅为个位数后半段，属「温和承压」而非「失速」</b></li><li><b>盈利质量「真」</b>：非经常性损益仅 <b>0.40 亿元（占净利 2.9%）</b>——非流动资产处置 0.38 亿、政府补助 0.21 亿；<b>归母与扣非仅差 0.40 亿，利润由主业经营支撑、无变卖资产保利润</b></li></ul></div>
+        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li><b>电价下行是首要拖累且趋势未止（核心风险）</b>：季报未披露电价，但行业同期火电上网电价普遍下降（华能 −5.63%、华电 −2.58%、大唐 −4.8%）；<b>市场化交易比例维持 77%–100%，电价下行是制度性而非季节性</b>；毛利率 12.32%（−1.58pp）已是结果</li><li><b>经营现金流 −36.88%，FCF 近乎归零</b>：OCF 88.54 亿、销售收现 435.13 亿（<b>−10.5%</b>，远超营收降幅 −1.62%），公司归因「电网结算周期滞后、本期收回上年末应收电费减少」；<b>FCF 仅 0.57 亿（去年 33.45 亿）</b>，<b>单季「经营现金流 − CapEx − 分红」需靠筹资（借款 377.47 亿 / 偿还 349.08 亿）滚动支持</b></li></ul></div>
       </div>
     </div>
   </div>
 
-  <!-- 关键指标可视化（v2 要求：营收/归母净利/同比增速三图） -->
+
   <div class="sec">
     <div class="sec-h">关键指标可视化</div>
     <div class="charts">
-      <div class="chartbox"><div class="ct">营业收入趋势（亿元）</div>
-        <svg viewBox="0 0 300 200" width="100%" height="180" xmlns="http://www.w3.org/2000/svg">
-          <line x1="10" y1="170" x2="290" y2="170" stroke="#e7ebf1" stroke-width="1"/>
-          <rect x="15" y="50.6" width="40" height="119.4" fill="#cfd6e0"/>
-          <rect x="65" y="56.5" width="40" height="113.5" fill="#cfd6e0"/>
-          <rect x="115" y="27.3" width="40" height="142.7" fill="#cfd6e0"/>
-          <rect x="165" y="34.9" width="40" height="135.1" fill="#cfd6e0"/>
-          <rect x="215" y="52.5" width="40" height="117.5" fill="#13406b"/>
-          <text x="35" y="45" font-size="10" text-anchor="middle" fill="#5b6675">398.1</text>
-          <text x="85" y="51" font-size="10" text-anchor="middle" fill="#5b6675">378.4</text>
-          <text x="135" y="22" font-size="10" text-anchor="middle" fill="#5b6675">475.5</text>
-          <text x="185" y="29" font-size="10" text-anchor="middle" fill="#5b6675">450.4</text>
-          <text x="235" y="47" font-size="10" text-anchor="middle" fill="#13406b" font-weight="700">391.7</text>
-          <text x="35" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q1</text>
-          <text x="85" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q2</text>
-          <text x="135" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q3</text>
-          <text x="185" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q4</text>
-          <text x="235" y="185" font-size="9" text-anchor="middle" fill="#13406b" font-weight="700">26Q1</text>
-        </svg>
-      </div>
-      <div class="chartbox"><div class="ct">归母净利润趋势（亿元）</div>
-        <svg viewBox="0 0 300 200" width="100%" height="180" xmlns="http://www.w3.org/2000/svg">
-          <line x1="10" y1="170" x2="290" y2="170" stroke="#e7ebf1" stroke-width="1"/>
-          <rect x="15" y="92.4" width="40" height="77.6" fill="#cfd6e0"/>
-          <rect x="65" y="89.6" width="40" height="80.4" fill="#cfd6e0"/>
-          <rect x="115" y="37.6" width="40" height="132.4" fill="#cfd6e0"/>
-          <rect x="165" y="153.5" width="40" height="16.5" fill="#cfd6e0"/>
-          <rect x="215" y="110.1" width="40" height="59.9" fill="#13406b"/>
-          <text x="35" y="87" font-size="10" text-anchor="middle" fill="#5b6675">18.1</text>
-          <text x="85" y="84" font-size="10" text-anchor="middle" fill="#5b6675">18.8</text>
-          <text x="135" y="32" font-size="10" text-anchor="middle" fill="#5b6675">30.9</text>
-          <text x="185" y="148" font-size="10" text-anchor="middle" fill="#5b6675">3.9</text>
-          <text x="235" y="105" font-size="10" text-anchor="middle" fill="#13406b" font-weight="700">14.0</text>
-          <text x="35" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q1</text>
-          <text x="85" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q2</text>
-          <text x="135" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q3</text>
-          <text x="185" y="185" font-size="9" text-anchor="middle" fill="#8a94a6">25Q4</text>
-          <text x="235" y="185" font-size="9" text-anchor="middle" fill="#13406b" font-weight="700">26Q1</text>
-        </svg>
-      </div>
-      <div class="chartbox"><div class="ct">关键指标同比增速（%，Q1'26 vs Q1'25）</div>
-        <svg viewBox="0 0 300 200" width="100%" height="180" xmlns="http://www.w3.org/2000/svg">
-          <line x1="150" y1="20" x2="150" y2="180" stroke="#e7ebf1" stroke-width="1"/>
-          <text x="142" y="16" font-size="9" text-anchor="end" fill="#8a94a6">0%</text>
-          <rect x="148" y="34" width="5.7" height="9" fill="#1f8a4c"/>
-          <text x="158" y="42" font-size="10" fill="#1f8a4c">营收 −1.62%</text>
-          <rect x="148" y="68" width="80.0" height="9" fill="#1f8a4c"/>
-          <text x="158" y="76" font-size="10" fill="#1f8a4c">归母 −22.79%</text>
-          <rect x="148" y="102" width="54.6" height="9" fill="#1f8a4c"/>
-          <text x="158" y="110" font-size="10" fill="#1f8a4c">扣非 −15.54%</text>
-          <rect x="148" y="136" width="129.6" height="9" fill="#1f8a4c"/>
-          <text x="158" y="144" font-size="10" fill="#1f8a4c">OCF −36.88%</text>
-          <rect x="148" y="170" width="82.7" height="9" fill="#1f8a4c"/>
-          <text x="158" y="178" font-size="10" fill="#1f8a4c">EPS −23.53%</text>
-          <text x="142" y="195" font-size="9" text-anchor="end" fill="#8a94a6">绿=同比下降</text>
-        </svg>
-      </div>
+      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">营业收入（Q1 同季，亿元）</text><rect x="96.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#13406b"/><text x="135.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">456</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023</text><rect x="246.0" y="71.0" width="78.0" height="127.0" rx="3" fill="#13406b"/><text x="285.0" y="66.0" font-size="10.5" fill="#1f2733" text-anchor="middle">456</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024</text><rect x="396.0" y="87.0" width="78.0" height="111.0" rx="3" fill="#13406b"/><text x="435.0" y="82.0" font-size="10.5" fill="#1f2733" text-anchor="middle">398</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025</text><rect x="546.0" y="88.8" width="78.0" height="109.2" rx="3" fill="#c0392b"/><text x="585.0" y="83.8" font-size="10.5" fill="#1f2733" text-anchor="middle">392</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">归母净利润（Q1 同季，亿元）</text><rect x="96.0" y="131.3" width="78.0" height="66.7" rx="3" fill="#13406b"/><text x="135.0" y="126.3" font-size="10.5" fill="#1f2733" text-anchor="middle">9.5</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2023</text><rect x="246.0" y="72.3" width="78.0" height="125.7" rx="3" fill="#13406b"/><text x="285.0" y="67.3" font-size="10.5" fill="#1f2733" text-anchor="middle">17.9</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2024</text><rect x="396.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#13406b"/><text x="435.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">18.1</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2025</text><rect x="546.0" y="99.7" width="78.0" height="98.3" rx="3" fill="#c0392b"/><text x="585.0" y="94.7" font-size="10.5" fill="#1f2733" text-anchor="middle">14.0</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">2026</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
+      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026Q1 关键指标同比（%）</text><line x1="60" y1="51.7" x2="660" y2="51.7" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="54.7" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="51.7" width="50.0" height="6.5" rx="3" fill="#1f8a4c"/><text x="110.0" y="71.2" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-1.6%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营业收入</text><rect x="185.0" y="51.7" width="50.0" height="92.9" rx="3" fill="#1f8a4c"/><text x="210.0" y="157.6" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-22.8%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">归母净利</text><rect x="285.0" y="51.7" width="50.0" height="63.1" rx="3" fill="#1f8a4c"/><text x="310.0" y="127.8" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-15.5%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">扣非归母</text><rect x="385.0" y="51.7" width="50.0" height="121.8" rx="3" fill="#1f8a4c"/><text x="410.0" y="186.5" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-29.9%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">联营投资</text><rect x="485.0" y="51.7" width="50.0" height="150.3" rx="3" fill="#1f8a4c"/><text x="510.0" y="215.0" font-size="10.5" font-weight="700" fill="#1f8a4c" text-anchor="middle">-36.9%</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">经营现金流</text><rect x="585.0" y="48.0" width="50.0" height="3.7" rx="3" fill="#c0392b"/><text x="610.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+0.9%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">财务费用</text></svg></div>
     </div>
   </div>
 
-  <!-- 核心财务指标变动 -->
+
   <div class="sec">
     <div class="sec-h">核心财务指标变动</div>
     <div class="metrics">
-      <div class="mcard"><div class="lab">营业收入</div><div class="val">391.69亿</div><div class="delta down">同比 −1.62%</div></div>
-      <div class="mcard"><div class="lab">归母净利润</div><div class="val">13.98亿</div><div class="delta down">同比 −22.79%</div></div>
-      <div class="mcard"><div class="lab">扣非归母净利润</div><div class="val">13.58亿</div><div class="delta down">同比 −15.54%</div></div>
-      <div class="mcard"><div class="lab">毛利率</div><div class="val">12.32%</div><div class="delta down">同比 −1.58pp</div></div>
-      <div class="mcard"><div class="lab">基本 EPS</div><div class="val">0.078元</div><div class="delta down">同比 −23.53%</div></div>
-      <div class="mcard"><div class="lab">加权 ROE</div><div class="val">2.32%</div><div class="delta down">同比 −0.858pp</div></div>
-      <div class="mcard"><div class="lab">经营现金流净额</div><div class="val">88.54亿</div><div class="delta down">同比 −36.88%</div></div>
-      <div class="mcard"><div class="lab">OCF / 净利润</div><div class="val">3.56x</div><div class="delta down">同比 −0.81x</div></div>
+
+<div class="mcard"><div class="lab">营业收入</div><div class="val">391.69亿</div><div class="delta down">−1.62%</div></div>
+<div class="mcard"><div class="lab">归母净利润</div><div class="val">13.98亿</div><div class="delta down">−22.79%</div></div>
+<div class="mcard"><div class="lab">扣非归母净利</div><div class="val">13.58亿</div><div class="delta down">−15.54%</div></div>
+<div class="mcard"><div class="lab">基本EPS</div><div class="val">0.078元</div><div class="delta down">−23.53%</div></div>
+<div class="mcard"><div class="lab">加权ROE</div><div class="val">2.32%</div><div class="delta down">−0.86pp</div></div>
+<div class="mcard"><div class="lab">毛利率</div><div class="val">12.32%</div><div class="delta down">−1.58pp</div></div>
+<div class="mcard"><div class="lab">联营投资收益</div><div class="val">3.24亿</div><div class="delta down">−29.93%</div></div>
+<div class="mcard"><div class="lab">经营现金流净额</div><div class="val">88.54亿</div><div class="delta down">−36.88%</div></div>
+<div class="mcard"><div class="lab">自由现金流</div><div class="val">0.57亿</div><div class="delta down">去年33.45亿</div></div>
+<div class="mcard"><div class="lab">资产负债率</div><div class="val">73.00%</div><div class="delta up">−0.45pp</div></div>
+<div class="mcard"><div class="lab">现金短债比</div><div class="val">0.22×</div><div class="delta flat">货币153亿</div></div>
+<div class="mcard"><div class="lab">PE / PB / 股息率</div><div class="val">12.3× / 1.43×</div><div class="delta flat">4.3–5.1%</div></div>
+
+
     </div>
   </div>
 
-  <!-- 与历史同期对比 -->
+
   <div class="sec">
     <div class="sec-h">与历史同期对比</div>
     <table class="tbl">
-      <thead><tr><th>指标</th><th style="text-align:right">本期（2026Q1）</th><th style="text-align:right">去年同期（2025Q1）</th><th style="text-align:right">同比变动</th></tr></thead>
+      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
       <tbody>
-        <tr><td>营业收入</td><td class="num">391.69 亿</td><td class="num">398.13 亿</td><td class="num down">−1.62%</td></tr>
-        <tr><td>归母净利润</td><td class="num">13.98 亿</td><td class="num">18.11 亿</td><td class="num down">−22.79%</td></tr>
-        <tr><td>扣非归母净利润</td><td class="num">13.58 亿</td><td class="num">16.08 亿</td><td class="num down">−15.54%</td></tr>
-        <tr><td>毛利率</td><td class="num">12.32%</td><td class="num">13.90%</td><td class="num down">−1.58pp</td></tr>
-        <tr><td>经营现金流净额</td><td class="num">88.54 亿</td><td class="num">140.26 亿</td><td class="num down">−36.88%</td></tr>
-        <tr><td>基本 EPS</td><td class="num">0.078 元</td><td class="num">0.102 元</td><td class="num down">−23.53%</td></tr>
-        <tr><td>加权 ROE</td><td class="num">2.32%</td><td class="num">3.18%</td><td class="num down">−0.858pp</td></tr>
+
+<tr><td>营业收入(亿元)</td><td class="num">391.69</td><td class="num">398.13</td><td class="num down">−1.62%</td></tr>
+<tr><td>归母净利润(亿元)</td><td class="num">13.98</td><td class="num">18.11</td><td class="num down">−22.79%</td></tr>
+<tr><td>扣非归母净利(亿元)</td><td class="num">13.58</td><td class="num">16.08</td><td class="num down">−15.54%</td></tr>
+<tr><td>毛利率(%)</td><td class="num">12.32</td><td class="num">13.90</td><td class="num down">−1.58pp</td></tr>
+<tr><td>净利率(归母，%)</td><td class="num">3.57</td><td class="num">4.55</td><td class="num down">−0.98pp</td></tr>
+<tr><td>加权ROE(%)</td><td class="num">2.32</td><td class="num">3.18</td><td class="num down">−0.86pp</td></tr>
+<tr><td>基本EPS(元)</td><td class="num">0.078</td><td class="num">0.102</td><td class="num down">−23.53%</td></tr>
+<tr><td>经营现金流净额(亿元)</td><td class="num">88.54</td><td class="num">140.26</td><td class="num down">−36.88%</td></tr>
+<tr><td>资产负债率(%)</td><td class="num">73.00</td><td class="num">73.45</td><td class="num up">−0.45pp</td></tr>
+
+
       </tbody>
     </table>
   </div>
 
-  <!-- 与市场预期对比 -->
+
   <div class="sec">
     <div class="sec-h">与市场预期对比</div>
-    <div class="card">
-      <p><b>预期来源与口径：</b>本报告期为 2026 年一季报，市场通常<span class="amber" style="color:var(--amber);font-weight:700">不形成权威单季一致预期</span>（卖方共识多针对全年）。按《财报深度分析模型 v2》第 0 章约束，<b>显式声明「无单季一致预期」，改用 TTM / 历史中枢进度校验</b>，禁止以搜索碎值冒充预期差。</p>
-      <p><b>进度校验：</b>Q1 归母净利润 13.98 亿，约为 2025 全年归母 71.61 亿的 <b>19.5%</b>（火电 Q1 通常为全年低谷，季节性偏低，非异常）。按该进度外推，2026 全年归母约落在 60–70 亿区间，<b>低于 2025 实际 71.61 亿</b>，反映「电价市场化下行 + 上年同期一次性处置收益高基数」下的盈利回落。需待中报/年报披露全年一致预期后，再做 beat-miss 严格校验。</p>
-      <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">注：2025Q1 归母含「转让国能电力工程管理有限公司」一次性收益，抬高了同比基数；扣非口径（−15.54%）更能反映主业真实降幅。</p>
-    </div>
+    <table class="tbl">
+      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
+      <tbody>
+
+<tr><td>营业收入</td><td class="num">391.69亿(−1.62%)</td><td class="num">行业火电电价−2.6%~−5.6%、电量+3.7%</td><td class="num up">符合预期</td><td class="num amber">量稳价跌</td></tr>
+<tr><td>归母净利润</td><td class="num">13.98亿(−22.79%)</td><td class="num">占2025全年19.5%(火电Q1为低谷)</td><td class="num down">低于进度</td><td class="num down">电价+高基数双压</td></tr>
+<tr><td>扣非归母净利</td><td class="num">13.58亿(−15.54%)</td><td class="num">同业华能−12.04%、华电−5.55%</td><td class="num amber">略弱于同业</td><td class="num amber">联营投资−29.93%拖累</td></tr>
+<tr><td>毛利率</td><td class="num">12.32%(−1.58pp)</td><td class="num">煤价−1.4%应对冲，实际仍降</td><td class="num down">低于预期</td><td class="num down">电价降幅超过成本降幅</td></tr>
+<tr><td>经营现金流</td><td class="num">88.54亿(−36.88%)</td><td class="num">净利−22.4%，OCF降幅更大</td><td class="num down">低于预期</td><td class="num down">电网结算滞后+CapEx刚性</td></tr>
+
+
+      </tbody>
+    </table>
+    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：一季度<b>无权威单季一致预期</b>（卖方共识多针对全年），<b>本报告不以搜索碎值冒充预期差</b>（v2 修正 B），改用<b>年度进度校验</b>：<br/>① <b>进度</b>：Q1 归母 13.98 亿，约为 2025 全年 71.61 亿的 <b>19.5%</b>（<b>火电 Q1 为全年低谷，季节性偏低属正常</b>）；按该进度外推，<b>2026 全年归母约落在 60–70 亿区间</b>，低于 2025 实际 71.61 亿，<b>反映「电价市场化下行 + 上年一次性处置收益高基数」下的盈利回落</b>。<br/>② <b>必须修正的季节性陷阱</b>：2025 年 Q4 归母仅 <b>3.85 亿</b>（全年 71.61 亿 − 前三季 67.77 亿），<b>因 Q4 集中计提减值与检修</b>——<b>这意味着「Q1 占比」不能直接用于外推，也不能用前三季占比反推 Q4</b>；本报告给出的 60–70 亿区间为「Q1 年化 ×0.95」与「2025 全年 − 电价降幅拖累」交叉验证后的保守区间。<br/>③ <b>同业交叉验证</b>：Q1 同业归母同比——华能 −9.83%、华电 −9.93%、国电 <b>−22.79%</b>，<b>国电跌幅深于同业主要由「上年一次性收益基数 + 联营投资收益 −29.93%」解释，非行业共性</b>。<br/>④ <b>口径约束</b>：季报<b>不披露发电量、上网电价、分板块盈亏、折旧摊销</b>，故 §3 的分部判断为<b>按 2025 年报结构与行业数据推断</b>、§2 的 EBIT（约 45.34 亿）由「利润总额 31.14 ＋ 利息费用 14.20」倒推、§5 的折旧摊销（单季 55–60 亿）为<b>估算</b>，均已标注。</p>
   </div>
 
-  <!-- 行业坐标与供需（v2 第 0.5 章 · 前置） -->
+
   <div class="sec">
     <div class="sec-h">行业坐标与供需</div>
     <div class="card">
-      <p><b>行业所处阶段与传导方向：</b>火电处「煤价小幅下行 + 电量电价市场化下行」的<b>利润再分配阶段</b>——成本端改善（秦皇岛 Q5500 现货 Q1 约 716–721 元/吨，同比 −1.4%；长协价 3 月 682 元/吨，较 2025 年末 −12 元/吨）部分抵消电价下滑；2026 年容量电价同比提升（部分区域执行 330 元/千瓦·年）托底盈利。整体火电板块 Q1 归母同比 <b>−0.8%（基本持平、好于预期）</b>，但内部分化：煤电韧性、新能源承压。传导方向：<b>价格（电价）为首要拖累，成本（煤价）为缓冲</b>。</p>
-      <p><b>量价 / 供需 / 价格位置 / 政策：</b>2026 年 1–3 月全国规上电厂发电量 +3.4%，其中火电 +3.7%、水电 +8.9%、光伏 +11.2%、风电 −2.9%；新能源装机高增挤压存量机组利用小时。主要火电公司上网电价普遍同比下降（华能 460.73 元/MWh、−5.63%；华电 504.28 元/MWh、−2.58%；大唐 438.78 元/MWh、−4.8%），市场电比例维持 77%–100%。国电电力业绩与此行业背景一致——<b>量稳价跌、成本缓降</b>。</p>
+      <p><b>行业所处阶段与传导方向：</b>电力行业 2026 年一季度处于<b>「煤价小幅下行 + 电量电价市场化下行」的利润再分配阶段</b>：① <b>量</b>——1–3 月全国规上电厂发电量 <b>+3.4%</b>，其中火电 <b>+3.7%</b>、水电 +8.9%、光伏 +11.2%、<b>风电 −2.9%</b>，总需求平稳而新能源高增持续挤压存量机组利用小时；② <b>价</b>——火电上网电价普遍下降（华能 460.73 元/MWh、<b>−5.63%</b>；华电 504.28 元、−2.58%；大唐 438.78 元、−4.8%），<b>市场化交易电量占上网电量 77%–100%，电价由市场定价后中枢持续下移</b>；③ <b>成本</b>——秦皇岛 5500 卡 Q1 现货约 <b>716–721 元/吨（同比 −1.4%）</b>、长协价 3 月 682 元/吨（较 2025 年末 −12 元），<b>煤价小幅下行是本期唯一的顺风</b>；④ <b>政策</b>——2026 年容量电价同比提升（部分区域执行 330 元/千瓦·年），<b>为煤电提供「容量 + 调节」的价值补偿，是对电量电价下行的部分对冲</b>。<b>行业坐标：火电板块 Q1 归母同比约 −0.8%（基本持平、好于预期），但内部分化明显——煤电韧性、新能源承压</b>；而<b>国电电力是「火电占收入 83%」的纯火电弹性标的，其利润方向几乎完全由「电价 − 煤价」的剪刀差决定</b>。Q1 的组合是「电价降、煤价也降」——剪刀差收窄但未崩塌，因此只跌 22.79%；<b>这与三季报「电价降、煤价大涨」的组合（跌 69.34%）形成清晰对照，是本轮周期最重要的时间序列证据</b>。</p>
+      <p><b>量价 / 供需 / 价格位置 / 政策：</b>电量：季报<b>未披露发电量与上网电量</b>（A 股季报惯例）；行业 1–3 月规上发电量 +3.4%（火电 +3.7%、水电 +8.9%、光伏 +11.2%、风电 −2.9%）。电价：公司未披露；行业华能 460.73 元/MWh（−5.63%）、华电 504.28（−2.58%）、大唐 438.78（−4.8%），市场化交易占比 77%–100%。成本：秦皇岛 5500 卡 Q1 约 716–721 元/吨（−1.4%）、长协 3 月 682 元/吨（−12 元）；容量电价部分区域 330 元/千瓦·年。业务结构（2025 年报）：<b>火电收入 1,417.19 亿（83.2%，毛利率 10.99%）</b>、新能源 146.85 亿（8.6%，<b>32.71%</b>）、水电 115.08 亿（6.8%，<b>47.46%</b>）、其他 0.3 亿——<b>火电贡献八成收入但毛利率最低，水电与新能源虽小却高毛利</b>。<b>同业参照（2026Q1）</b>：营收——国电 391.69 亿（−1.62%）vs 华能 567.83 亿（−5.89%）、华电 304.73 亿（−9.43%）；归母——国电 <b>13.98 亿（−22.79%）</b> vs 华能 44.84 亿（−9.83%）、华电 17.89 亿（−9.93%）；毛利率——国电 12.32% vs 华能 <b>19.52%</b>、华电 12.63%；资产负债率——国电 <b>73.00%</b> vs 华能 66.32%、华电 59.71%。<b>对比结论：国电 Q1 三个维度全面弱于同业——归母降幅最深（−22.79%）、毛利率最低（12.32%）、杠杆最高（73.00%），根因是「火电占比最高 + 上年一次性收益基数 + 联营投资收益降幅大」；华能毛利率 19.52% 高出 7.2pp，说明其电源结构与区域电价显著更优。</b></p>
     </div>
   </div>
 
-  <!-- 盈利质量与增长归因（v2 第 2 章） -->
+
   <div class="sec">
     <div class="sec-h">盈利质量与增长归因</div>
     <div class="card">
-      <p><b>ROIC − WACC（创造价值判据）：</b>季报未披露分业务投入资本，精确 ROIC 所需分部资本数据不足，按 v2 第 2 章降级为<b>定性提示</b>。参考 2025 全年（加权 ROE 12.28%、资产负债率 73.45%）与典型公用事业 WACC（约 5%–6%）：在 73% 高杠杆下，归母净资产回报率虽高，但<b>投入资本回报率（ROIC）约处于 5%–6% 区间，与 WACC 基本持平或略高</b>，价值创造边际偏薄、对煤价/电价敏感。需待年报披露分业务资本后做精确测算。</p>
-      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b>营收 −1.62% 主因<b>售电均价同比下降</b>（行业共性），发电量总体平稳；利润降幅大于营收，归因于：① <b>价格</b>：均价下行直接压缩毛利（毛利率 −1.58pp）；② <b>非经基数</b>：上年同期转让国能电力工程公司产生一次性收益，抬高对比基数（扣非口径降幅 −15.54% 远小于归母 −22.79%）；③ <b>投资收益</b>：对联营/合营企业投资收益 3.24 亿（−29.93%），参股资产贡献走弱。成本端煤价下行形成对冲，但未完全覆盖电价降幅。</p>
-      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b>非经常性损益仅 <b>0.40 亿</b>（占净利 2.9%），其中非流动性资产处置 0.38 亿、政府补助 0.21 亿。归母（13.98 亿）略高于扣非（13.58 亿），差额为正且极小，<b>盈利质量「真」</b>，利润由主业经营支撑，非靠变卖资产保利润。费用端：管理费用 −8.6%、研发费用 −16.9%（正运营杠杆），财务费用 +0.9% 基本持平。</p>
+      <p><b>ROIC − WACC（创造价值判据）：</b>电力是<b>典型重资产、高杠杆的公用事业</b>，价值创造须用 <b>ROIC−WACC</b> 判断（v2 修正 C）。单季口径：利润总额约 <b>31.14 亿</b> ＋ 利息费用 <b>14.20 亿</b> = EBIT ≈ <b>45.34 亿元</b>；有效税率约 <b>19.5%</b>（按电力央企常态）→ NOPAT ≈ <b>36.50 亿元</b>（年化 ≈ 146.0 亿）。投入资本 IC = 所有者权益合计 1,409.85 亿（归母 610.82 ＋ 少数股东 799.03）＋ 有息负债约 <b>2,963 亿</b>= <b>4,372.85 亿元</b>。<b>单季 ROIC ≈ 0.83%，年化 ≈ 3.34%</b>。WACC ≈ <b>3.3%</b>（Rf 约 1.8% ＋ β 约 0.6×ERP 5.0% → Re≈4.8%；债务成本约 3.2%×(1−19.5%)≈2.58%；E/V 约 32%、D/V 约 68%）。<b>ROIC−WACC ≈ +0.04pp（年化口径），几乎为零</b>——<b>即资本回报刚好贴着资金成本线，价值创造在盈亏边缘</b>。这与三季报的年化 3.36% vs WACC 3.3%（+0.05pp）几乎完全一致，<b>说明 Q1 的投资回报水平就是全年的基准线，Q3 的问题不在回报率本身，而在利润额的下滑被折旧与债务的刚性成本放大</b>。对比 2024 年 9M 的 ROIC 4.65%（高出 WACC 约 1.4pp），两年间的回落来自<b>电价下行（分子）＋ 在建转固带来折旧抬升（分母）＋ 有息负债扩张</b>；对这类公司，<b>ROIC 的修复只有两条路径：煤价回落，或容量电价/辅助服务补位电量电价的下行</b>。</p>
+      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>量</b>：季报未披露电量，行业 1–3 月规上发电量 +3.4%（火电 +3.7%），<b>公司电量总体平稳、量是中性项</b>。<b>价</b>：<b>售电均价同比下降是营收 −1.62% 的唯一解释</b>（行业火电电价普遍 −2.6%~−5.6%）；毛利率 <b>12.32%（−1.58pp）</b>即价格直接传导的结果。<b>成本</b>：秦皇岛 5500 卡 Q1 约 716–721 元/吨（<b>−1.4%</b>）、长协 682 元/吨（−12 元），<b>煤价小幅下行部分对冲了电价降幅</b>——这是毛利率只降 1.58pp、而非像三季报那样降 4.34pp 的原因。<b>费用</b>：管理费用 <b>−8.6%</b>、研发费用 <b>−16.9%</b>、财务费用 <b>+0.9%</b>（基本持平），<b>三项合计低于营收降幅，运营杠杆为正</b>。<b>非经营项</b>：对联营/合营企业投资收益 <b>3.24 亿元（−29.93%）</b>；非经常性损益 <b>0.40 亿元</b>（非流动资产处置 0.38 亿 + 政府补助 0.21 亿）；<b>上年同期含转让国能电力工程管理有限公司的一次性收益，是归母降幅（−22.79%）大于扣非（−15.54%）的原因</b>。<b>结论</b>：归母 −4.13 亿（−22.79%）≈ <b>毛利减少约 6.6 亿</b>（毛利率 −1.58pp × 391.69 亿）＋ 投资收益 −1.39 亿 － 费用节约（管理 + 研发约 1.1 亿）－ 税负下降；<b>即「电价下行」解释了毛利降幅的全部，「煤价下行」是对冲项，投资收益是叠加项</b>——四项因素方向清晰、无一项来自会计口径变化。</p>
+      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「真」且干净，下滑是价格问题而非会计问题</b>。归母 13.98 亿、扣非 13.58 亿，<b>非经常性损益仅 0.40 亿元（占净利 2.9%）</b>——非流动资产处置 0.38 亿、政府补助 0.21 亿，<b>规模极小，不存在靠变卖资产或补助保利润</b>。<b>关键对比</b>：<b>上年同期（2025Q1）归母中含「转让国能电力工程管理有限公司」的一次性处置收益</b>，这正是<b>归母 −22.79% 而扣非仅 −15.54% 的全部原因</b>——<b>用扣非看主业，跌幅是可控的</b>。<b>现金验证（本季的弱点）</b>：OCF 88.54 亿 ÷ 归母 13.98 亿 = <b>3.56 倍</b>（去年 4.37 倍），盈利现金含量仍远高于 1；<b>但 OCF 同比 −36.88%，降幅大于净利（−22.43%）</b>，核心是<b>销售收现 435.13 亿（−10.5%）远快于营收下滑</b>——公司归因「电网结算周期影响，本期收回上年末应收电费减少」，<b>属回款节奏而非盈利虚增</b>。<b>需要提示的高折旧属性</b>：固定资产约 3,296.9 亿、<b>单季折旧估计 55–60 亿</b>，这部分在利润中扣减、在 OCF 中加回，<b>因此「OCF 远高于净利」是资本密集的结构特征，不能读成盈利质量优异</b>。</p>
     </div>
   </div>
 
-  <!-- 业务分部与地区拆解（v2 第 3 章） -->
+
   <div class="sec">
     <div class="sec-h">业务分部与地区拆解</div>
-    <div class="card">
-      <p><b>本部披露限制：</b>2026 年一季度报告为<b> condensed 季报，未披露分部营收/利润明细及发电量、售电均价、煤价等运营数据</b>，故无法进行「Δ分部利润贡献占比 = (本期分部利润 − 上期分部利润) / (本期集团归母 − 上期集团归母)」的定量拆解。以下为公司已知业务结构（2025 年报口径，供参考）：</p>
-      <p><b>业务结构（2025 全年）：</b>火电为主——火电收入 1417.19 亿（占比 83.2%，毛利率 10.99%）；新能源发电 146.85 亿（占比 8.6%，毛利率 32.71%）；水电 115.08 亿（占比 6.8%，毛利率 47.46%）；其他 0.3 亿。公司业务分布全国 30 个省区，呈「火电压舱 + 水电/新能源贡献弹性」格局。</p>
-      <p><b>定性判断：</b>Q1 整体下滑主因<b>火电售电均价下行</b>（火电占收入八成以上，对电价最敏感）；新能源板块在行业利用小时下降（风电 91.5%、光伏 90.8%）与电价下行背景下，利润弹性减弱。待中报披露分部数据后补全增量利润贡献拆解。</p>
-    </div>
+    <div class="card">一季报为<b> condensed 季报，不披露分部营收/利润、发电量、售电均价、煤价</b>（v2 修正 H 要求的增量贡献占比无法定量测算，此处降级为结构定性）：<br/>• <b>火力发电</b>（2025 年收入 <b>1,417.19 亿、占 83.2%</b>，毛利率 <b>10.99%</b>）：<b>收入八成、利润主体的来源，也是对电价最敏感的板块</b>；Q1 电价下行直接压缩该板块毛利，是集团利润下滑的主要发生地。<br/>• <b>水电</b>（115.08 亿、6.8%，毛利率 <b>47.46%</b>）：<b>毛利率最高的板块</b>，Q1 行业水电发电量 +8.9%（来水偏丰），<b>是本期少数确定性改善的方向</b>。<br/>• <b>新能源（风电 + 光伏）</b>（146.85 亿、8.6%，毛利率 <b>32.71%</b>）：行业光伏发电量 +11.2%、<b>风电 −2.9%</b>；<b>利用小时下降（2024H1 参考值：风电 91.5%、光伏 90.8%）与电价下行双压</b>，利润弹性减弱。<br/>• <b>其他</b>：0.3 亿，主要为热力与煤炭贸易（体量已极小）。<br/><b>地区</b>：季报未披露；2025 年报口径以华东为主，<b>华东是全国电价最高的区域，因此也是电价市场化下行最敏感的区域</b>。<br/><b>判断</b>：<b>结构决定了国电的「高 β」属性——火电占八成收入、毛利率仅 11%，任何 1% 的电价变动都会被放大成数亿元的毛利变化，而水电/新能源虽毛利率高但体量小、无法对冲</b>；待中报披露分部数据后可补全增量利润贡献拆解（半年报已披露：火电归母 16.66 亿占 55.3%、水电 10.81 亿占 35.9%）。</div>
   </div>
 
-  <!-- 资产负债与周转效率（v2 第 4 章） -->
+
   <div class="sec">
     <div class="sec-h">资产负债与周转效率</div>
-    <div class="card">
-      <p><b>资本结构：</b>期末总资产 5223.55 亿（+0.42%）；负债合计 3813.70 亿（−0.18%）；<b>资产负债率 73.00%</b>（较年初 73.45% 微降 0.45pp）。有息负债约 2963 亿（短期借款 289.85 + 一年内到期非流动负债 395.43 + 长期借款 1940.18 + 应付债券 197.48 + 租赁负债 37.16 + 长期应付款 103.32 亿），杠杆水平在火电板块偏高（华能 66.3%、华电 59.7%）。归母净资产 610.82 亿（+2.71%），未分配利润 333.73 亿。</p>
-      <p><b>流动性：</b>流动比率 0.42、速动比率 0.39；<b>现金短债比 = 货币资金 153.11 亿 /（短期借款 289.85 + 一年内到期 395.43）≈ 0.22</b>，<1 为关注项，但系重资产公用事业「长债长投、稳定现金流再融资」的结构性特征，非急性流动性危机。<b>利息保障倍数（EBIT/利息费用）=（31.14+14.20）/14.20 ≈ 3.19x</b>（去年同期 3.84x），仍高于安全线。</p>
-      <p><b>周转效率：</b>应收账款 276.74 亿（较年初 +5.25%，而营收 −1.62%，应收增速 > 营收降幅，温和关注）；应收账款周转天数约 62 天（年化）。<b>预付款项 33.08 亿（较年初 +54.6%）</b>，延续中报以来的走高趋势，需关注是否为预付燃料/工程款项及回收节奏。存货 42.49 亿（较年初 −28.3%，周转健康）。其他应收款 13.51 亿（−10.9%，无异常）。</p>
-    </div>
+    <div class="card"><b>资本结构（高杠杆、小幅优化）</b>：总资产 <b>5,223.55 亿（+0.42%）</b>、负债 3,813.70 亿（−0.18%）、归母权益 <b>610.82 亿（+2.71%）</b>、未分配利润 333.73 亿；<b>资产负债率 73.00%（较年初 73.45%，−0.45pp）</b>——<b>在火电板块中偏高（华能 66.3%、华电 59.7%）</b>，是有息负债成本与财务风险的主要来源。<br/><b>有息负债与成本</b>：约 <b>2,963 亿元</b>（短借 289.85 ＋ 一年内到期 395.43 ＋ 长借 1,940.18 ＋ 应付债券 197.48 ＋ 租赁 37.16 ＋ 长期应付款 103.32）；财务费用 <b>14.20 亿（+0.9%，基本持平）</b>，<b>利息保障倍数 3.19×</b>（去年 3.84×，随 EBIT 下降而收窄）。<br/><b>流动性（偏紧，行业常态）</b>：货币资金 <b>153.11 亿</b>、<b>流动比率 0.42</b>、速动 0.39、<b>现金短债比仅 0.22</b>（153.11 / 685.28）——<b>重资产电力公司的典型结构：靠月度电费现金流入 + 央企信用滚动短债，不存在偿付危机，但缓冲极薄</b>。<br/><b>资产质量与周转</b>：<b>应收账款 276.74 亿（较年初 +5.25%）</b>——<b>营收 −1.62% 而应收增长，周转天数约 62 天，是本期最需要跟踪的一项（电网结算节奏）</b>；<b>预付款项 33.08 亿（+54.6%）</b>，大概率为燃料（煤）采购预付，对应长协锁量与煤价下行时的备货；存货 <b>42.49 亿（−28.3%）</b>，燃料库存下降、周转健康；其他应收款 13.51 亿（−10.9%，无异常）；商誉 <b>8.62 亿元</b>（占归母权益 1.41%，无减值迹象）；固定资产 3,296.9 亿（重资产主体）。<br/><b>整体判断：Q1 的资产负债表没有恶化（负债率还降了 0.45pp），但「应收 +5.25% + 预付 +54.6%」两项合计占用现金约 25 亿，与 OCF −36.88% 同向——这是营运资金在电价下行期被上游（燃料）与下游（电网）双向挤压的信号</b>。</div>
   </div>
 
-  <!-- 现金流健康度（v2 第 5 章 · OCF 拆解） -->
+
   <div class="sec">
     <div class="sec-h">现金流健康度</div>
     <div class="card">
-      <p><b>现金流匹配度：</b>经营现金流净额 88.54 亿，为归母净利润（13.98 亿）的 <b>3.56 倍</b>（去年同期 4.37 倍），盈利现金含量仍远高于 1，现金流质量健康；但 OCF 同比 <b>−36.88%</b>，降幅大于净利润（−22.43%），主因回款节奏而非盈利虚增。</p>
-      <p><b>OCF 拆解归因（v2 修正 E）：</b>OCF 与净利润的背离，公司 MD&A 解释为「受电网结算周期影响，本期收回的上年年末应收电费款项较上年同期减少」。从现金流量表看：销售商品/提供劳务收到现金 435.13 亿（−10.5%），而营收仅 −1.62%，印证<b>回款节奏放缓（电网结算滞后）是 OCF 下滑主因</b>；同期购买商品/接受劳务支付现金 280.09 亿（+2.9%）、支付其他经营现金 16.03 亿（−49.3%，去年同期基数较高），对 OCF 影响双向。非现金损益（折旧摊销等）仍是 OCF 高于净利润的主要正向来源（固定资产 3296.9 亿，季度折旧估计约 55–60 亿）。</p>
-      <p><b>自由现金流与覆盖能力：</b>FCF = OCF − 购建固定资产等资本开支 = 88.54 − 87.97 ≈ <b>0.57 亿</b>（去年同期 +33.45 亿），Q1 自由现金流阶段性接近盈亏平衡，主因 OCF 下降且 CapEx 仍处高位（87.97 亿，同比 −17.6%）。在「经营现金流 − CapEx − 分红」口径下，Q1 需依赖筹资（取得借款 377.47 亿、偿还债务 349.08 亿）滚动支持，<b>自由现金流阶段性偏紧，需跟踪后续季度恢复</b>。</p>
+      <p><b>现金流匹配度：</b><b>现金流是本季最大的瑕疵——「匹配但同比大幅回落」</b>。经营活动现金流净额 <b>88.54 亿元（−36.88%）</b>，归母净利润 13.98 亿 → <b>OCF/归母 3.56 倍</b>（去年同期 4.37 倍），<b>盈利现金含量仍远高于 1</b>，但 <b>OCF 降幅（−36.88%）显著大于净利降幅（−22.43%）</b>。<br/><b>背离可清晰归因</b>：① <b>销售商品提供劳务收到现金 435.13 亿（−10.5%）</b>，降幅远大于营收（−1.62%）——<b>公司 MD&A 明确解释「受电网结算周期影响，本期收回上年末应收电费较上年同期减少」</b>，即<b>回款节奏滞后，而非收入虚增</b>；② 购买商品接受劳务支付现金 280.09 亿（<b>+2.9%</b>，煤价虽降但发电量与长协采购量支撑支出）；③ 支付其他与经营活动有关的现金 16.03 亿（<b>−49.3%</b>，去年同期基数较高），对本季 OCF 是正向贡献。<br/><b>投资与筹资</b>：资本开支（购建固定资产等）<b>87.97 亿（−17.6%）</b>仍处高位；筹资端取得借款 <b>377.47 亿</b>、偿还债务 <b>349.08 亿</b>——<b>借新还旧规模接近，净融资很小，说明本季的现金流缺口主要靠「滚动再融资 + 存量现金」弥补</b>。<b>结论：OCF 下滑是「电网结算节奏 + 燃料现金支出刚性」的组合，属营运资金波动而非盈利质量恶化；但它与「应收 +5.25%、预付 +54.6%」同向，说明营运资金正在被上下游双向占用，这是需要连续跟踪的信号。</b></p>
+      <p><b>OCF 拆解归因：</b>OCF 拆解（v2 修正 E；季报按直接法列示、无补充资料，折旧摊销不可得）：<b>OCF 88.54 亿（上年 140.26 亿，−36.88%）</b>。<br/>① <b>收款端（本期核心拖累）</b>：销售商品提供劳务收现 <b>435.13 亿（−10.5%，−51.05 亿）</b>，而营收仅 −1.62%——<b>收现比由上年的约 1.11 降至约 1.11 的水平内实为「回款滞后」</b>（公司口径：电网结算周期导致本期收回上年末应收电费减少）。<br/>② <b>付款端</b>：购买商品接受劳务支付 <b>280.09 亿（+2.9%）</b>、支付其他与经营活动有关的现金 <b>16.03 亿（−49.3%）</b>；<b>付款端总体温和，未形成额外拖累</b>。<br/>③ <b>资本开支</b>：购建固定资产、无形资产及其他长期资产 <b>87.97 亿（−17.6%）</b>——虽同比下降，但<b>占单季营收的 22.5%，仍是 FCF 的主要吞噬项</b>。<br/><b>归因结论</b>：OCF −51.72 亿 ≈ <b>收现减少 51.05 亿</b> ＋ 付现增加约 7.9 亿 － 其他经营付现节约 15.6 亿；<b>九成以上由「收款端滞后」解释，且已有公司明确口径支撑，属可解释、非异常</b>。<b>但须提示：若 Q2 起电网结算未回补，OCF 的弱化将从「节奏问题」变成「趋势问题」</b>（半年报显示 H1 OCF 205.17 亿、−21.02%，降幅收窄，说明 Q2 已部分回补）。</p>
+      <p><b>自由现金流与覆盖能力：</b><b>自由现金流近乎归零，是本季最需要警示的指标</b>。FCF = OCF 88.54 − CapEx 87.97 ≈ <b>0.57 亿元</b>，对比上年同期 <b>33.45 亿</b>，<b>同比 −98.3%</b>。<br/><b>原因双重</b>：① OCF −36.88%（收现滞后）；② CapEx 虽有 −17.6%，但绝对额 87.97 亿仍相当于单季营收的 22.5%，<b>重资产扩张的刚性没有下降</b>。<br/><b>覆盖能力（本季不足）</b>：在「OCF − CapEx − 分红」口径下，Q1 的 FCF 0.57 亿<b>完全无法覆盖</b>季度利息支出（财务费用 14.20 亿）与年度分红（2025 年度派现约 43 亿），<b>缺口依赖筹资滚动（借款 377.47 亿 / 偿还 349.08 亿）与存量货币资金（153.11 亿）</b>。<b>但不宜线性外推</b>：电力公司 Q1 为现金流季节性低点（取暖季燃料支出高、电费回款跨期），2025 全年 OCF 达 536.68 亿、FCF 69.75 亿；<b>半年报 FCF 已回补至 +42.4 亿</b>。<b>结论：Q1 的 FCF 归零是季节性 + 结算节奏的叠加，不构成偿债危机；但它暴露了「CapEx 刚性 + 电价下行」下自由现金流的脆弱性——这是 60% 分红率可持续性的关键约束。</b></p>
     </div>
   </div>
 
-  <!-- 估值与股东回报（v2 第 6 章 · 周期正常化） -->
+
   <div class="sec">
     <div class="sec-h">估值与股东回报</div>
     <div class="card">
-      <p><b>相对估值水位：</b>以 2026-04-28 披露日前后股价约 4.6–4.9 元计，总市值约 <b>840–880 亿</b>；PE（TTM）约 <b>11.7x–13.0x</b>，PB（LF）约 <b>1.38x–1.48x</b>，PS（TTM）约 0.5x，股息率 TTM 约 <b>4.3%–5.1%</b>。估值处于火电板块中<b>游偏上</b>水平。</p>
-      <p><b>周期正常化估值（v2 修正 F）：</b>电力属弱周期（煤价+电价双变量）。以 2025 全年扣非净利 67.76 亿（同比 +45.23%，已反映当期煤/价 regime）作为稳态盈利近似，正常化 PE ≈ 860 亿 / 68 亿 ≈ <b>12.6x</b>，与当前 TTM PE 基本吻合——<b>既非周期顶部虚低、亦非深度低估，属合理中枢</b>。对比同业：华能国际 2026E PE 约 8.4x、华电国际 TTM PE 约 9.9x，<b>国电电力 PE 略高于可比龙头</b>，溢价或来自更高股息率与资产质量，但需结合其更高杠杆（73% vs 60%–66%）审慎看待。</p>
-      <p><b>股东回报可持续性：</b>2025 全年分红 10 派 2.41 元（含税，含中期 1.0 元 + 末期 1.41 元），分红总额约 43 亿，<b>分红率约 60%</b>，股息率 TTM 约 4.3%–5.1%。分红由经营现金流支撑（2025 OCF 536.68 亿，现金流覆盖充裕），<b>可持续性强</b>，是高股息防御属性的核心支撑。</p>
+      <p><b>相对估值水位：</b><b>估值处历史低位，高股息是核心支撑</b>。以 2026-04-28 披露日前后股价 <b>4.6–4.9 元</b>计（总股本 178.36 亿股）：市值约 <b>840–880 亿元</b>、<b>PE(TTM) 约 11.7–13.0×</b>、<b>PB(LF) 约 1.38–1.48×</b>、PS(TTM) 约 0.5×、<b>股息率 TTM 约 4.3%–5.1%</b>；<b>PB 接近 1× 重置成本，处自身历史偏低区域</b>。<br/><b>相对同业</b>：华能国际 2026E PE 约 <b>8.4×</b>、华电国际 TTM PE 约 <b>9.9×</b>——<b>国电 PE 略高于两家龙头，溢价可能来自更高股息率与资产质量，但其资产负债率 73.00% 也显著高于华能（66.32%）与华电（59.71%），溢价与风险并不对称</b>。<br/><b>估值判断</b>：① <b>P/E 口径</b>——TTM 归母 71.61 亿（2025 全年）对应 11.7–13.0×，若 2026 全年归母回落至 60–70 亿，PE 抬升至 12–14.7×，<b>仍不算贵但不便宜</b>；② <b>P/B 口径</b>——PB 1.38–1.48× 对 ROE 约 10%（年化）的电力公司属合理，<b>资产底提供下行保护</b>；③ <b>股息口径</b>——<b>4.3%–5.1% 的股息率明显高于 10Y 国债，这是红利型资金的核心买点</b>。<b>综合：Q1 时点的估值是「便宜 + 高股息」，与三季报时点的「PB 1.56×、PE(TTM) 21.96×」形成鲜明对照——<b>半年间利润下台阶、股价却从 4.6–4.9 涨到 5.35，估值被反转预期推高</b>。</b></p>
+      <p><b>周期正常化估值：</b>电力兼具<b>周期与公用事业</b>属性，正常化需双锚并用（v2 修正 F 的适用改造）。<br/>① <b>盈利锚</b>：以 <b>2025 全年扣非净利 67.76 亿元</b>（同比 +45.23%，已反映当期煤/价 regime）作为稳态盈利近似 → <b>正常化 PE ≈ 860 / 68 ≈ 12.6×</b>，<b>与当期 TTM PE（11.7–13.0×）基本吻合</b>，说明<b>Q1 的估值既非周期顶部虚低、也非深度低估，属合理中枢</b>。<br/>② <b>资产锚（PB−ROE）</b>：年化 ROE 约 <b>9.3%</b>（Q1 加权 2.32%×4；2025 全年 12.28%）、PB 1.43×（中值）、分红率 60% → 可持续增长率 g = 9.3%×40% ≈ <b>3.72%</b>；由 PB=(ROE−g)/(r−g) 反推 <b>隐含 COE ≈ 7.6%</b>，<b>落在公用事业合理 COE（7–8%）区间内 → 定价公允</b>（对比三季报时点隐含 COE 仅 6.82%，明显偏贵）。<br/>③ <b>情景锚（Q1 时点，2026 全年归母 → 合理价）</b>：<br/>• <b>乐观</b>（煤价维持低位、电价降幅收窄至 −2%）→ 全年归母 <b>65 亿</b>、PE 15× → <b>975 亿 / 5.47 元</b>；<br/>• <b>中性</b>（煤价小幅上行、电价 −4%）→ 全年归母 <b>55 亿</b>、PE 14× → <b>770 亿 / 4.32 元</b>；<br/>• <b>悲观</b>（煤价转大涨、电价继续下行）→ 全年归母 <b>40 亿</b>、PE 13× → <b>520 亿 / 2.92 元</b>，但<b>PB 0.9–1.0× 的资产底对应 3.10–3.44 元</b>为下行支撑。<br/><b>结论（Q1 时点）：4.6–4.9 元处「中性情景（4.32 元）与乐观情景（5.47 元）」之间，估值公允、靠 4.3%–5.1% 股息率提供持有回报；此时的核心风险不是估值，而是煤价方向——而三季报已证明煤价转向上行时，利润会以远快于股价的速度下滑。</b></p>
+      <p><b>股东回报可持续性：</b><b>分红稳定、比例高，是持有回报的主要来源</b>。<br/>• <b>2025 年度分红</b>：「<b>10 派 2.41 元</b>（含税，中期 1.0 元 + 末期 1.41 元）」，分红总额约 <b>43 亿元</b>、<b>分红率约 60%</b>，对应现价股息率 <b>4.3%–5.1%</b>——<b>在电力央企中属较高水平，且已连续多年维持 60% 左右</b>。<br/>• <b>覆盖能力（年度口径充足、季度口径不足）</b>：2025 全年 OCF <b>536.68 亿</b>、FCF 69.75 亿，<b>对 43 亿分红覆盖 1.6 倍（FCF 口径）至 12.5 倍（OCF 口径）</b>；但 Q1 单季 FCF 仅 0.57 亿，<b>说明分红必须以全年现金流而非单季现金流衡量</b>。<br/>• <b>需要提示的结构问题</b>：① <b>少数股东分流</b>——少数股东权益约 799 亿（占权益 56.7%）、分走净利约 44%，<b>归母股东仅得合并利润的 55.7%，这是分红率 60% 但每股股息仅 0.241 元的根本原因</b>；② <b>无回购计划</b>——本期无股份回购，资本配置以「保分红 + 保投资」为主；③ <b>分红可持续性依赖盈利不再下台阶</b>：若 2026 全年归母降至 40 亿，60% 分红率对应股息 24 亿、<b>股息率降至 2.8%</b>，红利逻辑将明显弱化——<b>这是 Q1 时点最需要前瞻提示的风险</b>（<b>三季报数据显示 9M 归母已 39.61 亿、−41.55%，该风险正在兑现</b>）。</p>
     </div>
   </div>
 
-  <!-- 管理层指引与前瞻（v2 第 7 章） -->
+
   <div class="sec">
     <div class="sec-h">管理层指引与前瞻</div>
-    <div class="card">
-      <p>一季度报告未披露独立的业绩前瞻/资本开支指引原文。基于行业与公司既有信息交叉验证（与第 0.5 章一致）：</p>
-      <p><b>行业与价格：</b>公司管理层（及行业共识）判断煤价小幅下行、电价市场化继续走低，容量电价提升部分对冲；新能源利用小时承压。与行业事实一致，未见明显背离。</p>
-      <p><b>资本配置：</b>Q1 资本开支 87.97 亿（同比 −17.6%），延续重资产扩张节奏；经营活动净流入支撑为主、筹资滚动为辅。公司为国家能源集团控股的全国性发电平台，绿色转型（风电/光伏/水电）为长期方向。</p>
-      <p><b>敏感性：</b>火电盈利对「电价 − 煤价」点火价差高度敏感——煤价每下行 10 元/吨约改善利润数亿元，电价每降 1% 则反向拖累。当前价差处有利区间但电价趋势仍向下，需持续跟踪。</p>
-      <p class="note" style="font-size:12.5px;color:var(--ink-3)">注：上述为基于行业公开信息的推演，非公司正式承诺性指引；前瞻性陈述存在不确定性。</p>
-    </div>
+    <div class="card"><b>一季度报告未披露独立的业绩前瞻与资本开支指引原文</b>（A 股季报惯例），以下为<b>基于行业与公司既有信息的交叉验证</b>（与 §0.5 行业坐标一致）：<br/><b>行业与价格判断</b>：管理层及行业共识为「<b>煤价小幅下行、电价市场化继续走低，容量电价提升部分对冲；新能源利用小时承压</b>」——与本季实际完全一致（煤价 −1.4%、电价下行、毛利率 −1.58pp），<b>未见管理层预期与事实背离</b>。<br/><b>资本配置</b>：Q1 资本开支 <b>87.97 亿（−17.6%）</b>，延续重资产扩张节奏；资金来源以<b>经营现金流为主、筹资滚动为辅</b>（借款 377.47 亿 / 偿还 349.08 亿）；公司为国家能源集团控股的全国性发电平台（集团持股 50.68%），<b>绿色转型（风电/光伏/水电）为长期方向</b>。<br/><b>敏感性（以本报告期营收 391.69 亿为基数）</b>：<br/>• <b>电价每 −1% → 单季收入 −3.92 亿 → 归母约 −1.7 亿</b>（按 19.5% 税率、55.7% 归母占比）；<br/>• <b>煤价每 +1% → 单季燃料成本约 +1.7 亿 → 归母约 −0.8 亿</b>（火电成本占营业成本约 83%、燃料占火电成本约 60%）；<br/>• <b>电价对利润的弹性约为煤价的 2.3 倍——电价始终是第一变量</b>；财务费用每 +10bp → 单季归母约 −0.2 亿（有息负债 2,963 亿）。<i>（测算基于公开结构推算，非公司指引；前瞻性陈述存在不确定性）</i></div>
   </div>
 
-  <!-- 同业可比（v2 第 8 章） -->
+
   <div class="sec">
     <div class="sec-h">同业可比与相对表现</div>
-    <div class="card">
-      <p><b>相对强弱（2026Q1）：</b></p>
-      <table class="tbl">
-        <thead><tr><th>指标</th><th style="text-align:right">国电电力</th><th style="text-align:right">华能国际</th><th style="text-align:right">华电国际</th></tr></thead>
-        <tbody>
-          <tr><td>营业收入（亿）</td><td class="num">391.69</td><td class="num">567.83</td><td class="num">304.73</td></tr>
-          <tr><td>营收同比</td><td class="num down">−1.62%</td><td class="num down">−5.89%</td><td class="num down">−9.43%</td></tr>
-          <tr><td>归母净利润（亿）</td><td class="num">13.98</td><td class="num">44.84</td><td class="num">17.89</td></tr>
-          <tr><td>归母同比</td><td class="num down">−22.79%</td><td class="num down">−9.83%</td><td class="num down">−9.93%</td></tr>
-          <tr><td>扣非同比</td><td class="num down">−15.54%</td><td class="num down">−12.04%</td><td class="num down">−5.55%</td></tr>
-          <tr><td>毛利率</td><td class="num">12.32%</td><td class="num">19.52%</td><td class="num">12.63%</td></tr>
-          <tr><td>资产负债率</td><td class="num">73.00%</td><td class="num">66.32%</td><td class="num">59.71%</td></tr>
-        </tbody>
-      </table>
-      <p style="margin-top:12px"><b>定位与估值溢价：</b>国电电力 Q1 业绩<b>弱于同业龙头</b>——归母同比 −22.79% 明显深于华能（−9.83%）、华电（−9.93%），主要因①上年同期一次性处置收益高基数、②对联营投资收益降幅更大（−29.93% vs 华电投资收益 −42.6% 但华电主业度电利润改善对冲）。毛利率 12.32% 与华电（12.63%）相近、低于华能（19.52%），杠杆率（73%）高于两家（60%–66%）。估值上 PE（TTM）约 12x 略高于华能/华电（约 9–10x），<b>相对同业性价比不占优，但更高股息率（~4.3%–5%）提供防御缓冲</b>。整体定位：<b>落后同业龙头、靠高股息托底</b>。</p>
-    </div>
+    <div class="card">电力板块可比（2026Q1）：<br/>• <b>国电电力</b>：营收 391.69 亿（−1.62%）、归母 <b>13.98 亿（−22.79%）</b>、扣非 −15.54%、毛利率 <b>12.32%</b>、资产负债率 <b>73.00%</b>——<b>降幅最深、毛利率最低、杠杆最高</b>。<br/>• <b>华能国际</b>：营收 567.83 亿（<b>−5.89%</b>）、归母 <b>44.84 亿（−9.83%）</b>、扣非 −12.04%、毛利率 <b>19.52%</b>、资产负债率 66.32%——<b>收入降幅最大但利润降幅最小，毛利率高出 7.2pp，说明其电价水平（460.73 元/MWh）与电源结构显著更优</b>。<br/>• <b>华电国际</b>：营收 304.73 亿（<b>−9.43%</b>）、归母 17.89 亿（−9.93%）、扣非 <b>−5.55%</b>、毛利率 12.63%、资产负债率 <b>59.71%</b>——<b>毛利率与国电接近但杠杆低 13pp，抗风险能力更强</b>。<br/><b>关键对比结论</b>：① <b>收入与利润的「降幅错配」是本期最有信息量的现象</b>——华能收入降 5.89% 而利润只降 9.83%，国电收入降 1.62% 而利润降 22.79%，<b>差异全部来自毛利率（19.52% vs 12.32%）：毛利率越低的公司，同样的电价降幅对利润的伤害越大</b>；② <b>杠杆差异放大了脆弱性</b>——国电 73.00% vs 华电 59.71%，意味着相同的 EBIT 下滑对国电的净资产回报冲击更大（ROE 2.32% vs 华电更高）；③ <b>投资含义：国电电力是火电板块中「高 β、高股息、高杠杆」的三高品种</b>，在煤价下行周期弹性最大（2024 年归母 98.31 亿即为明证），但在「电价下行 + 煤价上行」组合下也最脆弱——<b>Q1 属于前者（煤价还降）、三季报属于后者（煤价大涨），这个切换只用了两个季度。</b></div>
   </div>
 
-  <!-- 财务排雷（v2 第 9 章 · 含 v2 两项新增） -->
+
   <div class="sec">
     <div class="sec-h">财务排雷</div>
     <div class="redflags">
-      <div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">安全</span>商誉 8.62 亿，较年初无变化；占归母净资产仅 <b>1.41%</b>（远低于 30% 红线），商誉/年利润（2025 归母 71.61 亿）约 0.12x（远低于 5x 阈值）。无并购泡沫迹象。</div></div>
-      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">安全</span>研发费用 0.59 亿且全部费用化，开发支出余额 5.31 亿（较年初 +1.66 亿）属正常项目投入，无异常资本化突增（利润注水迹象低）。</div></div>
-      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">安全</span>信用减值损失 +1.77 亿（为转回，正向），资产减值损失仅 0.003 亿，无大额一次性减值（洗大澡/平滑利润迹象无）。</div></div>
-      <div class="rf"><div class="k">债务结构</div><div class="v"><span class="verdict amber">关注</span>现金短债比 ≈ 0.22（<1），短债（短期借款+一年内到期）占带息负债约 23%。系重资产公用事业结构性特征（长债长投、稳定再融资），非急性危机；但高杠杆（73%）下安全边际偏薄，需持续跟踪利率与再融资环境。</div></div>
-      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">标准</span>一季度报告法定「未经审计」（季报不强制审计，行业惯例），非「非标意见」；关键数据以公司正式公告为准。</div></div>
-      <div class="rf"><div class="k">关联交易</div><div class="v"><span class="verdict flat">安全</span>其他应收款 13.51 亿（较年初 −10.9%），应收股利 0.45 亿，无畸高其他应收（资金占用/利益输送迹象低）。</div></div>
-      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span>应收账款 276.74 亿（较年初 +5.25%），而营收 −1.62%，应收增速 > 营收降幅，呈温和信用放宽/回款放缓迹象；需下季验证回款节奏与账龄。</div></div>
-      <div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">安全</span>存货 42.49 亿（较年初 −28.3%），周转天数健康，无积压/滞销迹象；跌价准备未见异常计提。</div></div>
-      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">安全</span>非经常性损益 0.40 亿，仅占净利 2.9%，归母略高于扣非（差额为正且极小），盈利质量「真」，非靠卖资产/补助保利润。</div></div>
-      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">安全</span>OCF/净利润 = 3.56x（>1，健康）；OCF 同比 −36.88% 大于净利 −22.43%，但已由「电网回款节奏放缓」解释（见第 5 章拆解），非盈利质量恶化。</div></div>
-      <div class="rf"><div class="k">收入确认激进（v2 新增）</div><div class="v"><span class="verdict amber">关注·待核</span>季报未披露分部/渠道库存/终端动销数据，无法直接验证「经销商压货、完工百分比快于回款」等激进行为。现象：应收增速 > 营收降幅（温和），但无渠道压货证据。需待中报披露分部与渠道数据后验证收入确认审慎性。</div></div>
-      <div class="rf"><div class="k">表外 / 担保 / 或有负债（v2 新增）</div><div class="v"><span class="verdict amber">待核实</span>一季度 condensed 报告未披露对外担保余额、未决诉讼及并表范围变动明细。公司作为国家能源集团控股子公司，存在关联担保/合营安排可能。需查阅年报/临时公告核实担保率（担保余额/净资产）及重大未决诉讼，排除表外风险。</div></div>
+
+
+<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict flat">低风险</span>商誉 <b>8.62 亿元</b>（与年初完全一致，无新增无减值），占归母权益 610.82 亿的 <b>1.41%</b>、占总资产 0.17%——<b>远低于 v2 阈值，电力央企并购少、无商誉泡沫</b>。资产主体为固定资产（约 3,296.9 亿）与在建工程，不存在商誉减值敞口。</div></div>
+<div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发费用同比 <b>−16.9%</b>（随收入下滑同步压缩），开发支出规模极小、占营收不足 0.5%；<b>电力研发以智能电网、燃烧优化为主，基本全额费用化，不存在资本化虚增利润的空间</b>。</div></div>
+<div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict flat">低风险</span>本季资产减值与信用减值<b>均为小额</b>，无一次性大额计提；但需注意<b>公司有年末集中计提减值的惯例</b>（2025Q4 归母仅 3.85 亿、2024 年曾对大兴川电站计提 8.42 亿）——<b>Q1 的干净不代表全年干净，减值风险集中在 Q4</b>。</div></div>
+<div class="rf"><div class="k">债务结构与财务杠杆</div><div class="v"><span class="verdict amber">关注</span>资产负债率 <b>73.00%（−0.45pp）</b>、有息负债约 <b>2,963 亿元</b>（短借 289.85 ＋ 一年内到期 395.43 ＋ 长借 1,940.18 ＋ 应付债券 197.48 ＋ 租赁 37.16 ＋ 长期应付款 103.32）；财务费用 <b>14.20 亿（+0.9%）</b>、<b>利息保障倍数 3.19×</b>（去年 3.84×，随 EBIT 下降收窄）；<b>流动比率 0.42、速动 0.39、现金短债比仅 0.22</b>（货币 153.11 亿 vs 短期有息 685.28 亿）。<b>判断：高杠杆是电力央企常态，靠月度电费现金流与集团信用滚动短债；但杠杆显著高于华能（66.32%）与华电（59.71%），利率与再融资环境变化时更脆弱</b>——有息负债 2,963 亿，利率每 +10bp 约侵蚀归母 2.4 亿。</div></div>
+<div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>一季报<b>未经审计</b>（A 股季报惯例），不存在非标意见问题；董事会已声明保证真实准确完整。<b>待年报审计验证，重点看：在建工程转固时点与折旧年限、联营企业投资收益确认、Q4 减值计提的充分性</b>。</div></div>
+<div class="rf"><div class="k">关联交易与资金往来</div><div class="v"><span class="verdict amber">关注</span>① <b>控股股东国家能源投资集团持股 50.68%</b>（另集团资本控股 0.64%，合计约 51.3%），<b>燃料（煤炭）采购、设备与工程服务大量依赖集团体系，关联交易规模巨大且直接决定燃料成本</b>——这是电力央企最核心的关联交易风险点，<b>定价公允性直接关系少数股东与上市公司利益分配</b>；② <b>其他应收款 13.51 亿（−10.9%）</b>，无异常资金占用，规模较小；③ 上年同期<b>向集团体系转让国能电力工程管理有限公司股权（一次性收益）</b>，属关联交易性质，需注意此类资产处置的定价与可持续性；④ 财务公司存贷款往来需核查利率公允性。</div></div>
+<div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict flat">低风险</span>应收账款 <b>276.74 亿元（较年初 +5.25%）</b>、周转天数约 <b>62 天</b>——<b>应收增速快于营收（−1.62%）逆势增长，但购电方为电网公司，坏账风险极低</b>；<b>本季销售收现 435.13 亿（−10.5%）远快于营收下滑</b>，属电网结算节奏滞后（公司口径），非信用政策放宽。<b>判断：账面质量无恶化，但「应收增长 + 收现下降」需连续跟踪</b>。</div></div>
+<div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">低风险</span>存货 <b>42.49 亿元（较年初 −28.3%）</b>，主要为燃料（煤）库存；<b>在煤价小幅下行时主动去库、降低资金占用，是合理的库存管理</b>；燃料即耗即用、无滞销与跌价风险。</div></div>
+<div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict flat">低风险</span>非经常性损益 <b>0.40 亿元，仅占归母 2.9%</b>（非流动资产处置 0.38 亿 + 政府补助 0.21 亿）；<b>归母（13.98 亿）与扣非（13.58 亿）仅差 0.40 亿，利润由主业支撑、无变卖资产保利润</b>。<b>但须注意：是「上年同期」含转让国能电力工程的一次性收益才使同比基数偏高——即本期归母降幅大，50% 归因于去年的高基数而非今年的经营恶化</b>。</div></div>
+<div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">低风险</span>OCF <b>88.54 亿（−36.88%）</b> vs 净利（−22.43%）：<b>OCF 降幅大于净利，属不利背离</b>，但 <b>OCF/归母 3.56 倍</b>仍远高于 1、归因清晰（销售收现 −10.5% 系电网结算滞后），<b>且半年报 OCF 已回补至 205.17 亿（−21.02%，降幅收窄）</b>。<b>真正需要警示的不是 OCF 而是 FCF 0.57 亿（近乎归零）</b>——由 CapEx 刚性造成。</div></div>
+<div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span>上网电费按<b>上网电量 × 核准电价（含市场化交易价）按月与电网结算</b>确认，<b>无完工百分比、无预收蓄水池、无渠道压货</b>；营收 −1.62% 与行业电价下行的方向一致，<b>可交叉验证、无跨期调节空间</b>。</div></div>
+<div class="rf"><div class="k">表外 / 担保 / 或有负债（v2新增）</div><div class="v"><span class="verdict amber">关注</span>① <b>担保</b>：电力项目公司普遍存在为子公司借款提供的连带担保（季报未列明细，需年报核查规模与对象）；② <b>明股实债风险</b>：<b>少数股东权益约 799 亿占权益 56.7%</b>，大量项目公司由集团/外部股东共同持有，<b>需核查是否存在回购承诺与固定收益安排</b>——这是电力行业最典型的表外结构；③ <b>受限资产</b>（半年报口径 51.50 亿：货币 16.22 + 固定资产 32.75 + 在建 2.53）为借款抵质押，规模可控；④ 长期应付款 103.32 亿、专项储备等需核实构成。</div></div>
+<div class="rf"><div class="k">电价市场化与燃料成本（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span><b>「电价 − 煤价」剪刀差是电力股唯一核心变量</b>。本季：<b>电价下行</b>（行业火电 −2.6%~−5.6%，市场化交易占比 77%–100%）推动毛利率 <b>12.32%（−1.58pp）</b>；<b>煤价小幅下行形成缓冲</b>（秦皇岛 5500 卡 716–721 元/吨、−1.4%；长协 682 元、−12 元），使利润跌幅控制在 −22.79%。<b>但缓冲极为脆弱</b>：原煤产量 −3.5%、进口动力煤 −6.1%，<b>一旦煤价转向上行，剪刀差会双向恶化</b>——<b>该风险在 2026Q3 已完全兑现（秦皇岛煤价同比 +35.06%、毛利率跌至 12.41%、Q3 单季 9.27%）</b>。敏感性：<b>电价每 −1% 侵蚀单季归母约 1.7 亿、煤价每 +1% 约 0.8 亿，电价弹性约为煤价 2.3 倍</b>（§0.5 / §2 / §7）。</div></div>
+<div class="rf"><div class="k">装机结构与来水/利用小时（行业特有·红旗）</div><div class="v"><span class="verdict down">红旗</span>① <b>火电占 2025 年收入 83.2%、毛利率仅 10.99%</b>——<b>结构上最不抗电价下行</b>，这是国电降幅（−22.79%）深于华能（−9.83%）、华电（−9.93%）的结构性原因；② <b>新能源挤压存量机组</b>：行业 Q1 光伏发电量 +11.2%、风电 <b>−2.9%</b>，<b>新能源装机高增持续摊薄火电利用小时</b>；③ <b>水电是唯一亮点</b>：行业 Q1 水电发电量 +8.9%（来水偏丰），公司水电毛利率 47.46% 为各板块最高，<b>但体量仅占收入 6.8%，无法对冲火电下滑</b>；④ <b>枯水期（Q4–Q1）火电需回补电量，但煤价高位下「多发多亏」的风险并存</b>（§3 / §7）。</div></div>
+
+
     </div>
   </div>
 
-  <!-- 业务亮点与潜在风险（B 类提炼） -->
+
   <div class="sec">
     <div class="sec-h">业务亮点与潜在风险</div>
     <div class="two">
-      <div class="panel hl"><h4>✓ 业务亮点</h4><ul>
-        <li>扣非净利降幅（−15.54%）远小于归母（−22.79%），主业韧性优于表观，非经仅占净利 2.9%。</li>
-        <li>煤价下行 + 容量电价托底，煤电点火价差同比改善（行业共性）。</li>
-        <li>负债率微降至 73.0%；2025 分红率 60%，股息率 TTM 约 4.3%–5%，现金流可支撑。</li>
-      </ul></div>
-      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul>
-        <li>售电均价持续市场化下行，毛利率 12.32%（−1.58pp），价格端未企稳。</li>
-        <li>对联营企业投资收益 −29.93%，参股资产贡献走弱。</li>
-        <li>Q1 自由现金流近零（去年同期 +33.5 亿）；应收/预付走高待跟踪回款。</li>
-      </ul></div>
+      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li><b>扣非降幅（−15.54%）明显小于归母（−22.79%）</b>：归母差额来自上年同期转让国能电力工程管理有限公司的一次性收益高基数；<b>扣非才反映主业真实降幅，且降幅为个位数后半段，属「温和承压」而非「失速」</b></li><li><b>盈利质量「真」</b>：非经常性损益仅 <b>0.40 亿元（占净利 2.9%）</b>——非流动资产处置 0.38 亿、政府补助 0.21 亿；<b>归母与扣非仅差 0.40 亿，利润由主业经营支撑、无变卖资产保利润</b></li><li><b>煤价下行形成成本缓冲</b>：秦皇岛 5500 卡 Q1 约 <b>716–721 元/吨（−1.4%）</b>、长协 3 月 682 元/吨（−12 元），+ 容量电价机制（部分区域 330 元/千瓦·年）托底，<b>部分抵消了电价下行</b></li><li><b>费用端正贡献、运营杠杆为正</b>：管理费用 <b>−8.6%</b>、研发费用 <b>−16.9%</b>、财务费用 +0.9% 基本持平——<b>在收入下滑时费用被压缩，三项合计低于营收降幅</b></li><li><b>杠杆小幅优化、分红政策稳定</b>：资产负债率 <b>73.00%（−0.45pp）</b>、归母权益 +2.71%；2025 年度分红率 <b>约 60%</b>（10 派 2.41 元）、股息率 TTM 4.3%–5.1%，<b>高股息提供底部支撑</b></li><li><b>现金流质量指标仍远高于 1</b>：OCF/归母 <b>3.56 倍</b>（去年 4.37 倍），虽同比回落但<b>盈利现金含量依旧充足，说明下滑是价格问题而非回款恶化到失控</b></li></ul></div>
+      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li><b>电价下行是首要拖累且趋势未止（核心风险）</b>：季报未披露电价，但行业同期火电上网电价普遍下降（华能 −5.63%、华电 −2.58%、大唐 −4.8%）；<b>市场化交易比例维持 77%–100%，电价下行是制度性而非季节性</b>；毛利率 12.32%（−1.58pp）已是结果</li><li><b>经营现金流 −36.88%，FCF 近乎归零</b>：OCF 88.54 亿、销售收现 435.13 亿（<b>−10.5%</b>，远超营收降幅 −1.62%），公司归因「电网结算周期滞后、本期收回上年末应收电费减少」；<b>FCF 仅 0.57 亿（去年 33.45 亿）</b>，<b>单季「经营现金流 − CapEx − 分红」需靠筹资（借款 377.47 亿 / 偿还 349.08 亿）滚动支持</b></li><li><b>煤价的「缓冲」随时可能反转</b>：本季煤价同比 −1.4%，是利润跌幅温和的关键；<b>但供给端原煤产量 −3.5%、进口动力煤 −6.1%，若煤价转为上行，成本缓冲将立刻变成成本拖累</b>（<b>该风险在 2026Q3 已兑现：秦皇岛煤价同比 +35.06%</b>）</li><li><b>联营企业投资收益 −29.93%</b>：3.24 亿元，参股煤电/新能源项目在电价下行中同样承压，<b>第二利润源走弱</b></li><li><b>应收与预付逆势增长</b>：应收账款 <b>276.74 亿（较年初 +5.25%）</b>而营收 −1.62%（周转约 62 天）；<b>预付款项 33.08 亿（+54.6%）</b>，大概率为燃料采购预付——<b>两项均占用现金，需跟踪回收与结转</b></li><li><b>短债滚动依赖度高</b>：流动比率 0.42、<b>现金短债比 0.22</b>（货币 153.11 亿 vs 短期有息 685.28 亿）、利息保障 3.19×（去年 3.84×）；<b>有息负债约 2,963 亿元，利率每 +10bp 约侵蚀归母 2.4 亿</b></li></ul></div>
     </div>
   </div>
 
-  <!-- 下季跟踪（v2 第 10 章 跟踪闭环） -->
+
   <div class="sec">
     <div class="sec-h">下季跟踪事项</div>
-    <div class="track"><ol>
-      <li><b>售电均价是否企稳</b>（第 0.5/2 章红旗）：下季看 Q2 上网结算电价同比，验证毛利率拐点与「量稳价跌」是否延续。</li>
-      <li><b>对联营企业投资收益能否修复</b>（第 2 章红旗）：下季看联营/合营企业利润贡献，判断 −29.93% 是否为一次性或趋势性走弱。</li>
-      <li><b>应收账款与预付款回款节奏</b>（第 4/9 章红旗）：下季看应收周转天数、预付款变动及 OCF 恢复，验证「收入确认审慎性」与回款健康度。</li>
-      <li><b>自由现金流恢复情况</b>（第 5 章红旗）：下季看 OCF − CapEx 差额，确认 Q1 近零 FCF 为季节性还是趋势性。</li>
-      <li><b>表外担保 / 或有负债核实</b>（第 9 章新增红旗）：待年报/临时公告披露对外担保余额、未决诉讼，排除表外风险。</li>
-      <li><b>分部利润贡献拆解补全</b>（第 3 章）：待中报披露火电/水电/新能源分部数据，补全 Δ分部利润贡献占比。</li>
-    </ol></div>
+    <div class="track"><ol><li><b>电价与煤价剪刀差（Q1 煤价 −1.4% 为缓冲、电价下行 −1.58pp 毛利）</b> → 下季看平均上网电价、入炉标煤单价方向；<b>若煤价转涨，本季的「成本缓冲」将立即变为「成本拖累」</b>（§0.5 / §2 / §9 红旗 13）。</li><li><b>经营现金流与回款节奏（OCF 88.54 亿 −36.88%、销售收现 −10.5%）</b> → 下季看电网结算是否回补、应收（276.74 亿 +5.25%）与预付（33.08 亿 +54.6%）能否回落（§5 / §9 红旗 7、10）。</li><li><b>自由现金流近乎归零（0.57 亿 vs 去年 33.45 亿）与 CapEx 刚性（87.97 亿 −17.6%）</b> → 下季看 FCF 能否回补以覆盖 43 亿年度分红（§5 / §6）。</li><li><b>联营企业投资收益（3.24 亿 −29.93%）</b> → 下季看参股煤电/新能源项目的盈利与减值（§2）。</li><li><b>装机与利用小时（新能源挤压存量机组）</b> → 下季看新增风光投产、风电发电量（行业 Q1 −2.9%）、水电来水（行业 Q1 +8.9%）（§3 / §9 红旗 14）。</li></ol></div>
   </div>
 
-  <!-- 页脚 -->
+
+  <div class="foot">
+    <b>数据来源：</b>① <b>国电电力发展股份有限公司 2026 年第一季度报告</b>（披露日 <b>2026-04-28</b>，<b>未经审计</b>；一季报 PDF 未留存本地，数据以季报原文口径为准）。<br/>② <b>多期序列</b>：Q1 同季营收/归母取自公开财务数据（2023Q1 456.13 亿/9.46 亿、2024Q1 455.55/17.85、2025Q1 398.13/18.11、2026Q1 391.69/13.98 亿元）。<br/>③ <b>经营与行业数据</b>（WebSearch，统计时点 2026-04-28 至 2026-04-30）：1–3 月全国规上电厂发电量 +3.4%（火电 +3.7%、水电 +8.9%、光伏 +11.2%、风电 −2.9%）；火电上网电价——华能 460.73 元/MWh（−5.63%）、华电 504.28 元（−2.58%）、大唐 438.78 元（−4.8%），市场化交易占比 77%–100%；秦皇岛 5500 卡 Q1 现货约 716–721 元/吨（−1.4%）、长协 3 月 682 元/吨；容量电价部分区域 330 元/千瓦·年；同业 Q1 业绩（华能营收 567.83 亿/归母 44.84 亿、华电 304.73/17.89）。<b>估值口径</b>：2026-04-28 前后股价 4.6–4.9 元、市值 840–880 亿、PE(TTM) 11.7–13.0×、PB 1.38–1.48×、股息率 TTM 4.3%–5.1%、2025 年度「10 派 2.41 元」（分红率约 60%）。<br/>④ <b>口径说明与估算标注</b>：本报告为<b>合并口径</b>（归母 13.98 亿元）；公司<b>少数股东权益约 799 亿（占权益 56.7%）、少数股东损益分走净利约 44%</b>，读表时须注意<b>归母口径与合并口径差异远大于一般公司</b>；§2 的 ROIC 采用「权益合计 ＋ 有息负债」口径、§5 的 FCF = OCF − 购建长期资产，均为公开口径复算。<br/>
+  </div>
+
 </div>
 </body>
 </html>
