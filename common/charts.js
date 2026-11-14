@@ -174,12 +174,19 @@
         if (mm) f = freqObj[mm[1]];
       }
       if (!f) return;
-      var t = k.textContent
-        .replace(/[（(][^）)]*(最新|截至|年内)[^）)]*[）)]/g, '')
-        .replace(/[（(]\d{4}[）)]/g, '')
-        .replace(/[（(][周月季年][）)]/g, '')
-        .trim();
-      k.textContent = t + '(' + f + ')';
+      var _strip = function (s) {
+        return s.replace(/[（(][^）)]*(最新|截至|年内)[^）)]*[）)]/g, '')
+          .replace(/[（(]\d{4}[）)]/g, '')
+          .replace(/[（(][周月季年][）)]/g, '')
+          .trim();
+      };
+      // 指标名含副标（<small>）时只给副标补频率，避免 textContent 把子元素拍平
+      var sm = k.querySelector('small');
+      if (sm) {
+        sm.textContent = _strip(sm.textContent) + '(' + f + ')';
+        return;
+      }
+      k.textContent = _strip(k.textContent) + '(' + f + ')';
     });
   }
 

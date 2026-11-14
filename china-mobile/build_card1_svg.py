@@ -2,7 +2,7 @@
 """读取 数据源/《中国移动_财务健康与盈利质量.xlsx》，为看板卡片1（财务健康与盈利质量）
 的指标生成年度 / 季度 SVG 折线图（纯静态 SVG，无 JS 依赖）。
 
-营业收入、归母净利润、EBITDA率 有季度序列（2020Q1–2026Q2 单季），生成季度 svg；
+营业收入、归母净利润、EBITDA率 有季度序列（2020Q1–2026Q3 单季），生成季度 svg；
 ROE、自由现金流、应收账款增速差 仅年报披露，仅生成年度图。
 
 输入： 数据源/中国移动_财务健康与盈利质量.xlsx（年报数据 / 季报数据 两张 sheet）
@@ -31,11 +31,23 @@ wb = openpyxl.load_workbook(FN, data_only=True)
 wa = wb["年报数据"]
 hdr_a = [wa.cell(4, c).value for c in range(1, 21)]
 hidx_a = {h: i for i, h in enumerate(hdr_a) if h}
+
+ROW0 = 5  # 数据首行（表头位于 ROW0-1 行）
+def _last_row(ws, col=1):
+    """自 ROW0 向下探测最后一个非空数据行号。
+
+    动态探测取代硬编码行数：xlsx 新增行（新增年份/季度）后可自动纳入，
+    避免「数据已更新但图表末点未变」的静默丢点问题。"""
+    r = ROW0
+    while ws.cell(r, col).value not in (None, ""):
+        r += 1
+    return r - 1
+
 def ann(header):
     ci = hidx_a[header] + 1
-    return [wa.cell(r, ci).value for r in range(5, 11)]
+    return [wa.cell(r, ci).value for r in range(ROW0, _last_row(wa) + 1)]
 
-years = [2020, 2021, 2022, 2023, 2024, 2025]
+years = [wa.cell(r, 1).value for r in range(ROW0, _last_row(wa) + 1)]
 rev_a = ann("营业收入(亿元)")
 np_a = ann("归母净利润(亿元)")
 eb_a = ann("EBITDA率(%)")
@@ -66,10 +78,11 @@ ANN = [
 wq = wb["季报数据"]
 hdr_q = [wq.cell(4, c).value for c in range(1, 9)]
 qidx_q = {h: i for i, h in enumerate(hdr_q) if h}
-quarters = [wq.cell(r, 1).value for r in range(5, 31)]
+Q_ROWS = range(ROW0, _last_row(wq) + 1)
+quarters = [wq.cell(r, 1).value for r in Q_ROWS]
 def qv(header):
     ci = qidx_q[header] + 1
-    return [wq.cell(r, ci).value for r in range(5, 31)]
+    return [wq.cell(r, ci).value for r in Q_ROWS]
 
 q_rev = qv("营业收入(亿元)")
 q_np = qv("归母净利润(亿元)")

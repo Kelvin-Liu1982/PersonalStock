@@ -2,8 +2,8 @@
  * chart-zoom.js — 看板图表「双击放大」通用前端
  * ------------------------------------------------------------------
  * 用法（看板页 <head> 里引入一次即可，全页图表自动生效）：
- *   <script src="../chart-zoom.js" defer>   子目录看板（china-mobile / coal / telecom / unicom）
- *   <script src="/chart-zoom.js" defer>     根路径看板（cosco-shipping）
+ *   <script src="../chart-zoom.js" defer>     一级子目录看板（china-mobile / coal / telecom / unicom）
+ *   <script src="../../chart-zoom.js" defer>  二级子目录看板（cosco-shipping/output/ 主看板及周报页）
  *
  * 自动命中范围（事件委托，动态注入的图表同样生效）：
  *   1) [data-img]          内联 SVG 容器（cosco 看板趋势区 .imgbox，由 __CHARTS__ 注入）

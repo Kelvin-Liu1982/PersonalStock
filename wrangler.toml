@@ -6,5 +6,6 @@ main = "worker/index.js"
 
 # 将整个仓库根作为静态资源目录
 # 根 index.html 会作为站点首页
-# cosco-shipping/ 与 china-coal/ 子目录会保持原路径被访问
+# cosco-shipping/ 与 china-coal/ 等子目录按原路径访问；
+# 中远海控页面已收拢到 cosco-shipping/output/，根 index.html 的卡片链接已同步
 assets = { directory = "." }
