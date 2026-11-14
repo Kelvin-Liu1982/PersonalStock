@@ -27,8 +27,9 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "数据源", "中远海控_财报核心数据.xlsx")
-CACHE = os.path.join(HERE, "财报原始数据_缓存.json")
+ROOT = os.path.dirname(HERE)
+OUT = os.path.join(ROOT, "数据源", "中远海控_财报核心数据.xlsx")
+CACHE = os.path.join(ROOT, "财报原始数据_缓存.json")
 
 # ---------- 1) 抽取东方财富业绩报表（带回退缓存） ----------
 API = ("https://datacenter-web.eastmoney.com/api/data/v1/get?"

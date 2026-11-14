@@ -7,7 +7,8 @@ import openpyxl
 from openpyxl.styles import Font, Alignment, PatternFill, Border, Side
 from openpyxl.utils import get_column_letter
 
-XLSX = "数据源/中远海控_行业供需与运价数据.xlsx"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+XLSX = os.path.join(ROOT, "数据源", "中远海控_行业供需与运价数据.xlsx")
 SHEET = "供给端-Alphaliner周报(摘要)"
 assert os.path.exists(XLSX), XLSX
 

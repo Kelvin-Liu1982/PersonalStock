@@ -3,7 +3,7 @@
 一键重建中远海控追踪看板（方向C + 趋势增强）。
 
 用法:
-    python build.py
+    python src/build.py
     # 或先建虚拟环境: python -m venv .venv && .venv/bin/pip install -r requirements.txt
 
 步骤:

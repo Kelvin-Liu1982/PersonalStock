@@ -4,10 +4,10 @@
 =====================================================================
 数据主源: 中远海控_行业供需与运价数据.xlsx
 约定    : 该 Excel 为唯一主数据源；更新文件后重跑本脚本即可刷新整个看板。
-输出    : cosco-shipping/cosco-dashboard.html  (单文件，双击即开)
+输出    : cosco-shipping/output/_data_js.txt（中间产物）与 output/cosco-dashboard.html
 机制    : 时序数据抽成 JS 数组 + 长期趋势图 base64 内嵌，快照与趋势同源驱动。
 """
-import os, re, json, base64, io, math
+import os, re, json, base64, io, math, datetime
 import openpyxl
 import matplotlib
 matplotlib.use("Agg")
@@ -17,13 +17,17 @@ from matplotlib import font_manager as fm
 # ---------- 路径 ----------
 import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-WS   = os.path.dirname(HERE)  # 工作区根
+ROOT = os.path.dirname(HERE)   # 项目根 cosco-shipping/
+WS   = os.path.dirname(ROOT)   # 工作区根 业绩追踪看板/（含 common/）
 sys.path.insert(0, WS)
 # Phase 2 重构：折线/堆叠柱 SVG 生成器统一收口到跨看板公共库 common/svg_charts
 from common.svg_charts import make_line_svg_wide, make_stacked_bar_svg, make_pct_stacked_bar_svg
-SRC  = os.path.join(HERE, "数据源")  # 所有 Excel 数据源集中存放
+SRC  = os.path.join(ROOT, "数据源")  # 所有 Excel 数据源集中存放
 XLSX = os.path.join(SRC, "中远海控_行业供需与运价数据.xlsx")
-OUT  = os.path.join(HERE, "cosco-dashboard.html")
+# Drewry 三大周报（WCI / IACI / CST）与 Red Sea Diversion Tracker 已独立成表
+DR_XLSX = os.path.join(SRC, "中远海控_Drewry周报数据.xlsx")
+OUT  = os.path.join(ROOT, "output", "cosco-dashboard.html")
+os.makedirs(os.path.join(ROOT, "output"), exist_ok=True)
 
 # ---------- 中文字体（候选优先级：PingFang SC/HK → Songti SC → Heiti TC → STHeiti → SimHei） ----------
 try:
@@ -75,11 +79,168 @@ qvol_cum   = [float(r[4]) for r in _qv_rows]                       # 累计货�
 qrev       = [float(r[5]) for r in _qv_rows]                       # 外贸单箱收入(USD/TEU)
 qnp        = [float(r[6]) for r in _qv_rows]                       # 单季归母净利润(亿元RMB)
 
+# ---------- Drewry 周度 tracker：卡片4 的 WCI / 分航线 / 停航率 / 分航线结构 ----------
+# 数据源：中远海控_Drewry周报数据.xlsx（WCI / IACI / CST / RST 四表独立），此处按日期合并 WCI+CST
+def _drewry_weekly():
+    wb = openpyxl.load_workbook(DR_XLSX, data_only=True)
+
+    def _rows(sheet, names):
+        w = wb[sheet]
+        hdr = {}
+        for c in range(1, w.max_column + 1):
+            v = w.cell(1, c).value
+            if v:
+                hdr[str(v).strip().lstrip("\u3000")] = c
+        for k in names:
+            if k not in hdr:
+                raise KeyError("%s 表缺少列: %s" % (sheet, k))
+        out = {}
+        for r in range(2, w.max_row + 1):
+            d = w.cell(r, 1).value
+            if hasattr(d, "date"):
+                d = d.date().isoformat()
+            d = str(d)[:10]
+            if not re.match(r"^20\d\d-\d\d-\d\d$", d):
+                continue          # 跳过表下口径说明区
+            out[d] = {k: w.cell(r, hdr[k]).value for k in names}
+        return out
+
+    wci = _rows("WCI", ["WCI综合(美元/FEU)", "上海-鹿特丹(美元/FEU)",
+                        "上海-洛杉矶(美元/FEU)", "上海-热那亚(美元/FEU)",
+                        "上海-纽约(美元/FEU)"])
+    cst = _rows("CST", ["停航率(%)", "跨太平洋东行取消量(%)",
+                        "亚洲-北欧/地中海占取消量(%)", "跨大西洋占取消量(%)"])
+
+    keys = ["WCI综合(美元/FEU)", "上海-鹿特丹(美元/FEU)", "上海-洛杉矶(美元/FEU)",
+            "上海-热那亚(美元/FEU)", "上海-纽约(美元/FEU)",
+            "停航率(%)", "跨太平洋东行取消量(%)", "亚洲-北欧/地中海占取消量(%)",
+            "跨大西洋占取消量(%)"]
+    # CST 在新表中按百分数存储（6.0），下游图表的 vfmt 按小数比例 ×100，故在此归一
+    ratio_keys = set(keys[5:])
+    # 两表各用自己的发布日：WCI 周四、CST 周五，同一期差 1 天 → 按 ISO 周对齐
+    def _wk(d):
+        y, w, _ = datetime.date.fromisoformat(d).isocalendar()
+        return (y, w)
+    cst_wk = {}
+    for d, rec in cst.items():
+        cst_wk[_wk(d)] = rec
+    if set(_wk(d) for d in wci) != set(cst_wk):
+        raise RuntimeError(
+            "WCI 与 CST 的 ISO 周序列不一致（WCI %d 周 / CST %d 周）："
+            % (len(wci), len(cst))
+            + "仅 WCI 有 %s；仅 CST 有 %s"
+            % (sorted(set(_wk(d) for d in wci) - set(cst_wk))[:5],
+               sorted(set(cst_wk) - set(_wk(d) for d in wci))[:5]))
+    dates, out = [], {k: [] for k in keys}
+    for d in sorted(wci):
+        a, b = wci[d], cst_wk.get(_wk(d), {})
+        if (all(a.get(k) is None for k in keys[:5])
+                and all(b.get(k) is None for k in keys[5:])):
+            continue              # 占位行不进图表序列
+        dates.append(d)
+        for k in keys:
+            v = a.get(k) if k in a else b.get(k)
+            if isinstance(v, (int, float)):
+                out[k].append(v / 100.0 if k in ratio_keys else float(v))
+            else:
+                out[k].append(None)
+    return dates, out
+
+dr_dates, _dr = _drewry_weekly()
+dr_wci   = _dr["WCI综合(美元/FEU)"]
+dr_rtm   = _dr["上海-鹿特丹(美元/FEU)"]
+dr_lax   = _dr["上海-洛杉矶(美元/FEU)"]
+dr_goa   = _dr["上海-热那亚(美元/FEU)"]
+dr_nyc   = _dr["上海-纽约(美元/FEU)"]
+dr_blank = _dr["停航率(%)"]
+dr_tp    = _dr["跨太平洋东行取消量(%)"]
+dr_ae    = _dr["亚洲-北欧/地中海占取消量(%)"]
+dr_ta    = _dr["跨大西洋占取消量(%)"]
+def _dw_last(seq):
+    return next((v for v in reversed(seq) if v is not None), None)
+def _dw_k(v):
+    return ("%.1fk" % (v / 1000)) if isinstance(v, (int, float)) else "—"
+
+# ---------- Drewry RST：红海通航周度（卡6 两行由年度估算改为周度实测） ----------
+# 口径：经苏伊士 / 经好望角 为「艘/周」，亚欧运力经苏伊士为 Drewry 直接披露的百分比。
+# 原年度表（宏观核心数据(年度)）的「绕航比例 / 运力吸收率」只到 2025，2026 全空，已降级为背景说明。
+def _rst_weekly():
+    wb = openpyxl.load_workbook(DR_XLSX, data_only=True)
+    if "RST" not in wb.sheetnames:
+        raise KeyError("Drewry 周报表缺少 RST sheet：%s" % DR_XLSX)
+    w = wb["RST"]
+    hdr = {str(w.cell(1, c).value).strip(): c
+           for c in range(1, w.max_column + 1) if w.cell(1, c).value}
+    need = ["经苏伊士(艘/周)", "经好望角(艘/周)", "亚欧运力经苏伊士(%)"]
+    for k in need:
+        if k not in hdr:
+            raise KeyError("RST 表缺少列: %s" % k)
+    rows = []
+    for r in range(2, w.max_row + 1):
+        v = w.cell(r, 1).value
+        if hasattr(v, "date"):
+            v = v.date().isoformat()
+        v = str(v)[:10]
+        if not re.match(r"^20\d\d-\d\d-\d\d$", v):
+            continue                      # 跳过表下口径说明区
+        vals = []
+        for k in need:
+            x = w.cell(r, hdr[k]).value
+            vals.append(float(x) if isinstance(x, (int, float)) else None)
+        if vals[0] is None and vals[1] is None:
+            continue
+        rows.append((v, vals[0], vals[1], vals[2]))
+    rows.sort(key=lambda x: x[0])
+    return ([x[0] for x in rows], [x[1] for x in rows],
+            [x[2] for x in rows], [x[3] for x in rows])
+
+rst_d, rst_suez, rst_cape, rst_ae = _rst_weekly()
+# 苏伊士通行占比 = 经苏伊士 ÷（经苏伊士＋经好望角）；两线互补，合计 100%
+rst_share = [round(s / (s + c) * 100.0, 2)
+             if (s is not None and c) else None
+             for s, c in zip(rst_suez, rst_cape)]
+
 def sheet_rows(name):
     ws = wb[name]
     return [list(r) for r in ws.iter_rows(values_only=True)]
 
-fr = sheet_rows("周运价指数(SCFI&CCFI)")
+SSE_XLSX = os.path.join(SRC, "中远海控_SSE周报数据.xlsx")
+
+
+def _sse_wide():
+    """合并 SSE 两张表 → 原「周运价指数(SCFI&CCFI)」的宽表结构。
+
+    2026-11 起 SCFI 综合指数与 SCFI 分航线拆成两张 sheet（迁入
+    中远海控_SSE周报数据.xlsx），主看板仍按宽表消费，故此处按日期内连接：
+    综合表 290 期（2021 起）、分线表仅当年 43 期，取交集即当年 43 期。
+    周环比沿用源表的小数比例存储，与下游 pct() 的 ×100 口径一致。
+    """
+    w = openpyxl.load_workbook(SSE_XLSX, data_only=True)
+
+    def _rows(name):
+        return [list(r) for r in w[name].iter_rows(values_only=True)]
+
+    def _ds(v):
+        if hasattr(v, "date"):
+            return v.date().isoformat()
+        s = str(v)[:10] if v is not None else ""
+        return s if re.match(r"^20\d\d-\d\d-\d\d$", s) else None
+
+    idx, fl = _rows("SCFI&CCFI"), _rows("SCFI 分线")
+    fmap = {}
+    for r in fl[1:]:
+        d = _ds(r[0])
+        if d:
+            fmap[d] = r
+    out = [list(idx[0]) + list(fl[0][1:])]
+    for r in idx[1:]:
+        d = _ds(r[0])
+        if d and d in fmap:
+            out.append(list(r) + list(fmap[d][1:]))
+    return out
+
+
+fr = _sse_wide()
 de = sheet_rows("需求端-港口吞吐量&出口")
 de = [de[0]] + [r for r in de[1:] if r[0] not in (None, "")]   # 去掉尾部空行（编辑器易产生），避免 float(None) 崩
 su = sheet_rows("供给端-运力&闲置率")
@@ -169,29 +330,38 @@ TH_P95 = _quantile(theta_long, 0.95)
 TH_MED = _quantile(theta_long, 0.50)
 TH_N   = len(theta_long)
 
-def parse_util(v):
-    if isinstance(v,(int,float)):          # Excel 数字单元格存的是小数比例: 0.95=95%、1=100%
-        x=float(v)
-        return round(x*100,1) if x<=1.5 else round(x,1)
-    s=str(v); nums=[int(n) for n in re.findall(r"\d+", s)]
-    if not nums: return None
-    if "-" in s and len(nums)>=2: return round((nums[0]+nums[1])/2,1)
-    if ">" in s: return nums[0]+2.5
-    if "~" in s: return nums[0]
-    return nums[0]
-util=[parse_util(v) for v in util_raw]
+# 舱位利用率：**无公开周度数值源**（详见 README），仅按周报正文定性分三档。
+# 3=紧张(>=95%) / 2=平衡(85%~95%) / 1=宽松(<85%) / None=当周未披露
+UTIL_TXT = {3: "紧张", 2: "平衡", 1: "宽松"}
 
-# 舱位利用率：周报偶尔不披露该字段 → 用上一有效值顺延，避免 None 传入图表/指标导致崩溃
-def _carry_forward(seq):
-    out=[]; last=None
-    for v in seq:
-        if v is None and last is not None:
-            v = last
-        if v is not None:
-            last = v
-        out.append(v)
-    return out
-util = _carry_forward(util)
+def parse_util(v):
+    """把单元格解析为三档等级。兼容历史遗留写法（0.95 / 90%-95% / >95% 等），
+    避免切换到定性口径前的旧数据被误判为空。"""
+    if v is None or (isinstance(v, str) and not v.strip()):
+        return None
+    if isinstance(v, str):
+        t = v.strip()
+        if t in UTIL_TXT.values():
+            return {t2: k for k, t2 in UTIL_TXT.items()}[t]
+        nums = [float(n) for n in re.findall(r"\d+(?:\.\d+)?", t)]
+        if not nums:
+            return None
+        pct = sum(nums) / len(nums)
+        if pct <= 1.5:
+            pct *= 100
+    else:
+        pct = float(v)
+        if pct <= 1.5:
+            pct *= 100
+    if pct >= 95:
+        return 3
+    if pct >= 85:
+        return 2
+    return 1
+
+util=[parse_util(v) for v in util_raw]
+# 不再用「上一有效值顺延」：该指标本身缺失时宁可留空，也不显示一个无来源的数字
+_last_util = next((v for v in reversed(util) if v is not None), None)
 
 # --- 需求 ---
 de_dates=[str(r[0]) for r in de[1:]]
@@ -226,6 +396,29 @@ exp_y=[float(r[4]) for r in de[1:]]
 asean_y=[float(r[5]) for r in de[1:]]
 eu_y=[float(r[6]) for r in de[1:]]
 us_y=[float(r[7]) for r in de[1:]]
+
+# --- Alphaliner 周报：全球在运营运力（卡片4 第1行，周度快照） ---
+# 数据源：数据源/中远海控_Alphaliner周报数据.xlsx 的 `全球` 表「全球运力(TEU)」列
+# = PublicTop100 Global figures 的 active 口径（不是 fully cellular）。
+# 快照间隔 4–28 天，属不定期 TOP100 快照；本页每周六取一次当日快照作为该周数据。
+AL_XLSX = os.path.join(SRC, "中远海控_Alphaliner周报数据.xlsx")
+_al_ws = openpyxl.load_workbook(AL_XLSX, read_only=True, data_only=True)["全球"]
+_al = list(_al_ws.iter_rows(values_only=True))
+_al_h = {str(v).strip(): i for i, v in enumerate(_al[0]) if v}
+for _k in ("发布时间", "全球运力(TEU)"):
+    if _k not in _al_h:
+        raise KeyError("Alphaliner「全球」表缺列: " + _k)
+al_dates, al_fleet_w = [], []
+for _r in _al[1:]:
+    _d = str(_r[_al_h["发布时间"]])[:10]
+    if not re.match(r"^20\d\d-\d\d-\d\d$", _d):
+        continue
+    try:
+        _v = float(str(_r[_al_h["全球运力(TEU)"]]).replace(",", ""))
+    except (TypeError, ValueError):
+        continue
+    al_dates.append(_d)
+    al_fleet_w.append(_v / 10000)
 
 # --- 供给 ---
 su_dates=[str(r[0]) for r in su[1:]]
@@ -299,6 +492,25 @@ fin_q_lbl=[str(d["报告期"]) for d in fin_q]
 fin_rev_q=[fnum(d["营业收入(亿元)"]) for d in fin_q]
 fin_np_q=[fnum(d["归母净利润(亿元)"]) for d in fin_q]
 fin_gm_q=[fnum(d["毛利率(%)"]) for d in fin_q]
+
+# ---------- 单箱 EBIT（季度）：单季营业利润 ÷ 单季货运量 ÷ 7.1 ----------
+# 营业利润来自 财报核心数据.xlsx「季度核心数据」新增两列（东财 RPT_DMSK_FN_INCOME 的 OPERATE_PROFIT，
+# 单季由累计差分还原）；货运量用 货运量与航线结构数据.xlsx 的单季值（万TEU）。
+# 口径提示：分子为合并营业利润，含码头分部利润（年约 30 亿 ≈ 16 美元/TEU），绝对水平略高于航运分部 EBIT。
+FX_USDCNY = 7.1
+_OPQ = {}
+for _d in fin_q:
+    _k = str(_d["报告期"]).replace(" ", "")
+    _v = fnum(_d.get("营业利润(亿元)"))
+    if _v is not None:
+        _OPQ[_k] = _v
+q_ebit = []
+for _d, _v in zip(qvol_dates, qvol):
+    _op = _OPQ.get(str(_d).replace(" ", ""))
+    q_ebit.append(round(_op * 1e8 / (_v * 1e4) / FX_USDCNY, 1)
+                  if (_op is not None and _v) else None)
+_qe = next((x for x in reversed(q_ebit) if x is not None), None)
+_qr = next((x for x in reversed(qrev) if x is not None), None)
 # 分红（2021-2025，A+H 全体股东）
 div_years=[str(d["报告期"]).replace("年","") for d in fin_div]
 div_ps=[fnum(d["全年每股分红(元)"]) for d in fin_div]
@@ -368,21 +580,49 @@ ROUTE = {"years": ROUTE_FY, "routes": ROUTE_NAMES,
 _route_mix25 = sorted(((nm, route_vshare[nm][-1]) for nm in ROUTE_NAMES), key=lambda x: -x[1])
 route_mix25 = "/".join(f"{nm}{s:.0f}%" for nm, s in _route_mix25)
 
+# 分航线货运量：取表内**最新非 FY 期次**（季报/半年报口径），供卡1「货运量分航线」行
+# 说明：季报不拆分航线，故该行期次通常落后于卡内其它行的最新季；表内无该期时置空，不猜数
+_route_q = {}          # period -> {short_name: vol}
+for rec in _rows[1:]:
+    name, period, vol = rec[0], rec[1], rec[2]
+    _p = str(period).strip()
+    if _p.endswith("FY") or name not in ROUTE_SHORT:
+        continue
+    try:
+        _route_q.setdefault(_p, {})[ROUTE_SHORT[name]] = float(vol)
+    except (TypeError, ValueError):
+        continue
+
+def _period_key(p):
+    """"2026 Q1" → (2026, 1)；无法解析的排到最后。"""
+    mm = re.match(r"^(\d{4})\s*Q([1-4])$", p)
+    return (int(mm.group(1)), int(mm.group(2))) if mm else (0, 0)
+
+ROUTE_QP = max(_route_q, key=_period_key) if _route_q else None
+ROUTE_QV = _route_q.get(ROUTE_QP, {}) if ROUTE_QP else {}
+qroute_txt = "/".join("%s %.0f" % (nm.replace("线", "").replace("其它国际", "其它"),
+                                   ROUTE_QV[nm])
+                      for nm in ROUTE_NAMES if nm in ROUTE_QV) if ROUTE_QV else "待更新"
+qroute_period = (ROUTE_QP or "—") + " · 万TEU"
+
 VALUES = {
-    "scfi": f"{scfi[-1]:.2f}", "scfi_chg": pct(scfi_w[-1]), "scfi_dir": "up" if scfi_w[-1]>=0 else "down",
-    "ccfi": f"{ccfi[-1]:.2f}", "ccfi_chg": pct(ccfi_w[-1]), "ccfi_dir": "up" if ccfi_w[-1]>=0 else "down",
+    "scfi": f"{scfi[-1]:,.2f}", "scfi_chg": pct(scfi_w[-1]), "scfi_dir": "up" if scfi_w[-1]>=0 else "down",
+    "ccfi": f"{ccfi[-1]:,.2f}", "ccfi_chg": pct(ccfi_w[-1]), "ccfi_dir": "up" if ccfi_w[-1]>=0 else "down",
     "eu": f"{eu[-1]:.0f}", "med": f"{med[-1]:.0f}", "usw": f"{usw[-1]:.0f}",
     "use": f"{use[-1]:.0f}", "gulf": f"{gulf[-1]:.0f}",
-    "util": f"{util[-1]:.0f}%",
+    "util": (UTIL_TXT.get(_last_util, "待更新") if _last_util else "待更新"),
     "thru": (f"{_thru_last[-1][0]:.0f} 万TEU" if _thru_last else "待更新"),
     "thru_yoy": (pct(_thru_last[-1][1]) if _thru_last else "待更新"),
     "thru_dir": (("up" if _thru_last[-1][1] >= 0 else "down") if _thru_last else "flat"),
     "exp": f"{exp[-1]:.0f} 亿美元", "exp_yoy": pct(exp_y[-1]), "exp_dir":"up",
     "asean": pct(asean_y[-1]), "eu_yoy": pct(eu_y[-1]), "us_yoy": pct(us_y[-1]),
     "export_yoy_detail": f"总出口{pct(exp_y[-1])}/东盟{pct(asean_y[-1])}/欧盟{pct(eu_y[-1])}/美国{pct(us_y[-1])}",
-    "fleet": f"{fleet[-1]:.0f} 万TEU", "fleet_yoy": pct(fleet_y[-1]), "fleet_dir":"up",
-    "idle": pct(idle_r[-1],2), "order": pct(order[-1],1),
-    "blank_us": pct(blank_us[-1],1), "blank_eu": pct(blank_eu[-1],1),
+    "fleet": f"{_dw_last(al_fleet_w):.0f} 万TEU", "fleet_yoy": pct(fleet_y[-1]), "fleet_dir":"up",
+    # 卡4 供给端三锚点（键名与指标一致，替换历史遗留的 idle / order 命名）
+    "wci_val": ("%s" % f"{_dw_last(dr_wci):,.0f}"),
+    "order": "/".join(_dw_k(_dw_last(x)) for x in (dr_rtm, dr_lax, dr_goa, dr_nyc)),
+    "blank_us": pct(_dw_last(dr_blank), 1),
+    "blank_eu": "/".join(pct(_dw_last(x), 0) for x in (dr_tp, dr_ae, dr_ta)),
     # 财务核心指标（来源：财报核心数据.xlsx）
     "fin_rev25": f"{fin_rev_a[-1]:.1f}亿",
     "fin_np25": f"{fin_np_a[-1]:.1f}亿",
@@ -409,6 +649,7 @@ VALUES = {
     "cost_total25": f"{cost_total[-1]:.0f} 亿",
     "cost_fuel25": (f"{cost_fuel[-1]:.1f} 亿" if cost_fuel[-1] else "待更新"),
     "cost_charter25": (f"{cost_charter[-1]:.1f} 亿" if cost_charter[-1] else "待更新"),
+    # 「货运量分航线」2026-11-14 已从卡1 撤回；qroute_txt / qroute_period 保留供后续按需启用
     # 航线结构占比（来源：中远海控_货运量与航线结构数据.xlsx 分航线箱量与收入明细）
     "route_year": "2025",
     "route_mix25": route_mix25,
@@ -418,6 +659,9 @@ VALUES = {
     "qvol_dir": "up" if qvol_yoy[-1]>=0 else "down",
     "qvol_cum25": f"{qvol_cum[-1]:.2f} 万TEU",
     "qvol_q": qvol_dates[-1],
+    # 单箱链路（季）：国际航线单箱收入 / 单箱EBIT（合并营业利润口径）
+    "qrev25": (f"{_qr:,.0f} 美元/TEU" if _qr is not None else "待更新"),
+    "q_ebit25": (f"{_qe:,.0f} 美元/TEU" if _qe is not None else "待更新"),
     # 港口码头业务（来源：财报核心数据.xlsx 港口码头业务表）
     "port_rev25": f"{port_rev[-1]:.1f}亿",
     "port_rev_yoy": ("%.1f%%" % ((port_rev[-1]/port_rev[-2]-1)*100)),
@@ -429,10 +673,13 @@ VALUES = {
     "macro_fuel25": f"{m_fuel[-1]:g} $/mt",
     "macro_charter25": f"{m_charter[-1]:.0f}",
     "macro_ets25": f"{m_ets[-1]:.0f} €/t",
-    "macro_redsea_ratio25": f"{m_redsea_ratio[-1]:.0f}%",
-    "macro_redsea_absorb25": f"{m_redsea_absorb[-1]:.0f}%",
+    # 红海通航：亚欧经苏伊士比例保留（进脉搏条）；苏伊士/好望角艘数与苏伊士通行占比
+    # 已移至 Drewry 周报页「红海绕航」块（2026-11-14 从卡5 撤回），不再作为卡片指标
+    "macro_redsea_ae25": ("%.0f%%" % _dw_last(rst_ae)) if _dw_last(rst_ae) is not None else "待更新",
     "macro_pmi25": f"美制{_m_us_manuf[-1]:.1f}/美服{_m_us_serv[-1]:.1f}/欧制{_m_eu_manuf[-1]:.1f}/欧服{_m_eu_serv[-1]:.1f}",
 }
+
+# 卡1 已不含 SCFI/CCFI/θ 联动条（运价环境由 sse-weekly 承接），此处不再注入 theta_val
 # 红涨绿跌（A股惯例）：数值上行=红，下行=绿
 for k in ("thru_dir","exp_dir","fleet_dir"):
     pass
@@ -487,7 +734,7 @@ def make_weekly_svg(title, unit, labels, values, color, W=780, H=300):
     o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Microsoft YaHei,sans-serif">' % (W, H)]
     o.append('<rect x="0" y="0" width="%d" height="%d" fill="#ffffff"/>' % (W, H))
     o.append('<text x="%d" y="19" fill="#1f2733" font-size="14" font-weight="700">%s</text>' % (padL, title))
-    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 样本 %d 周 · %s ~ %s · 数据源：中远海控_行业供需与运价数据.xlsx · 周运价指数(SCFI&CCFI)</text>' % (padL, unit, n, labels[0], labels[-1]))
+    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 样本 %d 周 · %s ~ %s · 数据源：中远海控_SSE周报数据.xlsx · SCFI&CCFI</text>' % (padL, unit, n, labels[0], labels[-1]))
     for g in range(5):
         val = ylo + (yhi - ylo) * g / 4
         gy = Y(val)
@@ -518,41 +765,120 @@ def make_weekly_svg(title, unit, labels, values, color, W=780, H=300):
     o.append('</svg>')
     return "".join(o)
 
-def make_util_svg(title, unit, labels, values, color, ylo=70, yhi=105, W=780, H=300):
-    """舱位利用率（周度）折线 SVG（浅色主题，复刻 matplotlib 原图：固定 y 轴 70–105、稀疏标周 MM-DD、无逐点值标签）。"""
-    padL, padR, padT, padB = 54, 18, 40, 42
+def make_weekly_multi_svg(title, unit, labels, series, colors, vfmt=None, W=780, H=310,
+                          source="Drewry 周报（WCI &amp; CST）"):
+    """周度折线（1~N 序列）：稀疏 x 标签、顶部图例含末值、None 处断线、单序列标末点。
+
+    source 可覆盖副标题中的数据源名称（Alphaliner 快照图传入其表名）。
+    """
+    if vfmt is None:
+        vfmt = lambda v: f"{v:,.0f}"
+    padL, padR, padT, padB = 64, 18, 58, 42
     plotW = W - padL - padR; plotH = H - padT - padB
     xs, xf = padL, W - padR; ys, yf = padT, H - padB
-    vs = [v for v in values if isinstance(v, (int, float))]
-    if not vs: return ""
-    n = len(values)
+    allv = [v for _, vals in series for v in vals if isinstance(v, (int, float))]
+    if not allv: return ""
+    vmax, vmin = max(allv), min(allv)
+    span = (vmax - vmin) or 1
+    ylo = max(0.0, vmin - span * 0.15) if vmin >= 0 else vmin - span * 0.15
+    yhi = vmax + span * 0.15
+    if yhi == ylo: yhi = ylo + 1
+    n = len(labels)
     def X(i): return xs + (plotW * (i / (n - 1)) if n > 1 else plotW / 2)
     def Y(v): return ys + plotH * (1 - (v - ylo) / (yhi - ylo))
     o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Microsoft YaHei,sans-serif">' % (W, H)]
     o.append('<rect x="0" y="0" width="%d" height="%d" fill="#ffffff"/>' % (W, H))
     o.append('<text x="%d" y="19" fill="#1f2733" font-size="14" font-weight="700">%s</text>' % (padL, title))
-    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 样本 %d 周 · %s ~ %s · 数据源：中远海控_行业供需与运价数据.xlsx · 周运价指数(SCFI&amp;CCFI)</text>' % (padL, unit, n, labels[0], labels[-1]))
-    T = 5
-    for g in range(T + 1):
-        val = ylo + (yhi - ylo) * g / T
-        gy = Y(val)
+    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 样本 %d 期 · %s ~ %s · 数据源：%s</text>' % (padL, unit, n, labels[0], labels[-1], source))
+    step = min(190, plotW // max(1, len(series)))
+    for si, (nm, vals) in enumerate(series):
+        lx = padL + si * step
+        o.append('<circle cx="%.1f" cy="46" r="4" fill="%s"/>' % (lx, colors[si]))
+        lv = _dw_last(vals)
+        txt = nm + (" " + vfmt(lv) if lv is not None else "")
+        o.append('<text x="%.1f" y="50" fill="#1f2733" font-size="10.5">%s</text>' % (lx + 8, txt))
+    for g in range(6):
+        val = ylo + (yhi - ylo) * g / 5; gy = Y(val)
         o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#eef2f6" stroke-width="1"/>' % (xs, gy, xf, gy))
-        o.append('<text x="%d" y="%.1f" fill="#7a8694" font-size="10" text-anchor="end">%s</text>' % (xs - 6, gy + 3.5, _fmt_axis(val)))
+        o.append('<text x="%d" y="%.1f" fill="#7a8694" font-size="10" text-anchor="end">%s</text>' % (xs - 6, gy + 3.5, vfmt(val)))
     o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#c3ccd6" stroke-width="1"/>' % (xs, yf, xf, yf))
     xstep = max(1, math.ceil(n / 8))
     for i, lb in enumerate(labels):
         if i % xstep == 0 or i == n - 1:
-            o.append('<line x1="%.1f" y1="%d" x2="%.1f" y2="%.1f" stroke="#eef2f6" stroke-width="1"/>' % (X(i), ys, X(i), yf))
-            o.append('<text x="%.1f" y="%d" fill="#7a8694" font-size="9.5" text-anchor="middle">%s</text>' % (X(i), H - 16, lb[5:]))
-    d = ""
+            o.append('<line x1="%.1f" y1="%d" x2="%.1f" y2="%.1f" stroke="#f1f4f7" stroke-width="1"/>' % (X(i), ys, X(i), yf))
+            o.append('<text x="%.1f" y="%d" fill="#7a8694" font-size="9.5" text-anchor="middle">%s</text>' % (X(i), H - 16, str(lb)[5:]))
+    for si, (nm, vals) in enumerate(series):
+        c = colors[si]; d = ""; open_seg = False
+        for i, v in enumerate(vals):
+            if v is None:
+                open_seg = False; continue
+            d += ("L" if open_seg else "M") + "%.1f %.1f " % (X(i), Y(v))
+            open_seg = True
+        if d:
+            o.append('<path d="%s" fill="none" stroke="%s" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/>' % (d, c))
+        for i, v in enumerate(vals):
+            if v is None: continue
+            o.append('<circle cx="%.1f" cy="%.1f" r="2.4" fill="%s"/>' % (X(i), Y(v), c))
+        if len(series) == 1:
+            lv = _dw_last(vals)
+            if lv is not None:
+                o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="11" font-weight="700" text-anchor="end">%s</text>' % (X(n - 1) - 4, Y(lv) - 9, c, vfmt(lv)))
+    o.append('</svg>')
+    return "".join(o)
+
+def make_util_svg(title, labels, values, color, W=780, H=300):
+    """舱位利用率（定性三档，周度）阶梯图：3=紧张 / 2=平衡 / 1=宽松，None 处断开。
+    无公开周度数值源，故不画百分比、只画档位，避免给出虚假精度。"""
+    padL, padR, padT, padB = 86, 18, 40, 42
+    plotW = W - padL - padR; plotH = H - padT - padB
+    xs, xf = padL, W - padR; ys, yf = padT, H - padB
+    n = len(values)
+    if n == 0: return ""
+    ylo, yhi = 0.55, 3.45
+    def X(i): return xs + (plotW * (i / (n - 1)) if n > 1 else plotW / 2)
+    def Y(v): return ys + plotH * (1 - (v - ylo) / (yhi - ylo))
+    LV = [(1, "宽松"), (2, "平衡"), (3, "紧张")]
+    o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Microsoft YaHei,sans-serif">' % (W, H)]
+    o.append('<rect x="0" y="0" width="%d" height="%d" fill="#ffffff"/>' % (W, H))
+    o.append('<text x="%d" y="19" fill="#1f2733" font-size="14" font-weight="700">%s</text>' % (padL, title))
+    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">定性分档（周报正文口径）· 样本 %d 周 · %s ~ %s · 数据源：中远海控_SSE周报数据.xlsx · 舱位利用率</text>' % (padL, n, labels[0], labels[-1]))
+    for lv, name in LV:
+        gy = Y(lv)
+        o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#eef2f6" stroke-width="1"/>' % (xs, gy, xf, gy))
+        o.append('<text x="%d" y="%.1f" fill="#7a8694" font-size="10" text-anchor="end">%s</text>' % (xs - 8, gy + 3.5, name))
+    o.append('<line x1="%d" y1="%.1f" x2="%d" y2="%.1f" stroke="#c3ccd6" stroke-width="1"/>' % (xs, yf, xf, yf))
+    xstep = max(1, math.ceil(n / 8))
+    for i, lb in enumerate(labels):
+        if i % xstep == 0 or i == n - 1:
+            o.append('<text x="%.1f" y="%d" fill="#7a8694" font-size="9.5" text-anchor="middle">%s</text>' % (X(i), H - 16, str(lb)[5:]))
+    segs, cur = [], []
     for i, v in enumerate(values):
-        if v is None: continue
-        d += ("L" if d else "M") + "%.1f %.1f " % (X(i), Y(v))
-    if d:
+        if v is None:
+            if cur: segs.append(cur); cur = []
+        else:
+            cur.append((i, v))
+    if cur: segs.append(cur)
+    for sg in segs:
+        d = ""
+        for k, (i, v) in enumerate(sg):
+            if k == 0:
+                d += "M%.1f %.1f " % (X(i), Y(v))
+            else:
+                pi, pv = sg[k - 1]
+                d += "L%.1f %.1f L%.1f %.1f " % (X(i), Y(pv), X(i), Y(v))
         o.append('<path d="%s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' % (d, color))
-    for i, v in enumerate(values):
-        if v is None: continue
-        o.append('<circle cx="%.1f" cy="%.1f" r="2.4" fill="%s"/>' % (X(i), Y(v), color))
+        for i, v in sg:
+            o.append('<circle cx="%.1f" cy="%.1f" r="2.4" fill="%s"/>' % (X(i), Y(v), color))
+    tail_none = 0
+    for v in reversed(values):
+        if v is None: tail_none += 1
+        else: break
+    if tail_none:
+        o.append('<text x="%d" y="%d" fill="#b9c2cc" font-size="9.5" text-anchor="end">末 %d 周周报未披露</text>' % (xf, yf - 6, tail_none))
+    last = next(((i, v) for i, v in reversed(list(enumerate(values))) if v is not None), None)
+    if last:
+        i, v = last
+        o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="11" font-weight="700" text-anchor="end">%s</text>' % (X(i) - 4, Y(v) - 9, color, {3:"紧张",2:"平衡",1:"宽松"}[v]))
     o.append('</svg>')
     return "".join(o)
 
@@ -571,7 +897,7 @@ def make_theta_svg(title, unit, labels, values, color, ylo=0.7, yhi=2.1, band=No
     o = ['<svg viewBox="0 0 %d %d" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,Microsoft YaHei,sans-serif">' % (W, H)]
     o.append('<rect x="0" y="0" width="%d" height="%d" fill="#ffffff"/>' % (W, H))
     o.append('<text x="%d" y="19" fill="#1f2733" font-size="14" font-weight="700">%s</text>' % (padL, title))
-    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 样本 %d 周 · %s ~ %s · 数据源：周运价指数(SCFI&amp;CCFI)＋运价指数_周度_2021-2025.csv</text>' % (padL, unit, n, labels[0], labels[-1]))
+    o.append('<text x="%d" y="34" fill="#9aa6b2" font-size="10">单位：%s · 样本 %d 周 · %s ~ %s · 数据源：中远海控_SSE周报数据.xlsx＋运价指数_周度_2021-2025.csv</text>' % (padL, unit, n, labels[0], labels[-1]))
     T = 7
     for g in range(T + 1):
         val = ylo + (yhi - ylo) * g / T
@@ -746,9 +1072,10 @@ def make_fin_svg(key, title, unit, a_lbl, a_val, q_lbl, q_val, color, avfmt, qvf
     return "".join(o)
 
 def make_multi_line_svg(title, unit, labels, series, colors, vfmt=None, W=780, H=330,
-                        src_note=None, ptype="年", hline=None):
+                        src_note=None, ptype="年", hline=None, xstep=1):
     """多序列折线 SVG（浅色主题，顶部图例、自动 y 轴、网格、可选参考横线）。
     series=[(name, values), ...] 与 colors 等长；hline=(value, label) 如 PMI 荣枯线 (50,"荣枯线 50")。
+    xstep>1 时隔点标注 x 轴（季度序列避免 23 个标签重叠），始终保留首末点。
     多序列不画逐点数值标签（避免拥挤），由 y 轴刻度 + 图例 + 底部数据表读取。"""
     if vfmt is None: vfmt=lambda v:f"{v:.1f}"
     if src_note is None: src_note = "中远海控_宏观与政策环境数据.xlsx"
@@ -791,6 +1118,8 @@ def make_multi_line_svg(title, unit, labels, series, colors, vfmt=None, W=780, H
             o.append('<text x="%d" y="%.1f" fill="#7a8694" font-size="9.5" text-anchor="end">%s</text>' % (xf - 2, gy - 4, hline[1]))
     # 纵向网格 + x 标签
     for i, lbx in enumerate(labels):
+        if xstep > 1 and i % xstep and i != n - 1 and i != 0:
+            continue
         anchor = "start" if i == 0 else ("end" if i == n - 1 else "middle")
         lx = X(i) + (4 if i == 0 else (-4 if i == n - 1 else 0))
         o.append('<line x1="%.1f" y1="%d" x2="%.1f" y2="%d" stroke="#eef2f6" stroke-width="1"/>' % (X(i), ys, X(i), yf))
@@ -806,6 +1135,12 @@ def make_multi_line_svg(title, unit, labels, series, colors, vfmt=None, W=780, H
         for i, v in enumerate(vals):
             if v is None: continue
             o.append('<circle cx="%.1f" cy="%.1f" r="2.6" fill="%s"/>' % (X(i), Y(v), c))
+    # 单序列标末值（多序列靠图例读数，避免拥挤）
+    if len(series) == 1:
+        _lv = next((v for v in reversed(series[0][1]) if v is not None), None)
+        if _lv is not None:
+            o.append('<text x="%.1f" y="%.1f" fill="%s" font-size="11" font-weight="700" text-anchor="end">%s</text>'
+                     % (X(n - 1) - 4, Y(_lv) - 9, colors[0], vfmt(_lv)))
     o.append('</svg>')
     return "".join(o)
 
@@ -984,25 +1319,14 @@ def make_qvol_svg(dates, yoy, vol, W=780, H=390):
     o.append('</svg>')
     return "".join(o)
 
-# C1 运价指数：SCFI / CCFI 各自独立 SVG（数据源：主源 周运价指数(SCFI&CCFI)）
-CHARTS["scfi"] = make_weekly_svg("SCFI 综合指数（2026 周度）", "指数点", fr_dates, scfi, C_SCFI)
-CHARTS["ccfi"] = make_weekly_svg("CCFI 综合指数（2026 周度）", "指数点", fr_dates, ccfi, C_CCFI)
+# C1 运价指数：SCFI / CCFI / θ 已迁至 sse-weekly.html（2026-11-14 移除主看板图表）
 # 长历史缺失（CSV 被删/损坏）时自动降级为 2026 单年、且不画分位带，避免用 40 个点冒充全历史
 _LONG_OK = TH_N >= 100
 _theta_title = "SCFI / CCFI 即期溢价倍数（%s 周度）" % (
     (theta_long_dates[0][:4] + "-" + theta_long_dates[-1][:4]) if _LONG_OK else "2026")
-CHARTS["theta"] = make_theta_svg(_theta_title, "倍", theta_long_dates, theta_long, C_MED,
-                                 ylo=0.7, yhi=2.1, band=((TH_P5, TH_P95) if _LONG_OK else None))
+# θ 图同步移除；_theta_title / _LONG_OK 保留供卡片注解与 META 使用
 
-# C2 主力航线即期运价：五航线各自独立 SVG（数据源：主源 周运价指数(SCFI&CCFI)）
-CHARTS["route_eu"]   = make_weekly_svg("欧洲航线即期运价（2026 周度）",   "USD/TEU", fr_dates, eu,   C_EU)
-CHARTS["route_med"]  = make_weekly_svg("地中海航线即期运价（2026 周度）", "USD/TEU", fr_dates, med,  C_MED)
-CHARTS["route_usw"]  = make_weekly_svg("美西航线即期运价（2026 周度）",   "USD/FEU", fr_dates, usw,  C_USW)
-CHARTS["route_use"]  = make_weekly_svg("美东航线即期运价（2026 周度）",   "USD/FEU", fr_dates, use,  C_USE)
-CHARTS["route_gulf"] = make_weekly_svg("波斯湾航线即期运价（2026 周度）", "USD/TEU", fr_dates, gulf, C_GULF)
-
-# C3 舱位利用率：内联 SVG 折线图（复刻 matplotlib，浅色主题）
-CHARTS["util"]=make_util_svg("舱位利用率（周度，区间值取中值）", "%", fr_dates, util, C_IDLE)
+# C2 五航线即期运价 / C3 舱位利用率：同步移除（明细见 sse-weekly.html 分线块）
 
 # C4 需求：全国港口吞吐量（月度绝对值，独立 SVG；纵轴收紧到 2500–3300 以放大数据带）
 CHARTS["demand_thru"] = make_monthly_yoy_svg("全国港口吞吐量（月度）", "万TEU", de_dates, thru, C_THRU, y_lo=2500, y_hi=3300, yoy=thru_y)
@@ -1012,14 +1336,9 @@ CHARTS["demand_exp"]  = make_monthly_yoy_svg("海关出口总额（月度）", "
 # C5 需求：分区域出口同比（内联 SVG 多线图，复刻 matplotlib）
 CHARTS["demand_yoy"]=make_demand_yoy_svg(de_dates, [(exp_y,C_TY,"总出口"),(asean_y,C_ASEAN,"东盟"),(eu_y,C_EUY,"欧盟"),(us_y,C_USY,"美国")])
 
-# C6 供给：全球船队运力 / 手持订单占比 / 闲置率 —— 三张内联 SVG 单线图（复刻 matplotlib 双面板，浅色主题）
-CHARTS["supply_fleet"]=make_line_svg_wide("全球集装箱船队总运力（季频）", "万TEU", su_dates, fleet, C_FLEET, vfmt=lambda v:f"{v:.0f}")
-CHARTS["supply_order"]=make_line_svg_wide("手持订单占运力比例（季频）", "%", su_dates, order, C_ORDER, vfmt=lambda v:f"{v*100:.1f}%")
-CHARTS["supply_idle"] =make_line_svg_wide("闲置运力比例（季频）", "%", su_dates, idle_r, C_IDLE, vfmt=lambda v:f"{v*100:.2f}%")
-
-# C7 调控：美线/欧线停航率 —— 两张内联 SVG 单线图（复刻 matplotlib 双线，浅色主题）
-CHARTS["control_us"]=make_line_svg_wide("美线停航率（季频）", "%", co_dates, blank_us, "#"+C_BLUS, vfmt=lambda v:f"{v*100:.1f}%")
-CHARTS["control_eu"]=make_line_svg_wide("欧线停航率（季频）", "%", co_dates, blank_eu, "#"+C_BLEU, vfmt=lambda v:f"{v*100:.1f}%")
+# C6/C7 供给与调控：卡4 已于 2026-11-14 删除（数据全部由脉搏条 + drewry/alphaliner 周报页承接），
+# 对应 supply_fleet / supply_order / supply_idle / control_us / control_eu 五张图同步移除。
+# dr_wci / dr_rtm / dr_blank / dr_tp 等序列仍保留：PULSE 与 __META__ 依赖。
 
 # C8/C9 财务核心指标：7 张内联 SVG（年度+季度双视图 toggle，浅色主题，复刻原 matplotlib 双面板）
 # 年度(累计) 视图
@@ -1090,8 +1409,8 @@ _MNOTE = "中远海控_宏观与政策环境数据.xlsx · 宏观核心数据(�
 CHARTS["macro_fuel"]          = make_line_svg_wide("VLSFO 燃油价", "$/mt", MYEARS, m_fuel,           "#c8102e", vfmt=lambda v:f"{v:g}",   ptype="年", src_note=_MNOTE)
 CHARTS["macro_charter"]       = make_line_svg_wide("Harpex 租船费率指数", "指数", MYEARS, m_charter, "#d98a14", vfmt=lambda v:f"{v:.0f}", ptype="年", src_note=_MNOTE)
 CHARTS["macro_ets"]           = make_line_svg_wide("EU ETS 碳价", "€/t", MYEARS, m_ets,             "#2e9e6b", vfmt=lambda v:f"{v:.0f}", ptype="年", src_note=_MNOTE)
-CHARTS["macro_redsea_ratio"]  = make_line_svg_wide("亚欧绕航好望角比例", "%", MYEARS, m_redsea_ratio, "#d84315", vfmt=lambda v:f"{v:.0f}%", ptype="年", src_note=_MNOTE)
-CHARTS["macro_redsea_absorb"] = make_line_svg_wide("运力吸收率", "%", MYEARS, m_redsea_absorb,        "#ff8f00", vfmt=lambda v:f"{v:.0f}%", ptype="年", src_note=_MNOTE)
+# 红海通航（经苏伊士/好望角艘数、苏伊士通行占比）两张图已移至 Drewry 周报页（2026-11-14 从主看板撤回）；
+# 仅保留 macro_redsea_ae（亚欧经苏伊士比例）供脉搏条使用。rst_suez/rst_cape/rst_share 原始序列仍保留。
 CHARTS["macro_pmi"]           = make_multi_line_svg(
     "欧美制造业/服务业 PMI", "指数", MYEARS,
     [("美制造业", _m_us_manuf), ("美服务业", _m_us_serv),
@@ -1102,13 +1421,26 @@ CHARTS["macro_pmi"]           = make_multi_line_svg(
 
 # ---------- 季度航运货运量（单季，2021Q1–2026Q2）：内联 SVG 组合图（复刻 matplotlib） ----------
 CHARTS["qvol"]=make_qvol_svg(qvol_dates, qvol_yoy, qvol)
+# 单箱链路（季度）：收入 → EBIT 的裂口即「单箱成本 + DA + 码头贡献以外的期间费用」
+_QSRC = "中远海控_货运量与航线结构数据.xlsx · 外贸单箱收入；营业利润见 财报核心数据.xlsx · 季度核心数据"
+CHARTS["qrev"] = make_multi_line_svg(
+    "国际航线单箱收入（季度）", "美元/TEU", qvol_dates,
+    [("单箱收入", qrev)], ["#c8102e"],
+    vfmt=lambda v: f"{v:,.0f}", src_note=_QSRC, ptype="季", xstep=4, W=780, H=330)
+CHARTS["q_ebit"] = make_multi_line_svg(
+    "单箱EBIT（季度）", "美元/TEU", qvol_dates,
+    [("单箱EBIT", q_ebit)], ["#15616d"],
+    vfmt=lambda v: f"{v:,.0f}", ptype="季", xstep=4, W=780, H=330,
+    src_note="单季营业利润（东方财富 RPT_DMSK_FN_INCOME）÷ 单季货运量 ÷ 7.1 · 合并口径含码头分部")
 
 # ---------- 序列化 ----------
 SERIES = {
     "fr_dates":fr_dates, "scfi":scfi, "ccfi":ccfi, "theta":theta, "eu":eu, "med":med, "usw":usw, "use":use, "gulf":gulf, "util":util,
     "de_dates":de_dates, "thru":[v for v in thru if v is not None], "exp":exp, "asean_y":asean_y, "eu_y":eu_y, "us_y":us_y, "exp_y":exp_y,
-    "su_dates":su_dates, "fleet":fleet, "idle_r":idle_r, "order":order,
+    "su_dates":su_dates, "fleet":al_fleet_w, "idle_r":idle_r, "order":order,
     "co_dates":co_dates, "blank_us":blank_us, "blank_eu":blank_eu,
+    "wci_comp":dr_wci, "wci_rtm":dr_rtm, "wci_lax":dr_lax, "wci_goa":dr_goa, "wci_nyc":dr_nyc,
+    "blank_rate":dr_blank, "blank_tp":dr_tp, "blank_ae":dr_ae, "blank_ta":dr_ta,
     "fin_years":fin_years, "fin_rev_a":fin_rev_a, "fin_np_a":fin_np_a, "fin_gm_a":fin_gm_a, "fin_roe_a":fin_roe_a, "fin_ocf_a":fin_ocf_a, "fin_dar_a":fin_dar_a, "fin_eps_a":fin_eps_a,
     "fin_q_lbl":fin_q_lbl, "fin_rev_q":fin_rev_q, "fin_np_q":fin_np_q, "fin_gm_q":fin_gm_q,
     "div_years":div_years, "div_ps":div_ps, "div_payout":div_payout, "div_amt":div_amt,
@@ -1117,8 +1449,11 @@ SERIES = {
     "cost_total":cost_total, "cost_fuel":cost_fuel, "cost_charter":cost_charter,
     "port_rev":port_rev, "port_gm":port_gm, "port_thru":port_thru, "port_share":port_share,
     "macro_fuel":m_fuel, "macro_charter":m_charter, "macro_ets":m_ets,
-    "macro_redsea_ratio":m_redsea_ratio, "macro_redsea_absorb":m_redsea_absorb, "macro_pmi":m_pmi,
+    "macro_redsea_ae":rst_ae,
+    "macro_pmi":m_pmi,
+    "rst_dates":rst_d,
     "qvol_dates":qvol_dates, "qvol":qvol, "qvol_yoy":qvol_yoy, "qvol_cum":qvol_cum, "qrev":qrev, "qnp":qnp,
+    "q_ebit":q_ebit,
 }
 _thru_nn = [(d, t, y) for d, t, y in zip(de_dates, thru, thru_y) if t is not None]
 _lt = _thru_nn[-1]                       # 最新有吞吐量数据的月份（9 月吞吐量未发布时为 8 月）
@@ -1219,21 +1554,46 @@ QUOTE = {
 # 每个 SVG（趋势图）的更新频率参数：chart key -> 周/月/季/年
 # 卡片指标名后的频率标签由该表自动追加（render_html.py），不在模板里手写。
 FREQ = {
-    # 周度：SCFI/CCFI 综合指数、主力航线即期运价、舱位利用率
-    "scfi":"周","ccfi":"周","route_eu":"周","route_med":"周","route_usw":"周","route_use":"周","route_gulf":"周","util":"周",
     # 月频：港口吞吐量、海关出口总额、分区域出口同比增速
     "demand_thru":"月","demand_exp":"月","demand_yoy":"月",
-    # 季频：季度航运货运量、全球运力供给、停航率、财务单季
-    "qvol":"季","supply_fleet":"季","supply_order":"季","supply_idle":"季","control_us":"季","control_eu":"季","fin_rev_q":"季","fin_np_q":"季","fin_gm_q":"季",
+    # 季频：季度航运货运量 / 单箱收入 / 单箱EBIT、全球运力供给、停航率、财务单季
+    "qvol":"季","qrev":"季","q_ebit":"季","fin_rev_q":"季","fin_np_q":"季","fin_gm_q":"季",
     # 年频：财务年度、股东回报、成本结构、航线结构占比、港口码头、宏观与政策
     "fin_rev":"年","fin_np":"年","fin_gm":"年","fin_ocf":"年","fin_dar":"年","fin_roe":"年","fin_eps":"年",
     "dividend":"年","cost_breakdown":"年","cost_total":"年","cost_fuel":"年","cost_charter":"年","cost_perbox":"年",
     "routemix":"年","port_rev":"年","port_gm":"年","port_thru":"年","port_share":"年",
-    "macro_fuel":"年","macro_charter":"年","macro_ets":"年","macro_redsea_ratio":"年","macro_redsea_absorb":"年","macro_pmi":"年",
+    "macro_fuel":"年","macro_charter":"年","macro_ets":"年","macro_pmi":"年",
 }
+
+# 周度脉搏：四个数据源各自的数据截止日 + 关键数，供主看板顶部横条（render_html.py 渲染）
+def _pv(seq, fmt):
+    v = _dw_last(seq)
+    return fmt(v) if v is not None else "—"
+
+PULSE = [
+    {"tag": "DREWRY", "name": "运价与停航", "href": "drewry-weekly.html",
+     "asof": dr_dates[-1] if dr_dates else "—",
+     "items": [("WCI", _pv(dr_wci, lambda v: f"{v:,.0f}")),
+               ("停航率", _pv(dr_blank, lambda v: f"{v * 100:.0f}%"))]},
+    {"tag": "ALPHALINER", "name": "运力与公司", "href": "alphaliner-weekly.html",
+     "asof": al_dates[-1] if al_dates else "—",
+     "items": [("全球运力", _pv(al_fleet_w, lambda v: f"{v:,.0f} 万TEU")),
+               ("较上期", ("%+.0f 万TEU" % (al_fleet_w[-1] - al_fleet_w[-2]))
+                if len(al_fleet_w) >= 2 else "—")]},
+    {"tag": "SSE", "name": "运价指数", "href": "sse-weekly.html",
+     "asof": fr_dates[-1] if fr_dates else "—",
+     "items": [("SCFI", f"{scfi[-1]:,.0f}"), ("CCFI", f"{ccfi[-1]:,.0f}")]},
+    {"tag": "RST", "name": "红海绕航", "href": "drewry-weekly.html#rst",
+     "asof": rst_d[-1] if rst_d else "—",
+     "items": [("苏伊士/好望角",
+                "%s / %s 艘" % (_pv(rst_suez, lambda v: f"{v:.0f}"),
+                                _pv(rst_cape, lambda v: f"{v:.0f}"))),
+               ("亚欧经苏伊士", _pv(rst_ae, lambda v: f"{v:.0f}%"))]},
+]
 
 DATA_JS = "__FREQ__=" + json.dumps(FREQ, ensure_ascii=False) + ";\n" \
         + "__SERIES__=" + json.dumps(SERIES, ensure_ascii=False) + ";\n" \
+        + "__PULSE__=" + json.dumps(PULSE, ensure_ascii=False) + ";\n" \
         + "__CHARTS__=" + json.dumps(CHARTS, ensure_ascii=False) + ";\n" \
         + "__VALUES__=" + json.dumps(VALUES, ensure_ascii=False) + ";\n" \
         + "__NOTES__=" + json.dumps(NOTES, ensure_ascii=False) + ";\n" \
@@ -1248,7 +1608,7 @@ DATA_JS = "__FREQ__=" + json.dumps(FREQ, ensure_ascii=False) + ";\n" \
         + "__META__=" + json.dumps({
             "freight_range": f"{fr_dates[0]} ~ {fr_dates[-1]}（{len(fr_dates)} 周）",
             "demand_range": f"{de_dates[0]} ~ {de_dates[-1]}（{len(de_dates)} 期）",
-            "supply_range": f"{su_dates[0]} ~ {su_dates[-1]}（{len(su_dates)} 季）",
+            "supply_range": f"{al_dates[0]} ~ {al_dates[-1]}（Alphaliner {len(al_dates)} 期快照）",
             "control_range": f"{co_dates[0]} ~ {co_dates[-1]}（{len(co_dates)} 季）",
             "fin_range": f"{fin_years[0]}–{fin_years[-1]} 年报 + {fin_q_lbl[0]}–{fin_q_lbl[-1]} 季报",
             "route_range": "分航线箱量与收入明细，2021–2025 年报口径（全年）",
@@ -1260,9 +1620,9 @@ DATA_JS = "__FREQ__=" + json.dumps(FREQ, ensure_ascii=False) + ";\n" \
 
 print("charts:", list(CHARTS.keys()))
 print("series lens:", {k:len(v) for k,v in SERIES.items()})
-print("VALUES sample:", {k:VALUES[k] for k in ["scfi","ccfi","thru","fleet","idle","blank_us"]})
+print("VALUES sample:", {k:VALUES[k] for k in ["scfi","ccfi","qvol25","qrev25","q_ebit25","thru","fleet","wci_val","blank_us","macro_redsea_ae25"]})
 
 # 把 DATA_JS 暂存，供下一步合成 HTML
-with open(os.path.join(HERE,"_data_js.txt"),"w",encoding="utf-8") as f:
+with open(os.path.join(ROOT, "output", "_data_js.txt"),"w",encoding="utf-8") as f:
     f.write(DATA_JS)
 print("DATA_JS bytes:", len(DATA_JS))

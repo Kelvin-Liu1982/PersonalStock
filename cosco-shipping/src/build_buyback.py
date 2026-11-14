@@ -16,7 +16,8 @@ from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "数据源", "中远海控_回购明细.xlsx")
+ROOT = os.path.dirname(HERE)
+OUT = os.path.join(ROOT, "数据源", "中远海控_回购明细.xlsx")
 
 HEAD_FILL = PatternFill("solid", fgColor="1F2733")
 HEAD_FONT = Font(color="FFFFFF", bold=True, size=11)

@@ -2,8 +2,10 @@
 """读取 build_tracker.py 产出的 _data_js.txt，合成正式版追踪看板 HTML（方向C + 趋势增强）。"""
 import os
 HERE = os.path.dirname(os.path.abspath(__file__))
-DATA_JS = open(os.path.join(HERE, "_data_js.txt"), encoding="utf-8").read()
-OUT = os.path.join(HERE, "cosco-dashboard.html")
+ROOT = os.path.dirname(HERE)  # 项目根 = src/ 的上一级
+DATA_JS = open(os.path.join(ROOT, "output", "_data_js.txt"), encoding="utf-8").read()
+OUT = os.path.join(ROOT, "output", "cosco-dashboard.html")
+os.makedirs(os.path.join(ROOT, "output"), exist_ok=True)
 
 
 def build_ha_block(csv_path, key):
@@ -52,6 +54,31 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:18
 .top h1{font-size:19px;font-weight:700;letter-spacing:.5px}
 .top .sub{color:var(--dim);font-size:12px;margin-top:3px}
 .wrap{max-width:1200px;margin:0 auto;padding:24px 22px 90px}
+/* 周报视图导航：从主看板进入两个独立周报页 */
+.wk-nav{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.wk-nav-t{font-size:11px;font-weight:700;color:#fff;background:var(--acc2);padding:2px 9px;border-radius:10px;white-space:nowrap}
+.wk-nav a{font-size:12px;color:var(--acc2);text-decoration:none;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:3px 10px;white-space:nowrap}
+.wk-nav a:hover{background:#eef2f6;border-color:var(--acc2)}
+.wk-nav-n{font-size:10.5px;color:var(--todo);margin-left:auto}
+@media(max-width:700px){.wk-nav-n{display:none}}
+/* 周度脉搏：四个独立数据源的截止日与关键数 */
+.pulse{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin-bottom:16px;display:flex;gap:0;flex-wrap:wrap;align-items:stretch}
+.pulse .pi{display:flex;flex-direction:column;gap:1px;padding:1px 14px;border-left:1px solid var(--line);min-width:148px}
+.pulse .pi:first-child{border-left:none;padding-left:2px}
+.pulse .pn{font-size:11px;font-weight:700;color:var(--acc2);text-decoration:none;letter-spacing:.3px}
+.pulse .pn:hover{text-decoration:underline}
+.pulse .pd{font-size:10px;color:var(--todo);white-space:nowrap}
+.pulse .pv{font-size:12px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pulse .pv b{font-weight:700}
+.pulse .pv i{font-style:normal;color:var(--dim);font-size:10.5px;margin:0 3px 0 6px}
+.pulse .pv i:first-child{margin-left:0}
+.pulse .pfoot{font-size:10px;color:var(--todo);margin-left:auto;align-self:center;white-space:nowrap}
+@media(max-width:700px){.pulse .pfoot{display:none}.pulse .pi{min-width:46%;padding:1px 8px}}
+/* 明细下放入口：卡片底部的跳转条 */
+.enters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:auto;padding-top:11px;border-top:1px dashed var(--line)}
+.enters span.et{font-size:10.5px;color:var(--todo)}
+.enters a{font-size:11px;color:var(--acc2);text-decoration:none;border:1px solid var(--line);background:var(--soft);border-radius:9px;padding:3px 9px;white-space:nowrap}
+.enters a:hover{background:#eef2f6;border-color:var(--acc2)}
 /* 顶部行情快照条 */
 .quotebar{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:20px;display:flex;flex-direction:column;gap:10px}
 .quotebar .qhead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
@@ -94,17 +121,14 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:18
 .card .hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .card .idx{width:26px;height:26px;border-radius:7px;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex:none}
 .card h3{font-size:15px;font-weight:700}
-.hd .al-btn{margin-left:auto;flex:none;white-space:nowrap}
-.al-status{font-size:10px;color:#7a8694;margin:-6px 0 8px;line-height:1.45;word-break:break-word}
-.al-status:empty{display:none}
-.al-status.ok{color:#15616d}
-.al-status.err{color:#c53030}
 .chip{margin-left:auto;font-size:10px;padding:3px 9px;border-radius:12px;font-weight:600;white-space:nowrap}
 .chip.ok{background:#e7f6ee;color:var(--ok)} .chip.part{background:#fdf3e3;color:var(--warn)} .chip.todo{background:#f0f2f5;color:var(--todo)}
 .card .desc{font-size:12px;color:var(--dim);margin-bottom:10px}
 .metric{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px dashed var(--line)}
 .metric:last-of-type{border-bottom:none}
 .metric .k{color:var(--dim);font-size:13px}
+.metric .k small{display:block;font-size:10px;color:var(--todo);font-weight:400;line-height:1.25;letter-spacing:.2px;white-space:nowrap}
+.metric .k.k-long{font-size:11.5px;line-height:1.3}
 .metric .right{text-align:right;display:flex;align-items:center;gap:2px}
 .metric .v{font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
 .metric .v.up{color:var(--acc)} .metric .v.down{color:var(--ok)} .metric .v.todo{color:var(--todo);font-weight:400;font-size:12px}
@@ -166,7 +190,15 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
 </head>
 <body>
 <div class="wrap">
+  <div class="wk-nav">
+    <span class="wk-nav-t">周报视图</span>
+    <a href="drewry-weekly.html">Drewry · 运价与停航</a>
+    <a href="alphaliner-weekly.html">Alphaliner · 运力与公司</a>
+    <a href="sse-weekly.html">SSE · 运价指数</a>
+    <span class="wk-nav-n">独立页面 · 与卡片指标同源 xlsx</span>
+  </div>
   <div class="quotebar" data-a-code="sh601919" data-h-code="hk01919" id="quotebar"></div>
+  <div class="pulse" id="pulse"></div>
 
   <div class="grid">
 
@@ -174,12 +206,11 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <div class="card">
       <div class="hd"><div class="idx">1</div><h3>集装箱航运主业</h3></div>
       <div class="desc">核心基本盘，占总营收约 96%。</div>
-      <div class="metric"><span class="k">SCFI 综合指数</span><span class="right"><span class="v" data-val="scfi"></span><span class="spark" data-spark="scfi" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('scfi','SCFI 综合指数（2026 周度）')">趋势</button></span></div>
-      <div class="metric"><span class="k">CCFI 综合指数</span><span class="right"><span class="v" data-val="ccfi"></span><span class="spark" data-spark="ccfi" data-color="#15616d"></span><button class="tbtn" onclick="openChart('ccfi','CCFI 综合指数（2026 周度）')">趋势</button></span></div>
       <div class="metric"><span class="k">单季货运量</span><span class="right"><span class="v" data-val="qvol25"></span><span class="spark" data-spark="qvol" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('qvol','季度航运货运量（单季）')">趋势</button></span></div>
-      <div class="metric"><span class="k">舱位利用率</span><span class="right"><span class="v" data-val="util"></span><span class="spark" data-spark="util" data-color="#d98a14"></span><button class="tbtn" onclick="openChart('util','舱位利用率')">趋势</button></span></div>
+      <div class="metric"><span class="k">单箱收入</span><span class="right"><span class="v" data-val="qrev25"></span><span class="spark" data-spark="qrev" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('qrev','国际航线单箱收入（季度）')">趋势</button></span></div>
+      <div class="metric"><span class="k">单箱EBIT</span><span class="right"><span class="v" data-val="q_ebit25"></span><span class="spark" data-spark="q_ebit" data-color="#15616d"></span><button class="tbtn" onclick="openChart('q_ebit','单箱EBIT（季度）')">趋势</button></span></div>
       <div class="metric"><span class="k">航线结构占比</span><span class="right"><span class="v" style="font-size:11px;white-space:normal" data-val="route_mix25"></span><button class="tbtn" onclick="openChart('routemix','航线结构占比')">趋势</button></span></div>
-      <div class="note">传导逻辑：收入 ≈ <b>货运量</b> × <b>单箱运价</b>，运价弹性主导利润。三季度已兑现：量 721.15 万TEU（+4.5%）、单箱收入 1,381 美元/TEU（+31.3%），单季归母 172.30 亿元（+80.7%），利润几乎全由价格贡献。价格端 <b>SCFI</b> 近十周横盘于 3,660–3,690、<b>CCFI</b> 仅微涨，即期溢价 <b>θ 达 1.96</b>（97 分位），长协未重定价、补涨仍是后续 1–2 季利润来源。需求总量仍强但航线分化（欧地涨、美线跌、南美单周 −11.2%）。风险：<b>10 月停航率</b>拟升至美线 13%/欧线 17%，本身即需求转弱信号；闲置率 0.69% 的紧平衡依赖拥堵与绕航，叠加<b>订单/运力 40.2%</b>，压制 2027 年后运价。</div>
+      <div class="note">传导逻辑：收入 ≈ <b>货运量</b> × <b>单箱运价</b>，落到单箱就是「单箱收入 − 单箱成本 = <b>单箱EBIT</b>」。三季度已兑现：量 721.15 万TEU（+4.5%）、单箱收入 1,381 美元/TEU（+31.3%）、<b>单箱EBIT 440 美元/TEU</b>、单季归母 172.30 亿元（+80.7%），利润几乎全由价格贡献。口径：<b>单箱EBIT = 单季营业利润 ÷ 单季货运量 ÷ 7.1</b>，分子为合并口径（含码头分部约 +16 美元/TEU），季报无分部拆分，故绝对水平略高、趋势可用。</div>
     </div>
 
     <!-- 2 港口码头业务 -->
@@ -210,22 +241,9 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
       <div class="note" id="note-fin"></div>
     </div>
 
-    <!-- 4 行业供需格局 -->
+    <!-- 4 成本结构 -->
     <div class="card">
-      <div class="hd"><div class="idx">4</div><h3>行业供需格局</h3><button class="tbtn al-btn" id="al-btn" onclick="syncAlphaliner(this)" title="从 Alphaliner PublicTop100 抓取最新数据并写入 Excel（需本机运行 alphaliner_server.py）">同步</button></div>
-      <div class="al-status" id="al-status"></div>
-      <div class="desc">运力、闲置率与停航调控，决定运价的中长期天花板。</div>
-      <div class="metric"><span class="k">全球船队运力</span><span class="right"><span class="v" data-val="fleet"></span><span class="spark" data-spark="fleet" data-color="#15616d"></span><button class="tbtn" onclick="openChart('supply_fleet','全球集装箱船队总运力（季频）')">趋势</button></span></div>
-      <div class="metric"><span class="k">闲置率</span><span class="right"><span class="v" data-val="idle"></span><span class="spark" data-spark="idle_r" data-color="#d98a14"></span><button class="tbtn" onclick="openChart('supply_idle','闲置运力比例（季频）')">趋势</button></span></div>
-      <div class="metric"><span class="k">手持订单/运力</span><span class="right"><span class="v" data-val="order"></span><span class="spark" data-spark="order" data-color="#7a8694"></span><button class="tbtn" onclick="openChart('supply_order','手持订单占运力比例（季频）')">趋势</button></span></div>
-      <div class="metric"><span class="k">美线停航率</span><span class="right"><span class="v" data-val="blank_us"></span><span class="spark" data-spark="blank_us" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('control_us','美线停航率（季频）')">趋势</button></span></div>
-      <div class="metric"><span class="k">欧线停航率</span><span class="right"><span class="v" data-val="blank_eu"></span><span class="spark" data-spark="blank_eu" data-color="#15616d"></span><button class="tbtn" onclick="openChart('control_eu','欧线停航率（季频）')">趋势</button></span></div>
-      <div class="note">传导逻辑：运力（供给）侧是<b>运价</b>中长期天花板与底部的决定性变量。当<b>全球运力</b>持续扩张、<b>手持订单/运力</b>比居高，意味着未来有效供给放量，对 SCFI/CCFI 形成向下压制；反之<b>闲置率</b>低、船队高周转，说明在役运力偏紧、对运价形成支撑。船公司还可通过<b>美线/欧线停航率</b>（主动空班）在需求走弱时抽离有效运力，人为托住运价——停航率越高、运力收缩越深，运价底部越牢。运力扩张（增量投放）与停航调控（减量抽离）此消彼长，直接决定<b>单箱运价</b>弹性，进而传导至<b>单箱收入</b>与<b>净利</b>；跟踪手持订单/运力与美线/欧线停航率即可预判运价方向。</div>
-    </div>
-
-    <!-- 5 成本结构 -->
-    <div class="card">
-      <div class="hd"><div class="idx">5</div><h3>成本结构</h3></div>
+      <div class="hd"><div class="idx">4</div><h3>成本结构</h3></div>
       <div class="desc">利润的另一半：单箱成本与成本分项，决定盈利弹性。</div>
       <div class="metric"><span class="k">航线单箱成本</span><span class="right"><span class="v" data-val="cost_perbox25"></span><span class="spark" data-spark="cost_perbox" data-color="#15616d"></span><button class="tbtn" onclick="openChart('cost_perbox','航线单箱成本')">趋势</button></span></div>
       <div class="metric"><span class="k">集装箱航运业务成本</span><span class="right"><span class="v" data-val="cost_total25"></span><span class="spark" data-spark="cost_total" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('cost_total','集装箱航运业务成本')">趋势</button></span></div>
@@ -247,17 +265,15 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
       <div class="note" id="note-div"></div>
     </div>
 
-    <!-- 6 宏观与政策环境（由维度7 顺移） -->
+    <!-- 5 宏观与政策环境 -->
     <div class="card">
-      <div class="hd"><div class="idx">6</div><h3>宏观与政策环境</h3></div>
+      <div class="hd"><div class="idx">5</div><h3>宏观与政策环境</h3></div>
       <div class="desc">需求/成本/运力/监管四渠道，均映射到中远海控的损益线。</div>
       <div class="metric"><span class="k">VLSFO 燃油价</span><span class="right"><span class="v" data-val="macro_fuel25"></span><span class="spark" data-spark="macro_fuel" data-color="#c8102e"></span><button class="tbtn" onclick="openChart('macro_fuel','VLSFO 燃油价（$/mt）')">趋势</button></span></div>
       <div class="metric"><span class="k">租船费率 Harpex</span><span class="right"><span class="v" data-val="macro_charter25"></span><span class="spark" data-spark="macro_charter" data-color="#d98a14"></span><button class="tbtn" onclick="openChart('macro_charter','Harpex 租船费率指数')">趋势</button></span></div>
       <div class="metric"><span class="k">EU ETS 碳价</span><span class="right"><span class="v" data-val="macro_ets25"></span><span class="spark" data-spark="macro_ets" data-color="#2e9e6b"></span><button class="tbtn" onclick="openChart('macro_ets','EU ETS 碳价（€/t）')">趋势</button></span></div>
-      <div class="metric"><span class="k">亚欧绕航好望角比例</span><span class="right"><span class="v" data-val="macro_redsea_ratio25"></span><span class="spark" data-spark="macro_redsea_ratio" data-color="#d84315"></span><button class="tbtn" onclick="openChart('macro_redsea_ratio','亚欧绕航好望角比例（%）')">趋势</button></span></div>
-      <div class="metric"><span class="k">运力吸收率</span><span class="right"><span class="v" data-val="macro_redsea_absorb25"></span><span class="spark" data-spark="macro_redsea_absorb" data-color="#ff8f00"></span><button class="tbtn" onclick="openChart('macro_redsea_absorb','运力吸收率（%）')">趋势</button></span></div>
       <div class="metric"><span class="k">欧美制造业/服务业 PMI</span><span class="right"><span class="v" style="font-size:12px;white-space:normal" data-val="macro_pmi25"></span><button class="tbtn" onclick="openChart('macro_pmi','欧美制造业/服务业 PMI')">趋势</button></span></div>
-      <div class="note">传导逻辑：①需求：<b>欧美制造业/服务业 PMI</b> 表征海外景气，扩张则货量需求走强、支撑运价；②成本：<b>VLSFO 燃油价</b>、<b>租船费率 Harpex</b>、<b>EU ETS 碳价</b> 上行直接推高单箱成本（航程/船舶/碳合规），侵蚀利润弹性；③运力：<b>亚欧绕航好望角比例</b>与<b>运力吸收率</b> 上升，等于把有效运力"锁"在更长航线上，被动收紧供给、托底运价；④监管：碳价与排放合规抬升行业成本曲线。四者共振（需求旺 + 绕航吸运力 + 成本升）时利润弹性最大，反之需求弱 + 运力复航 + 成本降则利润收缩。</div>
+      <div class="note">传导逻辑：①需求：<b>欧美制造业/服务业 PMI</b> 表征海外景气，扩张则货量需求走强、支撑运价；②成本：<b>VLSFO 燃油价</b>、<b>租船费率 Harpex</b>、<b>EU ETS 碳价</b> 上行直接推高单箱成本（航程/船舶/碳合规），侵蚀利润弹性；③监管：碳价与排放合规抬升行业成本曲线。三者共振（需求旺 + 成本升）时利润弹性最大，反之需求弱 + 成本降则利润收缩。红海通航结构与苏伊士通行占比（周度实测）已移至 Drewry 周报页「红海绕航」块。</div>
     </div>
 
   </div>
@@ -268,21 +284,10 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
     <details open><summary>1 集装箱航运主业</summary>
       <div class="body">
         <div class="svg-grid">
-          <div class="imgbox" id="chart-scfi" data-img="scfi"></div>
-          <div class="imgbox" id="chart-ccfi" data-img="ccfi"></div>
-          <div class="imgbox" id="chart-theta" data-img="theta"></div>
-        </div>
-        <div class="svg-grid">
-          <div class="imgbox" id="chart-route-eu" data-img="route_eu"></div>
-          <div class="imgbox" id="chart-route-med" data-img="route_med"></div>
-          <div class="imgbox" id="chart-route-usw" data-img="route_usw"></div>
-          <div class="imgbox" id="chart-route-use" data-img="route_use"></div>
-          <div class="imgbox" id="chart-route-gulf" data-img="route_gulf"></div>
-          <div class="imgbox" data-img="util"></div>
-        </div>
-        <div class="svg-grid">
-          <div class="imgbox" data-img="qvol"></div>
-          <div class="imgbox" data-img="routemix"></div>
+          <div class="imgbox" id="chart-qvol" data-img="qvol"></div>
+          <div class="imgbox" id="chart-qrev" data-img="qrev"></div>
+          <div class="imgbox" id="chart-q-ebit" data-img="q_ebit"></div>
+          <div class="imgbox" id="chart-routemix" data-img="routemix" style="grid-column:span 2"></div>
         </div>
       </div>
     </details>
@@ -322,20 +327,7 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
         <div class="imgbox" data-img="dividend" style="display:none"></div>
       </div>
     </details>
-    <details ><summary>4 行业供需格局</summary>
-      <div class="body">
-        <div class="svg-grid">
-          <div class="imgbox" id="chart-supply-fleet" data-img="supply_fleet"></div>
-          <div class="imgbox" id="chart-supply-order" data-img="supply_order"></div>
-          <div class="imgbox" id="chart-supply-idle" data-img="supply_idle"></div>
-        </div>
-        <div class="svg-grid">
-          <div class="imgbox" id="chart-control-us" data-img="control_us"></div>
-          <div class="imgbox" id="chart-control-eu" data-img="control_eu"></div>
-        </div>
-      </div>
-    </details>
-    <details ><summary>5 成本结构</summary>
+    <details ><summary>4 成本结构</summary>
       <div class="body">
         <div class="svg-grid fin-grid">
           <div class="imgbox" id="chart-cost-breakdown" data-img="cost_breakdown"></div>
@@ -348,19 +340,17 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
         </div>
       </div>
     </details>
-    <details ><summary>6 宏观与政策环境</summary>
+    <details ><summary>5 宏观与政策环境</summary>
       <div class="body">
         <div class="svg-grid fin-grid">
           <div class="imgbox" id="chart-macro-fuel" data-img="macro_fuel"></div>
           <div class="imgbox" id="chart-macro-charter" data-img="macro_charter"></div>
           <div class="imgbox" id="chart-macro-ets" data-img="macro_ets"></div>
-          <div class="imgbox" id="chart-macro-redsea-ratio" data-img="macro_redsea_ratio"></div>
-          <div class="imgbox" id="chart-macro-redsea-absorb" data-img="macro_redsea_absorb"></div>
           <div class="imgbox" id="chart-macro-pmi" data-img="macro_pmi"></div>
         </div>
       </div>
     </details>
-    <details open><summary>7 宏观 → 损益 传导框架</summary>
+    <details open><summary>6 宏观 → 损益 传导框架</summary>
       <div class="body fin-sec">
         <p class="fin-note" style="margin-bottom:12px">原则：每个宏观/政策变量必须映射到一条损益线（货量 / 运价 / 成本 / 利润），否则只是背景噪声。</p>
         <div class="channel-grid">
@@ -500,10 +490,47 @@ for(const k in __VALUES__){
   if(dir==="up") el.classList.add("up");
   else if(dir==="down") el.classList.add("down");
 }
+// 1b) 周度脉搏：四源截止日 + 关键数（数据由 build_tracker.py 的 PULSE 注入）
+(function(){
+  const box=document.getElementById("pulse");
+  if(!box||typeof __PULSE__==="undefined"||!__PULSE__.length) return;
+  box.innerHTML=__PULSE__.map(function(p){
+    const its=(p.items||[]).map(function(it){
+      return '<i>'+it[0]+'</i><b>'+it[1]+'</b>';
+    }).join("");
+    return '<div class="pi"><a class="pn" href="'+p.href+'">'+p.tag+' · '+p.name+'</a>'
+         + '<span class="pd">截止 '+p.asof+'</span>'
+         + '<span class="pv">'+its+'</span></div>';
+  }).join("")+'<span class="pfoot">四源各自更新，截止日不同</span>';
+})();
 // 2) sparkline
 document.querySelectorAll("[data-spark]").forEach(el=>{
   const key=el.getAttribute("data-spark");
   spark(el, __SERIES__[key], el.getAttribute("data-color")||"#15616d");
+});
+// 2b) 多序列 mini 趋势线（共图指标：四条航线 / 三条航线停航占比）
+function sparkMulti(el, arrays, colors){
+  const W=100,H=24,pad=3;
+  let all=[];
+  (arrays||[]).forEach(a=>(a||[]).forEach(v=>{const n=Number(v); if(!isNaN(n)) all.push(n);}));
+  if(!all.length){ el.innerHTML=""; return; }
+  let mn=Math.min.apply(null,all), mx=Math.max.apply(null,all);
+  if(mn===mx){ const d=Math.abs(mx)||1; mn-=d*0.15; mx+=d*0.15; }
+  const parts=(arrays||[]).map(a=>{
+    const pts=(a||[]).map(Number).filter(v=>!isNaN(v));
+    const n=pts.length; if(!n) return "";
+    const X=i=>n<=1?W/2:pad+i*(W-2*pad)/(n-1);
+    const Y=v=>pad+(1-(v-mn)/(mx-mn))*(H-2*pad);
+    return pts.map((v,i)=>(i?"L":"M")+X(i).toFixed(2)+" "+Y(v).toFixed(2)).join(" ");
+  });
+  let h='<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" width="100%" height="100%">';
+  parts.forEach((d,i)=>{ if(d) h+='<path d="'+d+'" fill="none" stroke="'+(colors[i]||"#15616d")+'" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>'; });
+  el.innerHTML=h+'</svg>';
+}
+document.querySelectorAll("[data-spark-multi]").forEach(el=>{
+  const keys=el.getAttribute("data-spark-multi").split("|");
+  const cols=(el.getAttribute("data-colors")||"#15616d,#c8102e,#d98a14,#7a8694").split(",");
+  sparkMulti(el, keys.map(k=>__SERIES__[k]), cols);
 });
 // 3) 趋势专区图片注入（支持内联 SVG 与 base64 图片）：由 common/charts.js 的 injectCharts 提供
 CommonCharts.injectCharts("[data-img]", __CHARTS__);
@@ -543,41 +570,7 @@ window.openChart = function(id, title){
 window.closeChart = function(){ window.trendModal.close(); };
 
 // 自动给每个指标名追加更新频率（周/月/季/年）：频率来自各 SVG 的 FREQ 参数（build_tracker.py 注入 __FREQ__），不在模板手写
-// ===== Alphaliner 同步（本地服务 → 写入 Excel 两个 sheet） =====
-// 依赖：本机运行  .venv/bin/python alphaliner_server.py  （默认 127.0.0.1:8765）
-const AL_SYNC_URL = (localStorage.getItem('alSyncUrl') || 'http://127.0.0.1:8765/sync');
-function alSetStatus(text, cls){
-  const el = document.getElementById('al-status');
-  if(!el) return;
-  el.textContent = text || '';
-  el.className = 'al-status' + (cls ? ' ' + cls : '');
-  el.title = text || '';
-}
-async function syncAlphaliner(btn){
-  const old = btn.textContent;
-  btn.disabled = true; btn.textContent = '同步中…'; alSetStatus('正在从 Alphaliner PublicTop100 抓取…');
-  try{
-    const r = await fetch(AL_SYNC_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:'{}'});
-    const j = await r.json();
-    if(!j.ok) throw new Error(j.error || ('HTTP ' + r.status));
-    const g = j.global, c = j.cosco;
-    const pd = j.publish_date || (j.fetched_at || '').slice(0, 10);
-    alSetStatus(pd + ' · 全球 ' + (g.active_teu/1e4).toFixed(0) + ' 万TEU／中远 ' +
-                (c.total_teu/1e4).toFixed(0) + ' 万TEU（订单 ' + c.order_pct + '%）', 'ok');
-    btn.textContent = '已同步 ' + pd.slice(5);
-    btn.title = '写入：' + j.sheets.join(' / ') + '；第 ' + j.global_row + '、' + j.cosco_row + ' 行；耗时 ' + j.elapsed_ms + 'ms';
-  }catch(e){
-    const msg = /Failed to fetch|NetworkError|load failed/i.test(e.message || '')
-      ? '未连接本地服务：请先运行 .venv/bin/python alphaliner_server.py'
-      : ('同步失败：' + e.message);
-    alSetStatus(msg, 'err');
-    btn.textContent = '未连接';
-    btn.title = '请先在本机启动服务：\n  cd cosco-shipping\n  .venv/bin/python alphaliner_server.py\n（默认 http://127.0.0.1:8765）';
-  }finally{
-    btn.disabled = false;
-    setTimeout(function(){ btn.textContent = old; }, 9000);
-  }
-}
+// Alphaliner 同步按钮已迁移到 alphaliner-weekly.html（由 build_weekly_pages.py 生成），主看板不再保留。
 // 由 common/charts.js 的 appendFreq 提供（读取全局 __FREQ__）
 CommonCharts.appendFreq();
 </script>
@@ -586,26 +579,16 @@ __HA_BLOCK__
 </html>
 """
 
-ha_block = build_ha_block(os.path.join(HERE, "数据源", "ha_premium_601919.csv"), "601919")
+ha_block = build_ha_block(os.path.join(ROOT, "数据源", "ha_premium_601919.csv"), "601919")
 print("HA_BLOCK", "ok" if ha_block else "missing（跳过 H/A 溢价率图）")
 
 html = TEMPLATE.replace("__DATA_JS__", DATA_JS).replace("__HA_BLOCK__", ha_block)
-# 脚本/资源路径按输出文件所在深度生成相对前缀，使三种打开方式都能解析：
-#   cosco-shipping/cosco-dashboard.html   深度 1 -> ../
-#   cosco-shipping/public/index.html      深度 2 -> ../../
+# 主看板位于项目根下第 2 层（output/），到工作区根的前缀为 ../../。
+# __REL__ = 工作区根下的公共资源（quote-live.js / common/charts.js 等）；
+# 周报页与主看板同在 output/，故直接用同目录相对文件名。
 # （原先统一用根绝对路径 "/..."，仅在生产(站点根=工作区根)与 HTTP 服务下可用，
 #   双击 file:// 打开时会解析到磁盘根目录导致 CommonCharts undefined、图表全空。）
-html_main = html.replace("__REL__", "../")
+html_main = html.replace("__REL__", "../../")
 with open(OUT, "w", encoding="utf-8") as f:
     f.write(html_main)
 print("WROTE", OUT, "bytes=", len(html_main))
-
-# 同时输出 public/index.html：规范入口文件名，供 Cloudflare Pages 等静态托管识别。
-# 内容与主看板完全一致（单文件自包含），部署时只需指向 public/ 目录。
-pub_dir = os.path.join(HERE, "public")
-os.makedirs(pub_dir, exist_ok=True)
-pub_out = os.path.join(pub_dir, "index.html")
-html_pub = html.replace("__REL__", "../../")
-with open(pub_out, "w", encoding="utf-8") as f:
-    f.write(html_pub)
-print("WROTE", pub_out, "bytes=", len(html_pub))

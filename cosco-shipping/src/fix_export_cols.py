@@ -9,7 +9,8 @@
 """
 import openpyxl, zipfile, re, os, sys
 
-XLSX = "数据源/中远海控_行业供需与运价数据.xlsx"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+XLSX = os.path.join(ROOT, "数据源", "中远海控_行业供需与运价数据.xlsx")
 SHEET = "需求端-港口吞吐量&出口"
 
 # 出口总额(亿美元)：URL1 绝对值 ÷100
