@@ -36,6 +36,16 @@ const CODE_RE = /^(sh|sz|hk)\d{5,6}$/;
 const UPSTREAM_TIMEOUT = 6000; // ms
 const CACHE_TTL = 30;          // s
 
+// —— 宏观数据代理（FRED / EIA）——
+// 上游 API 不返回 CORS 头，浏览器直连会被拦；且密钥不能内嵌到公开页面。
+// 故由 Worker 代取：前端只传 ids，密钥取自环境变量（wrangler secret put）。
+const FRED_URL = 'https://api.stlouisfed.org/fred/series/observations';
+const EIA_URL = 'https://api.eia.gov/v2/seriesid';
+const SERIES_RE = /^[A-Za-z0-9_.-]{1,64}$/;  // 序列 id 白名单字符，杜绝拼出别的上游路径
+const MAX_SERIES = 24;                        // 单次最多取 24 条，防滥用放大
+const MACRO_TIMEOUT = 15000;                  // 宏观上游较慢，单独给更长的超时
+const MACRO_TTL = 300;                        // 5 分钟边缘缓存：FRED/EIA 均按日更新
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -46,6 +56,12 @@ export default {
 
     if (url.pathname === '/api/quote') {
       return handleQuote(request, url, ctx);
+    }
+    if (url.pathname === '/api/fred') {
+      return handleFred(url, env, ctx);
+    }
+    if (url.pathname === '/api/eia') {
+      return handleEia(url, env, ctx);
     }
 
     // 其余路径：回落到仓库根的静态资源
@@ -113,6 +129,143 @@ async function handleQuote(request, url, ctx) {
   } catch (err) {
     return json({ ok: false, error: String(err && err.message || err) }, 502, 0);
   }
+}
+
+/* ------------------------------ 宏观代理 ------------------------------ */
+
+function parseSeries(url) {
+  return (url.searchParams.get('ids') || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter((s) => SERIES_RE.test(s))
+    .slice(0, MAX_SERIES);
+}
+
+/**
+ * GET /api/fred?ids=DTWEXBGS,DFF&start=2024-01-01[&key=xxx]
+ * 返回 { map: { "2026-11-14": { DTWEXBGS: 121.8, DFF: 4.1 } } }
+ * key 缺省时用 env.FRED_KEY；显式传 key 仅为兼容本地 serve.py 的调试流程。
+ */
+async function handleFred(url, env, ctx) {
+  const ids = parseSeries(url);
+  if (!ids.length) return json({ error: 'missing or invalid ids' }, 400, 0);
+
+  const rawStart = (url.searchParams.get('start') || '').trim();
+  const start = /^\d{4}-\d{2}-\d{2}$/.test(rawStart) ? rawStart : '2024-01-01';
+  const key = (url.searchParams.get('key') || '').trim() || (env && env.FRED_KEY) || '';
+  if (!key) {
+    return json({ error: 'FRED key 未配置：请在 Cloudflare 设置 secret FRED_KEY' }, 501, 0);
+  }
+
+  // 缓存键固定为「序列集合 + 起点」，不掺入 key，避免不同 key 打出多份缓存
+  const norm = new URL('https://macro-cache.internal/fred');
+  norm.searchParams.set('ids', ids.join(','));
+  norm.searchParams.set('start', start);
+  const cached = await readCache(norm.toString());
+  if (cached) return cached;
+
+  try {
+    const obs = await Promise.all(ids.map(async (sid) => {
+      const u = `${FRED_URL}?series_id=${encodeURIComponent(sid)}`
+        + `&api_key=${encodeURIComponent(key)}&file_type=json&observation_start=${start}`;
+      const r = await fetch(u, { signal: AbortSignal.timeout(MACRO_TIMEOUT) });
+      if (!r.ok) throw new Error(`FRED ${sid} HTTP ${r.status}`);
+      const j = await r.json();
+      return [sid, j.observations || []];
+    }));
+
+    const map = {};
+    for (const [sid, rows] of obs) {
+      for (const o of rows) {
+        if (o.value == null || o.value === '.') continue;
+        const v = parseFloat(o.value);
+        if (isFinite(v)) (map[o.date] = map[o.date] || {})[sid] = v;
+      }
+    }
+    return writeCache(norm.toString(), { map }, ctx);
+  } catch (err) {
+    return json({ error: String((err && err.message) || err) }, 502, 0);
+  }
+}
+
+/**
+ * GET /api/eia?ids=SERIES_ID[&length=1500][&key=xxx]
+ * 返回 { map: { "SERIES_ID": { "2026-11-08": 123.4 } } }（注意与 FRED 的轴向相反）
+ */
+async function handleEia(url, env, ctx) {
+  const ids = parseSeries(url);
+  if (!ids.length) return json({ error: 'missing or invalid ids' }, 400, 0);
+
+  const lenRaw = (url.searchParams.get('length') || '').trim();
+  const length = /^\d{1,6}$/.test(lenRaw) ? lenRaw : '';
+  const key = (url.searchParams.get('key') || '').trim() || (env && env.EIA_KEY) || '';
+  if (!key) {
+    return json({ error: 'EIA key 未配置：请在 Cloudflare 设置 secret EIA_KEY' }, 501, 0);
+  }
+
+  const norm = new URL('https://macro-cache.internal/eia');
+  norm.searchParams.set('ids', ids.join(','));
+  norm.searchParams.set('length', length);
+  const cached = await readCache(norm.toString());
+  if (cached) return cached;
+
+  try {
+    const rows = await Promise.all(ids.map(async (sid) => {
+      const u = `${EIA_URL}/${encodeURIComponent(sid)}?api_key=${encodeURIComponent(key)}`
+        + (length ? `&length=${length}` : '');
+      const r = await fetch(u, { signal: AbortSignal.timeout(MACRO_TIMEOUT) });
+      if (!r.ok) throw new Error(`EIA ${sid} HTTP ${r.status}`);
+      const j = await r.json();
+      return [sid, (j.response && j.response.data) || []];
+    }));
+
+    const map = {};
+    for (const [sid, points] of rows) {
+      const m = {};
+      for (const p of points) {
+        if (p.value == null) continue;
+        const v = parseFloat(p.value);
+        if (isFinite(v)) m[p.period] = v;
+      }
+      map[sid] = m;
+    }
+    return writeCache(norm.toString(), { map }, ctx);
+  } catch (err) {
+    return json({ error: String((err && err.message) || err) }, 502, 0);
+  }
+}
+
+async function readCache(cacheKeyStr) {
+  try {
+    const hit = await caches.default.match(new Request(cacheKeyStr));
+    if (!hit) return null;
+    const body = await hit.text();
+    const out = new Response(body, {
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Access-Control-Allow-Origin': '*',
+        'X-Macro-Cache': 'HIT',
+      },
+    });
+    return out;
+  } catch (_) {
+    return null;
+  }
+}
+
+function writeCache(cacheKeyStr, obj, ctx) {
+  const body = JSON.stringify(obj);
+  const headers = {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': '*',
+    'Cache-Control': `public, max-age=${MACRO_TTL}`,
+    'X-Macro-Cache': 'MISS',
+  };
+  const res = new Response(body, { status: 200, headers });
+  try {
+    ctx.waitUntil(caches.default.put(new Request(cacheKeyStr), res.clone()).catch(() => {}));
+  } catch (_) { /* 无 ctx 或缓存不可用时忽略 */ }
+  return res;
 }
 
 /* ------------------------------ 上游抓取 ------------------------------ */

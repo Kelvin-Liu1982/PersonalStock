@@ -1,8 +1,16 @@
 name = "personalstock"
 compatibility_date = "2025-04-01"
 
-# Worker 入口：仅处理 /api/quote，其余请求回落静态资源
+# Worker 入口：处理 /api/quote（行情）、/api/fred、/api/eia（宏观代理），
+# 其余请求回落静态资源
 main = "worker/index.js"
+
+# ⚠️ 宏观代理所需密钥**不写在此文件**（本仓库公开），须在 Cloudflare Dashboard 配置为
+# 加密变量：Workers & Pages → personalstock → Settings → Variables and Secrets
+#   FRED_KEY  = <fred.stlouisfed.org 的 32 位 api key>
+#   EIA_KEY   = <eia.gov 的 api key>
+# 或本地执行：npx wrangler secret put FRED_KEY / EIA_KEY
+# 未配置时 /api/fred、/api/eia 返回 501，看板回落已烘焙的快照数据（页面不报错）。
 
 # 将整个仓库根作为静态资源目录
 # 根 index.html 会作为站点首页

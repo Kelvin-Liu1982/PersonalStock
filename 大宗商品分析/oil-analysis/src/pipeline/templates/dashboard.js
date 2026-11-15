@@ -3269,9 +3269,11 @@ function switchTab(key,el){
 
 /* ---------- live fetch ---------- */
 async function loadLive(){
+  /* key 可为空：留空时由服务端代理补 key —— Cloudflare Worker 的 /api/fred、/api/eia
+     读取环境变量 FRED_KEY / EIA_KEY，密钥不下发到浏览器（公开部署即走这条路径）。
+     显式内嵌 key（EMBED_KEYS=1 构建）只用于本地 python -m src.serve 调试。 */
   const key=(API_KEYS.fred||"").trim();
-  if(!key){$("status").textContent="未配置 FRED API Key（src/config.py 或环境变量 FRED_KEY）";return;}
-  if(window.location.protocol==="file:"){$("status").textContent="实时拉取需本地服务：运行 python -m src.serve 后访问 http://localhost:8000/";return;}
+  if(window.location.protocol==="file:"){$("status").textContent="实时拉取需经服务端：本地运行 python -m src.serve，或直接访问已部署的看板地址";return;}
   $("status").textContent="拉取实时数据中…";
   /* 2026-10-22 故障隔离（此前 FRED 一挂就 throw，价格与 EIA 周度根本没机会执行）：
      三个源各自独立 try/catch —— FRED 宏观 / 价格 / EIA 周度。
@@ -3351,10 +3353,8 @@ async function loadLive(){
     const series={dates,brent:getP("brent"),wti:getP("wti"),dxy:get("dxy"),dff:get("dff"),dgs10:get("dgs10"),gas:get("gas")};
     // ---- 源 3：EIA 周度（库存/产量；失败 → 仅该源缺失，仍有价格与宏观可渲染） ----
     let eia=null;
-    if(eiakey){
-      try{eia=await fetchEIA(eiakey,dates);}
-      catch(e2){console.warn("[dashboard] EIA 周度拉取失败（仅该源缺失）",e2);noteFail("EIA周度");}
-    }
+    try{eia=await fetchEIA(eiakey,dates);}   // key 可为空：服务端代理补 key
+    catch(e2){console.warn("[dashboard] EIA 周度拉取失败（仅该源缺失）",e2);noteFail("EIA周度");}
     // OPEC 月度原油产量（来自 MOMR PDF，静态嵌入快照），无需实时拉取；computeDerived 回落 SNAPSHOT 取值。
     STATE=computeDerived(series,eia);
     STATE.kpis.latest_date=dates[dates.length-1];STATE.kpis.n=dates.length;
@@ -3382,7 +3382,7 @@ async function loadLive(){
 async function fetchPrices(eiakey,fredkey){
   const out={__src:""};
   const ids=(EIA_PRICE_IDS&&EIA_PRICE_IDS.ids)||{};
-  if(eiakey&&Object.keys(ids).length){
+  if(Object.keys(ids).length){   // key 可为空：服务端代理补 key
     try{
       const r=await fetch(`/api/eia?key=${encodeURIComponent(eiakey)}&ids=${Object.values(ids).join(",")}&length=${(EIA_PRICE_IDS&&EIA_PRICE_IDS.len)||1500}`);
       const j=await r.json();
@@ -3397,7 +3397,7 @@ async function fetchPrices(eiakey,fredkey){
   }
   const fb=(EIA_PRICE_IDS&&EIA_PRICE_IDS.fallback)||{};
   for(const k in fb) delete out[k];
-  if(fredkey&&Object.keys(fb).length){
+  if(Object.keys(fb).length){    // key 可为空：服务端代理补 key
     try{
       const r2=await fetch(`/api/fred?key=${encodeURIComponent(fredkey)}&ids=${Object.values(fb).join(",")}&start=__START_DATE__`);
       const j2=await r2.json();
