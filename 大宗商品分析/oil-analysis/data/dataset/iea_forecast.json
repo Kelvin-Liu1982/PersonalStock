@@ -1,0 +1,88 @@
+{
+  "ieaOmrMonths": [
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09",
+    "2026-10"
+  ],
+  "ieaOmr2026Demand": [
+    0.93,
+    0.85,
+    0.64,
+    -0.08,
+    -0.42,
+    -1.1,
+    -1.0,
+    -1.6,
+    -2.5,
+    -2.62
+  ],
+  "ieaOmr2027Demand": [
+    null,
+    null,
+    null,
+    null,
+    null,
+    2.0,
+    2.0,
+    2.4,
+    2.6,
+    2.0
+  ],
+  "ieaOmrWarOnset": "2026-02",
+  "ieaOutlookYears": [
+    2022,
+    2023,
+    2024,
+    2025,
+    2026,
+    2027,
+    2028,
+    2029,
+    2030
+  ],
+  "ieaOutlook2023": [
+    99.8,
+    102.3,
+    103.1,
+    104.1,
+    104.8,
+    105.3,
+    105.7,
+    null,
+    null
+  ],
+  "ieaOutlook2024": [
+    null,
+    102.2,
+    103.2,
+    104.2,
+    105.0,
+    105.3,
+    105.5,
+    105.6,
+    105.4
+  ],
+  "ieaOutlook2025": [
+    null,
+    null,
+    103.0,
+    103.8,
+    104.5,
+    105.1,
+    105.4,
+    105.6,
+    105.5
+  ],
+  "ieaOutlookMeta": {
+    "intro": "本页汇总国际能源署（IEA）对未来原油供需的判断，分两层：① 月度《Oil Market Report (OMR)》对当年及次年的滚动需求增速预测——可观察预期如何随地缘局势逐月修正；② 年度《Oil 20XX》中期展望——对全球石油需求到 2030 年前的中期路径判断。两者构成「官方预测锚」，供与供给侧现状做情景对照。",
+    "omrSrc": "数据：取自 OMR「Tables」章节 Table 2「Summary of Global Oil Demand」的 World 行年度列（源文件 data/raw/iea_omr/）。",
+    "oilSrc": "数据：取自各版《Oil 20XX》「Demand」章节的「Global / World oil demand by product」表的 Total products 行年度列（Oil 2023 版表题为 Global、2024 起改 World；源文件 data/raw/iea_oil/）。"
+  }
+}

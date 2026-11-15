@@ -1,0 +1,4962 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="eCfnEhFAlfyy0DQfFSYa79">
+<head data-page-node-id="mX5BByV9qZxKqdGFRDsgUM">
+<meta charset="UTF-8" data-page-node-id="uxwcNSMq7SR97iAoJ8do6S">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="5PddlHhOTrKfS8luieuKYH">
+<title>国际黄金价格深度分析 · TERMINAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" data-page-node-id="WmxwDm6gFrtpXxfJKOzYON">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin data-page-node-id="aS1dTLdGNoad2GD6laaC9U">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" data-page-node-id="ceAkblRAaeTGx9F11Hl7K6">
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-2:#f7f8fa;
+    --panel:#ffffff;
+    --line:#e3e7ed;
+    --line-2:#cbd3dd;
+    --txt:#1f2933;
+    --txt-dim:#5b6672;
+    --txt-faint:#8a94a1;
+    --gold:#9A6B00;
+    --gold-2:#8A6508;
+    --gold-dim:#E8D9A8;
+    --up:#1f7a4d;      /* 涨 绿 */
+    --down:#c0392b;    /* 跌 红 */
+    --accent-cool:#2E6D9E;
+    --mono:'IBM Plex Mono','JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --sc:'Noto Sans SC',-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--txt);
+    font-family:var(--sc);
+    font-size:15px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    padding:18px;
+  }
+  ::selection{background:var(--gold-2);color:#ffffff}
+  a{color:var(--gold);text-decoration:none}
+
+  .mono{font-family:var(--mono)}
+
+  /* ===== 顶栏 TICKER ===== */
+  .topbar{
+    display:flex;align-items:center;gap:14px;
+    border:1px solid var(--line);
+    background:linear-gradient(180deg,#ffffff,#f4f6f9);
+    padding:8px 14px;
+    margin-bottom:14px;
+  }
+  .topbar .brand{
+    font-family:var(--mono);font-weight:700;letter-spacing:1px;
+    color:var(--gold);font-size:14px;white-space:nowrap;
+    background:none;border:0;padding:0;margin:0;line-height:1;
+    display:inline-flex;align-items:center;cursor:pointer;
+    transition:opacity .15s;
+  }
+  .topbar .brand:hover{opacity:.7}
+  .topbar .brand:active{opacity:.45}
+  .topbar .brand:disabled{cursor:progress;opacity:.55}
+  .topbar .brand b{color:var(--txt)}
+  .ticker{
+    flex:1;overflow:hidden;white-space:nowrap;
+    border-left:1px solid var(--line);border-right:1px solid var(--line);
+    padding:0 12px;height:22px;position:relative;
+  }
+  .ticker .track{
+    display:inline-block;white-space:nowrap;
+    font-family:var(--mono);font-size:13px;color:var(--txt-dim);
+    animation:scroll 38s linear infinite;
+  }
+  .ticker .track span{margin-right:42px}
+  .ticker .track b{color:var(--gold)}
+  .ticker .track .g{color:var(--up)} .ticker .track .r{color:var(--down)}
+  @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .topbar .clock{font-family:var(--mono);font-size:12px;color:var(--txt-dim);white-space:nowrap}
+  .topbar .live{display:inline-flex;align-items:center;gap:6px;color:var(--up);font-family:var(--mono);font-size:11px}
+  .topbar .live i{width:7px;height:7px;border-radius:50%;background:var(--up);box-shadow:0 0 0 3px rgba(31,122,77,.18);animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+  /* ===== 刷新实时金价（位于 HERO「当前报盘」右上角） ===== */
+  .hero .spot-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+  .hero .spot-actions{display:flex;flex-direction:column;align-items:flex-end;gap:3px;margin-left:auto}
+  .hero .rf-btn{
+    cursor:pointer;background:#f7f8fa;border:1px solid var(--gold-dim);color:var(--gold);
+    font-family:var(--mono);font-size:12px;font-weight:600;
+    padding:5px 12px;border-radius:3px;transition:.15s;white-space:nowrap;
+  }
+  .hero .rf-btn:hover:not(:disabled){background:#eef2f7;border-color:var(--gold)}
+  .hero .rf-btn:disabled{opacity:.45;cursor:not-allowed;border-color:var(--line-2);color:var(--txt-faint)}
+
+  /* ===== 通用面板 ===== */
+  .panel{
+    border:1px solid var(--line);
+    background:var(--panel);
+    position:relative;
+  }
+  .panel > .ph{
+    display:flex;align-items:baseline;gap:10px;
+    padding:7px 12px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg,#fafbfc,#f1f4f8);
+  }
+  .panel > .ph .tag{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:1.5px;
+    color:var(--gold-2);text-transform:uppercase;
+  }
+  .panel > .ph .tt{font-family:var(--mono);font-size:13px;color:var(--txt);font-weight:500}
+  .panel > .ph .meta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--txt-faint)}
+  .panel .pb{padding:14px 16px}
+
+  .grid{display:grid;gap:14px}
+  .wrap{max-width:1360px;margin:0 auto}
+
+  /* ===== HERO ===== */
+  .hero{
+    display:grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap:0;
+    border:1px solid var(--line);
+    background:var(--panel);
+    margin-bottom:14px;
+  }
+  .hero .cell{padding:16px 18px;border-right:1px solid var(--line)}
+  .hero .cell:last-child{border-right:none}
+  .hero .lbl{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:var(--txt-dim);text-transform:uppercase}
+  .hero .big{
+    font-family:var(--mono);font-weight:700;line-height:1.05;
+    font-size:64px;letter-spacing:-1px;margin:6px 0 2px;
+  }
+  .hero .big.ath{color:var(--gold)}
+  .hero .big.cur{color:var(--txt)}
+  .hero .sub{font-family:var(--mono);font-size:12.5px;color:var(--txt-dim)}
+  .hero .note{font-size:12.5px;color:var(--txt-dim);margin-top:8px;line-height:1.5}
+  .hero .note b{color:var(--gold-2)}
+  /* ===== 当前报盘 · 当年月度金价（Pink Sheet） ===== */
+  .hero .spot-trend{margin-top:6px;border:0;background:transparent;padding:0}
+  .hero .spot-spark{width:100%;height:auto;display:block}
+  .hero .gm-line{fill:none;stroke:#9A6B00;stroke-width:1.8}
+  .hero .gm-area{fill:rgba(154,107,0,.12)}
+  .hero .gm-dot{fill:#ffffff;stroke:#9A6B00;stroke-width:1.4}
+  .hero .gm-lbl{font-family:var(--mono);font-size:8.5px;fill:#5b6672}
+  .hero .gm-vlabel{font-family:var(--mono);font-size:8.5px;fill:#8a94a1}
+
+  /* 事件条 */
+  .eventbar{
+    grid-column:1 / -1;
+    border-top:1px solid var(--line);
+    display:flex;align-items:center;gap:14px;
+    padding:9px 18px;
+    background:repeating-linear-gradient(45deg,#f7f8fa,#f7f8fa 10px,#eef2f7 10px,#eef2f7 20px);
+  }
+  .eventbar .evtag{font-family:var(--mono);font-size:11px;letter-spacing:1px;color:#ffffff;background:var(--gold);padding:3px 8px;font-weight:700}
+  .eventbar button.evtag{cursor:pointer;border:0}
+  .eventbar button.evtag:hover{filter:brightness(1.14)}
+  .eventbar button.evtag:active{filter:brightness(.9)}
+  .eventbar .evdate{font-family:var(--mono);font-size:12px;color:var(--txt-dim);font-weight:700}
+  .eventbar .evtxt{font-size:13px;color:var(--txt-dim)}
+  .eventbar .evsrc{font-size:11px;color:var(--txt-dim);opacity:.75;border:1px solid var(--line-2);padding:1px 6px;white-space:nowrap}
+
+  /* ===== 价格时间轴 ===== */
+  .timeline{width:100%;display:block}
+  .tl-axis{stroke:var(--line-2);stroke-width:1}
+  .tl-grid{stroke:var(--line);stroke-width:1;stroke-dasharray:2 4}
+  .tl-path{fill:none;stroke:var(--gold);stroke-width:2}
+  .tl-area{fill:url(#goldgrad);opacity:.18}
+  .tl-node circle{fill:var(--bg);stroke:var(--gold);stroke-width:1.6}
+  .tl-node.hi circle{stroke:var(--gold);fill:var(--gold)}
+  .tl-node text{font-family:var(--mono);font-size:10.5px;fill:var(--txt-dim)}
+  .tl-node .val{fill:var(--gold);font-weight:700;font-size:11px}
+  .tl-node .dt{fill:var(--txt-faint)}
+  .tl-pin{stroke:var(--line-2);stroke-width:1;stroke-dasharray:3 3}
+
+  /* ===== 力矩阵 2x4 ===== */
+  .matrix{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+  }
+  .fcol .ph .side{font-family:var(--mono);font-size:12px;font-weight:700}
+  .fcol.push .ph .side{color:var(--up)}
+  .fcol.pull .ph .side{color:var(--down)}
+  .fcells{display:grid;grid-template-rows:repeat(4,1fr);gap:10px;padding:12px}
+  .fcell{
+    border:1px solid var(--line);
+    background:var(--bg-2);
+    padding:11px 13px;
+    transition:border-color .18s,background .18s,transform .18s;
+    position:relative;
+  }
+  .fcell:hover{border-color:var(--gold-2);background:#f2f5f9;transform:translateY(-2px)}
+  .fcell .fh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:5px}
+  .fcell .fname{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--txt)}
+  .push .fcell .fname{color:#1f7a4d}
+  .pull .fcell .fname{color:#b5462f}
+  .fcell .wt{
+    font-family:var(--mono);font-size:10px;letter-spacing:.5px;
+    padding:2px 7px;border:1px solid var(--line-2);color:var(--txt-dim);white-space:nowrap;
+  }
+  /* 力矩阵状态灯：当前值 · 近4周变化 · 对金价信号（build_html.py 由宏观因子派生） */
+  .fcell .fsig{
+    display:flex;align-items:center;gap:7px;flex-wrap:wrap;
+    font-family:var(--mono);font-size:10.5px;line-height:1.5;
+    margin:0 0 6px;padding:0 0 5px;border-bottom:1px dotted var(--line-2);
+    color:var(--txt-faint);min-height:15px;
+  }
+  .fcell .fsig .fval{color:var(--txt-dim);font-weight:600}
+  .fcell .fsig .fchg{font-weight:700;color:var(--txt-dim)}
+  .fcell .fsig .ftag{padding:1px 6px;border:1px solid currentColor;font-size:9.5px;letter-spacing:.3px;white-space:nowrap}
+  .fcell .fsig .ftag.bull{color:var(--up)}
+  .fcell .fsig .ftag.bear{color:var(--down)}
+  .fcell .fsig .ftag.neutral{color:var(--txt-faint)}
+  .fcell .fsig .fsrc{margin-left:auto;font-size:9px;color:var(--txt-faint);opacity:.85}
+  .fcell .mech{font-size:13px;color:var(--txt-dim);line-height:1.55}
+  .fcell .mech b{color:var(--txt);font-weight:500}
+  .fcell .eg{
+    margin-top:6px;padding-top:6px;border-top:1px dashed var(--line-2);
+    font-family:var(--mono);font-size:11px;color:var(--gold-2);line-height:1.5;
+  }
+  .fcell .eg .y{color:var(--gold-2)}
+
+  /* ===== 驱动权重条 ===== */
+  .weights{padding:14px 16px}
+  .wrow{display:grid;grid-template-columns:150px 1fr 52px;align-items:center;gap:12px;margin:9px 0}
+  .wrow .wl{font-family:var(--mono);font-size:12.5px;color:var(--txt-dim);text-align:right}
+  .wbar{height:18px;background:#eef1f5;border:1px solid var(--line);position:relative;overflow:hidden}
+  .wbar i{
+    display:block;height:100%;
+    background:linear-gradient(90deg,var(--gold-dim),var(--gold));
+    width:0;transition:width 1.1s cubic-bezier(.2,.7,.2,1);
+  }
+  .wrow .wp{font-family:var(--mono);font-size:13px;color:var(--gold);font-weight:700;text-align:right}
+  .wfoot{margin-top:12px;border-top:1px solid var(--line);padding-top:9px;font-family:var(--mono);font-size:11px;color:var(--txt-faint)}
+
+  /* ===== 叙事时间线 ===== */
+  .story{padding:6px 0}
+  .stage{
+    display:grid;grid-template-columns:120px 1fr;gap:14px;
+    padding:12px 16px;border-bottom:1px solid var(--line);
+  }
+  .stage:last-child{border-bottom:none}
+  .stage .stime{font-family:var(--mono)}
+  .stage .stime .y{font-size:15px;color:var(--gold);font-weight:700}
+  .stage .stime .m{font-size:11px;color:var(--txt-faint);margin-top:2px}
+  .stage .sbody .shead{font-family:var(--mono);font-size:13px;color:var(--txt);font-weight:600;margin-bottom:4px}
+  .stage .sbody p{font-size:13.5px;color:var(--txt-dim);line-height:1.6}
+  .stage .sbody .k{color:var(--gold-2);font-family:var(--mono);font-size:12px}
+  .stage:hover{background:#f4f6f9}
+  .dotline{position:relative}
+  .dotline::before{content:"";position:absolute;left:0;top:0;bottom:0;width:1px}
+
+  /* ===== 核心逻辑面板 ===== */
+  .logic{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .lblock{padding:13px 15px}
+  .lblock h4{font-family:var(--mono);font-size:12px;letter-spacing:1px;color:var(--gold-2);margin-bottom:8px;text-transform:uppercase}
+  .lblock ul{list-style:none}
+  .lblock li{font-size:13px;color:var(--txt-dim);padding:5px 0 5px 16px;position:relative;line-height:1.55;border-bottom:1px solid #f2f5f9}
+  .lblock li:last-child{border-bottom:none}
+  .lblock li::before{content:"▸";position:absolute;left:0;color:var(--gold-2)}
+  .lblock li b{color:var(--txt);font-weight:500}
+
+  /* ===== 数据点 ===== */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  .stat{border:1px solid var(--line);background:var(--panel);padding:12px 14px}
+  .stat .sl{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;color:var(--txt-dim);text-transform:uppercase}
+  .stat .sv{font-family:var(--mono);font-size:24px;color:var(--gold);font-weight:700;margin:6px 0 2px}
+  .stat .sd{font-size:12px;color:var(--txt-dim)}
+
+  .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  .sec-title{display:flex;align-items:center;gap:10px;margin:18px 0 10px}
+  .sec-title .bar{width:3px;height:18px;background:var(--gold)}
+  .sec-title h2{font-family:var(--mono);font-size:15px;font-weight:600;color:var(--txt);letter-spacing:.5px}
+  .sec-title .en{font-family:var(--mono);font-size:11px;color:var(--txt-faint);letter-spacing:1px}
+  /* 力矩阵例证角标：区分「状态灯实时」与「例证为历史叙事」，避免误读为最新 */
+  .sec-title .asof{
+    margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.3px;
+    padding:2px 7px;border:1px solid var(--line-2);color:var(--txt-faint);
+    white-space:nowrap;
+  }
+
+  @media (max-width:900px){
+    .hero{grid-template-columns:1fr}
+    .hero .cell{border-right:none;border-bottom:1px solid var(--line)}
+    .matrix,.logic{grid-template-columns:1fr}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .hero .big{font-size:48px}
+    .wrow{grid-template-columns:110px 1fr 44px}
+  }
+
+  /* ===== 央行购金展开面板（方案 A） ===== */
+  .cb-toggle{cursor:pointer;outline:none;transition:border-color .18s,background .18s,transform .18s}
+  .cb-toggle:hover,.cb-toggle:focus-visible{border-color:var(--gold-2);background:#f2f5f9;transform:translateY(-2px)}
+  .cb-toggle .cb-sub{font-family:var(--mono);font-size:11px;color:var(--gold-2);margin-top:6px}
+  .cb-panel{margin-bottom:14px}
+  .cb-panel[hidden]{display:none}
+  .cbsvg{width:100%;height:auto;display:block}
+  .cbsvg text{font-family:var(--mono)}
+  .cb-cap{font-family:var(--mono);font-size:12.5px;color:var(--gold-2);letter-spacing:.5px;margin:4px 0 6px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:12px;color:var(--txt-dim);margin:6px 0 10px}
+  .legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+  .cb-foot{font-size:11.5px;color:var(--txt-faint);line-height:1.6;margin-top:8px;border-top:1px solid var(--line);padding-top:9px}
+  .dt-tbl{width:100%;border-collapse:collapse;margin:4px 0 10px;font-family:var(--mono)}
+  .dt-tbl th,.dt-tbl td{text-align:right;padding:7px 8px;border-bottom:1px solid var(--line);font-size:12px;color:var(--txt-dim)}
+  .dt-tbl th:first-child,.dt-tbl td:first-child{text-align:left;color:var(--txt)}
+  .dt-tbl th{color:var(--txt-faint);font-weight:500;font-size:11px}
+  .dt-tbl .hot{color:var(--down)}
+  .cb-foot b{color:var(--gold-2)}
+</style>
+</head>
+<body data-page-node-id="6tTtA3lEuBi7H4jmfw4ZR0">
+<div class="wrap" data-page-node-id="KASfDiHKAGEE58D24BUoHu">
+
+  <!-- 顶栏 -->
+  <div class="topbar" data-page-node-id="6xiAczFLp7hbWxSfFgPEuo">
+    <button type="button" class="brand" id="brandRefreshBtn" title="点击刷新实时金价（XAU/USD）；其余指标为构建时静态数据" data-page-node-id="OAApzYIDAqu17d0qMkhVSh">AU<b data-page-node-id="FFOXhVPeGNEI0Jx3ojeQrr">::TERMINAL</b></button>
+    <div class="ticker" data-page-node-id="mdd5pSKDYIVHLwXfdjlPAS">
+      <div class="track" data-page-node-id="L7izw4nRNqbxSsmMBRp0Lt">
+        <span data-page-node-id="yqOp4yZ4EDzkJyvnB9RaKz">XAU/USD <b data-field="tickerXau" data-page-node-id="APLDs97vfonyeKOi9tnDbB">$4,312</b> <span class="g" data-field="tickerXauChg" data-page-node-id="iL4CSH4YgI2IrDaZl3eZrX">+0.8%</span></span>
+        <span data-page-node-id="GqZHzALLI1zbvVAA4eXaCp">10Y UST <b data-field="tickerUst" data-page-node-id="qUo57saxDZGa3PiEWG2vFb">4.18%</b> <span class="r" data-field="tickerUstChg" data-page-node-id="rl8jCGZlwk6UccsQH9FSjc">-0.06</span></span>
+        <span data-page-node-id="HnU5fEqpyxqBC2ujCKgLk3">DXY <b data-field="tickerDxy" data-page-node-id="XZyhrnRMo6JGVqku0LHvup">98.4</b> <span class="r" data-field="tickerDxyChg" data-page-node-id="0Io02dMNVdXtEbGa8c6dta">-0.3</span></span>
+        <span data-page-node-id="QVnRGFi92hXTI9RN8bZD6d">CB OWN <b data-field="cbChinaOwn" data-page-node-id="TogPXuFmiZfFunHAMyfiXn">2,410t</b> CN</span>
+        <span data-page-node-id="mYee6Cax9VlEf0qubCcUVZ">WORLD DEBT/GDP <b data-field="worldDebt" data-page-node-id="s4T4bTmypEN2RXF1TGDIZi">100%</b></span>
+        <span data-page-node-id="QhhcM2bSDCDmXYcOKK6o72">XAU/USD <b data-field="tickerXau" data-page-node-id="OvMWMX2brtppcsqzCFsCfA">$4,312</b> <span class="g" data-field="tickerXauChg" data-page-node-id="RFCtNEiOax2gNRa8QBF026">+0.8%</span></span>
+        <span data-page-node-id="PFzMLHwhp7CMsMVf7F2BG5">10Y UST <b data-field="tickerUst" data-page-node-id="ufqcC84gx3o9PRDgMXLnQR">4.18%</b> <span class="r" data-field="tickerUstChg" data-page-node-id="xKy3cUq3qaBCaZH8OcVMT0">-0.06</span></span>
+        <span data-page-node-id="hWjl7HApJSIiUqBFlJRPOB">DXY <b data-field="tickerDxy" data-page-node-id="jxv90hXBcCZyehIvv4qFjd">98.4</b> <span class="r" data-field="tickerDxyChg" data-page-node-id="LXI2S6sPgRoe9txKp41jhe">-0.3</span></span>
+        <span data-page-node-id="OioSsrcsut4n5H2iLXGm9y">CB OWN <b data-field="cbChinaOwn" data-page-node-id="SsnyXe3quIRnJYurhvu3zy">2,410t</b> CN</span>
+        <span data-page-node-id="qY2Bai39lV5nR0YJGhF6gn">WORLD DEBT/GDP <b data-field="worldDebt" data-page-node-id="joJvU65QCx5gQ9QQirEJjC">100%</b></span>
+      </div>
+    </div>
+    <div class="live" data-page-node-id="BUmZa1fvOxy0Xb08ZZFXtF"><i data-page-node-id="1cRATNGFnN9NrdF55aksTo"></i>LIVE</div>
+    <div class="clock" id="clock" data-page-node-id="90iAQhI7wkL6iefhGcx0pO">--:--:-- UTC</div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero reveal" data-page-node-id="OmIgAKRhepZwOMgCWzbCRf">
+    <div class="cell" data-page-node-id="IGVK30H8p9PWTIQX6Fe7cp">
+      <div class="lbl" data-page-node-id="ZegOvKXUBVlGguKJjk2eKv">历史高点 · ALL-TIME HIGH</div>
+      <div class="big ath mono" data-field="ath" data-page-node-id="xuUzNqG4F9rXtwUFIXaYc1">$5,590</div>
+      <div class="sub mono" data-page-node-id="gG4081n9e8aGSYqvNfWoig"><span data-field="athDate" data-page-node-id="r0czk2M5b1xFo9TW8SmGjN">2026-01-29</span> · 盘中创历史新高（<span data-field="athRange" data-page-node-id="87qJ7JGJ5WyAJ4KwS6OvYr">$5,590–5,603/oz</span>）</div>
+      <div class="note" id="athNote" data-page-node-id="FIfy9wZ7j88AkJZmGFPSyk">历史高点 <b>$5,590</b>（1-28 盘中）；当前 <b>$4,379</b>，较 ATH 回落 <b>21.7%</b>；最新月均 <b>$4,105</b>（10月）。</div>
+    </div>
+    <div class="cell" data-page-node-id="z8R9gO65WjL3LkbBR7HycK">
+      <div class="spot-head">
+        <div class="lbl" data-page-node-id="ynlbNKkVLgK5KvAp4SY016">当前报盘 · SPOT (<span data-field="spotAsOf" data-page-node-id="5DctBi8XV804nJqfSS0DdQ">2026-08</span>)</div>
+        <div class="spot-actions">
+          <button class="rf-btn" id="refreshBtn" type="button" data-page-node-id="peq68ylwTGZVdgkqrxlXal" title="点击获取最新现货价（需通过本地服务器打开）">⟳ 刷新实时金价</button>
+        </div>
+      </div>
+      <div class="big cur mono" data-page-node-id="ERsBTzb3VYClCaNSeN7xiy"><span data-field="spot" data-page-node-id="kQgUJTEtV2onld2vKEQJf6">$4,300</span><span style="font-size:28px;color:var(--txt-dim)" data-page-node-id="9OpofsXq4EI3kDCb9AfouE">+</span></div>
+      <div class="spot-trend">
+        <svg id="goldMonthlyChart" class="spot-spark" viewBox="0 0 460 80" role="img" aria-label="当年月度黄金参考价趋势"></svg>
+      </div>
+    </div>
+    <div class="eventbar" data-page-node-id="MbMoKGm96QZPS1dBW9gXRX">
+      <button type="button" class="evtag" id="evBtn" data-page-node-id="PoDGUZJM7HEb402UCOxmLi" title="点击：切到更新的候选；继续点循环浏览全部候选（候选池截至构建日，刷新数据请本地跑 fetch_event.py）">EVENT</button>
+      <span class="evdate mono" data-field="eventDate" data-page-node-id="0odxRiAPNkDijL6E6OqqMF">2026-08-05</span>
+      <span class="evtxt" data-field="eventText" data-page-node-id="32qTkMoKmipFyq3Glrd149">美元走软 · 美债收益率下降 · 中东局势缓和 → 单日强劲反弹</span>
+      <span class="evsrc" data-field="eventSource" data-page-node-id="32qTkMoKmipFyq3Glrd14a">—</span>
+    </div>
+  </div>
+
+  <!-- 价格时间轴：与 A1「历史周期定位」共用 renderHist() 数据驱动渲染 -->
+  <div class="sec-title"><span class="bar"></span><h2>价格时间轴</h2><span class="en">GOLD ANNUAL PRICE · 1970–2025</span></div>
+  <div class="panel reveal">
+    <div class="ph"><span class="tag">CHART</span><span class="tt">gold_annual_price_history</span><span class="meta">世界银行 Pink Sheet · 1970–2025</span></div>
+    <div class="pb">
+      <div class="hist-wrap">
+        <div class="hist-bar">
+          <span class="hist-cap">1970–2025 黄金年均价（USD/oz）</span>
+          <span class="hist-btns">
+            <button class="hist-btn on" data-scale="log" type="button">对数轴</button>
+            <button class="hist-btn" data-scale="lin" type="button">线性轴</button>
+          </span>
+        </div>
+        <svg class="hist-chart" viewBox="0 0 900 300" role="img" aria-label="1970 年以来黄金年均价格趋势"></svg>
+        <div class="hist-foot">口径：世界银行 Pink Sheet 年均价（名义 USD/oz，1970–2025）。○ 标记＝盘中极值（非年均）。金底色带＝上行阶段，红底色带＝回调阶段，蓝灰＝盘整。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心数据条 -->
+  <div class="sec-title" data-page-node-id="zspvGMrAwRi1Zg234bWqhi"><span class="bar" data-page-node-id="I43A6YpWrZiYpl0Mr41CeO"></span><h2 data-page-node-id="m8s9ebhSNII9RLnN9N8I1E">关键数据快照</h2><span class="en" id="snapshotAsOf" data-page-node-id="icVwzjgfOqJFrsArYLZ5Wx">DATA SNAPSHOT · 截至 2026-10</span></div>
+  <div class="stats reveal" data-page-node-id="rolOYNOHHGHA7QlLkmxbG3">
+    <div class="stat cb-toggle" id="cbToggle" role="button" tabindex="0" aria-expanded="false" title="点击展开 2026 年 1–9 月央行购金国别结构" data-page-node-id="tvtlbirhOk7idmCtKqAwzr">
+      <div class="sl" data-page-node-id="N4at1TQI3q6iZ0FvnLvKWi">央行购金 · 点击展开 ▾</div>
+      <div class="sv mono" data-field="cbNet2025" data-page-node-id="tIck0APq9da9rm9DbOvl1S">863t</div>
+      <div class="sd" data-page-node-id="PvfewFQdneWIprgl9pFuJW">2025 年净买入 · 2022–24 每年 &gt;1000t</div>
+      <div class="cb-sub mono" data-field="cbH1Summary" data-page-node-id="tPza6VfwzceLSQDRKTaXDe">2026 年至今 +270t</div>
+    </div>
+    <div class="stat cb-toggle" id="gdtToggle" role="button" tabindex="0" aria-expanded="false" title="点击展开 全球黄金供需季度结构（需求 / 供应）" data-page-node-id="g1FSAaFl0vsigz8Yx3954l"><div class="sl">全球黄金供需 · <span id="gdtQuarter">—</span> · 点击展开 ▾</div><div class="sv mono" id="gdtDemand">—</div><div class="sd" id="gdtSupply">供应 — · 缺口 —</div><div class="cb-sub mono" id="gdtMix">金饰 — · 科技 — · 投资 — · 央行 —</div></div>
+    <div class="stat cb-toggle" id="debtToggle" role="button" tabindex="0" aria-expanded="false" title="点击展开 美国债务真实数据校准 2021–2025" data-page-node-id="tx4I7tXogtjoQebFSlpGBe">
+      <div class="sl" data-page-node-id="WcsnKCYmuLAfvdLNA4WusN">美债务/GDP · 点击展开 ▾</div>
+      <div class="sv mono" data-field="worldDebt" data-page-node-id="su5yFfAv7PpjGaYZgp69Nz">100%</div>
+      <div class="sd" data-page-node-id="xIWGCqnXaDXZfxyOSOUZ8W">净利息占财政收入 <span data-field="netInterestShare" data-page-node-id="44IbTwMjDGBvCZWXDeeLVo">18.5%</span></div>
+      <div class="cb-sub mono" data-page-node-id="yLFpFnckdpDvHHwCWK8fdb">2021–25 真实校准 · (r−n) 逼近 0</div>
+    </div>
+    <div class="stat cb-toggle" id="cnCbToggle" role="button" tabindex="0" aria-expanded="false" title="点击展开 2024–2026 年中国央行购金月度折线" data-page-node-id="4AhOIGBvxaYHYNet1yYtdS"><div class="sl" data-page-node-id="a1SsI3hT55cJX4C3nL12nv">中国央行购金 · 点击展开 ▾</div><div class="sv mono" id="cnCbOwnT" data-field="cbChinaOwn" data-page-node-id="eqoJQricx7jjrbw0jcKVwE">2,410t</div><div class="sd" data-page-node-id="0fp5ERsIJsk4QpDu3DwYyC">连续 <span id="cnCbStreak" data-field="cbChinaStreak" data-page-node-id="LE0Kmr6BVcSwbv2yJ3bq1B">23</span> 个月增持 · <span id="cnCbYtdYear">2026</span> YTD <span id="cnCbYtd" data-field="cbChinaYtd">103t</span></div><div class="cb-sub mono" id="CNCB_sub" data-page-node-id="CNCB_sub">10 月储备 7,830 万盎司 · 当月增持 83 万盎司</div></div>
+  </div>
+
+  <!-- 全球黄金供需季度（WGC GDT） 展开面板 -->
+  <div class="panel cb-panel" id="gdtPanel" hidden>
+    <div class="ph"><span class="tag">GDT</span><span class="tt">gold_supply_demand_quarterly</span><span class="meta" id="gdtPanelMeta">—</span></div>
+    <div class="pb">
+      <div class="cb-cap">需求　金饰制造 + 科技 + 投资 + 央行及其他机构（吨）　<span style="color:var(--txt-faint)">央行及其他机构为负时绘于零轴下方</span></div>
+      <svg class="cbsvg" id="gdtDemandChart" viewBox="0 0 900 330" role="img" aria-label="全球黄金季度需求堆叠柱状图"></svg>
+      <div class="legend" id="gdtDemLegend"></div>
+      <div class="cb-cap" style="margin-top:10px">供应　矿产产量 + 回收金 + 生产商套保（吨）　<span style="color:var(--txt-faint)">生产商套保为负时绘于零轴下方</span></div>
+      <svg class="cbsvg" id="gdtSupplyChart" viewBox="0 0 900 330" role="img" aria-label="全球黄金季度供应堆叠柱状图"></svg>
+      <div class="legend" id="gdtSupLegend"></div>
+      <p class="cb-foot" id="gdtFoot" style="margin-top:10px"></p>
+    </div>
+  </div>
+  <div class="gdt-tip" id="gdtTip" hidden></div>
+
+  <!-- 央行购金国别 breakdown 展开面板（方案 A） -->
+  <div class="panel cb-panel" id="cbPanel" hidden data-page-node-id="9VBXMep7V2kbQ0FpkGCJuf">
+    <div class="ph" data-page-node-id="oCBmfzkaijk9rst57s4aME"><span class="tag" data-page-node-id="X5Fej1NnplyojFYSTWWTe0">CB GOLD</span><span class="tt" data-page-node-id="fgYPLWUzigSuqCdfJPCpb1">central_bank_buying_2002_2026</span><span class="meta" id="cbPanelMeta" data-page-node-id="3DcjEismdlWhgcjd19m8yP">IMF IFS · 截至 2026-09</span></div>
+    <div class="pb" data-page-node-id="GFVC4vRAMp3roIdvJa6l7x">
+      <div class="cb-cap" data-page-node-id="2aNmkaCpsHjm9P2G7KAeZk">图 1　<span id="cbPeriod">当年</span>各央行净购金量对比（吨）　<span style="color:var(--txt-faint)">Annual 当年列 · 净买入前 10 + 净卖出前 5 · 国名沿用源表</span></div>
+      <svg class="cbsvg" id="cbCountry" viewBox="0 0 920 600" role="img" aria-label="各央行净购金量水平条形图" data-page-node-id="G8kB8KWWWS8ZJNISsIxUkr"></svg>
+      <div class="legend" data-page-node-id="nanLeeYljGYNT82r6YP8z3">
+        <span data-page-node-id="Sj5A13ZTGx5AhMm4GjX5uU"><i style="background:var(--up)" data-page-node-id="RWVmpGzRuKIbpEmCbQxpqI"></i>净买入（吨）</span>
+        <span data-page-node-id="3wqzf0oDg69fl9yY5E2BTI"><i style="background:var(--down)" data-page-node-id="XIfqQVj1HLUeoJACbfl51B"></i>净卖出（吨）</span>
+        <span data-page-node-id="so4JGC5XUWWVN5tFusWfsH">纵轴按净购金量降序（买家在上、卖家在下）</span>
+      </div>
+
+      <div class="cb-cap" data-page-node-id="FQaoE4vk7Xp8Piu3o4adNK">图 2　全球央行 2026 年月度净购金（吨）　<span style="color:var(--txt-faint)">Monthly 各月列求和</span></div>
+      <svg class="cbsvg" id="cbMonthly" viewBox="0 0 920 290" role="img" aria-label="全球央行月度净购金柱状图" data-page-node-id="Ri0wi44NRnsE2nG1rcZaVj"></svg>
+      <div class="legend" data-page-node-id="cz9aB7xFu16LcAJQWciXM3">
+        <span data-page-node-id="Ih4gn4VOhYCovGGEYsG7uc"><i style="background:var(--up)" data-page-node-id="5gGddglTj7u82JIWsLzUMD"></i>月度净买入（吨）</span>
+        <span data-page-node-id="DL6d69Tw0R8IomcGudXJ5c"><i style="background:var(--down)" data-page-node-id="TjHUF6LF1SGM0cyVCfyKDg"></i>月度净卖出（吨）</span>
+      </div>
+
+      <div class="cb-cap">图 3　全球央行年度净购金（吨）<span style="color:var(--txt-faint)">2002–　Annual 各年列求和 · 口径同图 1/图 2</span></div>
+      <svg class="cbsvg" id="cbAnnual" viewBox="0 0 920 300" role="img" aria-label="全球央行年度净购金趋势图"></svg>
+      <div class="cb-foot" id="cbAnnualFoot" style="border-top:1px solid var(--line);padding-top:8px"></div>
+        
+      <p class="cb-foot" data-page-node-id="3NT99HtfWOgOXbwrRAEFjC">
+        <b data-page-node-id="Nb0FUCBTP9cHoErh0tnJs6">数据来源与口径：</b>IMF 国际金融统计（IFS）「Changes in Monetary Gold」。<b>图 1</b>取 Annual sheet 当年列（= 截止最新已公布月份的累计），按<b>净买入前 10 + 净卖出前 5</b> 自动入选，国名直接沿用源表英文；<b>图 2</b>取 Monthly sheet 各月列求和；<b>图 3</b>取 Annual sheet 各年份列求和（2002– 当年，当年为 YTD）。三图口径一致，均剔除 <b>Euro Area</b>（ECB 年初一次性年度披露）、<b>Türkiye / Turkey*</b>（gross 总额口径重复序列）与 <b>SOFAZ</b>（非央行主权基金）。采集命令：<span class="mono">python3 src/fetch_cb_ifs.py</span>（数据随 IFS 新版本自动刷新）。<br data-page-node-id="4kgGcJxQu4X4q52TQesDxs">
+        <b data-page-node-id="kfwHEktzpDGpgGc7ew5BW8">读数提示：</b>官方口径只统计已申报国家的储备变动，不含未申报国估算，故与 WGC 口径存在小幅差异（如 WGC 2026 H1 综合约 346t，IFS 官方口径 1–7 月合计 150.5t）；当年列为 YTD，不可与整年直接比较。      </p>
+    </div>
+  </div>
+
+  <!-- 中国央行购金月度 展开面板 -->
+  <div class="panel cb-panel" id="cnCbPanel" hidden data-page-node-id="CNCBP">
+    <div class="ph" data-page-node-id="CNCBP1"><span class="tag" data-page-node-id="CNCBP2">CN CB</span><span class="tt" data-page-node-id="CNCBP3">china_cb_buying_2026</span><span class="meta" id="cnCbRange" data-page-node-id="CNCBP4">SAFE · 2024-01~2026-10</span></div>
+    <div class="pb" data-page-node-id="CNCBP5">
+      <div class="cb-cap" id="cnCbCap" data-page-node-id="CNCBP6">图 1　2024–2026 年中国央行月度购金量与月末黄金储备（万盎司）</div>
+      <svg class="cbsvg" id="cnCbMonthly" viewBox="0 0 920 290" role="img" aria-label="中国央行月度购金折线图" data-page-node-id="CNCBP7"></svg>
+      <div class="legend" data-page-node-id="CNCBP8">
+        <span data-page-node-id="CNCBP9"><i style="background:var(--up)" data-page-node-id="CNCBP10"></i>当月增持（万盎司 · 左轴）</span>
+        <span data-page-node-id="CNCBP11"><i style="background:var(--gold)"></i>月末黄金储备（万盎司 · 右轴）</span>
+        <span><i style="background:var(--down)"></i>当月减持（万盎司 · 为负时绘于零轴下方）</span>
+        <span id="cnCbLegend" data-page-node-id="CNCBP11b">10 月储备 7,830 万盎司 ≈ 2,435t · 连续增持第 24 个月</span>
+      </div>
+      <p class="cb-foot" data-page-node-id="CNCBP12">
+<b data-page-node-id="CNCBP13">数据来源：</b>国家外汇管理局官网 → 统计数据 → 官方储备资产（黄金，月末，以万盎司计）；当月增持 = 当月末 − 上月末。<br data-page-node-id="CNCBP14">
+        <b data-page-node-id="CNCBP15">口径：</b><span id="cnCbCaliber">连续增持自 2024-11 起计（截至 2026-10 为第 24 个月）；2024-05~2024-10 为暂停增持区间（连续月数归零）；2026 YTD 净购 415 万盎司 ≈ 129t（月末口径，1–10 月累加）。</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- 美国债务真实数据校准 展开面板 -->
+  <div class="panel cb-panel" id="debtPanel" hidden data-page-node-id="FFPQdlteLxVAldWjKtNVFf">
+    <div class="ph" data-page-node-id="l6s7owz2Z8ZvmQhg3mQLsn"><span class="tag" data-page-node-id="AhDYV37LLoNSoOvttA2bsD">US DEBT</span><span class="tt" data-page-node-id="A7Ti5uPAXndc71mu4iMC1y">us_debt_real_data_2021_2025</span><span class="meta" data-page-node-id="DoHvCItHd4nrvNeZrIqT9j">FRED · CBO · 截至 2025</span></div>
+    <div class="pb" data-page-node-id="S4DN9bI4TkCf1WJFOGlV5U">
+      <table class="dt-tbl" data-page-node-id="0LtBcoRSSBjcBtc7EpniQy">
+        <thead data-page-node-id="98MxaZAP1jv16aqLilBSrp"><tr data-page-node-id="hk4YsBsq9nlDIihCnjv0zQ"><th data-page-node-id="GeBVY7pKNESudiZzUDG2Gr">年份</th><th data-page-node-id="W0ooBvW3mekX5ROOcytVdz">债务/GDP</th><th data-page-node-id="rocLwQ3yKi1ELP7zkMJxW9">有效利率 r</th><th data-page-node-id="k3GjhCbwl8oj21ZNra1OzC">名义GDP n</th><th data-page-node-id="b2hWJFaCn5LbmcNmftingA">利息/GDP</th><th data-page-node-id="lfmHHgvijc6NWElchWgaOB">(r−n)</th></tr></thead>
+        <tbody data-page-node-id="dt2OFdioq7YTa3sgy1xsxK">
+          <tr data-page-node-id="hTVjM5JRXmJNxNpFOsgh3y"><td data-page-node-id="ZxqdqHzymK4mhEWGk1vpKh">2021</td><td data-page-node-id="JDMCFDnr5SuEKbwTaJUAkR">119.6</td><td data-page-node-id="dER6abBsdAjbsXLIqs0BLn">1.25</td><td data-page-node-id="8NHf1DckOuguB1qYCAKOxA">11.0</td><td data-page-node-id="CA5JJn8wH1gRzIdvYjYQPu">1.49</td><td class="hot" data-page-node-id="qlOQ7NaDkGIeexb7ZDVBw7">−9.75</td></tr>
+          <tr data-page-node-id="Ykvg5sRGcZsCmHwGW0RNWZ"><td data-page-node-id="mFkF5uasOEj5qWiUpx11iH">2022</td><td data-page-node-id="h1YLHiBIIGUXzjjT0mGw07">118.4</td><td data-page-node-id="asiPYo3Avh55YPwg9R41Sc">1.55</td><td data-page-node-id="bNtPad7X9SXU9zGntqDkPU">9.8</td><td data-page-node-id="EPJWRbjxVYk0HQJf6TDtPb">1.83</td><td class="hot" data-page-node-id="XeVONdzgFkhm9WFGDrJmLX">−8.25</td></tr>
+          <tr data-page-node-id="yfIdMs8aMLmE9VHRM30BGk"><td data-page-node-id="bHBXkjF8lXoQcXuBWbsmbh">2023</td><td data-page-node-id="EN8lLIxMZz0E7Ujc25Kcge">118.6</td><td data-page-node-id="oWAPEeRsaybGPjbne0OTHw">2.00</td><td data-page-node-id="fGCyWiFj4meCtBgQW7bUIa">6.7</td><td data-page-node-id="cxTef4Eqa8n4v82YCanFPL">2.37</td><td class="hot" data-page-node-id="ld3i8mmY0GohIMd5dZd619">−4.70</td></tr>
+          <tr data-page-node-id="EEYgHdNluFugNoi6JZR0aS"><td data-page-node-id="IshFKYVNYxUB4eim2K1jD8">2024</td><td data-page-node-id="HaqTT1D0eVrmQjSCVMhil6">120.2</td><td data-page-node-id="6UKKmFmi01vPNufRn9XOJO">2.50</td><td data-page-node-id="4Ow0mKviRJp9L3qqu8ygfS">5.3</td><td data-page-node-id="j4TKizto9CXsU7LgVWVRwl">3.00</td><td class="hot" data-page-node-id="UPxr806b3tDiMoUaukv8T4">−2.80</td></tr>
+          <tr data-page-node-id="g8msbZYMRkcu9Ox8HOy0Hq"><td data-page-node-id="HFdnCQYVag8Yw9Wn1yJpfx">2025</td><td data-page-node-id="DKrke0fnzJPnwHhBZY2Vux">121.5</td><td data-page-node-id="tHbeIu5sp2N7r0uHUYp2oo">2.59</td><td data-page-node-id="0h4wvIPgUbSy4xnrZkUWSG">5.1</td><td data-page-node-id="aO1ND1FhIweNSt79MR7dtC">3.15</td><td class="hot" data-page-node-id="PF0J07GncguaYoaLyPdgtH">−2.51</td></tr>
+        </tbody>
+      </table>
+
+      <div class="cb-cap" data-page-node-id="Z5o6aOXYZZfSIZYwr7kB6D">图 1　债务 / GDP 实际轨迹（%）</div>
+      <svg class="cbsvg" id="dtDebt" viewBox="0 0 920 260" role="img" aria-label="债务GDP实际轨迹" data-page-node-id="dNuqFA8joj0QZy1DejRk45"></svg>
+
+      <div class="cb-cap" data-page-node-id="O0BTTdLJDSzopH6dgCWfpJ">图 2　利息支出 / GDP 实际轨迹（%）</div>
+      <svg class="cbsvg" id="dtInt" viewBox="0 0 920 260" role="img" aria-label="利息支出轨迹" data-page-node-id="Xb6TK1qmk2sbw9qObRsjjl"></svg>
+
+      <div class="cb-cap" data-page-node-id="mNYeSxq9Vs0VOcfp7y2crW">图 3　雪球指标 (r − n) 实际轨迹（0 = 点火线）</div>
+      <svg class="cbsvg" id="dtRN" viewBox="0 0 920 260" role="img" aria-label="雪球指标轨迹" data-page-node-id="v2gUTXyCMkU5soXsssEG3P"></svg>
+      <div class="legend" data-page-node-id="JPnLiFuGQl7uk1dTREA4Ro"><span data-page-node-id="TJA8VKPPTjQiKa9r0mh0Cb"><i style="background:var(--gold-2)" data-page-node-id="JgRklzoMrvvm4FTGMcsFmA"></i>(r − n) 实际值</span><span data-page-node-id="uK63sGMIRkCvA0sw7R4SX2"><i style="background:var(--down)" data-page-node-id="R3arZwO2ja62jrOmPrOcyA"></i>0 点火线</span></div>
+
+      <div class="cb-cap" data-page-node-id="zawUDgLodWUsIBkInYmlRI">图 4　以 2025 真实值（121.5 / r2.6 / 赤字5.9）为种子向前推演</div>
+      <svg class="cbsvg" id="dtFwd" viewBox="0 0 920 280" role="img" aria-label="前向投影" data-page-node-id="UePRoYM3Z64jKPeDRVmSpI"></svg>
+      <div class="legend" data-page-node-id="2wEfCLNV5stNqctOr8IAJK">
+        <span data-page-node-id="2POEZkbGF9mWjmOpu2TFtA"><i style="background:var(--up)" data-page-node-id="m40ARlUMIzEdI8U2c0GKzA"></i>维持 n=5.1%</span>
+        <span data-page-node-id="9Wl0y93EmzsEvYKofT37HE"><i style="background:var(--gold-2)" data-page-node-id="MEO1P6HGwF1rKI7t2BT454"></i>n 回落至 3.0%</span>
+        <span data-page-node-id="FK3iJ3JuLB8nUCA7tHQdHX"><i style="background:var(--down)" data-page-node-id="2VjpbiU6ezb2yZAqEn1FM6"></i>n 跌至 1.5%</span>
+      </div>
+
+      <p class="cb-foot" data-page-node-id="IE59m4EyWEzejEXhIBXDET">
+        <b data-page-node-id="viWzo9aZFzCP4Ew2SHDBi4">数据来源：</b>债务/GDP、利息/GDP 来自 FRED（GFDGDPA188S、FYOIGDA188S）；有效利率 r = 利息/GDP ÷ 债务/GDP；名义增速 n 来自 BEA / FocusEconomics；赤字来自 CBO FY2025。模型式 <code data-page-node-id="CuLSZgSaPBtxBvMn7fbNmN">Δb = (r − n)·b + 赤字</code>。<br data-page-node-id="6YREppr9ExjWrTUuslWtiv">
+        <b data-page-node-id="pqWDD5hQQjaVuIdzzMzs0d">口径：</b>债务/GDP 为日历年、赤字为财政年（差约一季度），故以"实际轨迹 + (r−n) 透镜 + 2025 种子前向推演"呈现。关键点：当前 r≈2.6%，一旦名义增速 n 跌破该值，雪球即点火——正是央行购金 / 去美元化的宏观底色。
+      </p>
+    </div>
+  </div>
+
+  <!-- 力矩阵 -->
+  <div class="sec-title" data-page-node-id="K0c6APD7VVSCDka7OaAVyP"><span class="bar" data-page-node-id="vaoPVAcOos4s4nF4GUOFh6"></span><h2 data-page-node-id="OOEDIdXzFvxYvafq3EPceL">推涨 vs 压制 · 力矩阵</h2><span class="en" data-page-node-id="t1d4BkrMnvP830HAKwuaRQ">FORCE MATRIX · 2 × 4</span><span class="asof" id="egAsOf">例证截至 —</span></div>
+  <div class="matrix" data-page-node-id="wFMsXBIyDJ3MeXEeVURl1g">
+    <!-- 推涨 -->
+    <div class="panel fcol push reveal" data-page-node-id="CJrE93Tdea01wZPk8AdXqy">
+      <div class="ph" data-page-node-id="DpMC33o139lNGM7zYWT2Gk"><span class="tag" data-page-node-id="4MbyFNK8sOLAwuwiXqAZvX">BULL</span><span class="side" data-page-node-id="zWziQmTzN1bDskn2uTc8Rj">▲ 推涨因素 / 4</span><span class="meta" data-page-node-id="ZXyigAexIYyDHscmG95DMV">权重见标</span></div>
+      <div class="fcells" data-page-node-id="wuKHbw8a8oLyHeCdRZ8vR1">
+        <div class="fcell" data-page-node-id="3CV5qcCEZOjI5vtevahV2F">
+          <div class="fh" data-page-node-id="8mc879grQDfCo2gGpFoDXJ"><span class="fname" data-page-node-id="IuokoYZB4TWmPkhB8zgi0B">① 避险需求</span><span class="wt" data-page-node-id="mq3P9oAH34ZCtmrFJYhNRj">HIGH</span></div>
+          <div class="fsig" id="fsig_bullSafe">—</div>
+          <div class="mech" data-page-node-id="FFewx8eQ6VTsiEPhHCg2ot"><b data-page-node-id="G2a8U0OmxVU2bE3Dx5RsS4">机制：</b>地缘与金融不确定性上升 → 资金撤离信用资产，转向「无交易对手风险」的实物黄金对冲尾部风险。</div>
+          <div class="eg" data-page-node-id="javMIi4DXNOlL4r0LeKVWC"><span class="y" data-page-node-id="gLKproCJOJqKQqkHBLv1Vj">2022</span> 冻结俄央行资产，黄金成中性储备；<span class="y" data-page-node-id="uM7GWz07yjydToax9AK7Wp">2026-08</span> 中东缓和前避险买盘持续。</div>
+        </div>
+        <div class="fcell" data-page-node-id="xprKfXwA0nX9sf08UadFnH">
+          <div class="fh" data-page-node-id="Pn9le21HmAtRGJcsGC5OCz"><span class="fname" data-page-node-id="WebKxKBQ4iJjExBSRNZ1Zq">② 通胀预期</span><span class="wt" data-page-node-id="Ry0eKwXQImopj1ONrao2Qm">MED</span></div>
+          <div class="fsig" id="fsig_bullInfl">—</div>
+          <div class="mech" data-page-node-id="pPC49hlceOQSeiHrlML7Gb"><b data-page-node-id="Bai7HtjkE8ENQQcKH09Qta">机制：</b>实际购买力担忧 → 黄金作为零息「保值储值」工具，抗法定货币购买力稀释。</div>
+          <div class="eg" data-page-node-id="MWaJ0qHssXmu5ObBLsDrjp"><span class="y" data-page-node-id="dEfiNMOknmdj1y1Z4lMWoG">2024–25</span> 财政扩张推升长期通胀预期；美债实际收益率波动中黄金获支撑。</div>
+        </div>
+        <div class="fcell" data-page-node-id="9peTPXM4rKk1xG5po8xVf0">
+          <div class="fh" data-page-node-id="DQBUgiH3VFFKeS1tOA6LPB"><span class="fname" data-page-node-id="OpIU8byQSbov4aDsaYnDOG">③ 美元走弱</span><span class="wt" data-page-node-id="QWRspC6D7YVDeox1vId1iM">MED</span></div>
+          <div class="fsig" id="fsig_bullUsd">—</div>
+          <div class="mech" data-page-node-id="LtpAeC5OQwO1s4OsxTYfp7"><b data-page-node-id="4n9v8jOmbcJr2wLa2NISVr">机制：</b>黄金以美元计价，美元指数下行 → 非美买家成本下降，需求与价格同向走强。</div>
+          <div class="eg" id="egBullUsd" data-page-node-id="HF8bqbkCJadHTtyTnVYI8E"><span class="y" data-page-node-id="c5DBdsGF0oL1lOMCRhIoMK">2026-08-05</span> 美元走软直接推动单日 +4.0% 反弹。</div>
+        </div>
+        <div class="fcell" data-page-node-id="pjSqnMrJdt9C0EzO3k2Kgz">
+          <div class="fh" data-page-node-id="uA3plKl4C29A62x8roHcqT"><span class="fname" data-page-node-id="0nm9loyNkBS1yO4VqcBTyL">④ 实际利率下行</span><span class="wt" data-page-node-id="IwM8HksfFhH9ZLMlPPNZnb">HIGH</span></div>
+          <div class="fsig" id="fsig_bullReal">—</div>
+          <div class="mech" data-page-node-id="covyeH9wPE8OlXmrnAmycw"><b data-page-node-id="E3Ihb2r06vpPAm7usXuQMd">机制：</b>持有黄金机会成本（实际利率）下降 → 相对收益改善，配置需求回升。</div>
+          <div class="eg" id="egBullReal" data-page-node-id="ELHTIOnIABRjAK98daFlX4"><span class="y" data-page-node-id="dkIj5PfPiCiGxyYY1W2bUn">2025</span> 宽松周期压低实际利率助涨；<span class="y" data-page-node-id="ItMqsjmaqApaSuPn0oif6g">2026-08</span> 美债收益率下降再成推力。</div>
+        </div>
+      </div>
+    </div>
+    <!-- 压制 -->
+    <div class="panel fcol pull reveal" data-page-node-id="xolL2CN9HkoNd2N7sS5kfF">
+      <div class="ph" data-page-node-id="F6PpJCxhj1YvsqWB3eBCUh"><span class="tag" data-page-node-id="xEbSic79bcTCipdGhec75Y">BEAR</span><span class="side" data-page-node-id="UZL5bFsSx2mJ8qK9fCWZJ0">▼ 压制因素 / 4</span><span class="meta" data-page-node-id="RhZLtrAcoB8qFHAHnXhJwq">权重见标</span></div>
+      <div class="fcells" data-page-node-id="XeMafCHUjIJ8mWGPVhU1vr">
+        <div class="fcell" data-page-node-id="aKNkJBn9mMih49Dv6Jary0">
+          <div class="fh" data-page-node-id="7KwtcZvSlD8DPCAeyIe0Cu"><span class="fname" data-page-node-id="NumaVcLZCdHnP1tSLCHcNS">① 美元走强</span><span class="wt" data-page-node-id="cDQW4QqZCk5ieH08BfWdr1">HIGH</span></div>
+          <div class="fsig" id="fsig_bearUsd">—</div>
+          <div class="mech" data-page-node-id="MhRErCboy9taGNOHGejBjv"><b data-page-node-id="zUQMnb6aWHMMwB8AVKuDhG">机制：</b>美元指数上行 → 非美需求受抑、计价压力上升，金价承压回落。</div>
+          <div class="eg" data-page-node-id="m0ZM9K1PVvv84P0tMte5o0"><span class="y" data-page-node-id="sSaRPCBXGy1iBx01ma4GDK">2026 H1</span> 美元阶段性走强，叠加「加息交易」压制黄金表现。</div>
+        </div>
+        <div class="fcell" data-page-node-id="nDUVr1McomBWXOcbz55gHQ">
+          <div class="fh" data-page-node-id="m7DCkpAHpAduEMwRyx5DNL"><span class="fname" data-page-node-id="LFbkuDscqZy4dnQl5fHXQx">② 风险偏好回升</span><span class="wt" data-page-node-id="nxSFcKhoriGUOjvYalmBwG">MED</span></div>
+          <div class="fsig" id="fsig_bearRisk">—</div>
+          <div class="mech" data-page-node-id="WmeSLp8VGUwtVSycX8u9zA"><b data-page-node-id="44xK6dF1UVPGawk5rK5EzY">机制：</b>股市/风险资产走牛 → 避险配置需求下降，资金从黄金流向权益。</div>
+          <div class="eg" data-page-node-id="OvHmFqvqKq3Glqzjm6KNKv"><span class="y" data-page-node-id="PKy2sxheFdSEtPXwW1cGNE">2026 H1</span> 风险资产回暖削弱避险买盘，金价高位回撤。</div>
+        </div>
+        <div class="fcell" data-page-node-id="JTgBTzIY1kNIZSZR6ZK9Yo">
+          <div class="fh" data-page-node-id="zTIA0rmRfmnMLenXFGbXtO"><span class="fname" data-page-node-id="Gz2aF57scMtutHdAAgHf5F">③ 加息预期</span><span class="wt" data-page-node-id="V12mWcHxC8Gpdt7bBCB6oy">HIGH</span></div>
+          <div class="fsig" id="fsig_bearHike">—</div>
+          <div class="mech" data-page-node-id="CwnnHZ0J3GUxR76f23jreF"><b data-page-node-id="OO55zhHfz6uphx3BXQ7Itu">机制：</b>加息预期 → 名义利率抬升、美元走强，直接压制零息资产估值。</div>
+          <div class="eg" data-page-node-id="OEgX8ADVwzNaBPfm2IsDRZ"><span class="y" data-page-node-id="2dOBPkhNV0QaYIjwUPM18J">2026</span> 「加息交易」反转 2025 宽松叙事，成上半年主导摆动变量。</div>
+        </div>
+        <div class="fcell" data-page-node-id="fzOYMzhzMWeugHOgWqixiC">
+          <div class="fh" data-page-node-id="8u8OqSQXBxbOwU4gySR2si"><span class="fname" data-page-node-id="6L8jFiLEhKCSzRjmKHYjFd">④ 实际利率上行</span><span class="wt" data-page-node-id="sW5OM1bBaX8i1fTmQ9Wpfv">HIGH</span></div>
+          <div class="fsig" id="fsig_bearReal">—</div>
+          <div class="mech" data-page-node-id="2FwpNTlUkokoxD5tfdmD4B"><b data-page-node-id="pLLsmKJerpN8QrpSqBLnJm">机制：</b>实际利率=定价锚，上行抬升持有成本，金价与实利率呈负相关。</div>
+          <div class="eg" id="egBearReal" data-page-node-id="PGEYEzUQ0kvuL3e06IQPPa"><span class="y" data-page-node-id="uuJdEJv62LVQAuzZwlhZY9">2026-01-29</span> 见顶 $5,586 → <span class="y">2026-11-12</span> 探底 $3,857（最大回撤 31%）。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 驱动权重条 -->
+  <div class="sec-title" data-page-node-id="73ml5iPBNCHifBYIceHSDc"><span class="bar" data-page-node-id="a2mXbqx4ETv6rvxiFML13x"></span><h2 data-page-node-id="FAeSY1fWkrn67yWiaM3sYX">上涨驱动权重</h2><span class="en" data-page-node-id="aq5DOe9FK1FfWBUXDLb34F">DRIVER WEIGHTS · 机构估算</span></div>
+  <div class="panel reveal" data-page-node-id="hiSRt7VKVzrxSXyo1E6w2c">
+    <div class="ph" data-page-node-id="rRIoaAlWLq07NmfaZF4Rrl"><span class="tag" data-page-node-id="j6zral9EwJYpfnRq79iaUA">MODEL</span><span class="tt" data-page-node-id="6iDMtSeFBTvKFFmeniFYK9">driver_attribution</span><span class="meta" data-page-node-id="HTEcWTcPA0WTnwlII9UcOM">基于机构估算</span></div>
+    <div class="weights" id="weights" data-page-node-id="30r185faPqfSRdKwFqIfKV">
+      <div class="wrow" data-page-node-id="5bB03EVxbbYb9iNbxpbqcO"><div class="wl" data-page-node-id="q1wWayPCAI9GeJtb7OyOcu">降息/利率下行</div><div class="wbar" data-page-node-id="4Z4eOqQCUWOnjBYMIZueZ7"><i data-w="30" data-page-node-id="yGzkutnt33nFny24cdBO6L"></i></div><div class="wp" data-page-node-id="ao3aApeNYePCN6zUMZNHgu">30%</div></div>
+      <div class="wrow" data-page-node-id="GghqDdpblxqFxwAwxR6X4H"><div class="wl" data-page-node-id="Hfub2HIaqxiN5ps4dqLCod">央行购金</div><div class="wbar" data-page-node-id="ORGnqNGOAMX4RBbUYUkTxD"><i data-w="25" data-page-node-id="2ODoQX6yEC10iDeILkbfpN"></i></div><div class="wp" data-page-node-id="L17LweDsflWR7n9YDkWEQC">25%</div></div>
+      <div class="wrow" data-page-node-id="eiparbH7fdV7KTvLqAghta"><div class="wl" data-page-node-id="FmxHF0vhJHashIsayYPAD0">地缘避险</div><div class="wbar" data-page-node-id="RmsBmTH4zPfzIACHhKQMoX"><i data-w="20" data-page-node-id="2dQrhcKtw9e9D0jKBaXzT7"></i></div><div class="wp" data-page-node-id="aDwsXBTHA7jbRmsPHYSgEC">20%</div></div>
+      <div class="wrow" data-page-node-id="lqrJL3sfjELioX1YYslgbd"><div class="wl" data-page-node-id="MulL3maKuLQBdeplG3C6kz">美元疲软</div><div class="wbar" data-page-node-id="IAioiJYmds9pjoiepPtUwG"><i data-w="15" data-page-node-id="dBQK9jUWaSwCGvj2UvgTtM"></i></div><div class="wp" data-page-node-id="hVH7DytapkNWMbsMMEhVEW">15%</div></div>
+      <div class="wrow" data-page-node-id="7UBWN3vwcQO1zwKnV0zMTw"><div class="wl" data-page-node-id="0VPCLK69CaToG4d2BN0gKI">投资需求</div><div class="wbar" data-page-node-id="LOHsOEZb5McBZOzqJyxmM1"><i data-w="10" data-page-node-id="lQsMzFFvdXaEs9QPT4mRHX"></i></div><div class="wp" data-page-node-id="mPL5cCbl8fZjq74aooeZXB">10%</div></div>
+      <div class="wfoot" id="wfootCb" data-page-node-id="Ert21CNDDeXaRaan7aMu8N">央行购金：2022–24 每年净买 &gt;1000t，2025 约 863t，最新 Q3'26 净买 321.2t（WGC 口径）；黄金占全球央行储备比重自 1996 年来首超美债。</div>
+    </div>
+  </div>
+
+  <!-- 核心逻辑 -->
+  <div class="sec-title" data-page-node-id="kGUnvjDJp5KEhNh2rkPKZs"><span class="bar" data-page-node-id="bFFMrAniRdzB5BikovWoqr"></span><h2 data-page-node-id="HeEeOK2WH6VQ184uu8zxfB">核心逻辑与供需结构</h2><span class="en" data-page-node-id="6FocOBdQaxQVoLy0olaW69">CORE LOGIC</span><span class="asof" id="logicAsOf">央行 2026-10 · 供需 Q3'26</span></div>
+  <div class="logic" data-page-node-id="IAjhS0NdIC5ElcPO3CHmaQ">
+    <div class="panel reveal" data-page-node-id="CpA7GqranQ9KEE4enLxjgz">
+      <div class="ph" data-page-node-id="T0mPqkjXDiWLK9C0u6B0sD"><span class="tag" data-page-node-id="Lc2wmLkmz70eEKHbFzawlc">MACRO</span><span class="tt" data-page-node-id="i9ckaHMeqDT0gZCgLAqtNZ">macro_cycle / policy</span></div>
+      <div class="lblock" style="border-bottom:1px solid var(--line);margin:0 0 12px;padding:13px 15px 0" data-page-node-id="5Gd9QuPyQYjEVPZt7XSWb2">
+        <h4 data-page-node-id="d0knJAqG0jM9uFU2dFpWqr">宏观周期 & 货币政策</h4>
+        <ul data-page-node-id="cxABXR0Ue3ote0zLuzFekU">
+          <li data-page-node-id="8tD7PVGxMCir8IEQMhk5EB"><b data-page-node-id="GpjuunFPcxjwfR27ykTSYy">晚周期/放缓：</b>财政扩张持续削弱美元信用，黄金的「去中心化储备」属性被重估。</li>
+          <li data-page-node-id="CPhEkIUPLVFwmPyBbKd7JE"><b data-page-node-id="nWsDTjuoCyiUokzE5Vtrtk">美联储利率路径 = 主导摆动变量：</b>2025 宽松推涨 → 2026「加息交易」反转成回调主因。</li>
+          <li data-page-node-id="wRmW6Wu4LORnjfIwBuLxwa"><b data-page-node-id="3oWgMB8ubiaP55IWpCmgjm">实际利率 = 定价锚：</b>金价与实利率负相关，利率下行涨幅放大、上行跌幅被央行托底缓冲（不对称）。</li>
+        </ul>
+      </div>
+      <div class="lblock" style="padding:0 15px 13px" data-page-node-id="HyllJwlH8Qr99GrmrEp6SN">
+        <h4 data-page-node-id="5jQb4TfMMIQnx4N4MVIiFi">地缘 & 去美元化</h4>
+        <ul data-page-node-id="UfymVcG9bdhfciID2oCjCl">
+          <li data-page-node-id="UYXCOSBL1HJX4m6Fg2Pk9D"><b data-page-node-id="6rvafM1D06EEXrnJv7fF2A">去美元化：</b>2022 冻结俄央行资产使黄金成为「无交易对手风险」的中性储备。</li>
+          <li data-page-node-id="ZEevhk5DKs79WVs8m9dU8p"><b data-page-node-id="MFaAJFED1ZpduhtQAoTpDc">央行成边际定价者：</b>结构性买盘使黄金与实际利率部分脱钩。</li>
+        </ul>
+      </div>
+    </div>
+    <div class="panel reveal" data-page-node-id="nnHyB96HFgEg8tYEwbHcp4">
+      <div class="ph" data-page-node-id="v7cj08Ovf9kGEjO3SvKG7k"><span class="tag" data-page-node-id="56kHcIltHKnWB1OBM7rlz1">SUPPLY</span><span class="tt" data-page-node-id="31NMShmfFUpYZWX2DPfmFp">supply / demand</span></div>
+      <div class="lblock" style="border-bottom:1px solid var(--line);margin:0 0 12px;padding:13px 15px 0" data-page-node-id="23v76ImhmcY0xqoyelzCsV">
+        <h4 data-page-node-id="2VWSBGTFP9228I3Jp9bbB5">供需结构</h4>
+        <ul data-page-node-id="iGDse0D6YdZROSkl1bqi8I">
+          <li data-page-node-id="51XPg9V0iq9hz7KUSE5rL8"><b data-page-node-id="5suWAru9E0AlsJEod3XJw0">矿产趋平：</b>近 4 季矿产合计 <span id="logicMine4q">3,930</span> 吨（滚动年化），供应增长平缓。</li>
+          <li data-page-node-id="pSv84BMjtEWQFC4yEOguzH"><b data-page-node-id="Orv1kuNxWkr3bxgEM1G1xJ">结构性需求 &gt; 供应：</b>央行 + ETF + 零售三股力量叠加形成长期稀缺溢价。</li>
+          <li data-page-node-id="8LMVYMG0tGgAtqcIsy0Izl"><b data-page-node-id="gd5EI0B0VmlTIBoIEKt1XB">中国央行：</b><span id="logicCnCb">连续 24 个月增持；10 月末储备 2,435t；2026 YTD 净购 129t（月末口径）。</span></li>
+        </ul>
+      </div>
+      <div class="lblock" style="padding:0 15px 13px" data-page-node-id="ihxqkEghaPmrPl9607kNep">
+        <h4 data-page-node-id="1XAVEF2t5HMVwdyNbaMHwI">结构性变化</h4>
+        <ul data-page-node-id="qL8VIHBCQIo9EQm00fjiEu">
+          <li data-page-node-id="Dkva6tXimciE2QQKj7TCYE"><b data-page-node-id="DaE3suk75KJTRHZabThlax">不对称反应：</b>利率下行期涨幅被放大；上行期跌幅被央行托底缓冲。</li>
+          <li data-page-node-id="hbraN9g7LZ61Ej9fY7PXYG"><b data-page-node-id="rHM3BCf1nIcoefjy7rCiKd">定价权迁移：</b>央行边际买盘重塑黄金与实利率的传统负相关强度。</li>
+          <li data-page-node-id="80jTkGzkzYquqPiyXD5pyZ"><b data-page-node-id="FhK3nLOdHBctY5J06Wr0mc">储备重构：</b>黄金占比超美债，标志储备资产偏好拐点。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 叙事时间线 -->
+  <div class="sec-title" data-page-node-id="XPf5WgzDMcKGVJ0dCE7LV6"><span class="bar" data-page-node-id="VuAI7UclvPIQlsG1NXUMQ2"></span><h2 data-page-node-id="Jf5GcTapB47EnQWRttZOag">叙事脉络 · 终端日志</h2><span class="en" data-page-node-id="c7lhqRS0wAuNDM0hmdURDZ">NARRATIVE TIMELINE</span></div>
+  <div class="panel reveal" data-page-node-id="vf6YCmE4wfjENj7ZV27DBN">
+    <div class="ph" data-page-node-id="rkg1Czp1QEBVEyaueo9Vec"><span class="tag" data-page-node-id="9bRHQ3ZJF2GMeOYAnfzlNy">LOG</span><span class="tt" data-page-node-id="U44SQNSFcb91CFwJLeCALP">narrative_arc</span><span class="meta" id="logMeta" data-page-node-id="uF7eCjMBPgjjmIE7MG7ZEi">2024 → 2026-11</span></div>
+    <div class="story" data-page-node-id="6NQ5Ef8iqUnobcKnQcBeEa">
+      <div class="stage" data-page-node-id="0tJ3D5VW180vdkiYfJgmpM">
+        <div class="stime" data-page-node-id="wd5DGnJloLEt0UDx4BSqbI"><div class="y mono" data-page-node-id="gNh5GGW66ESlb68p36WoDD">2024–25</div><div class="m mono" data-page-node-id="Lll61YuNAaf4wTlqNlz40i">共振上行</div></div>
+        <div class="sbody" data-page-node-id="GI4ARQOKiWEAcvxVTBKV0G">
+          <div class="shead mono" data-page-node-id="bzFKi0EX0APbn8VfAGuPbv">去美元化 + 央行购金 + 避险 三重共振</div>
+          <p data-page-node-id="LWiUgafBm3gujkDbP8DTml">央行持续净买入（2022–24 每年 &gt;1000t），叠加地缘避险与宽松预期，黄金进入趋势性上行通道；<span class="k" data-page-node-id="Wgyt72iGNByYUJ4i9X1nDJ">2025-10 首次突破 $4,000</span>。</p>
+        </div>
+      </div>
+      <div class="stage" data-page-node-id="oyfl9TpmlGMivMux68HqmG">
+        <div class="stime" data-page-node-id="p8CRDAJczo0NjhNuPqg2jF"><div class="y mono" data-page-node-id="R6BS0esOzmDHlP68KxyEhn">2026-01</div><div class="m mono" data-page-node-id="yS5bfso8F3S7eEN8cgyEP4">阶段见顶</div></div>
+        <div class="sbody" data-page-node-id="S1mYhe1Cp0GQSYpXWHfyB3">
+          <div class="shead mono" data-page-node-id="e74bDCGGbr6WvUZOjnxgiH">冲高见顶 · ATH</div>
+          <p data-page-node-id="mygVE6B8wTpOcKACZbVxmv">1 月盘中创历史新高 <span class="k" data-page-node-id="HWEPTrzJLCCpgNpQwva3bk">$5,590–5,603</span>（<span id="logAthDate">2026-01-29</span>），情绪与仓位达到极端。</p>
+        </div>
+      </div>
+      <div class="stage" data-page-node-id="5EgU7nNjnYtMsuF0fDYNY0">
+        <div class="stime" data-page-node-id="Bpzavu0Q3LkBEcVYrE7JnJ"><div class="y mono" data-page-node-id="LfYPhbkOUe1KRoE3nkaHK3">2026 H1</div><div class="m mono" data-page-node-id="kHUP89EWsPSdx6kYhS7XYk">宽幅回调</div></div>
+        <div class="sbody" data-page-node-id="Qnt5R3mjbjixMV2gJpk0Sm">
+          <div class="shead mono" data-page-node-id="aLTuXSKHpYRiCJuHSZjNNr">「加息交易」+ 实际利率上行 压制</div>
+          <p data-page-node-id="Su53jjXtrFr523zA26ojEL">受加息预期与实际利率上行拖累，6-24 盘中创阶段性低点 <span class="k" data-page-node-id="IEwuIPPEzN0hh9UIbw3LzH">$3,959</span>（较高点回落约 29%）；美元走强与风险偏好回升进一步削弱买盘。</p>
+        </div>
+      </div>
+      <div class="stage" data-page-node-id="ddmvc62jdazigGBgdY1nRr">
+        <div class="stime" data-page-node-id="UgwOktFPknqkkXQHibkFAC"><div class="y mono" data-page-node-id="jv2X5SCG45rerRjhFqAR1T">2026-08</div><div class="m mono" data-page-node-id="z6Wgwb8S3hOGZaLRJ6xXbZ">反弹修复</div></div>
+        <div class="sbody" data-page-node-id="YRpauCGKLT2azgU09uQ2Ki">
+          <div class="shead mono" data-page-node-id="xPOeXc17eGXGeOr1h2KyKm">美元走软 + 收益率下降 推动反弹</div>
+          <p data-page-node-id="vS8uaT30mymr8KCwI6eysF"><span class="k" data-page-node-id="r6IqsWSR7NXfNTaDUpl4zF">2026-08-05 单日 +4.0%</span>，美元走软、美债收益率下降、中东局势缓和；8 月初回升至 $4,300+。</p>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="stime"><div class="y mono">2026-11</div><div class="m mono">二次探底</div></div>
+        <div class="sbody">
+          <div class="shead mono">跌破前低 · 压制主导</div>
+          <p id="logLowP"><span class="k">2026-11-12 盘中 $3,857</span>，自高点回撤 31%，已跌破 6 月低点；现货 $3,888（2026-11），美元走强与实利率上行仍是主导压制。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<script id="gold-data">
+/*GOLD_DATA_START*/
+window.GOLD_DATA = {
+  "asOf": "2026-09",
+  "spot": "$3,888",
+  "spotAsOf": "2026-11",
+  "ath": "$5,586",
+  "athDate": "2026-01-29",
+  "athRange": "$5,590–5,603/oz",
+  "first4k": "$4,000",
+  "lowValue": "$3,857",
+  "lowDrop": "31%",
+  "reboundFromLow": "+0.8%",
+  "eventDate": "2026-11-15",
+  "eventPct": "+0.03%",
+  "eventText": "12月加息大局已定！黄金金价暗盘跌2.3%！央行托底金价为何下跌？",
+  "tickerXau": "$3,888",
+  "tickerXauChg": "+0.8%",
+  "tickerUst": "5.10%",
+  "tickerUstChg": "-0.07",
+  "tickerDxy": "98.4",
+  "tickerDxyChg": "-0.3",
+  "cbChinaOwn": "2,410t",
+  "worldDebt": "100%",
+  "usDebtGdp": "121.1%",
+  "dxyBroad": "121.9",
+  "cbNet2025": "863t",
+  "cbH1Summary": "2026 年至今 +270t",
+  "cnImportH1": "764t",
+  "netInterestShare": "18.5%",
+  "liveApi": "https://api.gold-api.com/price/XAU",
+  "cbChinaStreak": "23",
+  "cbChinaYtd": "103t",
+  "eventSource": "Sohu",
+  "egUsdDate": "2026-08-19",
+  "egUsdDxyChg": "-0.82%",
+  "egUsdGoldChg": "+2.8%",
+  "egRealTipsChg": "+0.08pct",
+  "egRealGoldChg": "-7.1%",
+  "lowDate": "2026-11-12"
+};
+/*GOLD_DATA_END*/
+</script>
+
+<!-- 面板数据（央行购金 / 美债）—— 由 src/build_html.py 从 data/gold_data.xlsx 注入。
+     改数据请改 Excel 后跑 build_html.py，不要手改这两个标记之间的内容。 -->
+<script id="gold-panel-data">
+/*GOLD_PANEL_DATA_START*/
+window.GOLD_PANEL_DATA = {
+  "cbCountry": [
+    {
+      "name": "Poland, Rep. of",
+      "value": 122.7
+    },
+    {
+      "name": "China, P.R.: Mainland",
+      "value": 103.3
+    },
+    {
+      "name": "Uzbekistan, Rep. of",
+      "value": 55.8
+    },
+    {
+      "name": "Kazakhstan, Rep. of",
+      "value": 40.9
+    },
+    {
+      "name": "Czech Rep.",
+      "value": 15.8
+    },
+    {
+      "name": "Singapore",
+      "value": 10.1
+    },
+    {
+      "name": "Chile",
+      "value": 9.5
+    },
+    {
+      "name": "Jordan",
+      "value": 6.9
+    },
+    {
+      "name": "Ghana",
+      "value": 6.0
+    },
+    {
+      "name": "Malaysia",
+      "value": 5.9
+    },
+    {
+      "name": "Germany",
+      "value": -1.2
+    },
+    {
+      "name": "United Arab Emirates",
+      "value": -1.8
+    },
+    {
+      "name": "Bulgaria",
+      "value": -1.9
+    },
+    {
+      "name": "Russian Federation",
+      "value": -40.4
+    },
+    {
+      "name": "Turkey",
+      "value": -81.6
+    }
+  ],
+  "cbMonthly": [
+    {
+      "month": "1 月",
+      "value": 7.1
+    },
+    {
+      "month": "2 月",
+      "value": 40.4
+    },
+    {
+      "month": "3 月",
+      "value": -19.8
+    },
+    {
+      "month": "4 月",
+      "value": 25.4
+    },
+    {
+      "month": "5 月",
+      "value": 44.1
+    },
+    {
+      "month": "6 月",
+      "value": 52.8
+    },
+    {
+      "month": "7 月",
+      "value": 22.6
+    },
+    {
+      "month": "8 月",
+      "value": 37.0
+    },
+    {
+      "month": "9 月",
+      "value": 60.7
+    }
+  ],
+  "cnMonthly": [
+    {
+      "month": "2024-01",
+      "reserve": 7219.0,
+      "add": 12.0,
+      "streak": 15.0
+    },
+    {
+      "month": "2024-02",
+      "reserve": 7258.0,
+      "add": 0.0,
+      "streak": 16.0
+    },
+    {
+      "month": "2024-03",
+      "reserve": 7274.0,
+      "add": 0.0,
+      "streak": 17.0
+    },
+    {
+      "month": "2024-04",
+      "reserve": 7280.0,
+      "add": 0.0,
+      "streak": 18.0
+    },
+    {
+      "month": "2024-05",
+      "reserve": 7280.0,
+      "add": 0.0,
+      "streak": 0.0
+    },
+    {
+      "month": "2024-06",
+      "reserve": 7280.0,
+      "add": 0.0,
+      "streak": 0.0
+    },
+    {
+      "month": "2024-07",
+      "reserve": 7280.0,
+      "add": 0.0,
+      "streak": 0.0
+    },
+    {
+      "month": "2024-08",
+      "reserve": 7280.0,
+      "add": 0.0,
+      "streak": 0.0
+    },
+    {
+      "month": "2024-09",
+      "reserve": 7280.0,
+      "add": 0.0,
+      "streak": 0.0
+    },
+    {
+      "month": "2024-10",
+      "reserve": 7280.0,
+      "add": 0.0,
+      "streak": 0.0
+    },
+    {
+      "month": "2024-11",
+      "reserve": 7296.0,
+      "add": 0.0,
+      "streak": 1.0
+    },
+    {
+      "month": "2024-12",
+      "reserve": 7329.0,
+      "add": 0.0,
+      "streak": 2.0
+    },
+    {
+      "month": "2025-01",
+      "reserve": 7345.0,
+      "add": 0.0,
+      "streak": 3.0
+    },
+    {
+      "month": "2025-02",
+      "reserve": 7361.0,
+      "add": 0.0,
+      "streak": 4.0
+    },
+    {
+      "month": "2025-03",
+      "reserve": 7370.0,
+      "add": 0.0,
+      "streak": 5.0
+    },
+    {
+      "month": "2025-04",
+      "reserve": 7377.0,
+      "add": 0.0,
+      "streak": 6.0
+    },
+    {
+      "month": "2025-05",
+      "reserve": 7383.0,
+      "add": 0.0,
+      "streak": 7.0
+    },
+    {
+      "month": "2025-06",
+      "reserve": 7390.0,
+      "add": 0.0,
+      "streak": 8.0
+    },
+    {
+      "month": "2025-07",
+      "reserve": 7396.0,
+      "add": 0.0,
+      "streak": 9.0
+    },
+    {
+      "month": "2025-08",
+      "reserve": 7402.0,
+      "add": 0.0,
+      "streak": 10.0
+    },
+    {
+      "month": "2025-09",
+      "reserve": 7406.0,
+      "add": 0.0,
+      "streak": 11.0
+    },
+    {
+      "month": "2025-10",
+      "reserve": 7409.0,
+      "add": 0.0,
+      "streak": 12.0
+    },
+    {
+      "month": "2025-11",
+      "reserve": 7412.0,
+      "add": 0.0,
+      "streak": 13.0
+    },
+    {
+      "month": "2025-12",
+      "reserve": 7415.0,
+      "add": 0.0,
+      "streak": 14.0
+    },
+    {
+      "month": "2026-01",
+      "reserve": 7419.0,
+      "add": 0.0,
+      "streak": 15.0
+    },
+    {
+      "month": "2026-02",
+      "reserve": 7422.0,
+      "add": 0.0,
+      "streak": 16.0
+    },
+    {
+      "month": "2026-03",
+      "reserve": 7438.0,
+      "add": 0.0,
+      "streak": 17.0
+    },
+    {
+      "month": "2026-04",
+      "reserve": 7464.0,
+      "add": 0.0,
+      "streak": 18.0
+    },
+    {
+      "month": "2026-05",
+      "reserve": 7496.0,
+      "add": 0.0,
+      "streak": 19.0
+    },
+    {
+      "month": "2026-06",
+      "reserve": 7544.0,
+      "add": 0.0,
+      "streak": 20.0
+    },
+    {
+      "month": "2026-07",
+      "reserve": 7608.0,
+      "add": 0.0,
+      "streak": 21.0
+    },
+    {
+      "month": "2026-08",
+      "reserve": 7673.0,
+      "add": 0.0,
+      "streak": 22.0
+    },
+    {
+      "month": "2026-09",
+      "reserve": 7747.0,
+      "add": 0.0,
+      "streak": 23.0
+    },
+    {
+      "month": "2026-10",
+      "reserve": 7830.0,
+      "add": 83.0,
+      "streak": 24.0
+    }
+  ],
+  "cbAnnual": [
+    {
+      "year": 2002,
+      "value": -373.9,
+      "note": "年度合计"
+    },
+    {
+      "year": 2003,
+      "value": -553.7,
+      "note": "年度合计"
+    },
+    {
+      "year": 2004,
+      "value": -410.9,
+      "note": "年度合计"
+    },
+    {
+      "year": 2005,
+      "value": -533.9,
+      "note": "年度合计"
+    },
+    {
+      "year": 2006,
+      "value": -271.1,
+      "note": "年度合计"
+    },
+    {
+      "year": 2007,
+      "value": -393.0,
+      "note": "年度合计"
+    },
+    {
+      "year": 2008,
+      "value": 37.7,
+      "note": "年度合计"
+    },
+    {
+      "year": 2009,
+      "value": 739.0,
+      "note": "年度合计"
+    },
+    {
+      "year": 2010,
+      "value": 165.8,
+      "note": "年度合计"
+    },
+    {
+      "year": 2011,
+      "value": 301.5,
+      "note": "年度合计"
+    },
+    {
+      "year": 2012,
+      "value": 276.0,
+      "note": "年度合计"
+    },
+    {
+      "year": 2013,
+      "value": 232.7,
+      "note": "年度合计"
+    },
+    {
+      "year": 2014,
+      "value": 304.6,
+      "note": "年度合计"
+    },
+    {
+      "year": 2015,
+      "value": 922.4,
+      "note": "年度合计"
+    },
+    {
+      "year": 2016,
+      "value": 245.4,
+      "note": "年度合计"
+    },
+    {
+      "year": 2017,
+      "value": 339.2,
+      "note": "年度合计"
+    },
+    {
+      "year": 2018,
+      "value": 531.7,
+      "note": "年度合计"
+    },
+    {
+      "year": 2019,
+      "value": 594.4,
+      "note": "年度合计"
+    },
+    {
+      "year": 2020,
+      "value": 135.3,
+      "note": "年度合计"
+    },
+    {
+      "year": 2021,
+      "value": 408.6,
+      "note": "年度合计"
+    },
+    {
+      "year": 2022,
+      "value": 414.7,
+      "note": "年度合计"
+    },
+    {
+      "year": 2023,
+      "value": 434.6,
+      "note": "年度合计"
+    },
+    {
+      "year": 2024,
+      "value": 314.3,
+      "note": "年度合计"
+    },
+    {
+      "year": 2025,
+      "value": 310.0,
+      "note": "年度合计"
+    },
+    {
+      "year": 2026,
+      "value": 270.2,
+      "note": "截至 9 月（YTD，非全年）"
+    }
+  ],
+  "gdtQuarter": [
+    {
+      "quarter": "Q1'10",
+      "jewellery": 564.1,
+      "technology": 115.8,
+      "investment": 283.3,
+      "cb": 59.7,
+      "demand": 1023.0,
+      "mine": 632.2,
+      "hedging": -11.7,
+      "mineTotal": 620.4,
+      "recycled": 376.3,
+      "supply": 996.7
+    },
+    {
+      "quarter": "Q2'10",
+      "jewellery": 432.8,
+      "technology": 116.6,
+      "investment": 619.5,
+      "cb": 14.2,
+      "demand": 1183.1,
+      "mine": 675.0,
+      "hedging": 14.8,
+      "mineTotal": 689.8,
+      "recycled": 455.2,
+      "supply": 1145.0
+    },
+    {
+      "quarter": "Q3'10",
+      "jewellery": 560.4,
+      "technology": 119.8,
+      "investment": 382.0,
+      "cb": 24.0,
+      "demand": 1086.3,
+      "mine": 730.3,
+      "hedging": -56.0,
+      "mineTotal": 674.4,
+      "recycled": 382.2,
+      "supply": 1056.6
+    },
+    {
+      "quarter": "Q4'10",
+      "jewellery": 531.3,
+      "technology": 114.8,
+      "investment": 368.0,
+      "cb": -18.8,
+      "demand": 995.3,
+      "mine": 719.0,
+      "hedging": -55.9,
+      "mineTotal": 663.0,
+      "recycled": 457.4,
+      "supply": 1120.4
+    },
+    {
+      "quarter": "Q1'11",
+      "jewellery": 610.0,
+      "technology": 112.9,
+      "investment": 353.4,
+      "cb": 142.5,
+      "demand": 1218.8,
+      "mine": 668.9,
+      "hedging": 9.9,
+      "mineTotal": 678.8,
+      "recycled": 357.0,
+      "supply": 1035.8
+    },
+    {
+      "quarter": "Q2'11",
+      "jewellery": 539.1,
+      "technology": 114.8,
+      "investment": 398.7,
+      "cb": 69.4,
+      "demand": 1122.0,
+      "mine": 721.5,
+      "hedging": 18.4,
+      "mineTotal": 739.9,
+      "recycled": 402.8,
+      "supply": 1142.7
+    },
+    {
+      "quarter": "Q3'11",
+      "jewellery": 510.5,
+      "technology": 111.6,
+      "investment": 541.0,
+      "cb": 148.8,
+      "demand": 1311.9,
+      "mine": 754.8,
+      "hedging": 5.0,
+      "mineTotal": 759.9,
+      "recycled": 454.4,
+      "supply": 1214.2
+    },
+    {
+      "quarter": "Q4'11",
+      "jewellery": 473.9,
+      "technology": 98.6,
+      "investment": 486.5,
+      "cb": 120.1,
+      "demand": 1179.1,
+      "mine": 739.4,
+      "hedging": -10.8,
+      "mineTotal": 728.6,
+      "recycled": 412.2,
+      "supply": 1140.7
+    },
+    {
+      "quarter": "Q1'12",
+      "jewellery": 560.1,
+      "technology": 103.0,
+      "investment": 416.4,
+      "cb": 122.5,
+      "demand": 1202.0,
+      "mine": 688.2,
+      "hedging": -0.4,
+      "mineTotal": 687.8,
+      "recycled": 401.0,
+      "supply": 1088.8
+    },
+    {
+      "quarter": "Q2'12",
+      "jewellery": 497.1,
+      "technology": 99.5,
+      "investment": 300.4,
+      "cb": 170.7,
+      "demand": 1067.7,
+      "mine": 732.2,
+      "hedging": -10.5,
+      "mineTotal": 721.8,
+      "recycled": 400.8,
+      "supply": 1122.6
+    },
+    {
+      "quarter": "Q3'12",
+      "jewellery": 551.5,
+      "technology": 97.5,
+      "investment": 451.3,
+      "cb": 117.8,
+      "demand": 1217.9,
+      "mine": 772.7,
+      "hedging": 1.3,
+      "mineTotal": 774.0,
+      "recycled": 443.9,
+      "supply": 1217.8
+    },
+    {
+      "quarter": "Q4'12",
+      "jewellery": 553.5,
+      "technology": 90.5,
+      "investment": 467.8,
+      "cb": 158.3,
+      "demand": 1270.2,
+      "mine": 775.9,
+      "hedging": -35.7,
+      "mineTotal": 740.2,
+      "recycled": 391.2,
+      "supply": 1131.3
+    },
+    {
+      "quarter": "Q1'13",
+      "jewellery": 613.2,
+      "technology": 91.6,
+      "investment": 255.8,
+      "cb": 170.5,
+      "demand": 1131.1,
+      "mine": 727.6,
+      "hedging": -5.4,
+      "mineTotal": 722.1,
+      "recycled": 341.8,
+      "supply": 1063.9
+    },
+    {
+      "quarter": "Q2'13",
+      "jewellery": 817.3,
+      "technology": 94.6,
+      "investment": 180.2,
+      "cb": 181.4,
+      "demand": 1273.6,
+      "mine": 776.4,
+      "hedging": -5.8,
+      "mineTotal": 770.6,
+      "recycled": 271.4,
+      "supply": 1041.9
+    },
+    {
+      "quarter": "Q3'13",
+      "jewellery": 697.4,
+      "technology": 91.3,
+      "investment": 203.1,
+      "cb": 126.9,
+      "demand": 1118.8,
+      "mine": 846.2,
+      "hedging": -2.1,
+      "mineTotal": 844.1,
+      "recycled": 299.7,
+      "supply": 1143.8
+    },
+    {
+      "quarter": "Q4'13",
+      "jewellery": 640.5,
+      "technology": 85.1,
+      "investment": 164.8,
+      "cb": 150.6,
+      "demand": 1041.0,
+      "mine": 844.8,
+      "hedging": -14.6,
+      "mineTotal": 830.2,
+      "recycled": 282.4,
+      "supply": 1112.6
+    },
+    {
+      "quarter": "Q1'14",
+      "jewellery": 615.3,
+      "technology": 84.8,
+      "investment": 283.2,
+      "cb": 118.8,
+      "demand": 1102.2,
+      "mine": 757.4,
+      "hedging": 12.4,
+      "mineTotal": 769.8,
+      "recycled": 358.7,
+      "supply": 1128.5
+    },
+    {
+      "quarter": "Q2'14",
+      "jewellery": 619.9,
+      "technology": 88.1,
+      "investment": 224.6,
+      "cb": 169.6,
+      "demand": 1102.2,
+      "mine": 800.2,
+      "hedging": 50.3,
+      "mineTotal": 850.5,
+      "recycled": 260.7,
+      "supply": 1111.2
+    },
+    {
+      "quarter": "Q3'14",
+      "jewellery": 651.2,
+      "technology": 91.2,
+      "investment": 192.1,
+      "cb": 177.0,
+      "demand": 1111.5,
+      "mine": 872.4,
+      "hedging": -8.1,
+      "mineTotal": 864.3,
+      "recycled": 254.1,
+      "supply": 1118.4
+    },
+    {
+      "quarter": "Q4'14",
+      "jewellery": 657.5,
+      "technology": 90.9,
+      "investment": 198.9,
+      "cb": 135.8,
+      "demand": 1083.1,
+      "mine": 873.7,
+      "hedging": 50.4,
+      "mineTotal": 924.1,
+      "recycled": 256.0,
+      "supply": 1180.1
+    },
+    {
+      "quarter": "Q1'15",
+      "jewellery": 623.5,
+      "technology": 85.3,
+      "investment": 293.7,
+      "cb": 103.1,
+      "demand": 1105.5,
+      "mine": 796.0,
+      "hedging": -2.9,
+      "mineTotal": 793.1,
+      "recycled": 337.5,
+      "supply": 1130.6
+    },
+    {
+      "quarter": "Q2'15",
+      "jewellery": 552.3,
+      "technology": 85.3,
+      "investment": 197.3,
+      "cb": 141.4,
+      "demand": 976.2,
+      "mine": 845.9,
+      "hedging": -15.1,
+      "mineTotal": 830.8,
+      "recycled": 253.6,
+      "supply": 1084.5
+    },
+    {
+      "quarter": "Q3'15",
+      "jewellery": 673.0,
+      "technology": 84.4,
+      "investment": 239.3,
+      "cb": 172.4,
+      "demand": 1169.1,
+      "mine": 874.3,
+      "hedging": 14.2,
+      "mineTotal": 888.5,
+      "recycled": 248.8,
+      "supply": 1137.3
+    },
+    {
+      "quarter": "Q4'15",
+      "jewellery": 630.6,
+      "technology": 83.0,
+      "investment": 233.2,
+      "cb": 162.7,
+      "demand": 1109.5,
+      "mine": 874.0,
+      "hedging": 16.7,
+      "mineTotal": 890.7,
+      "recycled": 227.1,
+      "supply": 1117.8
+    },
+    {
+      "quarter": "Q1'16",
+      "jewellery": 484.2,
+      "technology": 77.8,
+      "investment": 617.3,
+      "cb": 110.6,
+      "demand": 1289.9,
+      "mine": 874.3,
+      "hedging": 56.1,
+      "mineTotal": 930.4,
+      "recycled": 341.7,
+      "supply": 1272.1
+    },
+    {
+      "quarter": "Q2'16",
+      "jewellery": 456.9,
+      "technology": 81.5,
+      "investment": 460.4,
+      "cb": 84.9,
+      "demand": 1083.7,
+      "mine": 879.4,
+      "hedging": 23.8,
+      "mineTotal": 903.2,
+      "recycled": 327.9,
+      "supply": 1231.0
+    },
+    {
+      "quarter": "Q3'16",
+      "jewellery": 516.5,
+      "technology": 84.0,
+      "investment": 348.7,
+      "cb": 89.0,
+      "demand": 1038.1,
+      "mine": 900.6,
+      "hedging": -17.8,
+      "mineTotal": 882.8,
+      "recycled": 318.7,
+      "supply": 1201.5
+    },
+    {
+      "quarter": "Q4'16",
+      "jewellery": 565.7,
+      "technology": 85.9,
+      "investment": 195.7,
+      "cb": 110.4,
+      "demand": 957.7,
+      "mine": 933.7,
+      "hedging": -24.4,
+      "mineTotal": 909.2,
+      "recycled": 243.9,
+      "supply": 1153.1
+    },
+    {
+      "quarter": "Q1'17",
+      "jewellery": 551.9,
+      "technology": 80.4,
+      "investment": 415.1,
+      "cb": 92.0,
+      "demand": 1139.4,
+      "mine": 857.5,
+      "hedging": -15.6,
+      "mineTotal": 842.0,
+      "recycled": 273.2,
+      "supply": 1115.2
+    },
+    {
+      "quarter": "Q2'17",
+      "jewellery": 551.4,
+      "technology": 83.0,
+      "investment": 313.6,
+      "cb": 96.3,
+      "demand": 1044.3,
+      "mine": 911.2,
+      "hedging": -8.5,
+      "mineTotal": 902.7,
+      "recycled": 270.3,
+      "supply": 1173.0
+    },
+    {
+      "quarter": "Q3'17",
+      "jewellery": 541.6,
+      "technology": 85.9,
+      "investment": 266.6,
+      "cb": 96.6,
+      "demand": 990.6,
+      "mine": 952.0,
+      "hedging": 7.9,
+      "mineTotal": 959.9,
+      "recycled": 303.5,
+      "supply": 1263.4
+    },
+    {
+      "quarter": "Q4'17",
+      "jewellery": 622.5,
+      "technology": 90.1,
+      "investment": 326.6,
+      "cb": 93.7,
+      "demand": 1132.9,
+      "mine": 964.0,
+      "hedging": -9.3,
+      "mineTotal": 954.7,
+      "recycled": 265.4,
+      "supply": 1220.1
+    },
+    {
+      "quarter": "Q1'18",
+      "jewellery": 532.5,
+      "technology": 83.5,
+      "investment": 291.5,
+      "cb": 84.8,
+      "demand": 992.3,
+      "mine": 876.7,
+      "hedging": 37.5,
+      "mineTotal": 914.2,
+      "recycled": 265.5,
+      "supply": 1179.7
+    },
+    {
+      "quarter": "Q2'18",
+      "jewellery": 538.4,
+      "technology": 85.0,
+      "investment": 280.4,
+      "cb": 152.8,
+      "demand": 1056.5,
+      "mine": 923.9,
+      "hedging": -37.7,
+      "mineTotal": 886.3,
+      "recycled": 280.1,
+      "supply": 1166.3
+    },
+    {
+      "quarter": "Q3'18",
+      "jewellery": 589.2,
+      "technology": 87.1,
+      "investment": 194.4,
+      "cb": 240.5,
+      "demand": 1111.3,
+      "mine": 979.9,
+      "hedging": -24.1,
+      "mineTotal": 955.8,
+      "recycled": 309.1,
+      "supply": 1264.9
+    },
+    {
+      "quarter": "Q4'18",
+      "jewellery": 637.5,
+      "technology": 86.0,
+      "investment": 400.9,
+      "cb": 178.1,
+      "demand": 1302.5,
+      "mine": 974.7,
+      "hedging": 12.6,
+      "mineTotal": 987.3,
+      "recycled": 277.1,
+      "supply": 1264.4
+    },
+    {
+      "quarter": "Q1'19",
+      "jewellery": 547.5,
+      "technology": 81.5,
+      "investment": 303.0,
+      "cb": 146.2,
+      "demand": 1078.2,
+      "mine": 869.8,
+      "hedging": -7.0,
+      "mineTotal": 862.8,
+      "recycled": 281.9,
+      "supply": 1144.7
+    },
+    {
+      "quarter": "Q2'19",
+      "jewellery": 560.6,
+      "technology": 82.3,
+      "investment": 296.8,
+      "cb": 227.8,
+      "demand": 1167.6,
+      "mine": 903.9,
+      "hedging": 50.9,
+      "mineTotal": 954.8,
+      "recycled": 305.7,
+      "supply": 1260.5
+    },
+    {
+      "quarter": "Q3'19",
+      "jewellery": 487.3,
+      "technology": 83.7,
+      "investment": 413.6,
+      "cb": 113.5,
+      "demand": 1098.1,
+      "mine": 958.4,
+      "hedging": -4.4,
+      "mineTotal": 954.0,
+      "recycled": 355.8,
+      "supply": 1309.8
+    },
+    {
+      "quarter": "Q4'19",
+      "jewellery": 566.9,
+      "technology": 85.1,
+      "investment": 268.4,
+      "cb": 117.9,
+      "demand": 1038.3,
+      "mine": 966.5,
+      "hedging": -33.3,
+      "mineTotal": 933.2,
+      "recycled": 332.4,
+      "supply": 1265.6
+    },
+    {
+      "quarter": "Q1'20",
+      "jewellery": 330.7,
+      "technology": 74.1,
+      "investment": 555.9,
+      "cb": 140.8,
+      "demand": 1101.5,
+      "mine": 853.9,
+      "hedging": 40.4,
+      "mineTotal": 894.3,
+      "recycled": 301.0,
+      "supply": 1195.3
+    },
+    {
+      "quarter": "Q2'20",
+      "jewellery": 201.1,
+      "technology": 70.3,
+      "investment": 597.1,
+      "cb": 63.7,
+      "demand": 932.3,
+      "mine": 806.8,
+      "hedging": -32.9,
+      "mineTotal": 773.9,
+      "recycled": 285.2,
+      "supply": 1059.1
+    },
+    {
+      "quarter": "Q3'20",
+      "jewellery": 314.3,
+      "technology": 78.8,
+      "investment": 508.5,
+      "cb": -10.6,
+      "demand": 891.1,
+      "mine": 938.9,
+      "hedging": -21.9,
+      "mineTotal": 917.1,
+      "recycled": 378.0,
+      "supply": 1295.0
+    },
+    {
+      "quarter": "Q4'20",
+      "jewellery": 485.8,
+      "technology": 85.8,
+      "investment": 146.1,
+      "cb": 61.0,
+      "demand": 778.6,
+      "mine": 944.4,
+      "hedging": -22.2,
+      "mineTotal": 922.2,
+      "recycled": 328.9,
+      "supply": 1251.1
+    },
+    {
+      "quarter": "Q1'21",
+      "jewellery": 546.4,
+      "technology": 82.7,
+      "investment": 181.5,
+      "cb": 115.6,
+      "demand": 926.2,
+      "mine": 853.3,
+      "hedging": 4.8,
+      "mineTotal": 858.2,
+      "recycled": 269.7,
+      "supply": 1127.8
+    },
+    {
+      "quarter": "Q2'21",
+      "jewellery": 465.1,
+      "technology": 81.6,
+      "investment": 292.3,
+      "cb": 209.6,
+      "demand": 1048.7,
+      "mine": 896.2,
+      "hedging": -16.2,
+      "mineTotal": 880.0,
+      "recycled": 278.1,
+      "supply": 1158.1
+    },
+    {
+      "quarter": "Q3'21",
+      "jewellery": 520.1,
+      "technology": 85.2,
+      "investment": 233.9,
+      "cb": 90.6,
+      "demand": 929.8,
+      "mine": 952.5,
+      "hedging": -11.8,
+      "mineTotal": 940.7,
+      "recycled": 292.9,
+      "supply": 1233.6
+    },
+    {
+      "quarter": "Q4'21",
+      "jewellery": 720.8,
+      "technology": 87.7,
+      "investment": 304.1,
+      "cb": 34.3,
+      "demand": 1147.0,
+      "mine": 963.7,
+      "hedging": 34.9,
+      "mineTotal": 998.6,
+      "recycled": 295.1,
+      "supply": 1293.7
+    },
+    {
+      "quarter": "Q1'22",
+      "jewellery": 518.6,
+      "technology": 82.6,
+      "investment": 562.0,
+      "cb": 82.4,
+      "demand": 1245.6,
+      "mine": 870.1,
+      "hedging": 25.0,
+      "mineTotal": 895.1,
+      "recycled": 294.2,
+      "supply": 1189.3
+    },
+    {
+      "quarter": "Q2'22",
+      "jewellery": 498.6,
+      "technology": 79.5,
+      "investment": 215.6,
+      "cb": 158.6,
+      "demand": 952.3,
+      "mine": 923.0,
+      "hedging": 2.0,
+      "mineTotal": 925.0,
+      "recycled": 284.1,
+      "supply": 1209.1
+    },
+    {
+      "quarter": "Q3'22",
+      "jewellery": 586.2,
+      "technology": 78.8,
+      "investment": 106.8,
+      "cb": 456.9,
+      "demand": 1228.7,
+      "mine": 983.6,
+      "hedging": -21.8,
+      "mineTotal": 961.9,
+      "recycled": 267.9,
+      "supply": 1229.7
+    },
+    {
+      "quarter": "Q4'22",
+      "jewellery": 605.1,
+      "technology": 73.9,
+      "investment": 251.1,
+      "cb": 382.1,
+      "demand": 1312.1,
+      "mine": 980.9,
+      "hedging": -14.3,
+      "mineTotal": 966.5,
+      "recycled": 289.9,
+      "supply": 1256.4
+    },
+    {
+      "quarter": "Q1'23",
+      "jewellery": 535.4,
+      "technology": 72.8,
+      "investment": 279.9,
+      "cb": 290.4,
+      "demand": 1178.6,
+      "mine": 880.4,
+      "hedging": 39.0,
+      "mineTotal": 919.5,
+      "recycled": 309.2,
+      "supply": 1228.7
+    },
+    {
+      "quarter": "Q2'23",
+      "jewellery": 501.5,
+      "technology": 72.8,
+      "investment": 257.0,
+      "cb": 176.3,
+      "demand": 1007.6,
+      "mine": 926.6,
+      "hedging": -16.2,
+      "mineTotal": 910.4,
+      "recycled": 323.9,
+      "supply": 1234.3
+    },
+    {
+      "quarter": "Q3'23",
+      "jewellery": 584.7,
+      "technology": 77.3,
+      "investment": 161.6,
+      "cb": 367.3,
+      "demand": 1190.9,
+      "mine": 962.7,
+      "hedging": 23.2,
+      "mineTotal": 985.9,
+      "recycled": 289.5,
+      "supply": 1275.4
+    },
+    {
+      "quarter": "Q4'23",
+      "jewellery": 586.8,
+      "technology": 82.2,
+      "investment": 263.2,
+      "cb": 216.8,
+      "demand": 1148.9,
+      "mine": 982.5,
+      "hedging": 20.8,
+      "mineTotal": 1003.3,
+      "recycled": 311.1,
+      "supply": 1314.4
+    },
+    {
+      "quarter": "Q1'24",
+      "jewellery": 538.7,
+      "technology": 80.2,
+      "investment": 211.2,
+      "cb": 313.3,
+      "demand": 1143.4,
+      "mine": 879.5,
+      "hedging": -9.4,
+      "mineTotal": 870.1,
+      "recycled": 348.8,
+      "supply": 1218.9
+    },
+    {
+      "quarter": "Q2'24",
+      "jewellery": 416.6,
+      "technology": 80.2,
+      "investment": 272.1,
+      "cb": 211.5,
+      "demand": 980.5,
+      "mine": 942.4,
+      "hedging": -21.1,
+      "mineTotal": 921.4,
+      "recycled": 334.2,
+      "supply": 1255.6
+    },
+    {
+      "quarter": "Q3'24",
+      "jewellery": 546.1,
+      "technology": 82.9,
+      "investment": 372.4,
+      "cb": 196.4,
+      "demand": 1197.8,
+      "mine": 999.1,
+      "hedging": -7.1,
+      "mineTotal": 991.9,
+      "recycled": 324.5,
+      "supply": 1316.5
+    },
+    {
+      "quarter": "Q4'24",
+      "jewellery": 523.9,
+      "technology": 82.8,
+      "investment": 349.7,
+      "cb": 365.1,
+      "demand": 1321.5,
+      "mine": 984.2,
+      "hedging": -18.8,
+      "mineTotal": 965.4,
+      "recycled": 357.7,
+      "supply": 1323.1
+    },
+    {
+      "quarter": "Q1'25",
+      "jewellery": 434.6,
+      "technology": 80.7,
+      "investment": 564.7,
+      "cb": 235.9,
+      "demand": 1315.8,
+      "mine": 876.4,
+      "hedging": -7.7,
+      "mineTotal": 868.7,
+      "recycled": 348.6,
+      "supply": 1217.3
+    },
+    {
+      "quarter": "Q2'25",
+      "jewellery": 354.2,
+      "technology": 78.9,
+      "investment": 486.9,
+      "cb": 177.9,
+      "demand": 1097.9,
+      "mine": 962.2,
+      "hedging": -25.8,
+      "mineTotal": 936.4,
+      "recycled": 346.7,
+      "supply": 1283.1
+    },
+    {
+      "quarter": "Q3'25",
+      "jewellery": 420.0,
+      "technology": 82.0,
+      "investment": 554.3,
+      "cb": 226.3,
+      "demand": 1282.6,
+      "mine": 1040.7,
+      "hedging": -0.2,
+      "mineTotal": 1040.5,
+      "recycled": 342.7,
+      "supply": 1383.2
+    },
+    {
+      "quarter": "Q4'25",
+      "jewellery": 438.9,
+      "technology": 82.5,
+      "investment": 604.1,
+      "cb": 209.9,
+      "demand": 1335.3,
+      "mine": 999.8,
+      "hedging": -20.2,
+      "mineTotal": 979.6,
+      "recycled": 365.4,
+      "supply": 1345.0
+    },
+    {
+      "quarter": "Q1'26",
+      "jewellery": 331.8,
+      "technology": 82.2,
+      "investment": 539.3,
+      "cb": 57.7,
+      "demand": 1011.0,
+      "mine": 907.7,
+      "hedging": -21.8,
+      "mineTotal": 886.0,
+      "recycled": 372.5,
+      "supply": 1258.4
+    },
+    {
+      "quarter": "Q2'26",
+      "jewellery": 311.0,
+      "technology": 80.9,
+      "investment": 261.2,
+      "cb": 296.3,
+      "demand": 949.5,
+      "mine": 951.3,
+      "hedging": -18.6,
+      "mineTotal": 932.7,
+      "recycled": 321.8,
+      "supply": 1254.5
+    },
+    {
+      "quarter": "Q3'26",
+      "jewellery": 340.1,
+      "technology": 84.8,
+      "investment": 479.0,
+      "cb": 321.2,
+      "demand": 1225.1,
+      "mine": 1070.9,
+      "hedging": -16.8,
+      "mineTotal": 1054.1,
+      "recycled": 314.5,
+      "supply": 1368.6
+    }
+  ],
+  "debt": {
+    "years": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "debt": [
+      119.6,
+      118.4,
+      118.6,
+      120.2,
+      121.5
+    ],
+    "r": [
+      1.25,
+      1.55,
+      2.0,
+      2.5,
+      2.59
+    ],
+    "n": [
+      11.0,
+      9.8,
+      6.7,
+      5.3,
+      5.1
+    ],
+    "interest": [
+      1.49,
+      1.83,
+      2.37,
+      3.0,
+      3.15
+    ],
+    "rn": [
+      -9.75,
+      -8.25,
+      -4.7,
+      -2.8,
+      -2.51
+    ]
+  },
+  "meta": {
+    "asOf": "2026-08",
+    "projB0": "121.5",
+    "projR": "2.59",
+    "projN": "5.1",
+    "projDef": "5.9",
+    "projYears": "15",
+    "dataSource": "gold-api.com / FRED / WGC / CBO",
+    "lastUpdated": "2026-11-15 22:03:37"
+  },
+  "macroLatest": [
+    {
+      "key": "A2",
+      "name": "实际利率 TIPS",
+      "value": "2.86",
+      "date": "2026-11-12",
+      "unit": "%",
+      "source": "FRED DFII10",
+      "note": "10Y TIPS 收益率（市场口径实际利率）；非 DGS10−T10YIE 构造值"
+    },
+    {
+      "key": "A3",
+      "name": "美元指数",
+      "value": "103.41",
+      "date": "2026-11-13",
+      "unit": "",
+      "source": "Yahoo DX-Y.NYB (ICE DXY)",
+      "note": "ICE DXY；与 FRED 广义美元 DTWEXBGS 量级不同，不可混用"
+    },
+    {
+      "key": "A4",
+      "name": "央行及其他机构净购金",
+      "value": "321.2",
+      "date": "Q3'26",
+      "unit": "吨/季",
+      "source": "WGC GDT 季度（复用本地 sheet）",
+      "note": "WGC 口径季度值；与 IFS 年度净购金非同一口径"
+    },
+    {
+      "key": "A5",
+      "name": "地缘政治风险指数",
+      "value": "164.0",
+      "date": "2026-11-02",
+      "unit": "MA30",
+      "source": "Caldara-Iacoviello GPR",
+      "note": "报纸词频代理指标，30 日均；非价格、非直接避险溢价"
+    },
+    {
+      "key": "A6",
+      "name": "金油比",
+      "value": "44.6",
+      "date": "2026-11-11",
+      "unit": "桶/盎司",
+      "source": "Yahoo GC=F ÷ FRED DCOILWTICO",
+      "note": "COMEX 期货金价 ÷ WTI 现货；仅作趋势观察"
+    },
+    {
+      "key": "A7",
+      "name": "通胀预期",
+      "value": "2.24",
+      "date": "2026-11-13",
+      "unit": "%",
+      "source": "FRED T10YIE",
+      "note": "10Y 盈亏平衡通胀率；通胀预期上行为黄金保值需求提供支撑"
+    },
+    {
+      "key": "A8",
+      "name": "风险偏好 VIX",
+      "value": "19.3",
+      "date": "2026-11-13",
+      "unit": "",
+      "source": "Yahoo ^VIX",
+      "note": "CBOE 波动率指数；VIX 下行=风险偏好回升（压制黄金），上行=避险升温"
+    }
+  ],
+  "macroSeries": {
+    "A2": [
+      {
+        "d": "2025-11-21",
+        "v": 1.82
+      },
+      {
+        "d": "2025-11-28",
+        "v": 1.79
+      },
+      {
+        "d": "2025-12-05",
+        "v": 1.88
+      },
+      {
+        "d": "2025-12-12",
+        "v": 1.93
+      },
+      {
+        "d": "2025-12-19",
+        "v": 1.92
+      },
+      {
+        "d": "2025-12-26",
+        "v": 1.91
+      },
+      {
+        "d": "2026-01-02",
+        "v": 1.94
+      },
+      {
+        "d": "2026-01-09",
+        "v": 1.9
+      },
+      {
+        "d": "2026-01-16",
+        "v": 1.91
+      },
+      {
+        "d": "2026-01-23",
+        "v": 1.92
+      },
+      {
+        "d": "2026-01-30",
+        "v": 1.9
+      },
+      {
+        "d": "2026-02-06",
+        "v": 1.88
+      },
+      {
+        "d": "2026-02-13",
+        "v": 1.77
+      },
+      {
+        "d": "2026-02-20",
+        "v": 1.8
+      },
+      {
+        "d": "2026-02-27",
+        "v": 1.72
+      },
+      {
+        "d": "2026-03-06",
+        "v": 1.8
+      },
+      {
+        "d": "2026-03-13",
+        "v": 1.92
+      },
+      {
+        "d": "2026-03-20",
+        "v": 2.01
+      },
+      {
+        "d": "2026-03-27",
+        "v": 2.13
+      },
+      {
+        "d": "2026-04-03",
+        "v": 1.99
+      },
+      {
+        "d": "2026-04-10",
+        "v": 1.95
+      },
+      {
+        "d": "2026-04-17",
+        "v": 1.9
+      },
+      {
+        "d": "2026-04-24",
+        "v": 1.89
+      },
+      {
+        "d": "2026-05-01",
+        "v": 1.91
+      },
+      {
+        "d": "2026-05-08",
+        "v": 1.93
+      },
+      {
+        "d": "2026-05-15",
+        "v": 2.1
+      },
+      {
+        "d": "2026-05-22",
+        "v": 2.16
+      },
+      {
+        "d": "2026-05-29",
+        "v": 2.07
+      },
+      {
+        "d": "2026-06-05",
+        "v": 2.19
+      },
+      {
+        "d": "2026-06-12",
+        "v": 2.17
+      },
+      {
+        "d": "2026-06-18",
+        "v": 2.21
+      },
+      {
+        "d": "2026-06-26",
+        "v": 2.18
+      },
+      {
+        "d": "2026-07-02",
+        "v": 2.26
+      },
+      {
+        "d": "2026-07-10",
+        "v": 2.32
+      },
+      {
+        "d": "2026-07-17",
+        "v": 2.31
+      },
+      {
+        "d": "2026-07-24",
+        "v": 2.43
+      },
+      {
+        "d": "2026-07-31",
+        "v": 2.47
+      },
+      {
+        "d": "2026-08-07",
+        "v": 2.4
+      },
+      {
+        "d": "2026-08-14",
+        "v": 2.41
+      },
+      {
+        "d": "2026-08-21",
+        "v": 2.4
+      },
+      {
+        "d": "2026-08-28",
+        "v": 2.42
+      },
+      {
+        "d": "2026-09-04",
+        "v": 2.43
+      },
+      {
+        "d": "2026-09-11",
+        "v": 2.6
+      },
+      {
+        "d": "2026-09-18",
+        "v": 2.68
+      },
+      {
+        "d": "2026-09-25",
+        "v": 2.83
+      },
+      {
+        "d": "2026-10-02",
+        "v": 2.92
+      },
+      {
+        "d": "2026-10-09",
+        "v": 2.91
+      },
+      {
+        "d": "2026-10-16",
+        "v": 2.74
+      },
+      {
+        "d": "2026-10-23",
+        "v": 2.66
+      },
+      {
+        "d": "2026-10-30",
+        "v": 2.6
+      },
+      {
+        "d": "2026-11-06",
+        "v": 2.63
+      },
+      {
+        "d": "2026-11-12",
+        "v": 2.86
+      }
+    ],
+    "A3": [
+      {
+        "d": "2025-11-21",
+        "v": 100.1800003051758
+      },
+      {
+        "d": "2025-11-28",
+        "v": 99.45999908447266
+      },
+      {
+        "d": "2025-12-05",
+        "v": 98.98999786376953
+      },
+      {
+        "d": "2025-12-12",
+        "v": 98.4000015258789
+      },
+      {
+        "d": "2025-12-19",
+        "v": 98.5999984741211
+      },
+      {
+        "d": "2025-12-26",
+        "v": 98.0199966430664
+      },
+      {
+        "d": "2026-01-02",
+        "v": 98.41999816894531
+      },
+      {
+        "d": "2026-01-09",
+        "v": 99.12999725341797
+      },
+      {
+        "d": "2026-01-16",
+        "v": 99.38999938964844
+      },
+      {
+        "d": "2026-01-23",
+        "v": 97.5999984741211
+      },
+      {
+        "d": "2026-01-30",
+        "v": 96.98999786376953
+      },
+      {
+        "d": "2026-02-06",
+        "v": 97.62999725341797
+      },
+      {
+        "d": "2026-02-13",
+        "v": 96.87999725341797
+      },
+      {
+        "d": "2026-02-20",
+        "v": 97.80000305175781
+      },
+      {
+        "d": "2026-02-27",
+        "v": 97.61000061035156
+      },
+      {
+        "d": "2026-03-06",
+        "v": 98.98999786376953
+      },
+      {
+        "d": "2026-03-13",
+        "v": 100.3600006103516
+      },
+      {
+        "d": "2026-03-20",
+        "v": 99.6500015258789
+      },
+      {
+        "d": "2026-03-27",
+        "v": 100.1500015258789
+      },
+      {
+        "d": "2026-04-02",
+        "v": 100.0299987792969
+      },
+      {
+        "d": "2026-04-10",
+        "v": 98.6500015258789
+      },
+      {
+        "d": "2026-04-17",
+        "v": 98.0999984741211
+      },
+      {
+        "d": "2026-04-24",
+        "v": 98.51000213623047
+      },
+      {
+        "d": "2026-05-01",
+        "v": 98.20999908447266
+      },
+      {
+        "d": "2026-05-08",
+        "v": 97.83999633789062
+      },
+      {
+        "d": "2026-05-15",
+        "v": 99.2699966430664
+      },
+      {
+        "d": "2026-05-22",
+        "v": 99.31999969482422
+      },
+      {
+        "d": "2026-05-29",
+        "v": 98.91000366210938
+      },
+      {
+        "d": "2026-06-05",
+        "v": 100.0699996948242
+      },
+      {
+        "d": "2026-06-12",
+        "v": 99.75
+      },
+      {
+        "d": "2026-06-18",
+        "v": 100.8499984741211
+      },
+      {
+        "d": "2026-06-26",
+        "v": 101.3600006103516
+      },
+      {
+        "d": "2026-07-02",
+        "v": 100.8600006103516
+      },
+      {
+        "d": "2026-07-10",
+        "v": 100.9700012207031
+      },
+      {
+        "d": "2026-07-17",
+        "v": 100.75
+      },
+      {
+        "d": "2026-07-24",
+        "v": 101.4700012207031
+      },
+      {
+        "d": "2026-07-31",
+        "v": 99.80000305175781
+      },
+      {
+        "d": "2026-08-07",
+        "v": 99.5999984741211
+      },
+      {
+        "d": "2026-08-14",
+        "v": 99.66999816894531
+      },
+      {
+        "d": "2026-08-21",
+        "v": 98.80000305175781
+      },
+      {
+        "d": "2026-08-28",
+        "v": 99.69999694824219
+      },
+      {
+        "d": "2026-09-04",
+        "v": 99.16000366210938
+      },
+      {
+        "d": "2026-09-11",
+        "v": 99.12000274658203
+      },
+      {
+        "d": "2026-09-18",
+        "v": 100.2200012207031
+      },
+      {
+        "d": "2026-09-25",
+        "v": 100.9700012207031
+      },
+      {
+        "d": "2026-10-02",
+        "v": 101.9300003051758
+      },
+      {
+        "d": "2026-10-09",
+        "v": 102.2099990844727
+      },
+      {
+        "d": "2026-10-16",
+        "v": 101.8399963378906
+      },
+      {
+        "d": "2026-10-23",
+        "v": 101.8099975585938
+      },
+      {
+        "d": "2026-10-30",
+        "v": 101.879997253418
+      },
+      {
+        "d": "2026-11-06",
+        "v": 102.3000030517578
+      },
+      {
+        "d": "2026-11-13",
+        "v": 103.4100036621094
+      }
+    ],
+    "A4": [
+      {
+        "d": "Q1'24",
+        "v": 313.3
+      },
+      {
+        "d": "Q1'25",
+        "v": 235.9
+      },
+      {
+        "d": "Q1'26",
+        "v": 57.7
+      },
+      {
+        "d": "Q2'24",
+        "v": 211.5
+      },
+      {
+        "d": "Q2'25",
+        "v": 177.9
+      },
+      {
+        "d": "Q2'26",
+        "v": 296.3
+      },
+      {
+        "d": "Q3'24",
+        "v": 196.4
+      },
+      {
+        "d": "Q3'25",
+        "v": 226.3
+      },
+      {
+        "d": "Q3'26",
+        "v": 321.2
+      },
+      {
+        "d": "Q4'23",
+        "v": 216.8
+      },
+      {
+        "d": "Q4'24",
+        "v": 365.1
+      },
+      {
+        "d": "Q4'25",
+        "v": 209.9
+      }
+    ],
+    "A5": [
+      {
+        "d": "2025-11-16",
+        "v": 114.7428665161133
+      },
+      {
+        "d": "2025-11-23",
+        "v": 102.1196823120117
+      },
+      {
+        "d": "2025-11-30",
+        "v": 103.7168502807617
+      },
+      {
+        "d": "2025-12-07",
+        "v": 103.9485321044922
+      },
+      {
+        "d": "2025-12-14",
+        "v": 115.2328567504883
+      },
+      {
+        "d": "2025-12-21",
+        "v": 127.6907958984375
+      },
+      {
+        "d": "2025-12-28",
+        "v": 126.6585540771484
+      },
+      {
+        "d": "2026-01-04",
+        "v": 136.4132690429688
+      },
+      {
+        "d": "2026-01-11",
+        "v": 160.6676635742188
+      },
+      {
+        "d": "2026-01-18",
+        "v": 158.6572418212891
+      },
+      {
+        "d": "2026-01-25",
+        "v": 168.0410003662109
+      },
+      {
+        "d": "2026-02-01",
+        "v": 165.0210723876953
+      },
+      {
+        "d": "2026-02-08",
+        "v": 146.6018371582031
+      },
+      {
+        "d": "2026-02-15",
+        "v": 129.0193786621094
+      },
+      {
+        "d": "2026-02-22",
+        "v": 114.5931777954102
+      },
+      {
+        "d": "2026-03-01",
+        "v": 123.1007461547852
+      },
+      {
+        "d": "2026-03-08",
+        "v": 174.6095275878906
+      },
+      {
+        "d": "2026-03-15",
+        "v": 228.6533660888672
+      },
+      {
+        "d": "2026-03-22",
+        "v": 278.71728515625
+      },
+      {
+        "d": "2026-03-29",
+        "v": 316.0260314941406
+      },
+      {
+        "d": "2026-04-05",
+        "v": 297.0800476074219
+      },
+      {
+        "d": "2026-04-12",
+        "v": 291.567138671875
+      },
+      {
+        "d": "2026-04-19",
+        "v": 285.2651672363281
+      },
+      {
+        "d": "2026-04-26",
+        "v": 262.7974548339844
+      },
+      {
+        "d": "2026-05-03",
+        "v": 238.7543792724609
+      },
+      {
+        "d": "2026-05-10",
+        "v": 227.103759765625
+      },
+      {
+        "d": "2026-05-17",
+        "v": 206.9042205810547
+      },
+      {
+        "d": "2026-05-24",
+        "v": 202.6860656738281
+      },
+      {
+        "d": "2026-05-31",
+        "v": 199.2599639892578
+      },
+      {
+        "d": "2026-06-07",
+        "v": 183.5776062011719
+      },
+      {
+        "d": "2026-06-14",
+        "v": 179.5815277099609
+      },
+      {
+        "d": "2026-06-21",
+        "v": 181.9619750976562
+      },
+      {
+        "d": "2026-06-28",
+        "v": 176.0072021484375
+      },
+      {
+        "d": "2026-07-05",
+        "v": 158.7951812744141
+      },
+      {
+        "d": "2026-07-12",
+        "v": 155.65478515625
+      },
+      {
+        "d": "2026-07-19",
+        "v": 149.0831909179688
+      },
+      {
+        "d": "2026-07-26",
+        "v": 161.3916168212891
+      },
+      {
+        "d": "2026-08-02",
+        "v": 169.3636627197266
+      },
+      {
+        "d": "2026-08-09",
+        "v": 171.3289642333984
+      },
+      {
+        "d": "2026-08-16",
+        "v": 146.6448211669922
+      },
+      {
+        "d": "2026-08-23",
+        "v": 130.8844757080078
+      },
+      {
+        "d": "2026-08-30",
+        "v": 122.514045715332
+      },
+      {
+        "d": "2026-09-06",
+        "v": 126.5647430419922
+      },
+      {
+        "d": "2026-09-13",
+        "v": 138.43115234375
+      },
+      {
+        "d": "2026-09-20",
+        "v": 142.9443511962891
+      },
+      {
+        "d": "2026-09-27",
+        "v": 149.0933532714844
+      },
+      {
+        "d": "2026-10-04",
+        "v": 154.1705169677734
+      },
+      {
+        "d": "2026-10-11",
+        "v": 156.2398529052734
+      },
+      {
+        "d": "2026-10-18",
+        "v": 162.7458038330078
+      },
+      {
+        "d": "2026-10-25",
+        "v": 169.3506011962891
+      },
+      {
+        "d": "2026-11-01",
+        "v": 165.5500793457031
+      },
+      {
+        "d": "2026-11-02",
+        "v": 164.0431976318359
+      }
+    ],
+    "A6": [
+      {
+        "d": "2025-11-21",
+        "v": 69.30852871219844
+      },
+      {
+        "d": "2025-11-28",
+        "v": 72.63400311273045
+      },
+      {
+        "d": "2025-12-05",
+        "v": 70.44662128507389
+      },
+      {
+        "d": "2025-12-12",
+        "v": 75.131050246268
+      },
+      {
+        "d": "2025-12-19",
+        "v": 77.24119374449825
+      },
+      {
+        "d": "2025-12-26",
+        "v": 80.4363992104682
+      },
+      {
+        "d": "2026-01-02",
+        "v": 75.67907879140448
+      },
+      {
+        "d": "2026-01-09",
+        "v": 76.33819373038925
+      },
+      {
+        "d": "2026-01-16",
+        "v": 77.36363471959176
+      },
+      {
+        "d": "2026-01-23",
+        "v": 82.03789448620263
+      },
+      {
+        "d": "2026-01-30",
+        "v": 73.5674433745155
+      },
+      {
+        "d": "2026-02-06",
+        "v": 78.09000791418379
+      },
+      {
+        "d": "2026-02-13",
+        "v": 80.03647588719271
+      },
+      {
+        "d": "2026-02-20",
+        "v": 76.186833143556
+      },
+      {
+        "d": "2026-02-27",
+        "v": 78.37365445555183
+      },
+      {
+        "d": "2026-03-06",
+        "v": 56.83265611228931
+      },
+      {
+        "d": "2026-03-13",
+        "v": 51.39825543574837
+      },
+      {
+        "d": "2026-03-20",
+        "v": 46.34687369409128
+      },
+      {
+        "d": "2026-03-27",
+        "v": 44.3659885443413
+      },
+      {
+        "d": "2026-04-02",
+        "v": 41.3291547762298
+      },
+      {
+        "d": "2026-04-10",
+        "v": 48.68212225283455
+      },
+      {
+        "d": "2026-04-17",
+        "v": 56.7989768089425
+      },
+      {
+        "d": "2026-04-24",
+        "v": 48.1700863883738
+      },
+      {
+        "d": "2026-05-01",
+        "v": 44.07382805086354
+      },
+      {
+        "d": "2026-05-08",
+        "v": 47.84768074554971
+      },
+      {
+        "d": "2026-05-15",
+        "v": 41.85613269422654
+      },
+      {
+        "d": "2026-05-22",
+        "v": 45.07424210575486
+      },
+      {
+        "d": "2026-05-29",
+        "v": 50.38394032470382
+      },
+      {
+        "d": "2026-06-05",
+        "v": 46.28180454503287
+      },
+      {
+        "d": "2026-06-12",
+        "v": 47.8311871438445
+      },
+      {
+        "d": "2026-06-18",
+        "v": 52.84256256806161
+      },
+      {
+        "d": "2026-06-26",
+        "v": 58.26884501689189
+      },
+      {
+        "d": "2026-07-02",
+        "v": 59.16678897622974
+      },
+      {
+        "d": "2026-07-10",
+        "v": 56.77985086697722
+      },
+      {
+        "d": "2026-07-17",
+        "v": 48.16972370643803
+      },
+      {
+        "d": "2026-07-24",
+        "v": 44.37322922202011
+      },
+      {
+        "d": "2026-07-31",
+        "v": 47.66713091922006
+      },
+      {
+        "d": "2026-08-07",
+        "v": 55.15482255625549
+      },
+      {
+        "d": "2026-08-14",
+        "v": 52.83128711379331
+      },
+      {
+        "d": "2026-08-21",
+        "v": 53.67045175617762
+      },
+      {
+        "d": "2026-08-28",
+        "v": 53.56391039782134
+      },
+      {
+        "d": "2026-09-04",
+        "v": 48.29647316491801
+      },
+      {
+        "d": "2026-09-11",
+        "v": 43.53609067190432
+      },
+      {
+        "d": "2026-09-18",
+        "v": 43.62085865875148
+      },
+      {
+        "d": "2026-09-25",
+        "v": 50.7004598769506
+      },
+      {
+        "d": "2026-10-02",
+        "v": 42.52017371220247
+      },
+      {
+        "d": "2026-10-09",
+        "v": 42.70535606895067
+      },
+      {
+        "d": "2026-10-16",
+        "v": 38.63875887308244
+      },
+      {
+        "d": "2026-10-23",
+        "v": 36.52843512890767
+      },
+      {
+        "d": "2026-10-30",
+        "v": 36.24860452160422
+      },
+      {
+        "d": "2026-11-06",
+        "v": 43.18003499357582
+      },
+      {
+        "d": "2026-11-11",
+        "v": 44.63847355501004
+      }
+    ],
+    "A7": [
+      {
+        "d": "2025-11-21",
+        "v": 2.24
+      },
+      {
+        "d": "2025-11-28",
+        "v": 2.23
+      },
+      {
+        "d": "2025-12-05",
+        "v": 2.26
+      },
+      {
+        "d": "2025-12-12",
+        "v": 2.26
+      },
+      {
+        "d": "2025-12-19",
+        "v": 2.24
+      },
+      {
+        "d": "2025-12-26",
+        "v": 2.23
+      },
+      {
+        "d": "2026-01-02",
+        "v": 2.25
+      },
+      {
+        "d": "2026-01-09",
+        "v": 2.28
+      },
+      {
+        "d": "2026-01-16",
+        "v": 2.33
+      },
+      {
+        "d": "2026-01-23",
+        "v": 2.32
+      },
+      {
+        "d": "2026-01-30",
+        "v": 2.36
+      },
+      {
+        "d": "2026-02-06",
+        "v": 2.34
+      },
+      {
+        "d": "2026-02-13",
+        "v": 2.27
+      },
+      {
+        "d": "2026-02-20",
+        "v": 2.28
+      },
+      {
+        "d": "2026-02-27",
+        "v": 2.25
+      },
+      {
+        "d": "2026-03-06",
+        "v": 2.35
+      },
+      {
+        "d": "2026-03-13",
+        "v": 2.36
+      },
+      {
+        "d": "2026-03-20",
+        "v": 2.38
+      },
+      {
+        "d": "2026-03-27",
+        "v": 2.31
+      },
+      {
+        "d": "2026-04-03",
+        "v": 2.36
+      },
+      {
+        "d": "2026-04-10",
+        "v": 2.36
+      },
+      {
+        "d": "2026-04-17",
+        "v": 2.36
+      },
+      {
+        "d": "2026-04-24",
+        "v": 2.42
+      },
+      {
+        "d": "2026-05-01",
+        "v": 2.48
+      },
+      {
+        "d": "2026-05-08",
+        "v": 2.45
+      },
+      {
+        "d": "2026-05-15",
+        "v": 2.49
+      },
+      {
+        "d": "2026-05-22",
+        "v": 2.4
+      },
+      {
+        "d": "2026-05-29",
+        "v": 2.38
+      },
+      {
+        "d": "2026-06-05",
+        "v": 2.36
+      },
+      {
+        "d": "2026-06-12",
+        "v": 2.31
+      },
+      {
+        "d": "2026-06-18",
+        "v": 2.25
+      },
+      {
+        "d": "2026-06-26",
+        "v": 2.2
+      },
+      {
+        "d": "2026-07-02",
+        "v": 2.23
+      },
+      {
+        "d": "2026-07-10",
+        "v": 2.24
+      },
+      {
+        "d": "2026-07-17",
+        "v": 2.24
+      },
+      {
+        "d": "2026-07-24",
+        "v": 2.26
+      },
+      {
+        "d": "2026-07-31",
+        "v": 2.28
+      },
+      {
+        "d": "2026-08-07",
+        "v": 2.25
+      },
+      {
+        "d": "2026-08-14",
+        "v": 2.27
+      },
+      {
+        "d": "2026-08-21",
+        "v": 2.34
+      },
+      {
+        "d": "2026-08-28",
+        "v": 2.31
+      },
+      {
+        "d": "2026-09-04",
+        "v": 2.35
+      },
+      {
+        "d": "2026-09-11",
+        "v": 2.36
+      },
+      {
+        "d": "2026-09-18",
+        "v": 2.33
+      },
+      {
+        "d": "2026-09-25",
+        "v": 2.34
+      },
+      {
+        "d": "2026-10-02",
+        "v": 2.36
+      },
+      {
+        "d": "2026-10-09",
+        "v": 2.33
+      },
+      {
+        "d": "2026-10-16",
+        "v": 2.35
+      },
+      {
+        "d": "2026-10-23",
+        "v": 2.34
+      },
+      {
+        "d": "2026-10-30",
+        "v": 2.34
+      },
+      {
+        "d": "2026-11-06",
+        "v": 2.23
+      },
+      {
+        "d": "2026-11-13",
+        "v": 2.24
+      }
+    ],
+    "A8": [
+      {
+        "d": "2025-11-21",
+        "v": 23.43000030517578
+      },
+      {
+        "d": "2025-11-28",
+        "v": 16.35000038146973
+      },
+      {
+        "d": "2025-12-05",
+        "v": 15.40999984741211
+      },
+      {
+        "d": "2025-12-12",
+        "v": 15.73999977111816
+      },
+      {
+        "d": "2025-12-19",
+        "v": 14.90999984741211
+      },
+      {
+        "d": "2025-12-26",
+        "v": 13.60000038146973
+      },
+      {
+        "d": "2026-01-02",
+        "v": 14.51000022888184
+      },
+      {
+        "d": "2026-01-09",
+        "v": 14.48999977111816
+      },
+      {
+        "d": "2026-01-16",
+        "v": 15.85999965667725
+      },
+      {
+        "d": "2026-01-23",
+        "v": 16.09000015258789
+      },
+      {
+        "d": "2026-01-30",
+        "v": 17.44000053405762
+      },
+      {
+        "d": "2026-02-06",
+        "v": 20.3700008392334
+      },
+      {
+        "d": "2026-02-13",
+        "v": 20.60000038146973
+      },
+      {
+        "d": "2026-02-20",
+        "v": 19.09000015258789
+      },
+      {
+        "d": "2026-02-27",
+        "v": 19.86000061035156
+      },
+      {
+        "d": "2026-03-06",
+        "v": 29.48999977111816
+      },
+      {
+        "d": "2026-03-13",
+        "v": 27.19000053405762
+      },
+      {
+        "d": "2026-03-20",
+        "v": 26.78000068664551
+      },
+      {
+        "d": "2026-03-27",
+        "v": 31.04999923706055
+      },
+      {
+        "d": "2026-04-02",
+        "v": 23.8700008392334
+      },
+      {
+        "d": "2026-04-10",
+        "v": 19.22999954223633
+      },
+      {
+        "d": "2026-04-17",
+        "v": 17.47999954223633
+      },
+      {
+        "d": "2026-04-24",
+        "v": 18.70999908447266
+      },
+      {
+        "d": "2026-05-01",
+        "v": 16.98999977111816
+      },
+      {
+        "d": "2026-05-08",
+        "v": 17.19000053405762
+      },
+      {
+        "d": "2026-05-15",
+        "v": 18.43000030517578
+      },
+      {
+        "d": "2026-05-22",
+        "v": 16.70000076293945
+      },
+      {
+        "d": "2026-05-29",
+        "v": 15.31999969482422
+      },
+      {
+        "d": "2026-06-05",
+        "v": 21.51000022888184
+      },
+      {
+        "d": "2026-06-12",
+        "v": 17.68000030517578
+      },
+      {
+        "d": "2026-06-18",
+        "v": 16.39999961853027
+      },
+      {
+        "d": "2026-06-26",
+        "v": 18.40999984741211
+      },
+      {
+        "d": "2026-07-02",
+        "v": 16.14999961853027
+      },
+      {
+        "d": "2026-07-10",
+        "v": 15.02999973297119
+      },
+      {
+        "d": "2026-07-17",
+        "v": 18.77000045776367
+      },
+      {
+        "d": "2026-07-24",
+        "v": 18.57999992370605
+      },
+      {
+        "d": "2026-07-31",
+        "v": 15.98999977111816
+      },
+      {
+        "d": "2026-08-07",
+        "v": 14.89999961853027
+      },
+      {
+        "d": "2026-08-14",
+        "v": 14.25
+      },
+      {
+        "d": "2026-08-21",
+        "v": 15.13000011444092
+      },
+      {
+        "d": "2026-08-28",
+        "v": 14.43000030517578
+      },
+      {
+        "d": "2026-09-04",
+        "v": 14.52999973297119
+      },
+      {
+        "d": "2026-09-11",
+        "v": 15.84000015258789
+      },
+      {
+        "d": "2026-09-18",
+        "v": 14.8100004196167
+      },
+      {
+        "d": "2026-09-25",
+        "v": 14.86999988555908
+      },
+      {
+        "d": "2026-10-02",
+        "v": 15.3100004196167
+      },
+      {
+        "d": "2026-10-09",
+        "v": 14.84000015258789
+      },
+      {
+        "d": "2026-10-16",
+        "v": 19.98999977111816
+      },
+      {
+        "d": "2026-10-23",
+        "v": 19.45000076293945
+      },
+      {
+        "d": "2026-10-30",
+        "v": 19.42000007629395
+      },
+      {
+        "d": "2026-11-06",
+        "v": 25.63999938964844
+      },
+      {
+        "d": "2026-11-13",
+        "v": 19.29999923706055
+      }
+    ]
+  },
+  "goldMonthly": [
+    {
+      "month": "2026-01",
+      "price": 4753.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-02",
+      "price": 5020.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-03",
+      "price": 4856.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-04",
+      "price": 4721.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-05",
+      "price": 4587.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-06",
+      "price": 4228.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-07",
+      "price": 4073.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-08",
+      "price": 4411.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-09",
+      "price": 4319.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    },
+    {
+      "month": "2026-10",
+      "price": 4105.0,
+      "note": "世界银行 Pink Sheet Monthly Prices · Gold（$/troy oz，日均价月平均）"
+    }
+  ],
+  "events": [
+    {
+      "date": "2026-11-15",
+      "title": "12月加息大局已定！黄金金价暗盘跌2.3%！央行托底金价为何下跌？",
+      "source": "Sohu",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQNUc2NVlDYkpBT1NzcnlsSjB6YnhqVkd6dVlqb2Y2azlqOHI4aDkwaG5aSk05dWZ5SFMxRFJDS2hOUlJTbUJYeXlZMWtOLUI5aUwzaVR2NzlVdmgxdUozRlRXU2F5UFk2enR4b0ZqS3ljUnR5ZGRzZ3RBd0VRRWpFS3BBYV9wVWJsejRRVg?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "美联储内部分歧加大，黄金在“通胀扩散”与“能源冲击”间拉锯，金价周线…",
+      "source": "黄金网",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTFBmVlBGeS1BOUt2QXNqWS16SnE0MkxKcHg1Ulo0N3drUlYtdUs0X3V4QkFBS1RtSE04OVRKdmhReEplX182MEUyMTEzUkhaeDNGZnNqcXlCX1hnQXBFT3kyX01mRVNFTHFI?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "金市前瞻：下周恐不平静！华尔街62%分析师看空黄金，金价最悲观恐再跌…",
+      "source": "金融界",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5QS0VpZlJFRjhYb3cwMEhHOHBya3NXZXR4TlRtT3Nxa3BZSXN0UTJEdng3bnVGRkRITmJGSHNxRzljb3RCcTgyTm82U0ZCeGo2OHpMNGNfaDBMZklWbUNSUkFCaHZpMjhOOVVsNndpMTdKbXdW?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "黄金周评：多头遭遇惨烈一周！金价冲破4100美元后狂泻250美元，下…",
+      "source": "黄金网",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE1YSjJoR1dFdGxIRm1mWXNjUWVNUldnMW9sVVhmdmlSajZ6LW55M0FoRVQyUGNPRjZtMjRHM0NvbThfY0VzU0tFME0ycElWa3M5Z1RlS256S1RTSHVRYWpqWkJJWFJ5b19N?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "危险信号！金价一周狂泻近300美元，华尔街警告下一站恐跌向3800美…",
+      "source": "黄金网",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE5qaHM2RVBINGcwQVFWRV81aTVxYlRhNHQwOXYydUtub0tXUEJrVXpkMUJVdGZ0VTYzTmxVc3NQTldhd2VpU0x6TDR3ajQ1TVU4dHZOQjVPbGhJOUVoLTR6Zi00WEtFV3I0?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "许安丰：11.15黄金日内操作策略，反弹承压做空顺势而为_名家点金",
+      "source": "黄金网",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE1hX3JKLXR2VzdubFYyVG5VbGx6ZmgwQmk0OUNVN0JXMVpuamZSTnhDRDI2RndUNVNPRmJsQ005Y1ZRRW1xSVgwNmVxWk1sUW1sNzc5U202dkozYmlKd0x0ZzJ1RWlaMzlDbDJXMw?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "许安丰：11.14黄金本周完美预测，下周开盘行情趋势解析_名家点金",
+      "source": "黄金网",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE9uYVRQOUJTS1g3ekZSbGktVThVZzg3bllEUHFsUXVzWFAwZjlwVDR0am9ROTJrVG9NOEpqbTJTc3FEbmtwQVRoMXdoanFFWVpmWllaTFcxSk5ZMkhQdXU1Y05mOGh3WXlzV05ocQ?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold, silver prices today, 15 November: Check retail rates of 24K, 22K, 18K go…",
+      "source": "Livemint",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMigAJBVV95cUxNNkZ2aHNGMURpQUpIXzNzVFFkbHFSOXFXNVJvaTNneUc1Vnl2Z0JRMXlhY1E1LUpBMGhSQ3NReFpLV3g0OC1uX1AxNnFWZ00zaWU2bUlmS1JCNGFiTDIzZ09ieXVDUk11eldWbkcwbDNpTm5WVzR2Y3JmaWFRdHN2MXJjMmhjeG9tWHRJQ2JIbEl1dDlsVmVobWJ0TTRXMS1BTWxid2RhRTFOMFN1M0FKR01UcEJ5U2piT3NzOHNLQ1ZZR2NzSFJlSlg5ei1kd3JZQXlBUE1kNGcyelh1eWZiWkxSaExKTEFwUWdZMndoZ2VNYlNHY0xDRV9vTVM3WHhH0gGGAkFVX3lxTE16Q25hZjdlaVRhMXdaWmxhZVgta0lsRTVRdHdqVU5GMG52MlFxbVNuUjN3LXhGMDlhTlNLTjZ0blBpX3EwZ0QyLXphSE9ud21KRFloSllWYkd1R2pIRkluQmdXYVNpMjBWczVuQjd4alVSV196RTFSam9iNFVRQkVHc05zQ0hOYkRrQVN2RG1fY19ic19rV1ZsOUNfM05oOTB3UndGcUYyekNycFVlVl9vbTJtWjdaNVFKTjQtZkFDdjh1bi1SOERfRkFOQ0VqNThVanRWNVMwWU55RlNKNWhpWkh2V3JLVDJmQ1RSWlhFVFdicjBiQlhFaUYzLWxucnNibFI5ZlE?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold prices remain unchanged in Syrian markets",
+      "source": "سانا",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiTEFVX3lxTFBOTFhadW56WHRON1dqa2VGczU0bmx4YmZVOGxoWlZyU3MyZ2ljcHdSZ1JZeGdfN0dRb1lOdUhQZHlzLVJHbzJoQW5rODE?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold rate in this UP city sees major crash; price plunges over ₹6,611 in just…",
+      "source": "Livemint",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMigAJBVV95cUxOQWVKYVM4YmRFc2R2bldBSlNXU1Vqa0NpaEgtdm1yb1NpUzJJYXpIblZzcFpUcXBSU1l6em9FTDlraUR2ZFNzU3I4bmR2aDhabEowZ1FOMlVwNk9valFxN0tmc0hyWjJlTUk4SEFYRWg5aUtiZWQ2WWRuaTRRU3p1bUxSSzZoRnZvR3QzWVlQY1o3aTVOZ0ZIVDdBcXFTSk1JOHY5ck9oT0NIM1B5NDAzUG5HNm5Hb2xCYkJ2bjc4VjNnTFF6MWNIM3pya25jNHp5S0dXWmVkdWZDX0pZN1RpTkc4cWRMWW5VcHBDQk1oc2lUMzNDTFJwaGhHUVVoaTJG0gGGAkFVX3lxTE1yaWtfTkFiQnhjMThDRTJfQk5kdzNnMEljSzNwNWJDeHE1VWptcEtDSHA1VjlpX00wUzM3bzBWTFV6eHBPZ1I2cUhIaTFITlc5QmVWY0pTUklmWkxIVHFCd2s4VGJZaVlXSHJ2SWxaXzgzdHF4TmxtR1RodENxSnhucEhfT0RHVG4zbVNyQ0hqOG9kTWNpRVpWTVpFUnBIdUg5V2hoUHJiYzRlbTFjME94QTNHSU1yYXZNaDFuVms4d2pTdGxidjBxZWhVR1ZsdmZ6Mkp2OGoyTzRsUjZFb2tmd3lmMThRQnVwRVU3MThwRG00NWJ4Wkt5b291UGw5eFRYZ3d6VEE?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "21-karat gold price at JD79.50 in local market",
+      "source": "Ammon News",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE90ZWtJell5V0pkRVBjZ1VKZUNHRVNwV3VILTl1UTRVV3ZPNTBFNTA2Z003UkloMFkxTGRWN2RuTG95c2NRMWZ5NFBSTGR6UQ?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold Price – Today’s Chart – Historical Data – Outlook",
+      "source": "TheBull.com.au",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxNOGczUWdqT2loTW9IaEhCeWxuSHE2OXQwTm9mUTRFVHBDZmlWQWx3WE1STVotaVJhUzk1LU5nY05SX0pBRXdEZzU2MmtteWJSMFRVWGNLSTFUaUpOWFIxdENMd0pxbFM4VVMtWmN5cXVFQUZzUGRDb1BjR19Tdlc1WVBMWQ?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold rate today in Hyderabad, November 15, 2026: Check 22K, 24K and 18K gold p…",
+      "source": "Hyderabad Mail",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMirAFBVV95cUxNR1d4cEFWdDBUYlg0cE1GaU9adXlUU0xlLWVkcHZMRWdWVHRTeDh6aGFocWRPMjlselhUOExrUk1NaXR2TFdjRzBmaHVKaE1vOTc3b1IwUFhPRFppTDUzYkVVUHlTMnZzOEUwTm1VRHpKR0JqS2hTOGotM0hxcmVmcjdyWGd5cVBXdmpwQ2tHRkdGNG1pRUIzUE9EMDMyVWJNRUh4eTg4RTE2bDhz?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold price today November 15th: End of week in red, experts forecast new week…",
+      "source": "Laodong.vn",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMi0AFBVV95cUxQODBmOHdaQXJJNWdRSFY1dm9jakRob3U2ZzgyTDhuTUdJS3RRME5xMW05QkpvaC0yNnBKejcxSHQzNUJVbnJ2OTRKWC1lWTRNa2E4TWVJVFJVQWZkWHdlWEZXSkJaUDM5cEx2TkZHcGRqUFByNnR0NHkxMmxNQWs5Y0lnYmdVUHJYOGlkeUM3cFpqNlozV2xpRi1la1FPRmRtMnBOdTQ5RWppbzEzSkN3WDBXM0pWMmRhNjhTbzFEZjN6VFlCcFRhTFU0eXd5SUUx?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold price drops by Rs 1,500 per tola, down Rs 14,100 since Tihar",
+      "source": "OnlineKhabar English News",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9QVWlfd2RoRTBmcWtVYXRVUHItZGF3b2tQbXBNeFZyNDF3WjFXdUI2WF9yYnY5aHpkMDlQeXpGSGw4UGRiQWo0M1RuMnIyMUh4bGdyc2swZC1mS012b3ZLQXU5U0lzdnYyVkNDanFFZm9nU28?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold prices today (November 15): Domestic and international gold prices contin…",
+      "source": "Vietnam.vn",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxQWnBDN2lPMWI2eFdKS0FpZ0dfNlpnd29uMWtRbFo1aUlaNHBZRWRFOWNXNmxDb0U2Wjh3djJSWVZUa0dreExHOWFnaC1mNldiZndUanJRejB3TWt1WGR5eU9zblV3LXFVcXpZN0RPN1hUTUIwTDRqcmVyNl8tdnBEdmcwTWF4VUxucEJfSWRlaDluUmRSNFo1SEt6MA?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold Rates Today In Hyderabad On Nov. 15, 2026",
+      "source": "INDToday",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMidEFVX3lxTE5xT3o0T2JmZTBrNEV5Nk00Q09pNkl6czRmNmxiVE1SRlU3WFBjY3VLeHE4MnNzdHhJRlNPcG5yQTlieU43YW9paFd2U0s0cENCTi02dy1vSXc5bTFKOTc2UVdLdElNeWljdlJtNkdkNDR3WXBD?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "Gold Rate Today November 15: Check latest Gold prices in Delhi, Mumbai, Kolkat…",
+      "source": "BusinessLine",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMilgJBVV95cUxQN1FRWFdjTDhoc1dNTFBpV0N6REpseUpLVkNIQ1pZVWE4dXVIRUVfRU9pbUxpeENhZjItUTlGaVdWdXBQTWtvcnVfNVJ2WXFVTFMzell3eWJ3QVNlTVFMSkVwOFV6dkk0REJESTdDcmk1TTR6all0NFJDMlcxbVRGbWIyMFBQbjdIUVBSMGxUZGwtVUs1ckhlOWRHekh1RkNQMVl6Y0VNQnlFRmkxa09vNWFIdi1MTjRycEl2TjZYbmEyLW5ib2IteDJXRUdacHJlX1drVm9IRUN4VTl6VTRWYXlrZ05XWEFrTk9uUjJPdXRvdGRsZS0wUVRqQWJwTTFpZmJFY0w4d01yZHFHaGRya1RwT0xQZ9IBnAJBVV95cUxPMXU5RnZxb1A3R090QkM2UFdrai1MRnZMRHBaWUhDZHFnVUEzTXJUZ2RVSldPSzFqaUJrYzBJanRDY25rSzBfamZzXzNIQTNoc2U3anVHYVJ3V2lhVWRzZXUybzA1Y3Mtckd6Q2VqbFlFaWVPdGhqNGVtYm5IRzFLeVBjbEk2VkxRdzR4QWZrVDkyeTF4LXRPV2Fpang5NkktaWVITVpGd3dfQ0pXX0tBZkhSMFEwVFFCVmRfcHQ3czhHclZaR2UxSDg5X3lHZ05JcXE4Vll6WG15WGFWclBkVVNuUHJ3QkJIM2U0S2xkRXN5OHRxM29LNnlEcFRoV0haYnVOeDl3MjZaY2JPVEpvTUowYmlnNjdZcl9HZw?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "20克大金镯子跌了10000元，金价回调黄金消费升温，有金店小克重金…",
+      "source": "Sohu",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMijwFBVV95cUxPSmhZa1BCcUQybDNhSGJhYmVzdEo1VHYteFdNWE51WGpNX0FrWGpjNk1XLXBnSURDQ1VZSHQ2emVpMnEtLUtGUk5TRVZEd3FRUGhmWHV3cEtJWDRfcHQzWWVwWk5nbG9yV0dvbTk1T19JdEg3MHU4Mk1taVVEUWVOd1l5LUxYbW1aUnFZRHUybw?oc=5"
+    },
+    {
+      "date": "2026-11-15",
+      "title": "金价连日大跌！实探北京金店：黄金区挤满人！网友：比菜市场人还多",
+      "source": "新浪新闻_手机新浪网",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTE5lNl9zUW4tdWFyMGpfMGUxS004UlE5SG9JU05EMzZEZHhTOUJqWjQ5WTgySUJIZ0FUbHlvRTA0ZGlHSEttdjUtM0xzUTBXOEpmOTBEbG9iOVk0c1JPZm5pQk4xXzlRVnBQeHZZMmNhSldZX0h1b2Nscg?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "中信建投2027黄金展望：利率压制有限、央行购金托底，金价中枢有望震…",
+      "source": "英为财情 Investing.com",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBzNXVYblhNbUE2VzhaUEdyc0xnZHFCdVF3a1RuSVlzNUJJOWQ0MTZjMjQzYng0bGNYYkVCOGVDUG1tQWNvZGgwYm82VnZsQlpSdGIxa1VVQTJwUFFoUWF3c3dHcXc3RVdueWpUNjVPclg?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "黄金多头迎来重磅利好？知名机构看涨至4800美元，当前回调或暗藏投资…",
+      "source": "FX168",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5mRktKYXNfNVJZOGVreG5YUmRkSUJYUFJ1OFpubDNyVEdhcWRpNkpEek9rMFlIY0VFamt2cUl6aVlLOTIyZWFvUGdfeGV6M1ZhbE5RZWpKdWctakhfa3JJcHloaU9sQmlET09zRQ?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold Price Slips to Key Support as Fed Rate Risks and GLD ETF Outflows Build",
+      "source": "Benzinga",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMi0gFBVV95cUxNSGM3TWZaYlNGVlJHRnV4OXNWNG5iWU9SN3hQYzRibnprTldmMU9oVXlwYVBXWWlfSTd3MXZsMXFZZGw2Ui05Y0xxTGVqRUhLSThyUWg3RDA2LU1SUFVxRVR4OWVWN0lZQmRMbjBRWXpQdTc5UzhMVDRRTHdxVGVINGhwRzdzS1hhQS1IaWxnYTZYN1NDRGRfN3NEVWhlclRRY2VfQ0Q4SDlGVnUxa0NDWEdfbVJWQXY1dGFDN3VYaTNYOEliTFl2SFRyZ2dLYVF4YlE?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold Prices Hit Records. Where Are the Major Discoveries?",
+      "source": "Streetwise Reports",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiswFBVV95cUxQQVktSjFuSVBOenplY2tFT2JSdDNBREhlM2c3Q0dZM3ppNTVxWTUwTVFPVFlHbFI5V2FiR0s3dktySVJFbWpKRURqX0k2dnAyTXdoQ2pTV1RGQUNKdUZDUFdETm9XeGVycFdPQ1ZxdjViOTdwTmVBMXdBWDJLTXVVVnRDSVVMN0VKZG1RSHk0TWxCenBYY241UVVHbFVHTzI3aDVnbzlqYlNhYWFRS0dRYnJjSQ?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Can gold avoid a weekly rout as high US yields bolster Fed rate hike bets?",
+      "source": "www.tmgm.com",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMizgFBVV95cUxPamc4bE9PRDBIWnV1UnptOTAxTDBELXVxTVJsaldBb1dOTU1mME00TmdBN21LbVdVbjVIazBjU3Uzd0hBRjl6eWUyVjV3cURCa1oxckJLS2k2SFBFREQyNUJjZUVZVFdWMV9qdVlyVXUydUFQeVE5VEJBN0RHTF8xbGdTbXBaN2ZJYWx1VW9xYjRPLUt4a1JLVloya2ZtM3VvdG5jb3BTRy1BVFJ0MzluLXNIX3NrUEJ6Z2ZNRkhpZjlkRjYzVWlmMzdNYzlTdw?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Goldman Sachs just slashed its 2027 gold forecast. Here are the new numbers",
+      "source": "Investing.com",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiygFBVV95cUxQRzYyRU50SDUzOW15clJVVGhYWFZ5WDdSRWpMSnJBTUMzZDZ5VU16QUM3V3RSVE05Mjg2aFg2eFRQTkVkcWo3US0wU3hGWFFzWUVfYjdTLXNZNG5FelVydFhKVmx0SDR3S1l4VVVicmU5WlBLeUhxM051VXQwLVhjQk5ITjBBOGN1OUVjS1lUb2t5VGh6QmtSVmhyRVNYUG5hODJhNlFmcjB2NXFuMF9BTVBsclRJaTFEbmJjaURTWDRLZ2xNZnNwMy1B?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "金价跌了，兰州老板的黄金品牌还在涨价，买枚戒指要等15个月，曾靠一家…",
+      "source": "Sohu",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMijAFBVV95cUxQZ1EtejVJOFpOYkVibl9QRXV6YVNNbmp6YjB4Rk42QW91OVlKSDlfUzBqbjUzOENNcGRJNkRLRlIxQ1Z3OUlsemRoVDdwbXNmckdMcFd5cDlqRG5xeElZV2xKc3EwWFB0MDhKRkUybGFsa3ZTaHozMUJwQVlzNi04dEJ4c0NhcFhhSjRZYg?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "如何看金价走势 理解涨跌逻辑",
+      "source": "中华网",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFB0cUtpX1MwUzF5d3BLczRkX1NBMGllb0dVNjc0RjE0ajI5SHZfYUdSQ2VEY0pOUkVxcklLQktZUnhEVTQ4QmxLMTRjYU1zaVI0bnlZSnl0V0lpMUVXYlhrT2NwLWZrdTU4WS05UlUyWlk?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "What Gold Royalty Holders Got Wrong Before The Slide",
+      "source": "Yahoo Finance",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMimwFBVV95cUxPRWhYeW9HWl96bk5McWsxWm9aV2lWUnFIemh3clF4WFIyWXZvbDdCamdBLWcxcVpVZVgxbjNjWVEyeEgxVWxSMEhTd05QcUdSWFVINTJIQko3NWpYdDB6NW1PSWt1MUc1VmNuaFE0cEtuanp1UWZLdnFFV1pzN0JEaVAxenVIaG1kQUEycGY5Nm41eUhjaU1pZ0xKQQ?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold (XAU/USD) Price Forecast: Dollar Strength Extends Downside Targets",
+      "source": "FXEmpire",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxOdzdCM1hzb2FXaGNBanJoWDJac05XeXpWX3R6WUJKZ1JTbTZyVHM1TmQyRlYzQlRIdmozb2ltem1hdnNvN1FaZi1GdFczYV81YnhxeDBnSGhzSURzOTREcnpPV0xDaEdKWFVSZVdFandqWFB4a09jcE9aTTQ2Und1SFgwdEpEV0NLaVRLeUhMSUJFSnBWN25HSFZ6UnUzY05mZzVrMWpxYXViUlAzcWV1aVM3SXVLZ3RPOWg1aFlB?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold, silver prices today, 14 November: Check retail rates of 24K, 22K, 18K go…",
+      "source": "Livemint",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMigAJBVV95cUxQdzd4TU1yQUQtakl0QjRMVDRrbUlEaU1vVUNfcGx5YjBmZW84al9USDlsUFY1UGMzejdTWlJJbGdZWnVrOUJHSlREZ21uYi1odkRIUEktMnBNdllHVHNwb0NLS0tKbVZMN0RlZ2tZOFY5YVc1bVMzWi1UaG1vMDNsZi1XclRXbjdmajJJVm1nWG1CUWFMSk1lYTZJMUNOamROb0VGcUhhdTlDSXhKWmZfMmh0b081NFZzUU1IZElvaU5wbDJsdjhzcTNuMkFrb3VGUmxYTFUyelBySElJcl9Oa3dTZ2lscjBERGdKbmc1QXRDd3Z6eFBOMmRjS0NQRnhk0gGGAkFVX3lxTFBmVEhVdmwxZWducW5ST3IxcTQ1aVI4UG1pVHJadld0ZUZyRE16Vm85MjRtNlllTDNaYmV2ZUxrby1MYTRDeHNQcGR5eXNnalpqUDFSTEwzaTBhZEJfZFBhUnRpd094dEtKS2tXNWY4QUxYVWhDUjYyNU9rWUxJalNFSEgwb3AyWHk2VzdKYWIzdEJhcTZSaUxDLTFHekx3UUJ4dUpBTXVtZU90cGhwUzdNa3NxX2dVR3R6VE8wclJRY2lOSUZZM21WT1Zlem5wYUdCVFJKYlpTalFoankwTTlwbHdVQk44VndhRC03dTFYRXZlSWNjbklOSjVHSS1VMG1wd2dlMkE?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Asante Gold withdraws 2026 production and cost guidance",
+      "source": "Mugglehead Investment Magazine",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPN3ZGMHdtS0V0Q3BRbm1fcG9wZjdkbk91VHRYamhfVVg4aHNlTm5YSGdUd3RqNzY2YkI0SDh4ZGcta3BtMGdMUmNUNWJ5TExxR0liX01qY2IyaGdBWjhzOTF4LUFZVTZKX0w4LVJicWF1VmpvWE5lWTBJSFZ4NkM1d0JXRQ?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "International Gold Price Plunges 4.9% in a Single Week; Chinese Jewelry Prices…",
+      "source": "BigGo Finance",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMidkFVX3lxTE43bGpDb0ZIaXBIb2hlVFN0VjktSzVkMHdTeVg3MkttdUk1X2hFcVFsRHZHTlRERlVxZVRoWXROdHVjYklXc2s1MWZNcC00U1pyOTV0M08xY2FiaG9oaEdaVnlmYWhjNDhRU01xNl82QmlHRVp2Tmc?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold futures rose Friday, but the rally failed. What I’m watching next week",
+      "source": "investingLive",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQS3JGTTlrR2tPcTdQTGQzRGJMU2ZGOVhNZGlCLXZCbENMNUktdm5XQy1ZOVFwS1FPYVhHamVnUkNiQTJWOVgxVV9qdE1tUDl2Nmp1a0hDTWJvR0FhZDg2a2Q5ZDFqcDZITFFCUDgwRU1QYXlWRGx4S1ptYmIta0F3OEpoOW1jTTByVDQ2alBocGVCOWhjdWprdWNybWVvSnpoamxpZXl0SElQcTBnN0RYMWN3?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold price drops again by Tk 2,217",
+      "source": "New Age BD",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMilAFBVV95cUxQVGZOQ1VCUEkxMmNmTnhOdHR4YzQ0NmtPUXpEMGM2ZFNlUjFwUUtfX2JLUWhyejVCY2c1c2RqU3hwbUVHT3BzSHVfNzZWLWdyajRidzZPSFZmdVM5UmE4NklQNWxEaEhXZVlYeHZoLVBHRG1VY1JNYndPNDdkektIaEMwczNHQ0ZaaHFKTkIycXppam42?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold’s sharp weekly correction: Persistent selling pressure erases over 5% of…",
+      "source": "The New Indian Express",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMi2AFBVV95cUxQalRvS0V6andVZmdTemc1UERwTW1NS1dNM05HNjY4emtWWXowY0FEemZDd0VqWU9LNGppN1A3SnJyckVoRHA0bmdDNXNfTHpSNVpSdTJaZHBvV1JRaG56TkN3SGU2S2s0V2ZsYVAtbGI0cy1WZXN3YkxoRldadU9KT2lOckVscldmTkh2ZTBENHBSbmZ5bGVUMTN5S0RIdEZYZXpTQWhoTTFINVBTUTVEOFBRcDNXX1Byc1FwU2tWQ2R2ZDhrWXlhMDhsQ0g2QVJTQmV6MWVrbzTSAeYBQVVfeXFMUDNsaXlYMU9ndkRkVldwTXAtTVIyNTZpZ3h3bjVPUFhPd1hjOVV5RjlucGY5cnctaHo5V2NaSVVGSnBsV21PZGtPeGF3cXJmUmtXR1d4OEVNVVBLR1pydVFsOXR4Vmg2ZlRSN1pDUnlfTXViLVJ0QWFQanhtWXNvNEkwMmh2cXZyZTlCVC1CMV9NOUN1a0s4T1c4Z0JxdkM0SjBZNDJlczNLeWd4YlNWNlBESUtLMzZ3ZnpoZkgzZFM1ME9aMHFLb0c0TDY5RTlnR3dBdmk3UXBUcVdxbzUzVl9pSGNXeGc?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Peter Schiff Calls Bitcoin a 'Slow Bleed' While Gold Slides Below $3,900",
+      "source": "Cryptonews.net",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMiWEFVX3lxTE4zRF8wYk5MUTVPX2RTWVl6dUFvOTFJMi0zVlBVY0l5SENXb0xDal8zckFtS0tvSENqZ2VRM3J2NkowWVFIemVYTENDT2JfcWVialFidTVHOTE?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold price update morning of November 15th: Week of strong fluctuations, hitti…",
+      "source": "Laodong.vn",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMivgFBVV95cUxPQllPRVRMUEhzM08yNmxjN3lCZ1hKUHltakx3OW1UbkJZT24yRk8yNDdiNUJFNFRfQnFUM2dzQVlNaEtvUkwxcTNzWVZRdlhuOGZDY2tLN3o1M3VxN2xhYjAyX1Q1N1pLSnhNUUpTY3VUaldNNXM5TVFzQWVQcWc5Q2dxb3lnbTh4a2tMeWdIM0x2WmttaWtROXc2MDZ2VktyVDJfaDBSOHdxWTJ1RnNqUElMam9sdEQ4VUJTVlhn?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Gold (XAUUSD), Silver, Platinum Forecasts – Gold Attempts To Rebound Despite S…",
+      "source": "FXEmpire",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMi0wFBVV95cUxQTDlXZ2k1X1dnTzA4WnZaSWh6NTV3c3lLUmhhcF93V1lSZ2xfTDRHZFVQZzgxajU3U2U3QWhDTnhvWFJBQ0YzQTdHb2hjTDh5VFZ3cFlMNWNmSUZ2MndEa3lFOUxET2Zfdk1yMnY4eGZHX2NCWHBlTzgxR2RjYUpJYTZ6TnIwTGFmUk1ZRUJqNVl0dDBWNEdfVldYclZ4Mlk5Mm5lekJfVkpteWVhVEZPY2QwaXpLOVdMSXRMNmlzMW1VQkFiQXJSQWJyTmUteWFDbXFV?oc=5"
+    },
+    {
+      "date": "2026-11-14",
+      "title": "Experts predict unexpected gold prices next week",
+      "source": "Laodong.vn",
+      "pct": "+0.03%",
+      "link": "https://news.google.com/rss/articles/CBMimAFBVV95cUxNTHVVd1VfQ0N0eElfakpBYUREVUZmY3lVajR0dDhsU19tVTRRNGZtZXpYZmg1V1d2UHNNM3NBbS1IcGlYVGpZQ1M3LTF1eThrd3ZFcTlXZU5ZVGVpM0J0d25kT2JHbVNXUmFQWk5nUjBjeldzZFhIU19pVGoyVmFYX1phY2Z3R3p5c2dDZDNWR2FyTUNRdFZCYg?oc=5"
+    }
+  ],
+  "forces": [
+    {
+      "id": "fsig_bullSafe",
+      "name": "GPR 地缘风险",
+      "val": "164.0",
+      "unit": "MA30",
+      "chg": "+7.8",
+      "dir": "up",
+      "tag": "避险升温",
+      "tone": "bull",
+      "src": "Caldara-Iacoviello"
+    },
+    {
+      "id": "fsig_bullUsd",
+      "name": "DXY 美元指数",
+      "val": "103.41",
+      "unit": "",
+      "chg": "+1.57",
+      "dir": "up",
+      "tag": "美元偏强 · 未生效",
+      "tone": "neutral",
+      "src": "ICE DXY"
+    },
+    {
+      "id": "fsig_bearUsd",
+      "name": "DXY 美元指数",
+      "val": "103.41",
+      "unit": "",
+      "chg": "+1.57",
+      "dir": "up",
+      "tag": "美元走强 · 压制生效",
+      "tone": "bear",
+      "src": "ICE DXY"
+    },
+    {
+      "id": "fsig_bullReal",
+      "name": "10Y TIPS 实利率",
+      "val": "2.86%",
+      "unit": "",
+      "chg": "+0.12",
+      "dir": "up",
+      "tag": "实利率上行 · 未生效",
+      "tone": "neutral",
+      "src": "FRED DFII10"
+    },
+    {
+      "id": "fsig_bearReal",
+      "name": "10Y TIPS 实利率",
+      "val": "2.86%",
+      "unit": "",
+      "chg": "+0.12",
+      "dir": "up",
+      "tag": "实利率上行 · 压制生效",
+      "tone": "bear",
+      "src": "FRED DFII10"
+    },
+    {
+      "id": "fsig_bearHike",
+      "name": "10Y 名义利率",
+      "val": "5.10%",
+      "unit": "",
+      "chg": "-0.07",
+      "dir": "down",
+      "tag": "加息压力缓和",
+      "tone": "neutral",
+      "src": "10Y UST"
+    },
+    {
+      "id": "fsig_bullInfl",
+      "name": "10Y 通胀预期",
+      "val": "2.24%",
+      "unit": "",
+      "chg": "-0.11",
+      "dir": "down",
+      "tag": "通胀预期回落",
+      "tone": "neutral",
+      "src": "FRED T10YIE"
+    },
+    {
+      "id": "fsig_bearRisk",
+      "name": "VIX 波动率",
+      "val": "19.3",
+      "unit": "",
+      "chg": "-0.7",
+      "dir": "down",
+      "tag": "风险偏好回升 · 压制生效",
+      "tone": "bear",
+      "src": "CBOE ^VIX"
+    }
+  ]
+};
+/*GOLD_PANEL_DATA_END*/
+</script>
+
+<script>
+  // 时钟（UTC）
+  function tick(){
+    var d=new Date();
+    var p=function(n){return String(n).padStart(2,'0')};
+    var s=p(d.getUTCHours())+':'+p(d.getUTCMinutes())+':'+p(d.getUTCSeconds())+' UTC';
+    var c=document.getElementById('clock'); if(c) c.textContent=s;
+  }
+  tick(); setInterval(tick,1000);
+
+  // scroll-reveal
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el);});
+
+  // 权重条动画：进入视口后填充
+  var wio=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting){
+        e.target.querySelectorAll('.wbar i').forEach(function(b){
+          b.style.width=b.getAttribute('data-w')+'%';
+        });
+        wio.unobserve(e.target);
+      }
+    });
+  },{threshold:0.3});
+  var w=document.getElementById('weights'); if(w) wio.observe(w);
+
+  // 央行购金展开面板（方案 A）
+  (function(){
+    var t=document.getElementById('cbToggle'), p=document.getElementById('cbPanel');
+    if(!t||!p) return;
+    function toggle(){
+      var open=p.hasAttribute('hidden');
+      if(open){
+        p.removeAttribute('hidden');
+        t.setAttribute('aria-expanded','true');
+        t.querySelector('.sl').textContent='央行购金 · 收起 ▴';
+        p.scrollIntoView({behavior:'smooth',block:'nearest'});
+      }else{
+        p.setAttribute('hidden','');
+        t.setAttribute('aria-expanded','false');
+        t.querySelector('.sl').textContent='央行购金 · 点击展开 ▾';
+      }
+    }
+    t.addEventListener('click',toggle);
+    t.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  })();
+
+  // 中国央行购金展开面板
+  (function(){
+    var t=document.getElementById('cnCbToggle'), p=document.getElementById('cnCbPanel');
+    if(!t||!p) return;
+    function toggle(){
+      var open=p.hasAttribute('hidden');
+      if(open){
+        p.removeAttribute('hidden');
+        t.setAttribute('aria-expanded','true');
+        t.querySelector('.sl').textContent='中国央行购金 · 收起 ▴';
+        p.scrollIntoView({behavior:'smooth',block:'nearest'});
+      }else{
+        p.setAttribute('hidden','');
+        t.setAttribute('aria-expanded','false');
+        t.querySelector('.sl').textContent='中国央行购金 · 点击展开 ▾';
+      }
+    }
+    t.addEventListener('click',toggle);
+    t.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  })();
+
+  // 央行购金面板：图1 国别发散条形 + 图2 月度柱状
+  // 数据来自 data/gold_data.xlsx，由 build_html.py 注入 GOLD_PANEL_DATA。
+  // 改数据 -> 改 Excel -> 跑 build_html.py，无需手改 SVG。
+  (function(){
+    var P = window.GOLD_PANEL_DATA || {};
+
+    function txt(x,y,s,o){
+      o=o||{};
+      return '<text x="'+x+'" y="'+y+'"'+
+        (o.anchor?' text-anchor="'+o.anchor+'"':'')+
+        (o.fill?' fill="'+o.fill+'"':'')+
+        (o.size?' font-size="'+o.size+'"':'')+
+        (o.weight?' font-weight="'+o.weight+'"':'')+
+        '>'+s+'</text>';
+    }
+    function esc(s){
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+    // 坐标轴"整齐"上限：maxAbs=83、ticks=3 -> 90（刻度 30/60/90，与初稿比例一致）
+    // 先按刻度数取整，再套 1/2/3/5/10 × 10^n 阶梯，保证每个刻度都是整数。
+    function niceMax(v,ticks){
+      ticks=ticks||3;
+      if(!(v>0)) return ticks*10;
+      var raw=Math.ceil(v/ticks);
+      var mag=Math.pow(10,Math.floor(Math.log(raw)/Math.LN10));
+      var ladder=[1,2,3,5,10], step=mag*10;
+      for(var i=0;i<ladder.length;i++){ if(raw<=mag*ladder[i]){ step=mag*ladder[i]; break; } }
+      return step*ticks;
+    }
+
+    // ---- 图1：各央行净购金量（发散条形，买家在上/卖家在下）----
+    function drawCountry(rows){
+      var svg=document.getElementById('cbCountry');
+      if(!svg||!rows||!rows.length) return;
+      // 英文国名较长 -> 左侧标签区按最长名称自适应；
+      // 正负两侧按 maxPos/maxNeg 比例分配绘图宽度，保证负值条与数值标签不侵入国名区
+      var W=1180, NAME_SIZE=12, CHAR_W=7.1, PAD=26, LBL_W=54;
+      var n=rows.length, PITCH=26, TOP=64, BOT=TOP+n*PITCH+10;
+      var maxLen=0, maxPos=0, maxNeg=0;
+      rows.forEach(function(r){
+        maxLen=Math.max(maxLen, String(r.name).length);
+        var v=Number(r.value)||0;
+        if(v>=0) maxPos=Math.max(maxPos,v); else maxNeg=Math.max(maxNeg,-v);
+      });
+      var GUT=Math.min(330, Math.max(96, Math.ceil(maxLen*CHAR_W)+14));
+      var avail=W-GUT-PAD*2;
+      var tot=maxPos+maxNeg;
+      var share = tot>0 ? maxNeg/tot : 0.5;
+      var NEG_HALF=Math.max(90, Math.min(avail-200, Math.round(avail*share)));
+      var POS_HALF=Math.max(200, avail-NEG_HALF);
+      var ZERO=GUT+PAD+NEG_HALF;
+      var axMax=niceMax(Math.max(maxPos,maxNeg));
+      var pxPos=POS_HALF/axMax, pxNeg=NEG_HALF/axMax;
+      var bh=Math.min(15, PITCH*0.56);
+      var g='';
+
+      // 竖向网格 + 刻度（上：正侧 / 下：负侧绝对值）
+      var tickStep=axMax/3;
+      g+='<g stroke="var(--line)" stroke-width="1">';
+      for(var k=1;k<=3;k++){
+        var v=tickStep*k;
+        var xp=ZERO+v*pxPos, xn=ZERO-v*pxNeg;
+        g+='<line x1="'+xp.toFixed(1)+'" y1="'+(TOP-10)+'" x2="'+xp.toFixed(1)+'" y2="'+BOT+'"/>';
+        g+='<line x1="'+xn.toFixed(1)+'" y1="'+(TOP-10)+'" x2="'+xn.toFixed(1)+'" y2="'+BOT+'"/>';
+        g+=txt(xp.toFixed(1), (TOP-16).toFixed(1), v.toFixed(0), {anchor:'middle', fill:'var(--txt-faint)', size:'10.5'});
+        g+=txt(xn.toFixed(1), (BOT+18).toFixed(1), v.toFixed(0), {anchor:'middle', fill:'var(--txt-faint)', size:'10.5'});
+      }
+      g+='</g>';
+      g+='<line x1="'+ZERO+'" y1="'+(TOP-14)+'" x2="'+ZERO+'" y2="'+(BOT+4)+
+         '" stroke="var(--line-2)" stroke-width="1.5"/>';
+
+      rows.forEach(function(r,idx){
+        var y=TOP+idx*PITCH+(PITCH-bh)/2;
+        var v=Number(r.value)||0, pos=v>=0;
+        var w=Math.abs(v)*(pos?pxPos:pxNeg);
+        var x=pos?ZERO:ZERO-w;
+        var color=pos?'var(--up)':'var(--down)';
+        g+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+Math.max(w,1).toFixed(1)+
+           '" height="'+bh.toFixed(1)+'" fill="'+color+'"/>';
+        // 国名（左，右对齐）
+        g+=txt((GUT-10).toFixed(1), (y+bh/2+4).toFixed(1), esc(r.name),
+               {anchor:'end', fill:'var(--txt)', size:String(NAME_SIZE)});
+        // 数值：条端外侧；条宽足够时改为条内反白，避免与国名/边界冲突
+        var label=(v>0?'+':'')+v;
+        if(w>=LBL_W+14){
+          g+=txt((pos? x+w-8 : x+8).toFixed(1), (y+bh/2+4).toFixed(1), label,
+                 {anchor:pos?'end':'start', fill:'#ffffff', size:'12', weight:'700'});
+        }else{
+          g+=txt((pos? x+w+8 : x-8).toFixed(1), (y+bh/2+4).toFixed(1), label,
+                 {anchor:pos?'start':'end', fill:color, size:'12', weight:'600'});
+        }
+      });
+      svg.setAttribute('viewBox','0 0 '+W+' '+(BOT+30));
+      svg.innerHTML=g;
+    }
+
+    function drawMonthly(rows){
+      var svg=document.getElementById('cbMonthly');
+      if(!svg||!rows||!rows.length) return;
+      var W=920, L=90, RIGHT=45, BASE=190, TOP_LIM=110, BOT_LIM=240;
+      var maxPos=0, maxNeg=0;
+      rows.forEach(function(r){
+        if(r.value>=0) maxPos=Math.max(maxPos,r.value);
+        else maxNeg=Math.max(maxNeg,-r.value);
+      });
+      var sUp=maxPos>0?(BASE-TOP_LIM)/maxPos:1;
+      var sDn=maxNeg>0?(BOT_LIM-BASE)/maxNeg:1;
+      var s=Math.min(sUp,sDn);
+      var n=rows.length, slot=(W-L-RIGHT)/n, bw=Math.min(70, slot*0.52);
+      var g='';
+
+      g+='<line x1="'+L+'" y1="'+BASE+'" x2="'+(W-20)+'" y2="'+BASE+
+         '" stroke="var(--line-2)" stroke-width="1.4"/>';
+
+      rows.forEach(function(r,i){
+        var x=L+i*slot+(slot-bw)/2;
+        var h=Math.abs(r.value)*s;
+        var y=r.value>=0?BASE-h:BASE;
+        var color=r.value>=0?'var(--up)':'var(--down)';
+        g+='<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+
+           '" height="'+h.toFixed(1)+'" fill="'+color+'"/>';
+        if(r.value>=0){
+          g+=txt((x+bw/2).toFixed(1), (y-6).toFixed(1), '+'+r.value,
+                 {anchor:'middle', fill:color, size:'12.5', weight:'600'});
+        }else{
+          g+=txt((x+bw/2).toFixed(1), (y+h+16).toFixed(1), '−'+Math.abs(r.value),
+                 {anchor:'middle', fill:'var(--txt)', size:'12.5', weight:'600'});
+        }
+        g+=txt((x+bw/2).toFixed(1), 255, esc(r.month),
+               {anchor:'middle', fill:'var(--txt)', size:'12.5'});
+      });
+
+      g+=txt(482, 278, '月度净购金量（吨，WGC 月度统计口径）',
+             {anchor:'middle', fill:'var(--txt-faint)', size:'12'});
+      svg.innerHTML=g;
+    }
+
+    // ---- 中国央行购金月度（双轴：左=当月增持柱 / 右=月末储备线）----
+    function drawCnMonthly(rows){
+      var svg=document.getElementById('cnCbMonthly');
+      if(!svg||!rows||!rows.length) return;
+      var W=920, L=70, RIGHT=88, TOP=40, BOT=230;
+      // 当月增持：优先取 Excel「当月增持(万盎司)」；该列为空/0 而储备有变动时用月末储备差兜底
+      // （口径：当月增持 = 当月末 − 上月末，正值=增持、负值=减持），避免公式无缓存值导致减持(负值)丢失。
+      var series=rows.map(function(r,i){
+        var add=Number(r.add); if(isNaN(add)) add=0;
+        var res=Number(r.reserve); if(isNaN(res)) res=0;
+        var chg=(i>0 && !isNaN(Number(rows[i-1].reserve)))? (res-Number(rows[i-1].reserve)) : 0;
+        if(i>0 && add===0 && chg!==0) add=chg;
+        return {month:r.month, reserve:res, add:add};
+      });
+      var maxPos=0, maxNeg=0;
+      series.forEach(function(r){ if(r.add>0) maxPos=Math.max(maxPos,r.add); else if(r.add<0) maxNeg=Math.max(maxNeg,-r.add); });
+      var hasNeg=maxNeg>0;   // 出现减持(负值)时启用双向轴
+      // 左轴（当月增持）：无减持→零轴贴底（0…absMax）；有减持→对称双轴，零轴居中，负值绘于零轴下方
+      var absMax=hasNeg ? niceMax(Math.max(maxPos,maxNeg),4) : niceMax(maxPos,4);
+      var yZero=hasNeg ? (TOP+BOT)/2 : BOT;
+      var Y=function(v){ return hasNeg ? (yZero - (v/absMax)*((BOT-TOP)/2))
+                                      : (BOT - (v/absMax)*(BOT-TOP)); };
+      var rMin=Infinity, rMax=-Infinity;
+      series.forEach(function(r){ rMin=Math.min(rMin,r.reserve); rMax=Math.max(rMax,r.reserve); });
+      var spanR=(rMax-rMin)||1;
+      var STEPS=[5,10,20,25,50,100,200,250,500,1000,2000];
+      var rStep=STEPS[STEPS.length-1];
+      for(var si=0; si<STEPS.length; si++){
+        var cand=STEPS[si];
+        if(Math.ceil(rMax/cand)*cand - Math.floor(rMin/cand)*cand >= spanR*1.18){ rStep=cand; break; }
+      }
+      var rLo=Math.floor(rMin/rStep)*rStep, rHi=rLo+rStep*4;
+      var n=series.length, slot=(W-L-RIGHT)/n;
+      var X=function(i){ return L + slot*(i+0.5); };
+      var YR=function(v){ return BOT - (v-rLo)/(rHi-rLo)*(BOT-TOP); };
+      var g='';
+      for(var t=0;t<=4;t++){
+        // 双向轴时左轴刻度覆盖 −absMax…+absMax（t=2 为 0）；单向时 0…absMax
+        var v=hasNeg ? (absMax*(t-2)/2) : (absMax*t/4);
+        var y=Y(v), rv=rLo+rStep*t;
+        g+='<line x1="'+L+'" y1="'+y.toFixed(1)+'" x2="'+(W-RIGHT)+'" y2="'+y.toFixed(1)+'" stroke="var(--line-2)" stroke-width="1"/>';
+        g+=txt(L-8, (y+4).toFixed(1), ''+Math.round(v), {anchor:'end', fill:'var(--txt-dim)', size:'11'});
+        g+=txt(W-RIGHT+8, (y+4).toFixed(1), ''+Math.round(rv), {anchor:'start', fill:'var(--gold-2)', size:'11'});
+      }
+      // 出现减持时零轴加粗，明确区分增持区/减持区
+      if(hasNeg){
+        g+='<line x1="'+L+'" y1="'+yZero.toFixed(1)+'" x2="'+(W-RIGHT)+'" y2="'+yZero.toFixed(1)+'" stroke="var(--txt-dim)" stroke-width="1.5"/>';
+      }
+      g+=txt(L-8, TOP-16, '增持', {anchor:'end', fill:'var(--txt-faint)', size:'11'});
+      g+=txt(W-RIGHT+8, TOP-16, '储备', {anchor:'start', fill:'var(--gold-2)', size:'11'});
+      var rpts=[];
+      series.forEach(function(r,i){ rpts.push(X(i).toFixed(1)+' '+YR(r.reserve).toFixed(1)); });
+      g+='<polyline points="'+rpts.join(' ')+'" fill="none" stroke="var(--gold)" stroke-width="2"/>';
+      var bw=Math.max(3, slot*0.56);
+      series.forEach(function(r,i){
+        var x=X(i), y=Y(r.add);
+        if(r.add>0){
+          // 增持：由零轴向上绘绿柱
+          g+='<rect x="'+(x-bw/2).toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(yZero-y,1).toFixed(1)+'" fill="var(--up)" opacity="0.55"/>';
+          g+=txt(x.toFixed(1), (y-6).toFixed(1), ''+r.add, {anchor:'middle', fill:'var(--up)', size:'11', weight:'600'});
+        } else if(r.add<0){
+          // 减持：由零轴向下绘红柱（与同页「净卖出」配色一致），标签贴柱末并夹在轴内
+          g+='<rect x="'+(x-bw/2).toFixed(1)+'" y="'+yZero.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(y-yZero,1).toFixed(1)+'" fill="var(--down)" opacity="0.55"/>';
+          g+=txt(x.toFixed(1), Math.min(y+13, BOT-2).toFixed(1), ''+r.add, {anchor:'middle', fill:'var(--down)', size:'11', weight:'600'});
+        }
+        g+='<circle cx="'+x.toFixed(1)+'" cy="'+YR(r.reserve).toFixed(1)+'" r="2.2" fill="var(--gold)"/>';
+        var p=String(r.month).split('-');
+        var lb=(p.length===2) ? (p[1]==='01'? p[0] : p[1]) : r.month;
+        g+=txt(x.toFixed(1), (BOT+18).toFixed(1), esc(lb), {anchor:'middle', fill:'var(--txt)', size:'12'});
+      });
+      var lastX=X(n-1), lastY=YR(series[n-1].reserve);
+      g+=txt(lastX.toFixed(1), (lastY-10).toFixed(1), String(series[n-1].reserve), {anchor:'end', fill:'var(--gold)', size:'12', weight:'700'});
+      g+=txt(((L+W-RIGHT)/2).toFixed(1), (BOT+40).toFixed(1), '左轴：当月增持（万盎司 · 减持为负，绘于零轴下方）　右轴：月末黄金储备（万盎司）· 国家外汇管理局', {anchor:'middle', fill:'var(--txt-faint)', size:'12'});
+      svg.innerHTML=g;
+    }
+
+    drawCountry(P.cbCountry||[]);
+    // 图 1 期间标签：取月度序列的首末月份，随数据自动更新
+    (function(){
+      var cb=P.cbMonthly||[], el=document.getElementById('cbPeriod');
+      if(!cb.length||!el) return;
+      var f=String(cb[0].month).replace(' 月',''), l=String(cb[cb.length-1].month).replace(' 月','');
+      var yr=(String(cb[0].month).match(/(\d{4})/)||[])[1]||'';
+      el.textContent = yr+' 年 '+f+'–'+l+' 月';
+    })();
+    // ---- 图 3：全球央行年度净购金（Annual 各年列求和）----
+    function drawAnnual(rows){
+      var svg=document.getElementById('cbAnnual');
+      if(!svg||!rows||!rows.length) return;
+      var W=920, L=58, RIGHT=20, TOP=34, BOT=246;
+      var maxPos=0, maxNeg=0;
+      rows.forEach(function(r){
+        var v=Number(r.value)||0;
+        if(v>=0) maxPos=Math.max(maxPos,v); else maxNeg=Math.max(maxNeg,-v);
+      });
+      var sUp=maxPos>0?(BOT-TOP)/maxPos:1, sDn=maxNeg>0?(BOT-TOP)/maxNeg:1;
+      var s=Math.min(sUp,sDn);
+      var n=rows.length, slot=(W-L-RIGHT)/n, bw=Math.min(26, slot*0.66);
+      var Y=function(v){ return v>=0 ? BOT-v*s : BOT-v*s; };
+      var g='';
+      // 零轴 + 网格（±max 取整）
+      var ax=niceMax(Math.max(maxPos,maxNeg));
+      for(var k=-2;k<=2;k++){
+        if(k===0) continue;
+        var y=BOT-k*(ax/2)*s;
+        g+='<line x1="'+L+'" y1="'+y.toFixed(1)+'" x2="'+(W-RIGHT)+'" y2="'+y.toFixed(1)+
+           '" stroke="var(--line-2)" stroke-width="1" stroke-dasharray="2 4"/>';
+        g+=txt(L-7, (y+4).toFixed(1), (k*(ax/2)).toFixed(0), {anchor:'end', fill:'var(--txt-faint)', size:'10.5'});
+      }
+      g+='<line x1="'+L+'" y1="'+BOT+'" x2="'+(W-RIGHT)+'" y2="'+BOT+'" stroke="var(--line-2)" stroke-width="1.5"/>';
+      // 柱：负值红、正值绿；当年（YTD）用空心+虚线边标注
+      rows.forEach(function(r,i){
+        var v=Number(r.value)||0, x=L+slot*(i+0.5), y=BOT-v*s;
+        var isYtd=/YTD/.test(String(r.note||''));
+        var fill=isYtd?'none':(v>=0?'var(--up)':'var(--down)');
+        var stroke=v>=0?'var(--up)':'var(--down)';
+        g+='<rect x="'+(x-bw/2).toFixed(1)+'" y="'+Math.min(y,BOT).toFixed(1)+'" width="'+bw.toFixed(1)+
+           '" height="'+Math.max(Math.abs(BOT-y),1).toFixed(1)+'" fill="'+fill+'" stroke="'+stroke+
+           '" stroke-width="'+(isYtd?1.6:0)+'"'+(isYtd?' stroke-dasharray="3 2"':'')+'/>';
+        // X 轴：每 2 年一个标签，避免拥挤
+        if(i%2===0 || i===n-1){
+          g+=txt(x.toFixed(1), (BOT+16).toFixed(1), String(r.year), {anchor:'middle', fill:'var(--txt-dim)', size:'10.5'});
+        }
+      });
+      // 峰值/谷值标注
+      var hi=0, lo=0;
+      rows.forEach(function(r,i){ if(r.value>rows[hi].value) hi=i; if(r.value<rows[lo].value) lo=i; });
+      g+=txt((L+slot*(hi+0.5)).toFixed(1), (BOT-rows[hi].value*s-8).toFixed(1), '+'+rows[hi].value,
+             {anchor:'middle', fill:'var(--up)', size:'12', weight:'700'});
+      g+=txt((L+slot*(lo+0.5)).toFixed(1), (BOT-rows[lo].value*s+16).toFixed(1), String(rows[lo].value),
+             {anchor:'middle', fill:'var(--down)', size:'12', weight:'700'});
+      g+=txt(((L+W-RIGHT)/2).toFixed(1), (BOT+34).toFixed(1),
+             '吨 · 零轴以上=净买入 / 以下=净卖出　'+(rows[n-1].note||''), {anchor:'middle', fill:'var(--txt-faint)', size:'11.5'});
+      svg.innerHTML=g;
+      // 图下说明：分段统计
+      var foot=document.getElementById('cbAnnualFoot');
+      if(foot){
+        var seg=function(a,b){ var t=0; rows.forEach(function(r){ if(r.year>=a&&r.year<=b) t+=r.value; }); return t; };
+        foot.innerHTML='<b style="color:var(--gold-2)">阶段读数：</b>2002–2007 累计 <b style="color:var(--down)">'+seg(2002,2007).toFixed(0)+
+          't</b>（官方部门持续净卖出）｜2008–2016 累计 <b style="color:var(--up)">'+seg(2008,2016).toFixed(0)+
+          't</b>（金融危机后转净买入）｜2017–2025 累计 <b style="color:var(--up)">'+seg(2017,2025).toFixed(0)+
+          't</b>｜'+rows[n-1].year+' 年至今 <b style="color:var(--up)">'+rows[n-1].value.toFixed(0)+'t</b>（'+String(rows[n-1].note||'')+'）。'+
+          '';
+      }
+    }
+    // ---- 全球黄金供需季度（堆叠柱 + 悬浮明细）----
+    var GDT_DEF = {
+      demand: {
+        svg: 'gdtDemandChart', legend: 'gdtDemLegend', totalKey: 'demand',
+        series: [
+          {k:'jewellery',   n:'金饰制造',   c:'#7C3AED'},
+          {k:'technology',  n:'科技',       c:'#2563EB'},
+          {k:'investment',  n:'投资',       c:'#0F766E'},
+          {k:'cb',          n:'央行及其他', c:'#A21CAF', neg:true}
+        ]
+      },
+      supply: {
+        svg: 'gdtSupplyChart', legend: 'gdtSupLegend', totalKey: 'supply',
+        series: [
+          {k:'mine',      n:'矿产产量',     c:'#2E5C8A'},
+          {k:'recycled',  n:'回收金',       c:'#8A6508'},
+          {k:'hedging',   n:'生产商套保',   c:'#4A7FA5', neg:true}
+        ],
+        subtotals: [
+          {k:'mineTotal', n:'矿产供应合计（小计）', c:'#4a6f96'}
+        ]
+      }
+    };
+
+    function drawGdtStack(cfg, rows){
+      var svg=document.getElementById(cfg.svg);
+      if(!svg||!rows||!rows.length) return;
+      var W=900, L=48, RIGHT=14, TOP=16, BOT=252;
+      var n=rows.length, slot=(W-L-RIGHT)/n, bw=Math.max(2, Math.min(30, slot*0.60));
+      var dense=n>28, totEvery=dense?5:1;   // 合计标签间距：4 会与末季标签相撞（12.7px/季），5 安全
+
+      // 正负分轴：正值向上堆叠，负值系列单独绘于零轴下方（柱底）
+      var maxPos=0, maxNeg=0;
+      rows.forEach(function(r){
+        var p=0, g=0;
+        cfg.series.forEach(function(s2){
+          var v=Number(r[s2.k])||0;
+          if(v<0){ g+=v; } else { p+=v; }   // 可负系列为正时同样计入正向堆叠
+        });
+        maxPos=Math.max(maxPos,p); maxNeg=Math.max(maxNeg,-g);
+      });
+      var axPos=niceMax(maxPos*1.02), axNeg=maxNeg>0?niceMax(maxNeg*1.15):0;
+      var range=axPos+axNeg;
+      var sc=range>0 ? (BOT-TOP)/range : 1;
+      var zeroY=TOP+axPos*sc;   // 正轴在零轴之上、负轴在零轴之下，合计占满 TOP–BOT
+      var Yp=function(v){ return zeroY - v*sc; };
+      var Yn=function(v){ return zeroY + (-v)*sc; };
+
+      var g='';
+      // 正半轴网格
+      for(var t=0;t<=4;t++){
+        var v=axPos*t/4, y=Yp(v);
+        g+='<line x1="'+L+'" y1="'+y.toFixed(1)+'" x2="'+(W-RIGHT)+'" y2="'+y.toFixed(1)+
+           '" stroke="var(--line-2)" stroke-width="1" stroke-dasharray="2 4"/>';
+        g+=txt(L-6, (y+3.5).toFixed(1), v.toFixed(0), {anchor:'end', fill:'var(--txt-faint)', size:'10'});
+      }
+      // 负半轴网格（若存在）：离零轴过近的刻度跳过，避免与「0」叠字
+      if(axNeg>0){
+        [-axNeg/2, -axNeg].forEach(function(nv){
+          var ny=Yn(nv);
+          if(zeroY-ny<15) return;
+          g+='<line x1="'+L+'" y1="'+ny.toFixed(1)+'" x2="'+(W-RIGHT)+'" y2="'+ny.toFixed(1)+
+             '" stroke="var(--line-2)" stroke-width="1" stroke-dasharray="2 4"/>';
+          g+=txt(L-6, (ny+3.5).toFixed(1), nv.toFixed(0), {anchor:'end', fill:'var(--txt-faint)', size:'10'});
+        });
+      }
+      // 零轴
+      g+='<line x1="'+L+'" y1="'+zeroY.toFixed(1)+'" x2="'+(W-RIGHT)+'" y2="'+zeroY.toFixed(1)+
+         '" stroke="var(--line-2)" stroke-width="1.6"/>';
+
+      rows.forEach(function(r,i){
+        var x=L+slot*(i+0.5), posCum=0, negCum=0;
+        cfg.series.forEach(function(s2){
+          var v=Number(r[s2.k])||0;
+          if(s2.neg && v<0){                      // 负值段：绘于零轴下方（柱底）
+            var mag=-v, prevMag=negCum;
+            negCum+=mag;
+            var y0=zeroY+prevMag*sc, y1=zeroY+negCum*sc;
+            g+='<rect x="'+(x-bw/2).toFixed(1)+'" y="'+Math.min(y0,y1).toFixed(1)+'" width="'+bw.toFixed(1)+
+               '" height="'+Math.max(Math.abs(y1-y0),0.8).toFixed(1)+'" fill="'+s2.c+'"/>';
+          }else{
+            if(v<=0) return;
+            posCum+=v;
+            var y0=Yp(posCum), y1=Yp(posCum-v);
+            g+='<rect x="'+(x-bw/2).toFixed(1)+'" y="'+Math.min(y0,y1).toFixed(1)+'" width="'+bw.toFixed(1)+
+               '" height="'+Math.max(Math.abs(y1-y0),0.8).toFixed(1)+'" fill="'+s2.c+'"/>';
+          }
+        });
+        // 柱顶合计（稀疏，末季必显）；无正向段时标在负段下方
+        var topY = posCum>0 ? Yp(posCum)-5 : (negCum<0 ? Yn(negCum)+12 : zeroY-5);
+        if(i%totEvery===0 || i===n-1){
+          g+=txt(x.toFixed(1), topY.toFixed(1), (posCum-negCum).toFixed(0),
+                 {anchor:'middle', fill:'var(--txt-dim)', size:'9'});
+        }
+        // X 轴标签：稀疏时仅 Q1 标年份，其余每 8 个标一个季度
+        var q=String(r.quarter), m=q.match(/^Q(\d)'(\d{2})$/);
+        var lb=m? ('Q'+m[1]) : q, isYear=m&&m[1]==='1';
+        if(dense){
+          if(isYear) g+=txt(x.toFixed(1), (BOT+15).toFixed(1), "'"+m[2], {anchor:'middle', fill:'var(--txt-dim)', size:'9.5'});
+          else if(i%8===0) g+=txt(x.toFixed(1), (BOT+15).toFixed(1), lb, {anchor:'middle', fill:'var(--txt-faint)', size:'9'});
+        }else{
+          if(isYear||m[1]==='3') g+=txt(x.toFixed(1), (BOT+15).toFixed(1), (isYear? ("'"+m[2]) : ('Q'+m[1])), {anchor:'middle', fill:'var(--txt-dim)', size:'9.5'});
+          else g+=txt(x.toFixed(1), (BOT+15).toFixed(1), lb, {anchor:'middle', fill:'var(--txt-dim)', size:'9.5'});
+        }
+        // 悬浮命中区
+        g+='<rect class="gdt-hit" data-gdt="'+cfg.svg+'" data-i="'+i+'" x="'+(x-slot/2).toFixed(1)+
+           '" y="'+TOP+'" width="'+slot.toFixed(1)+'" height="'+(BOT-TOP)+'"/>';
+      });
+      g+=txt(((L+W-RIGHT)/2).toFixed(1), (BOT+30).toFixed(1), '吨 / 季度　零轴以上=堆叠项，零轴以下=负值项',
+             {anchor:'middle', fill:'var(--txt-faint)', size:'11'});
+      svg.innerHTML=g;
+      // 图例（负值系列标注）
+      var lg=document.getElementById(cfg.legend);
+      if(lg){
+        var html='';
+        cfg.series.forEach(function(s2){
+          html+='<span><i style="background:'+s2.c+'"></i>'+s2.n+(s2.neg?'（负值段）':'')+'</span>';
+        });
+        (cfg.subtotals||[]).forEach(function(s2){ html+='<span style="opacity:.75"><i style="background:'+s2.c+'"></i>'+s2.n+'</span>'; });
+        lg.innerHTML=html;
+      }
+    }
+
+    function gdtTipShow(svgId, i, ev){
+      var rows=(window.GOLD_PANEL_DATA||{}).gdtQuarter||[];
+      var r=rows[i]; if(!r) return;
+      var cfg=GDT_DEF[svgId.indexOf('Demand')>=0 ? 'demand':'supply'];
+      var tip=document.getElementById('gdtTip');
+      if(!tip) return;
+      var h='<div class="gt">'+r.quarter+'</div>';
+      cfg.series.forEach(function(s){
+        h+='<div class="gr"><i style="background:'+s.c+'"></i>'+s.n+'<b>'+(Number(r[s.k])||0).toFixed(1)+'t</b></div>';
+      });
+      (cfg.subtotals||[]).forEach(function(s){
+        h+='<div class="gr"><i style="background:'+s.c+'"></i>'+s.n+'<b>'+(Number(r[s.k])||0).toFixed(1)+'t</b></div>';
+      });
+      h+='<div class="gtot">'+(cfg===GDT_DEF.demand?'需求合计':'供应合计')+'<b>'+(Number(r[cfg.totalKey])||0).toFixed(1)+'t</b></div>';
+      tip.innerHTML=h;
+      tip.hidden=false;
+      var pad=14, w=tip.offsetWidth||200, ht=tip.offsetHeight||120;
+      var x=Math.min(ev.clientX+pad, window.innerWidth-w-8);
+      var y=Math.max(8, Math.min(ev.clientY-ht/2, window.innerHeight-ht-8));
+      tip.style.left=x+'px'; tip.style.top=y+'px';
+    }
+    function gdtTipHide(){ var t=document.getElementById('gdtTip'); if(t) t.hidden=true; }
+
+    (function(){
+      var rows=(window.GOLD_PANEL_DATA||{}).gdtQuarter||[];
+      drawGdtStack(GDT_DEF.demand, rows);
+      drawGdtStack(GDT_DEF.supply, rows);
+      ['gdtDemandChart','gdtSupplyChart'].forEach(function(id){
+        var svg=document.getElementById(id); if(!svg) return;
+        svg.addEventListener('mousemove', function(ev){
+          var t=ev.target;
+          if(t && t.getAttribute && t.getAttribute('data-gdt')===id){
+            gdtTipShow(id, +t.getAttribute('data-i'), ev);
+          } else { gdtTipHide(); }
+        });
+        svg.addEventListener('mouseleave', gdtTipHide);
+      });
+      // 卡片：供需读数 + 展开/收起
+      var lastQ='';
+      function gdtTitle(open){
+        var sl=document.querySelector('#gdtToggle .sl');
+        if(sl) sl.innerHTML='全球黄金供需 · '+lastQ+' · '+(open?'收起 ▴':'点击展开 ▾');
+      }
+      (function(){
+        var t=document.getElementById('gdtToggle'), p=document.getElementById('gdtPanel');
+        if(!t||!p) return;
+        function toggle(){
+          var open=p.hasAttribute('hidden');
+          if(open){ p.removeAttribute('hidden'); t.setAttribute('aria-expanded','true'); }
+          else   { p.setAttribute('hidden','');     t.setAttribute('aria-expanded','false'); }
+          gdtTitle(open);
+          if(open) p.scrollIntoView({behavior:'smooth', block:'nearest'});
+        }
+        t.addEventListener('click', toggle);
+        t.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+      })();
+      if(rows.length){
+        var last=rows[rows.length-1], prev=rows[rows.length-5];
+        var f=function(v){ return Number(v||0).toLocaleString('en-US',{minimumFractionDigits:1, maximumFractionDigits:1}); };
+        var set=function(i,t){ var e=document.getElementById(i); if(e) e.textContent=t; };
+        set('gdtQuarter', last.quarter);
+        lastQ=last.quarter;
+        gdtTitle(false);
+        set('gdtDemand', f(last.demand)+'t');
+        var gap=last.demand-last.supply;
+        set('gdtSupply', '供应 '+f(last.supply)+'t · 缺口 '+(gap>=0?'+':'')+f(gap)+'t');
+        set('gdtMix', '金饰 '+f(last.jewellery)+' · 科技 '+f(last.technology)+' · 投资 '+f(last.investment)+' · 央行 '+f(last.cb));
+        set('gdtPanelMeta', rows[0].quarter+' – '+last.quarter+'（'+rows.length+' 个季度）');
+        var yoy=prev&&prev.demand? ((last.demand/prev.demand-1)*100):0;
+        var yoyS=prev&&prev.supply? ((last.supply/prev.supply-1)*100):0;
+        var foot=document.getElementById('gdtFoot');
+        if(foot){
+          foot.innerHTML='<b>数据来源：</b>WGC《Gold Demand Trends》Gold Balance 表（Metals Focus / Refinitiv GFMS / ICSG），单位吨。'+
+            '<b>需求合计</b>=金饰制造+科技+投资+央行及其他机构；<b>供应合计</b>=矿产供应合计（矿产产量+生产商套保）+回收金，堆叠项为矿产产量/套保/回收金。'+
+            '最新季度 '+last.quarter+'：需求同比 '+(yoy>=0?'+':'')+yoy.toFixed(1)+'%，供应同比 '+(yoyS>=0?'+':'')+yoyS.toFixed(1)+'%，'+
+            '需求较供应低 '+Math.abs(gap).toFixed(1)+' 吨（缺口由场外/未分配需求吸收）。采集命令：<span class="mono">python3 src/fetch_gdt.py</span>。';
+        }
+      }
+    })();
+    drawAnnual(P.cbAnnual||[]);
+    drawMonthly(P.cbMonthly||[]);
+    drawCnMonthly(P.cnMonthly||[]);
+
+    // 卡片三项信息随月度数据自动更新（数据源同图：中国央行月末储备）
+    // 换月只需在 xlsx「中国央行购金月度」追加一行并跑 build_html.py，无需改 HTML
+    function syncCnCbCard(rows){
+      if(!rows||!rows.length) return;
+      var OZ_PER_TONNE=32150.7;               // 1 金衡盎司=31.1035g → 1 吨=32150.7 盎司
+      var last=rows[rows.length-1], first=rows[0];
+      var toT=function(wanOz){ return Math.round(wanOz*10000/OZ_PER_TONNE); };
+      var parts=String(last.month).split('-');
+      var yr=parts[0], mo=parts[1]||'';
+      // YTD 用月末储备差口径：最新月储备 − 上一年末(12月)储备；
+      // 不用「当月增持」列求和（该列历史多为空，会低估）。与 applyData 派生口径一致。
+      var prevDec=null;
+      for(var _p=rows.length-1;_p>=0;_p--){ if(String(rows[_p].month)===String(Number(yr)-1)+'-12'){ prevDec=rows[_p]; break; } }
+      var ytd=prevDec?(Number(last.reserve)-Number(prevDec.reserve)):0;
+      var set=function(id,txt){ var el=document.getElementById(id); if(el) el.textContent=txt; };
+      set('cnCbOwnT', toT(last.reserve).toLocaleString('en-US')+'t');
+      set('cnCbStreak', String(last.streak));
+      set('cnCbYtdYear', yr);
+      set('cnCbYtd', toT(ytd)+'t');
+      set('CNCB_sub', Number(mo)+' 月储备 '+Number(last.reserve).toLocaleString('en-US')+' 万盎司 · 当月增持 '+Number(last.add).toLocaleString('en-US')+' 万盎司');
+      set('snapshotAsOf', 'DATA SNAPSHOT · 截至 '+last.month);
+      set('cnCbRange', 'SAFE · '+String(first.month)+'~'+String(last.month));
+      set('cnCbCap', '图 1　'+String(first.month).slice(0,4)+'–'+String(last.month).slice(0,4)+' 年中国央行月度购金量与月末黄金储备（万盎司）');
+    }
+    syncCnCbCard(P.cnMonthly||[]);
+  })();
+
+  // ===== 当前报盘 · 当年月度金价（世界银行 Pink Sheet 月度 Gold）=====
+  // 数据来自 fetch_gold_monthly.py -> 「黄金月度均价」sheet -> GOLD_PANEL_DATA.goldMonthly。
+  // 空 <svg> + IIFE 渲染，空数据兜底；不硬编码任何图形。
+  (function(){
+    var rows=(window.GOLD_PANEL_DATA||{}).goldMonthly||[];
+    var svg=document.getElementById('goldMonthlyChart');
+    if(!svg) return;
+    var pts=rows.filter(function(r){return r&&r.price&&!isNaN(parseFloat(r.price));});
+    if(!pts.length){
+      svg.innerHTML='<text class="gm-lbl" x="230" y="44" text-anchor="middle">暂无月度数据 · 请跑 fetch_gold_monthly.py</text>';
+      window.__goldMonthlyStat={points:0,empty:true}; return;
+    }
+    var W=460,H=80,PL=26,PR=10,PT=8,PB=16;
+    var vs=pts.map(function(r){return Number(r.price);});
+    var mn=Math.min.apply(null,vs), mx=Math.max.apply(null,vs);
+    var pad=(mx-mn)*0.15||1; mn-=pad; mx+=pad;
+    function X(i){return PL+(pts.length<2?0:i/(pts.length-1)*(W-PL-PR));}
+    function Y(v){return H-PB-(v-mn)/(mx-mn)*(H-PT-PB);}
+    var yr=String(pts[0].month).slice(0,4);
+    var last=pts[pts.length-1];
+    var d='';
+    pts.forEach(function(r,i){d+=(i?'L':'M')+X(i).toFixed(1)+','+Y(r.price).toFixed(1)+' ';});
+    var area=d+'L'+X(pts.length-1).toFixed(1)+','+(H-PB)+' L'+X(0).toFixed(1)+','+(H-PB)+' Z';
+    var g='<path class="gm-area" d="'+area+'"/><path class="gm-line" d="'+d+'"/>';
+    pts.forEach(function(r,i){
+      g+='<circle class="gm-dot" cx="'+X(i).toFixed(1)+'" cy="'+Y(r.price).toFixed(1)+'" r="2.3"/>';
+      var mo=parseInt(String(r.month).slice(5,7),10);
+      if(i===0||i===pts.length-1||pts.length<=7||i%2===0)
+        g+='<text class="gm-lbl" x="'+X(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle">'+mo+'月</text>';
+    });
+    var vt=yr+'月度';
+    for(var k=0;k<vt.length;k++){
+      g+='<text class="gm-vlabel" x="'+(PL-15)+'" y="'
+         +(PT+8+k*((H-PT-PB-12)/Math.max(1,vt.length-1))).toFixed(1)
+         +'" text-anchor="middle">'+vt.charAt(k)+'</text>';
+    }
+    g+='<text class="gm-lbl" x="'+(X(pts.length-1)-2).toFixed(1)+'" y="'+(Y(last.price)-9).toFixed(1)+'" text-anchor="end">$'+Number(last.price).toLocaleString('en-US')+'</text>';
+    svg.innerHTML=g;
+    window.__goldMonthlyStat={points:pts.length,year:yr,last:last.price,empty:false};
+  })();
+
+  // 美国债务真实数据校准 展开面板
+  (function(){
+    // 数据来自 data/gold_data.xlsx「美债数据」sheet，由 build_html.py 注入 GOLD_PANEL_DATA
+    var PD = window.GOLD_PANEL_DATA || {};
+    var DP = PD.debt || {};
+    var Y        = DP.years    || [];
+    var debt     = DP.debt     || [];
+    var interest = DP.interest || [];
+    var rn       = DP.rn       || [];
+    function project(b0,r,nn,def,years){var b=b0,out=[b];for(var t=0;t<years;t++){b=b+(r-nn)*b/100+def;if(b<0)b=0;out.push(+b.toFixed(1));}return out;}
+    function draw(svgId,xs,series,opt){
+      var svg=document.getElementById(svgId);
+      if(!svg||!xs||!xs.length) return;   // 数据缺失时安全跳过，避免整页脚本报错
+      var W=svg.viewBox.baseVal.width,H=svg.viewBox.baseVal.height;
+      var L=56,R=16,T=18,B=42,n=xs.length-1;
+      var maxV=-1e9,minV=1e9;
+      series.forEach(function(s){s.data.forEach(function(v){maxV=Math.max(maxV,v);minV=Math.min(minV,v);});});
+      if(opt.zero)minV=Math.min(minV,0);
+      var pad=(maxV-minV)*0.12||1; maxV+=pad; if(opt.zero)minV=Math.min(minV-pad,0);
+      function X(t){return L+(W-L-R)*t/n;}
+      function Yf(v){return T+(H-T-B)*(1-(v-minV)/(maxV-minV));}
+      var g='';
+      for(var i=0;i<=5;i++){var v=minV+(maxV-minV)*i/5,y=Yf(v);
+        g+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'" stroke="#e5e9ef" stroke-width="1"/>';
+        g+='<text x="'+(L-8)+'" y="'+(y+4)+'" text-anchor="end" font-size="11" fill="#5b6672" font-family="IBM Plex Mono,monospace">'+v.toFixed(opt.dp||0)+'</text>';
+      }
+      xs.forEach(function(x,t){ if(t%Math.max(1,Math.round(n/5))===0||t===n) g+='<text x="'+X(t)+'" y="'+(H-14)+'" text-anchor="middle" font-size="11" fill="#5b6672" font-family="IBM Plex Mono,monospace">'+x+'</text>';});
+      if(opt.zero!==undefined){var yz=Yf(0); g+='<line x1="'+L+'" y1="'+yz+'" x2="'+(W-R)+'" y2="'+yz+'" stroke="var(--down)" stroke-width="1.3" stroke-dasharray="5 4"/>';}
+      series.forEach(function(s){
+        var path='',area='M '+X(0)+' '+Yf(s.data[0]);
+        s.data.forEach(function(v,t){path+=(t===0?'M':'L')+' '+X(t).toFixed(1)+' '+Yf(v).toFixed(1)+' ';area+=' L '+X(t).toFixed(1)+' '+Yf(v).toFixed(1);});
+        area+=' L '+X(n)+' '+Yf(minV)+' L '+X(0)+' '+Yf(minV)+' Z';
+        if(s.fill)g+='<path d="'+area+'" fill="'+s.color+'" opacity="0.10"/>';
+        g+='<path d="'+path+'" fill="none" stroke="'+s.color+'" stroke-width="2.2"/>';
+        s.data.forEach(function(v,t){g+='<circle cx="'+X(t)+'" cy="'+Yf(v)+'" r="3" fill="'+s.color+'"/>';});
+        var last=s.data[n];
+        g+='<text x="'+(X(n)-6)+'" y="'+(Yf(last)-9)+'" text-anchor="end" font-size="12" font-weight="600" fill="'+s.color+'" font-family="IBM Plex Mono,monospace">'+last.toFixed(opt.dp||0)+'</text>';
+      });
+      svg.innerHTML=g;
+    }
+    // 前向推演种子与参数同样来自 Excel「元数据」sheet
+    var PM=PD.meta||{};
+    function pnum(v,d){var n=parseFloat(v);return isNaN(n)?d:n;}
+    var b0=pnum(PM.projB0,121.5), rr=pnum(PM.projR,2.59),
+        dfc=pnum(PM.projDef,5.9), yrs=pnum(PM.projYears,15);
+    var startY=(Y&&Y.length)?Y[Y.length-1]:2025;
+    var fwdX=[]; for(var k=startY;k<=startY+yrs;k++) fwdX.push(k);
+    var pA=project(b0,rr,pnum(PM.projN,5.1),dfc,yrs);
+    var pB=project(b0,rr,3.0,dfc,yrs);
+    var pC=project(b0,rr,1.5,dfc,yrs);
+    draw('dtDebt',Y,[{data:debt,color:'#9A6B00',fill:true}],{dp:0});
+    draw('dtInt',Y,[{data:interest,color:'#c0392b',fill:true}],{dp:1});
+    draw('dtRN',Y,[{data:rn,color:'#9A6B00',fill:true}],{dp:1,zero:0});
+    draw('dtFwd',fwdX,[{data:pA,color:'#1f7a4d',fill:true},{data:pB,color:'#9A6B00',fill:false},{data:pC,color:'#c0392b',fill:false}],{dp:0});
+
+    var t=document.getElementById('debtToggle'), p=document.getElementById('debtPanel');
+    if(!t||!p) return;
+    function toggle(){
+      var open=p.hasAttribute('hidden');
+      if(open){ p.removeAttribute('hidden'); t.setAttribute('aria-expanded','true'); t.querySelector('.sl').textContent='美债务/GDP · 收起 ▴'; p.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+      else{ p.setAttribute('hidden',''); t.setAttribute('aria-expanded','false'); t.querySelector('.sl').textContent='美债务/GDP · 点击展开 ▾'; }
+    }
+    t.addEventListener('click',toggle);
+    t.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } });
+  })();
+
+  // ===== 数据驱动 + 刷新（双通道） =====
+  (function(){
+    var D = window.GOLD_DATA || {};
+    // 历史高点卡片 · 三锚动态描述（2026-11-15 用户选「删低点留三锚」）：
+    // 静态「盘中最低 3,959 / 回落 26%」会被后续行情打破，改为 ATH + 当前价 + 最新月均动态拼装。
+    // 挂进 applyData：刷新按钮改 D.spot、event 切换改 D 后都会自动重算。
+    function _num(v){ var n=parseFloat(String(v==null?'':v).replace(/[$,]/g,'')); return isNaN(n)?null:n; }
+    function renderAthNote(){
+      var el=document.getElementById('athNote');
+      if(!el) return;
+      var ath=_num(D.ath), spot=_num(D.spot);
+      var rows=(window.GOLD_PANEL_DATA||{}).goldMonthly||[];
+      var last=rows.length?rows[rows.length-1]:null;
+      var md=String(D.athDate||'').slice(5).replace(/^0/,'');   // 例：2026-01-29 → 1-29
+      var h='';
+      if(ath!=null) h+='历史高点 <b>'+D.ath+'</b>'+(md?'（'+md+' 盘中）':'')+'；';
+      if(spot!=null){
+        h+='当前 <b>'+D.spot+'</b>';
+        if(ath!=null && ath>0){
+          var dp=(ath-spot)/ath*100;
+          if(dp>0.05) h+='，较 ATH 回落 <b>'+dp.toFixed(1)+'%</b>';
+          else if(dp<-0.05) h+='，较 ATH 上涨 <b>'+Math.abs(dp).toFixed(1)+'%</b>';
+          else h+='，贴近历史高点';
+        }
+      }
+      if(last) h+='；最新月均 <b>$'+Number(last.price).toLocaleString('en-US')+'</b>（'+parseInt(String(last.month).slice(5),10)+'月）';
+      el.innerHTML=h+'。';
+      window.__athNoteStat={ath:ath, spot:spot,
+        dropPct:(spot!=null&&ath)?(ath-spot)/ath*100:null,
+        lastMonth:last?last.month:null, lastPrice:last?last.price:null, html:el.innerHTML};
+    }
+    window.__athNoteRender=renderAthNote;
+    function applyData(){
+      // 局部转义（esc 定义在另一 IIFE 作用域，此处不可见）
+      var _esc=function(x){ return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); };
+      // 中国央行购金：卡片大字/副行、图例、口径段、顶栏 CB OWN 统一由 cnMonthly 月末口径派生（数据块外，重建保留）
+      var _cm=(window.GOLD_PANEL_DATA||{}).cnMonthly||[];
+      var _cn=null;
+      if(_cm.length){
+        var _oz=32150.7;                                   // 1 吨 = 32150.7 金衡盎司
+        var _toT=function(w){ return Math.round(Number(w)*10000/_oz); };
+        var _cl=_cm[_cm.length-1];
+        var _yr=String(_cl.month).slice(0,4), _mo=String(_cl.month).slice(5);
+        var _prevDec=null;
+        for(var _i=_cm.length-1;_i>=0;_i--){
+          if(String(_cm[_i].month)===String(Number(_yr)-1)+'-12'){ _prevDec=_cm[_i]; break; }
+        }
+        var _ytdWan=_prevDec?(Number(_cl.reserve)-Number(_prevDec.reserve)):0;
+        var _ytdT=_toT(_ytdWan);
+        // 当前一轮连续增持起点 = 最后一个 streak 归零月之后的首月
+        var _lastZero=-1;
+        for(var _j=0;_j<_cm.length;_j++){ if(Number(_cm[_j].streak)===0) _lastZero=_j; }
+        var _start=_lastZero>=0 && _cm[_lastZero+1] ? String(_cm[_lastZero+1].month) : String(_cm[0].month);
+        // 暂停区间 = 所有 streak 归零月的首尾
+        var _zeros=_cm.filter(function(r){ return Number(r.streak)===0; }).map(function(r){ return String(r.month); });
+        var _pause=_zeros.length ? (_zeros[0]+'~'+_zeros[_zeros.length-1]) : '—';
+        _cn={
+          cbChinaOwn:_toT(_cl.reserve).toLocaleString('en-US')+'t',
+          cbChinaStreak:String(_cl.streak),
+          cbChinaYtd:_ytdT+'t',
+          legend:Number(_mo)+' 月储备 '+Number(_cl.reserve).toLocaleString('en-US')+' 万盎司 ≈ '+_toT(_cl.reserve).toLocaleString('en-US')+'t · 连续增持第 '+Number(_cl.streak)+' 个月',
+          caliber:'连续增持自 '+_start+' 起计（截至 '+_cl.month+' 为第 '+Number(_cl.streak)+' 个月）；'+_pause+' 为暂停增持区间（连续月数归零）；'+_yr+' YTD 净购 '+_ytdWan.toLocaleString('en-US')+' 万盎司 ≈ '+_ytdT+'t（月末口径，1–'+Number(_mo)+' 月累加）。'
+        };
+      }
+      document.querySelectorAll('[data-field]').forEach(function(el){
+        var k=el.getAttribute('data-field');
+        // cbH1Summary 数据驱动：与图 3 全球央行年度净购金同源，取 cbAnnual 最新年份(YTD)，
+        // 显示 "YYYY 年至今 +NNNt"，不再使用写死的 "1–7 月 / H1 综合" 静态口径。
+        if(k==='cbH1Summary'){
+          var _ann=(window.GOLD_PANEL_DATA||{}).cbAnnual||[];
+          if(_ann.length){
+            var _aLast=_ann[_ann.length-1];
+            el.textContent=_aLast.year+' 年至今 +'+(Number(_aLast.value)||0).toFixed(0)+'t';
+            return;
+          }
+        }
+        // 中国央行购金三项徽章由 cnMonthly 派生，优先级高于 GOLD_DATA 静态注入值
+        if(_cn && (k==='cbChinaOwn'||k==='cbChinaStreak'||k==='cbChinaYtd')){
+          el.textContent=_cn[k]; return;
+        }
+        if(D[k]!==undefined && D[k]!==null) el.textContent=D[k];
+      });
+      if(_cn){
+        var _lg=document.getElementById('cnCbLegend'); if(_lg) _lg.textContent=_cn.legend;
+        var _cl2=document.getElementById('cnCbCaliber'); if(_cl2) _cl2.textContent=_cn.caliber;
+      }
+      // 四张卡悬停 title / 央行面板 meta 的日期随数据自动更新（不再静态写死月份/年份）：
+      // 全球央行卡取 cbMonthly 首末月 + cbAnnual 末年；美债卡取 debt.years 首末；中国央行卡取 cnMonthly 首末。
+      var _P2=window.GOLD_PANEL_DATA||{};
+      var _st=function(id,txt){ var e=document.getElementById(id); if(e) e.setAttribute('title',txt); };
+      var _cbm=_P2.cbMonthly||[], _ann2=_P2.cbAnnual||[];
+      if(_cbm.length){
+        var _y2=String(_ann2.length?_ann2[_ann2.length-1].year:new Date().getFullYear());
+        var _fm=String(_cbm[0].month).replace(/\s*月$/,'');
+        var _lm=String(_cbm[_cbm.length-1].month).replace(/\s*月$/,'');
+        _st('cbToggle','点击展开 '+_y2+' 年 '+_fm+'–'+_lm+' 月央行购金国别结构');
+        var _pm=document.getElementById('cbPanelMeta');
+        if(_pm) _pm.textContent='IMF IFS · 截至 '+_y2+'-'+('0'+_lm).slice(-2);
+      }
+      var _dy=(_P2.debt||{}).years||[];
+      if(_dy.length) _st('debtToggle','点击展开 美国债务真实数据校准 '+_dy[0]+'–'+_dy[_dy.length-1]);
+      if(_cm.length) _st('cnCbToggle','点击展开 '+String(_cm[0].month).slice(0,4)+'–'+String(_cm[_cm.length-1].month).slice(0,4)+' 年中国央行购金月度折线');
+      // 力矩阵状态灯（方案 B 第一步）：当前值 · 近4周变化 · 对金价信号，由 build_html.py 从宏观因子派生
+      (_P2.forces||[]).forEach(function(f){
+        var fe=document.getElementById(f.id); if(!fe) return;
+        var ar=f.dir==='up'?'▲':(f.dir==='down'?'▼':'—');
+        fe.innerHTML='<span class="fval">'+_esc(f.name)+' '+_esc(f.val)+(f.unit?' '+_esc(f.unit):'')+'</span>'
+          +'<span class="fchg '+_esc(f.dir)+'">'+ar+' '+_esc(f.chg)+'</span>'
+          +'<span class="ftag '+_esc(f.tone)+'">'+_esc(f.tag)+'</span>'
+          +'<span class="fsrc">'+_esc(f.src)+'</span>';
+      });
+      // 核心逻辑与供需结构：中国央行条 / 矿产滚动 4 季 / 标题基准标注（与卡片、GDT 同源）
+      var _gdt2=_P2.gdtQuarter||[];
+      if(_cn && _cm.length){
+        var _lcEl=document.getElementById('logicCnCb');
+        if(_lcEl){
+          var _lm0=String(_cm[_cm.length-1].month);
+          _lcEl.textContent='连续 '+String(_cn.cbChinaStreak)+' 个月增持；'+
+            _lm0.slice(5)+' 月末储备 '+_cn.cbChinaOwn+'；'+_lm0.slice(0,4)+' YTD 净购 '+
+            _cn.cbChinaYtd+'（月末口径）。';
+        }
+      }
+      var _lmEl=document.getElementById('logicMine4q');
+      if(_lmEl && _gdt2.length>=4){
+        var _sumMine=0;
+        for(var _gi=_gdt2.length-4;_gi<_gdt2.length;_gi++) _sumMine+=(Number(_gdt2[_gi].mine)||0);
+        _lmEl.textContent=_sumMine.toLocaleString('en-US',{maximumFractionDigits:0});
+      }
+      var _laEl=document.getElementById('logicAsOf');
+      if(_laEl){
+        var _cmL=_cm.length?String(_cm[_cm.length-1].month):'—';
+        var _gL=_gdt2.length?String(_gdt2[_gdt2.length-1].quarter):'—';
+        _laEl.textContent='央行 '+_cmL+' · 供需 '+_gL;
+      }
+      // 叙事脉络：末月标注 / 见顶日期 / 新增「二次探底」节点（均取 GOLD_DATA，随抓取更新）
+      var _lgMeta=document.getElementById('logMeta');
+      if(_lgMeta && D.spotAsOf) _lgMeta.textContent='2024 → '+String(D.spotAsOf);
+      var _lgAth=document.getElementById('logAthDate');
+      if(_lgAth && D.athDate) _lgAth.textContent=String(D.athDate);
+      var _lgLow=document.getElementById('logLowP');
+      if(_lgLow && D.lowDate && D.lowValue){
+        _lgLow.innerHTML='<span class="k">'+_esc(String(D.lowDate))+' 盘中 '+_esc(D.lowValue)+
+          '</span>，自高点回撤 '+_esc(String(D.lowDrop||''))+'，已跌破 6 月低点；现货 '+
+          _esc(String(D.spot||''))+'（'+_esc(String(D.spotAsOf||''))+'），美元走强与实利率上行仍是主导压制。';
+      }
+      // 压制④例证：顶部/低点/回撤改用 GOLD_DATA（ath / lowValue / lowDrop / athDate）动态值
+      var _egr=document.getElementById('egBearReal');
+      if(_egr && D.ath && D.lowValue){
+        _egr.innerHTML='<span class="y">'+_esc(String(D.athDate||''))+'</span> 见顶 '+_esc(D.ath)+
+          ' → <span class="y">'+_esc(String(D.lowDate||''))+'</span> 探底 '+_esc(D.lowValue)+
+          '（最大回撤 '+_esc(String(D.lowDrop||''))+'）。';
+      }
+      // 上涨驱动权重脚注：央行购金最新季度改用 macroLatest.A4（date + value）
+      var _wfc=document.getElementById('wfootCb'), _a4=null;
+      (_P2.macroLatest||[]).forEach(function(m){ if(m&&m.key==='A4') _a4=m; });
+      if(_wfc && _a4){
+        var _a4v=Number(_a4.value);
+        _wfc.textContent='央行购金：2022–24 每年净买 >1000t，2025 约 863t，最新 '+_a4.date+' 净买 '+
+          (isNaN(_a4v)?_a4.value:_a4v.toFixed(1))+'t（WGC 口径）；黄金占全球央行储备比重自 1996 年来首超美债。';
+      }
+      // 力矩阵例证 ③④：由 fetch_gold_data.py 写入的近期行情派生，避免月份过期
+      var _eu=document.getElementById('egBullUsd');
+      if(_eu && D.egUsdDate){
+        _eu.innerHTML='<span class="y">'+_esc(D.egUsdDate)+'</span> 美元指数单日 '+_esc(D.egUsdDxyChg)+
+          '，金价当日 '+_esc(D.egUsdGoldChg)+'（近半年最大单日走软）。';
+      }
+      var _er=document.getElementById('egBullReal');
+      if(_er && D.egRealTipsChg){
+        _er.innerHTML='<span class="y">2025</span> 宽松周期压低实际利率助涨；近 20 个交易日 10Y TIPS '+
+          _esc(D.egRealTipsChg)+'、金价 '+_esc(D.egRealGoldChg||'—')+'。';
+      }
+      // 力矩阵例证角标：扫描 8 处 .eg 文本中的最新年月（YYYY-MM / YYYY H1·H2 / YYYY Q1–Q4），
+      // 使「例证截至」随文案自动更新，明确例证为历史叙事、只有状态灯是实时的。
+      (function(){
+        var tag=document.getElementById('egAsOf'); if(!tag) return;
+        var best='';
+        var bump=function(y,mm){ var k=y+'-'+('0'+mm).slice(-2); if(k>best) best=k; };
+        var QM={H1:'06',H2:'12',Q1:'03',Q2:'06',Q3:'09',Q4:'12'};
+        document.querySelectorAll('.matrix .eg').forEach(function(el){
+          var t=el.textContent||'', m;
+          var re=/\b(20\d{2})-(\d{2})(?:-\d{2})?\b/g;
+          while((m=re.exec(t))) bump(m[1],m[2]);
+          var re2=/\b(20\d{2})\s*(H1|H2|Q[1-4])\b/g;
+          while((m=re2.exec(t))) bump(m[1], QM[m[2]]);
+        });
+        tag.textContent = best ? ('例证截至 '+best) : '例证为历史叙事';
+      })();
+      renderAthNote();
+    }
+    applyData();
+
+
+    // EVENT 按钮：点击在「黄金事件流」候选（GOLD_PANEL_DATA.events，构建时注入）中切换。
+    // 第 1 次点击 -> 切到日期最新的候选（events[1]，即"更新当日"的最近似动作）；
+    // 之后每点一次循环下一条，走完回到构建时选中的默认条（events[0]）。
+    // ⚠️ 浏览器端拿不到新新闻：Google News RSS / Yahoo 均无 CORS 头，公共代理不可靠，
+    //    所以候选池 = 上次 build 时注入的 40 条；要真正刷新数据仍需本地跑 fetch_event.py。
+    (function eventButton(){
+      var btn=document.getElementById('evBtn');
+      if(!btn) return;
+      var list=(window.GOLD_PANEL_DATA && window.GOLD_PANEL_DATA.events) || [];
+      if(!list.length){ btn.title='无候选数据（先跑 fetch_event.py）'; return; }
+
+      var cur={ date: D.eventDate, title: D.eventText };
+      function curIdx(){
+        for(var i=0;i<list.length;i++){
+          if(list[i].date===cur.date && list[i].title===cur.title) return i;
+        }
+        return 0;
+      }
+      function show(i){
+        var e=list[i];
+        cur={ date:e.date, title:e.title };
+        D.eventDate=e.date;
+        D.eventText=e.title;
+        D.eventSource=e.source||'—';
+        applyData();
+      }
+      btn.addEventListener('click',function(){
+        var i=curIdx();
+        var next=(i===0) ? 1 : (i+1)%list.length;   // 首点切最新，之后循环
+        if(list.length===1) next=0;
+        show(next);
+      });
+    })();
+
+    var btn=document.getElementById('refreshBtn');
+    var brandBtn=document.getElementById('brandRefreshBtn');
+    if(!btn && !brandBtn) return;
+    var BTN_LABEL='⟳ 刷新实时金价';
+    function todayStr(){
+      var d=new Date(), m=d.getMonth()+1, day=d.getDate();
+      return d.getFullYear()+'-'+('0'+m).slice(-2)+'-'+('0'+day).slice(-2);
+    }
+    // 刷新动作抽成公共函数：顶栏 AU::TERMINAL 与 HERO 刷新按钮共用同一逻辑。
+    // 只更新现货价与滚动条 XAU/USD；其余 ticker 字段为构建时静态数据，点击不刷新。
+    function doRefresh(){
+      var targets=[btn,brandBtn].filter(Boolean);
+      targets.forEach(function(b){ b.disabled=true; });
+      if(btn) btn.textContent='⟳ 获取中…';
+      fetch(D.liveApi,{cache:'no-store'})
+        .then(function(r){return r.json();})
+        .then(function(j){
+          if(j&&j.price){
+            var p=Number(j.price);
+            var s='$'+p.toLocaleString('en-US',{maximumFractionDigits:0});
+            // 成功：只更新现货价与「当前报盘」日期，不显示任何结果提示
+            D.spot=s; D.tickerXau=s; D.spotAsOf=todayStr(); applyData();
+          }
+          targets.forEach(function(b){ b.disabled=false; });
+          if(btn) btn.textContent=BTN_LABEL;
+        })
+        .catch(function(){
+          targets.forEach(function(b){ b.disabled=false; });
+          if(btn) btn.textContent=BTN_LABEL;
+        });
+    }
+    if(location.protocol==='file:'){
+      [btn,brandBtn].forEach(function(b){
+        if(b){ b.disabled=true; b.title='实时刷新需通过本地服务器运行：python3 -m http.server'; }
+      });
+    }else{
+      if(btn) btn.addEventListener('click',doRefresh);
+      if(brandBtn) brandBtn.addEventListener('click',doRefresh);
+    }
+  })();
+</script>
+
+
+<style>
+
+  /* ===== 全球黄金供需（GDT） ===== */
+  #gdtGrid{margin-bottom:14px}
+  .gdt-tip{
+    position:fixed;z-index:99;pointer-events:none;
+    background:#ffffff;border:1px solid var(--line-2);border-radius:4px;
+    padding:10px 12px;min-width:186px;
+    box-shadow:0 10px 28px rgba(15,23,42,.16);
+    font-family:var(--sc);
+  }
+  .gdt-tip[hidden]{display:none}
+  .gdt-tip .gt{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--txt);margin-bottom:7px}
+  .gdt-tip .gr{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--txt-dim);line-height:1.7}
+  .gdt-tip .gr i{width:9px;height:9px;border-radius:50%;flex:none}
+  .gdt-tip .gr b{margin-left:auto;font-family:var(--mono);font-size:13px;color:var(--txt)}
+  .gdt-tip .gtot{margin-top:6px;padding-top:6px;border-top:1px solid var(--line);display:flex;font-size:12.5px;color:var(--txt-dim)}
+  .gdt-tip .gtot b{margin-left:auto;font-family:var(--mono);font-size:13.5px;color:var(--gold)}
+  .gdt-hit{fill:transparent}
+  .gdt-hit:hover{fill:rgba(15,23,42,.05)}
+  .gdt-lab{font-family:var(--mono);font-size:9.5px;fill:var(--txt-dim)}
+  /* ===== 历史周期趋势图 ===== */
+  .hist-wrap{border:1px solid var(--line);background:#f7f8fa;padding:8px 10px;margin:8px 0 10px}
+  .hist-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px}
+  .hist-cap{font-family:var(--mono);font-size:11.5px;color:var(--gold-2);letter-spacing:.5px}
+  .hist-btns{margin-left:auto;display:flex;gap:6px}
+  .hist-btn{cursor:pointer;background:#ffffff;border:1px solid var(--line-2);color:var(--txt-dim);font-family:var(--mono);font-size:11px;padding:3px 9px;border-radius:3px;transition:.15s}
+  .hist-btn:hover{border-color:var(--gold-dim);color:var(--gold)}
+  .hist-btn.on{border-color:var(--gold);color:var(--gold);background:#fdf5e3}
+  .hist-chart{width:100%;height:auto;display:block}
+  .hist-chart text{font-family:var(--mono)}
+  .hg{stroke:#e5e9ef;stroke-width:1}
+  .hy{fill:#6b7684;font-size:10px}
+  .hx{fill:#6b7684;font-size:10px}
+  .harea{fill:rgba(154,107,0,.12)}
+  .hline{fill:none;stroke:#9A6B00;stroke-width:1.6}
+  .hpeak{fill:#ffffff;stroke:#9A6B00;stroke-width:1.6}
+  .hlow{fill:#ffffff;stroke:#2E6D9E;stroke-width:1.6}
+  .hlbl{fill:#5b6672;font-size:9.5px}
+  .hfoot{font-size:11px;color:var(--txt-faint);line-height:1.55;margin-top:6px}
+
+  .ti{border:1px solid var(--line);background:var(--bg-2);padding:10px 12px;margin-bottom:10px}
+  .ti:last-child{margin-bottom:0}
+  .ti-h{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+  .ti-n{font-family:var(--mono);font-size:13px;color:var(--txt);font-weight:600}
+  .ti-hint{font-size:11.5px;color:var(--txt-faint)}
+  .ti-mech{font-size:12.5px;color:var(--txt-dim);line-height:1.6;margin-bottom:8px}
+</style>
+
+<script>
+(function(){
+  // ===== 历史周期趋势图：1970–2025 黄金年均价（世界银行 Pink Sheet） =====
+  var HIST=[[1970,36],[1971,41],[1972,58],[1973,97],[1974,159],[1975,161],[1976,125],[1977,148],[1978,193],[1979,307],[1980,612],[1981,460],[1982,376],[1983,424],[1984,361],[1985,317],[1986,368],[1987,447],[1988,437],[1989,381],[1990,383],[1991,362],[1992,344],[1993,360],[1994,384],[1995,384],[1996,388],[1997,331],[1998,294],[1999,279],[2000,279],[2001,271],[2002,310],[2003,364],[2004,409],[2005,445],[2006,604],[2007,696],[2008,872],[2009,973],[2010,1225],[2011,1571],[2012,1669],[2013,1411],[2014,1266],[2015,1160],[2016,1249],[2017,1258],[2018,1269],[2019,1393],[2020,1770],[2021,1800],[2022,1801],[2023,1943],[2024,2388],[2025,3442]];
+  var HIST_MARK=[
+    {y:1980,v:852,t:'1980 峰值 852'},
+    {y:1999,v:252,t:'1999 低点 252',low:1},
+    {y:2011,v:1920,t:'2011 峰值 1,920'},
+    {y:2015,v:1046,t:'2015 低点 1,046',low:1},
+    {y:2020,v:2075,t:'2020 峰值 2,075'}
+  ];
+  var HIST_BAND=[[1971,1980,'up'],[1981,2000,'down'],[2001,2011,'up'],[2012,2015,'down'],[2016,2019,'flat'],[2020,2025,'up']];
+  var HIST_SCALE='log';
+  function renderHist(){
+    var svgs=document.querySelectorAll('.hist-chart');
+    if(!svgs||!svgs.length) return;
+    var W=900,H=300,PL=56,PR=22,PT=16,PB=30,x0=1970,x1=2025;
+    var log=HIST_SCALE==='log', lo=Math.log(30), hi=Math.log(6000);
+    function X(y){ return PL+(y-x0)/(x1-x0)*(W-PL-PR); }
+    function Y(v){ if(log){ return H-PB-(Math.log(Math.max(v,1))-lo)/(hi-lo)*(H-PT-PB); } return H-PB-(v/6000)*(H-PT-PB); }
+    var s='';
+    HIST_BAND.forEach(function(b){
+      var bx=X(b[0]), bw=X(b[1])-bx;
+      var col = b[2]==='up' ? 'rgba(154,107,0,.09)' : (b[2]==='down' ? 'rgba(192,57,43,.09)' : 'rgba(46,109,158,.08)');
+      s+='<rect x="'+bx.toFixed(1)+'" y="'+PT+'" width="'+bw.toFixed(1)+'" height="'+(H-PT-PB)+'" fill="'+col+'"/>';
+    });
+    var yt = log ? [50,100,200,500,1000,2000,5000] : [0,1000,2000,3000,4000,5000,6000];
+    yt.forEach(function(v){
+      var y=Y(v);
+      s+='<line class="hg" x1="'+PL+'" y1="'+y.toFixed(1)+'" x2="'+(W-PR)+'" y2="'+y.toFixed(1)+'"/>';
+      s+='<text class="hy" x="'+(PL-8)+'" y="'+(y+3.5).toFixed(1)+'" text-anchor="end">'+v+'</text>';
+    });
+    [1970,1980,1990,2000,2010,2020,2025].forEach(function(y){
+      s+='<text class="hx" x="'+X(y).toFixed(1)+'" y="'+(H-10)+'" text-anchor="middle">'+y+'</text>';
+    });
+    var d=HIST.map(function(p,i){ return (i?'L':'M')+X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1); }).join(' ');
+    var base=(H-PB).toFixed(1);
+    s+='<path class="harea" d="'+d+' L'+X(2025).toFixed(1)+','+base+' L'+X(1970).toFixed(1)+','+base+' Z"/>';
+    s+='<path class="hline" d="'+d+'"/>';
+    s+='<text class="hlbl" x="'+X(1971).toFixed(1)+'" y="'+Math.min(H-PB-6,Y(41)+22).toFixed(1)+'" text-anchor="start">1971 美元与黄金脱钩</text>';
+    HIST_MARK.forEach(function(m){
+      var x=X(m.y), y=Y(m.v);
+      s+='<circle class="'+(m.low?'hlow':'hpeak')+'" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.2"/>';
+      var ly2 = m.low ? Math.min(H-PB-8, y+16) : Math.max(PT+11, y-9);
+      var anchor = x>(W-170) ? 'end' : (x<(PL+60) ? 'start' : 'middle');
+      s+='<text class="hlbl" x="'+x.toFixed(1)+'" y="'+ly2.toFixed(1)+'" text-anchor="'+anchor+'">'+m.t+'</text>';
+    });
+    svgs.forEach(function(sv){ sv.innerHTML=s; });
+  }
+  renderHist();
+
+  document.querySelectorAll('.hist-btn').forEach(function(b){
+    b.addEventListener('click',function(){
+      HIST_SCALE=b.getAttribute('data-scale');
+      document.querySelectorAll('.hist-btn').forEach(function(o){ o.classList.toggle('on', o.getAttribute('data-scale')===HIST_SCALE); });
+      renderHist();
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

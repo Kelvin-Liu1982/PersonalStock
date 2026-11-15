@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原油五维度分析</title>
+<script src="vendor/chart.umd.min.js"></script>
+<script>if(typeof Chart==="undefined"){document.write('<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"><\/script>');}</script>
+<script src="vendor/echarts.min.js"></script>
+<style>__CSS__</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <h1>🛢️ 原油五维度分析</h1>
+  <div class="controls">
+    <button onclick="loadLive()">拉取实时</button>
+    <button class="ghost" onclick="resetSnapshot()">恢复快照</button>
+    <span class="hint" id="asof"></span>
+    <span class="hint" id="status"></span>
+  </div>
+</header>
+
+
+<div class="kpis" id="kpis"></div>
+
+<div class="risk">
+  <div class="card gaugewrap">
+    <h3>整体风险概览</h3>
+    <div style="position:relative"><canvas id="gauge" height="150"></canvas><div class="gaugeval" id="gaugeval">--</div></div>
+    <div class="gaugelbl" id="gaugelbl"></div>
+    <!-- 原「各维度风险贡献（当前）」整卡已于 2026-10-15 缩小合并进本卡 -->
+    <div class="riskmini">
+      <div class="riskmini-t">各维度风险贡献（当前）</div>
+      <div class="box" style="height:104px"><canvas id="riskbar"></canvas></div>
+    </div>
+  </div>
+  <div class="card newscard">
+    <div class="card-hd">
+      <h3>Crude Oil News</h3>
+      <button type="button" class="newsbtn" id="newsfetch" onclick="fetchNews(this)">↻ Fetch</button>
+    </div>
+    <div id="newsstatus" class="newsstatus"></div>
+    <div id="news" class="newslist"></div>
+  </div>
+  <div class="card alertscard">
+    <h3>异常预警（实时规则）</h3>
+    <div id="alerts"></div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs">
+  <button data-d="supply" class="on" onclick="switchTab('supply',this)">供给侧</button>
+  <button data-d="demand" onclick="switchTab('demand',this)">需求侧</button>
+  <button data-d="geo" onclick="switchTab('geo',this)">地缘政治</button>
+  <button data-d="macro" onclick="switchTab('macro',this)">宏观金融</button>
+  <button data-d="other" onclick="switchTab('other',this)">其他突发</button>
+  <button data-d="corr" onclick="switchTab('corr',this)">关联性</button>
+  <button data-d="outlook" onclick="switchTab('outlook',this)">未来展望</button>
+</div>
+
+<div id="panels">
+  <!-- dimension panels built by JS -->
+  <div class="panel on" id="p_supply"></div>
+  <div class="panel" id="p_demand"></div>
+  <div class="panel" id="p_geo"></div>
+  <div class="panel" id="p_macro"></div>
+  <div class="panel" id="p_other"></div>
+  <div class="panel" id="p_corr"></div>
+  <div class="panel" id="p_outlook"></div>
+</div>
+</div>
+
+<script>__JS__</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+# Python 版本必须为 3.13.x —— 3.12+ 的 sum() 采用 Neumaier 补偿求和，
+# 3.13 与 3.14 对「int 混入 float 列表」的处理不同，会导致 composite 序列
+# 末位浮点数字变化，进而让产物 HTML 无法字节复现。开发/构建请固定 3.13。
+
+# ---------------------------------------------------------------------------
+# 以下两个是【可选依赖】，只在 run.py extract（重新解析 data/raw 下的离线文件）时需要：
+#   - 新下载了一期 OPEC MOMR 月报 PDF 要并入序列
+#   - 要重新解析 Baker Hughes 钻井数 Excel
+#   - 拿到了新版 OPEC WOO / IEA《Oil 20XX》PDF 要重取长期需求路径
+#
+# 日常刷新（run.py build = 抓线上数据 + 渲染）完全用不到它们；
+# 缺失时脚本会给出提示并以退出码 3 跳过，不会中断流水线。
+#
+# 版本已按当前实际验证通过的组合锁定（2026-08-29 实测 pdfplumber/openpyxl；
+# 2026-10-06 实测 pymupdf）：pdfplumber 0.11.10 + pdfminer.six 20260107，
+# openpyxl 3.1.5，pymupdf 1.28.2，均跑在 Python 3.13.12。
+# ---------------------------------------------------------------------------
+
+# 解析 OPEC MOMR 月报 PDF（opec_momr / oecd_stocks）
+pdfplumber==0.11.10
+# 解析 Baker Hughes Worldwide Rig Count Excel（rig_count）
+openpyxl==3.1.5
+# 解析 OPEC WOO / IEA《Oil 20XX》展望 PDF（opec_woo / iea_oil）
+pymupdf==1.28.2
+
+# ---------------------------------------------------------------------------
+# 以下是【刷新期依赖】：run.py dataset（抓线上数据）会用到，不属于 extract 阶段。
+#   - yfinance == Yahoo 行情。全项目只有 src/fetch/geo/brent_term.py 用它
+#     （Brent 近月连续 BZ=F + 远月合约 BZ{mc}{yy}.NYM），另两个 Yahoo 源
+#     （OVX / CFTC）走的是自研 curl + 浏览器 UA，不依赖本项。
+#   - pandas 只是 yfinance 的返回值载体（DataFrame / MultiIndex 解析）。
+#
+# 缺失时 brent_term 静默降级为空 → 地缘 tab「Brent 12个月期限结构」一张图空白，
+# 其余数据源不受影响；但页面与构建日志都会给出提示，不会无声失败。
+# 版本为 2026-08-04 实测通过的组合（Python 3.13.12）。
+# ---------------------------------------------------------------------------
+yfinance==1.5.2
+pandas==3.0.5

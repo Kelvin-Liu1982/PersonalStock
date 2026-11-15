@@ -1,0 +1,3 @@
+# gold-analysis 依赖（Python）
+# 运行：先建虚拟环境后 pip install -r requirements.txt
+openpyxl>=3.1.0

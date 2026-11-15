@@ -1,0 +1,27 @@
+# ---- 构建产物（可完全重建）----
+# 注意：output/ 下的看板 HTML 与 vendor 是线上站点的直接访问目标，
+# 必须入库；故用 output/* 排除目录内容后按文件/子目录选择性放回
+# （git 不允许在已被排除的目录内再包含文件，故不能直接写 output/ + !output/xxx）
+output/*
+!output/crude_oil_dashboard.html
+!output/vendor/
+!assets/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+# .venv 在本机是指向 workbuddy 托管环境绝对路径的符号链接，
+# 不写结尾斜杠才能同时匹配「目录」与「符号链接」两种形态
+.venv
+venv
+
+# ---- 前端校验依赖（puppeteer-core，仅供 tools/verify_oecd.cjs 使用）----
+tools/node_modules/
+
+# ---- 系统 ----
+.DS_Store
+Thumbs.db
+
+# ---- 编辑器 ----
+.vscode/
+.idea/

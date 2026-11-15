@@ -23,12 +23,57 @@ h1{font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:.5px}
 .actions{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 @media (max-width:900px){.actions{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:560px){.actions{grid-template-columns:1fr}}
+
+/* ===== 大宗商品分析 · 快捷小卡（置顶，独立于标的卡片） ===== */
+.quicklinks{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:0 0 32px;text-align:left}
+@media (max-width:700px){.quicklinks{grid-template-columns:1fr}}
+.qcard{
+  --cat:var(--acc2);
+  display:flex;align-items:center;gap:12px;padding:14px 18px;
+  background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--cat);border-radius:12px;
+  box-shadow:0 2px 6px rgba(20,30,50,.05);
+  text-decoration:none;color:var(--ink);
+  transition:transform .15s,box-shadow .15s,border-color .15s;
+}
+.qcard:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(20,30,50,.1);border-color:var(--cat)}
+.qcard .q-tag{
+  flex:none;font-size:11px;line-height:1;color:#fff;
+  background:var(--cat);padding:5px 9px;border-radius:10px;white-space:nowrap;
+}
+.qcard .q-body{display:flex;flex-direction:column;flex:1;min-width:0}
+.qcard .q-name{font-size:15px;font-weight:700;line-height:1.35}
+.qcard .q-desc{
+  font-size:12px;color:var(--dim);line-height:1.4;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.qcard .q-arrow{flex:none;color:var(--dim);font-size:15px;transition:transform .15s,color .15s}
+.qcard:hover .q-arrow{color:var(--cat);transform:translateX(2px)}
 </style>
 </head>
 <body data-page-node-id="GeP5iyii6MCUk6B5d5i5RS">
 <main data-page-node-id="GnWrqVd0KciNDFlPq2S3cP">
   <h1 data-page-node-id="JDgTo3Ok9oOSVbuhKHlpgc">业绩追踪看板</h1>
   <p class="lead" data-page-node-id="QU07Bts81LMEfCk6mj2qpd">点击下方入口进入对应标的追踪页面</p>
+
+  <section class="quicklinks" aria-label="大宗商品分析">
+    <a class="qcard" href="./大宗商品分析/gold-analysis/output/gold-terminal.html" style="--cat:var(--ind-gold)" title="国际黄金价格深度分析 · TERMINAL">
+      <span class="q-tag">贵金属</span>
+      <span class="q-body">
+        <span class="q-name">国际黄金</span>
+        <span class="q-desc">价格时间轴 · 驱动权重 · 供需结构</span>
+      </span>
+      <span class="q-arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="qcard" href="./大宗商品分析/oil-analysis/output/crude_oil_dashboard.html" style="--cat:var(--ind-oil)" title="原油五维度分析">
+      <span class="q-tag">能源</span>
+      <span class="q-body">
+        <span class="q-name">原油五维度</span>
+        <span class="q-desc">Brent 价格 · 期限结构 · 相关性热力图</span>
+      </span>
+      <span class="q-arrow" aria-hidden="true">→</span>
+    </a>
+  </section>
 
   <div id="stockGrid" class="actions" data-cards='[
     {

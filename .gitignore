@@ -21,6 +21,11 @@ __pycache__/
 venv/
 *.egg-info/
 
+# ---- 本地私钥（真实 API Key 只存本机，严禁入库）----
+_keys_local.py
+.env
+.env.*
+
 # ---- 系统/编辑器 ----
 .DS_Store
 Thumbs.db

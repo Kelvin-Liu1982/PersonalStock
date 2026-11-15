@@ -1,0 +1,139 @@
+{
+  "eiaSteoPriceMonths": [
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09",
+    "2026-10"
+  ],
+  "eiaSteoBrent2026": [
+    55.87,
+    57.69,
+    78.84,
+    96.0,
+    94.85,
+    95.39,
+    81.91,
+    86.81,
+    91.01,
+    96.32
+  ],
+  "eiaSteoBrent2027": [
+    54.02,
+    53.0,
+    64.47,
+    76.09,
+    79.39,
+    79.39,
+    64.76,
+    69.39,
+    73.74,
+    83.74
+  ],
+  "eiaSteoBrentActual2025": {
+    "2025": 69.04
+  },
+  "eiaSteoPriceMeta": {
+    "steoSrc": "数据：取自 EIA《STEO》「Table 2. Energy Prices」Crude Oil (dollars per barrel) 段的 Brent Spot Average / West Texas Intermediate Spot Average 行。",
+    "latest": "2026-10",
+    "frequency": "月度发布（比 IMF WEO 的季度更细）",
+    "vintages": [
+      "2026-01",
+      "2026-02",
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09",
+      "2026-10"
+    ],
+    "口径": "EIA = Brent 现货（单一品种）；IMF WEO = Brent+Dubai+WTI 三品种简单平均。两者差 1~14 美元，横向对照时不可直接混线，只能比修订路径。"
+  },
+  "eiaSteoMonths": [
+    "2026-01",
+    "2026-02",
+    "2026-03",
+    "2026-04",
+    "2026-05",
+    "2026-06",
+    "2026-07",
+    "2026-08",
+    "2026-09",
+    "2026-10",
+    "2026-11"
+  ],
+  "eiaSteo2026Demand": [
+    1.1,
+    1.2,
+    1.23,
+    0.6,
+    0.2,
+    -1.1,
+    -1.2,
+    -1.2,
+    -1.7,
+    -1.96,
+    -2.02
+  ],
+  "eiaSteo2027Demand": [
+    null,
+    null,
+    null,
+    1.6,
+    1.5,
+    2.5,
+    2.0,
+    2.2,
+    2.4,
+    2.21,
+    1.96
+  ],
+  "eiaSteoWarOnset": "2026-02",
+  "eiaAeoYears": [
+    2025,
+    2030,
+    2035,
+    2040,
+    2045,
+    2050
+  ],
+  "eiaAeoConsHigh": [
+    20.47,
+    20.05,
+    18.97,
+    18.38,
+    18.17,
+    18.6
+  ],
+  "eiaAeoConsLow": [
+    20.47,
+    19.57,
+    18.1,
+    17.06,
+    16.4,
+    16.06
+  ],
+  "eiaAeoCaseHigh": "High Economic Growth",
+  "eiaAeoCaseLow": "Low Economic Growth",
+  "eiaAeoConsBase": [
+    20.47,
+    19.85,
+    18.51,
+    17.59,
+    17.14,
+    17.12
+  ],
+  "eiaAeoCaseBase": "Counterfactual Baseline",
+  "eiaForecastMeta": {
+    "intro": "EIA 侧与 IEA / OPEC 的对应关系并不对称：月度《Short-Term Energy Outlook (STEO)》完全对等（含全球石油需求预测，展望当年与次年）；但年度长期层没有对等产品——全球性的《International Energy Outlook (IEO)》已停滞（最新版仍为 IEO2023，官网标注 Next Release: TBD），年度《Annual Energy Outlook (AEO)》为<b>美国国内</b>展望，不能当作全球需求路径使用。",
+    "steoSrc": "数据：取自 STEO「Global Oil Markets」章节 Table 3e「World Petroleum and Other Liquid Fuels Consumption」的 World total 行年度列（源文件 data/raw/eia_steo/）。",
+    "aeoSrc": "数据：取自《Annual Energy Outlook 2026》配套 AEO2026_Narrative_Figures.xlsx 的 sheet「14_RefinThruPut」中「U.S. total product supplied」系列（Series = PSD000:fa_Total，11 档情景）的行年度列。"
+  }
+}

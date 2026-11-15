@@ -1,0 +1,768 @@
+{
+  "crudeNewsMeta": {
+    "baseDate": "2026-10-14",
+    "source": "Argus Media (filtered crude feed, page 1)",
+    "sourceUrl": "https://www.argusmedia.com/en/news-and-insights/latest-market-news?filter_language=en-gb&filter_commodity=crude:crude+oil,condensate&page=1",
+    "lastFetched": "2026-11-15",
+    "note": "原油快讯抓取域。Argus 站点有 AWS WAF 挑战（非浏览器请求一律返回 gokuProps 挑战页），由 src/fetch/news/argus.py 经 tools/fetch_argus_news.cjs 无头 Chromium 渲染后解析；抓取 filtered 完整 feed 第一页（≈最近 27 条），按 URL 去重写回本文件。",
+    "fetchMode": "整页完整 feed（headless 浏览器渲染，按 URL 去重）"
+  },
+  "crudeNews": [
+    {
+      "title": "FAA halts aircraft takeoffs nationwide: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904594-faa-halts-aircraft-takeoffs-nationwide-update",
+      "date": "2026-11-13",
+      "source": "Argus"
+    },
+    {
+      "title": "Brazil pushes fossil fuel transition at Cop 31",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904593-brazil-pushes-fossil-fuel-transition-at-cop-31",
+      "date": "2026-11-13",
+      "source": "Argus"
+    },
+    {
+      "title": "FAA grounds takeoffs at all US airports",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904523-faa-grounds-takeoffs-at-all-us-airports",
+      "date": "2026-11-13",
+      "source": "Argus"
+    },
+    {
+      "title": "Nabep crude split to US, Venezuela blending",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904504-nabep-crude-split-to-us-venezuela-blending",
+      "date": "2026-11-13",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Presidencies release cover decision wish list",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904420-cop-presidencies-release-cover-decision-wish-list",
+      "date": "2026-11-13",
+      "source": "Argus"
+    },
+    {
+      "title": "Global oil supply to surpass demand in 4Q: IEA",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904013-global-oil-supply-to-surpass-demand-in-4q-iea",
+      "date": "2026-11-13",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Support for electrification pledge, finance needed",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2903788-cop-support-for-electrification-pledge-finance-needed",
+      "date": "2026-11-12",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: France pushes for methane in summit decision",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2903520-cop-france-pushes-for-methane-in-summit-decision",
+      "date": "2026-11-12",
+      "source": "Argus"
+    },
+    {
+      "title": "Brazil energy minister to visit Venezuela in 2026",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2903513-brazil-energy-minister-to-visit-venezuela-in-2026",
+      "date": "2026-11-12",
+      "source": "Argus"
+    },
+    {
+      "title": "Freight futures suggest tanker rates have peaked",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2903465-freight-futures-suggest-tanker-rates-have-peaked",
+      "date": "2026-11-12",
+      "source": "Argus"
+    },
+    {
+      "title": "Opec keeps oil demand outlook unchanged",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2902942-opec-keeps-oil-demand-outlook-unchanged",
+      "date": "2026-11-11",
+      "source": "Argus"
+    },
+    {
+      "title": "US doubles down on vow not to resume Iran war: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2902777-us-doubles-down-on-vow-not-to-resume-iran-war-update",
+      "date": "2026-11-10",
+      "source": "Argus"
+    },
+    {
+      "title": "US doubles down on vow not to resume Iran war",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2902686-us-doubles-down-on-vow-not-to-resume-iran-war",
+      "date": "2026-11-10",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Fossil fuel shift talks come back to finance",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2902681-cop-fossil-fuel-shift-talks-come-back-to-finance",
+      "date": "2026-11-10",
+      "source": "Argus"
+    },
+    {
+      "title": "OGDC's oil, gas firms maintain focus on emissions cuts",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2902443-ogdc-s-oil-gas-firms-maintain-focus-on-emissions-cuts",
+      "date": "2026-11-10",
+      "source": "Argus"
+    },
+    {
+      "title": "US Senate starts debate on permitting bill: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2902254-us-senate-starts-debate-on-permitting-bill-update",
+      "date": "2026-11-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Phillips 66 eyes opportunity through Bogota",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901899-phillips-66-eyes-opportunity-through-bogota",
+      "date": "2026-11-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Trump faces new limits after midterms blowout",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901877-trump-faces-new-limits-after-midterms-blowout",
+      "date": "2026-11-09",
+      "source": "Argus"
+    },
+    {
+      "title": "War keeps Cop focus on transition, major deals unlikely",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901864-war-keeps-cop-focus-on-transition-major-deals-unlikely",
+      "date": "2026-11-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Iran's post-war oil rebuild 80pc complete",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901862-iran-s-post-war-oil-rebuild-80pc-complete",
+      "date": "2026-11-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Drone attack halts output at Iraq's Khor Mor gas plant",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901856-drone-attack-halts-output-at-iraq-s-khor-mor-gas-plant",
+      "date": "2026-11-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Key Saudi Aramco facilities come under renewed attack",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901848-key-saudi-aramco-facilities-come-under-renewed-attack",
+      "date": "2026-11-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Paraguay's president impeached: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901639-paraguay-s-president-impeached-update",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "Paraguay’s political crisis deepens",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901603-paraguay-s-political-crisis-deepens",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "Iran increases Hormuz attacks, commercial threats",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901533-iran-increases-hormuz-attacks-commercial-threats",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "Colombia wary of Venezuela draining oil rigs, resources",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901508-colombia-wary-of-venezuela-draining-oil-rigs-resources",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "Brazil sets out guidelines to phase out fossil fuels",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901454-brazil-sets-out-guidelines-to-phase-out-fossil-fuels",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "Four countries have Hormuz exemptions: Iran lawmaker",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901277-four-countries-have-hormuz-exemptions-iran-lawmaker",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "Midterms scramble Trump’s plans on Iran",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901271-midterms-scramble-trump-s-plans-on-iran",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "US adds 165,000 jobs in October, well above forecasts",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2901224-us-adds-165-000-jobs-in-october-well-above-forecasts",
+      "date": "2026-11-06",
+      "source": "Argus"
+    },
+    {
+      "title": "Intl Seaways expects post-war tanker demand surge",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2900839-intl-seaways-expects-post-war-tanker-demand-surge",
+      "date": "2026-11-05",
+      "source": "Argus"
+    },
+    {
+      "title": "Bahrain's Sitra refinery eyes full capacity by end-Nov",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2900393-bahrain-s-sitra-refinery-eyes-full-capacity-by-end-nov",
+      "date": "2026-11-05",
+      "source": "Argus"
+    },
+    {
+      "title": "Ample heavy crude weighs on Canadian prices in US",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2900309-ample-heavy-crude-weighs-on-canadian-prices-in-us",
+      "date": "2026-11-04",
+      "source": "Argus"
+    },
+    {
+      "title": "US oil production hits new record at 14mn b/d: EIA",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2900024-us-oil-production-hits-new-record-at-14mn-b-d-eia",
+      "date": "2026-11-04",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop 30 fossil fuel roadmap backs existing momentum",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2900013-cop-30-fossil-fuel-roadmap-backs-existing-momentum",
+      "date": "2026-11-04",
+      "source": "Argus"
+    },
+    {
+      "title": "Democrats win Senate, House in US midterm elections",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2899873-democrats-win-senate-house-in-us-midterm-elections",
+      "date": "2026-11-04",
+      "source": "Argus"
+    },
+    {
+      "title": "Trump to face new limits after midterms blowout",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2900229-trump-to-face-new-limits-after-midterms-blowout",
+      "date": "2026-11-04",
+      "source": "Argus"
+    },
+    {
+      "title": "Iran official downplays talk of peace deal",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2899660-iran-official-downplays-talk-of-peace-deal",
+      "date": "2026-11-03",
+      "source": "Argus"
+    },
+    {
+      "title": "Brazil presents global fossil fuel, forest roadmaps",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2899436-brazil-presents-global-fossil-fuel-forest-roadmaps",
+      "date": "2026-11-03",
+      "source": "Argus"
+    },
+    {
+      "title": "Apache, Wood Group North Sea workers to strike: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2899422-apache-wood-group-north-sea-workers-to-strike-update",
+      "date": "2026-11-03",
+      "source": "Argus"
+    },
+    {
+      "title": "UAE says oil exports back around pre-war levels",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2899369-uae-says-oil-exports-back-around-pre-war-levels",
+      "date": "2026-11-03",
+      "source": "Argus"
+    },
+    {
+      "title": "Oil services firms see momentum building into 2027",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2898876-oil-services-firms-see-momentum-building-into-2027",
+      "date": "2026-11-02",
+      "source": "Argus"
+    },
+    {
+      "title": "Adnoc CEO warns energy supply buffers have ‘eroded’",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2898717-adnoc-ceo-warns-energy-supply-buffers-have-eroded",
+      "date": "2026-11-02",
+      "source": "Argus"
+    },
+    {
+      "title": "Hormuz oil flows down on the month",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2899097-hormuz-oil-flows-down-on-the-month",
+      "date": "2026-11-02",
+      "source": "Argus"
+    },
+    {
+      "title": "Lula may lean more on Petrobras in fourth term",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2898884-lula-may-lean-more-on-petrobras-in-fourth-term",
+      "date": "2026-11-02",
+      "source": "Argus"
+    },
+    {
+      "title": "Opec+ to keep output targets unchanged in December",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2898606-opec-to-keep-output-targets-unchanged-in-december",
+      "date": "2026-11-01",
+      "source": "Argus"
+    },
+    {
+      "title": "US awards 17mn bl of crude from SPR",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2898262-us-awards-17mn-bl-of-crude-from-spr",
+      "date": "2026-10-30",
+      "source": "Argus"
+    },
+    {
+      "title": "Valero to buy, restart idled Houston oil refinery",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897922-valero-to-buy-restart-idled-houston-oil-refinery",
+      "date": "2026-10-30",
+      "source": "Argus"
+    },
+    {
+      "title": "Tanker hit by explosives in strait of Hormuz",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897834-tanker-hit-by-explosives-in-strait-of-hormuz",
+      "date": "2026-10-30",
+      "source": "Argus"
+    },
+    {
+      "title": "Higher refining margins, trading boost BP’s 3Q profit",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897795-higher-refining-margins-trading-boost-bp-s-3q-profit",
+      "date": "2026-10-30",
+      "source": "Argus"
+    },
+    {
+      "title": "Adnoc's new Hormuz bypass seen ready by 2Q 2027",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897787-adnoc-s-new-hormuz-bypass-seen-ready-by-2q-2027",
+      "date": "2026-10-30",
+      "source": "Argus"
+    },
+    {
+      "title": "IRGC claims three tankers hit mines in SoH",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897405-irgc-claims-three-tankers-hit-mines-in-soh",
+      "date": "2026-10-29",
+      "source": "Argus"
+    },
+    {
+      "title": "Iran downplays latest US overture",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897330-iran-downplays-latest-us-overture",
+      "date": "2026-10-29",
+      "source": "Argus"
+    },
+    {
+      "title": "Saudi Satorp refinery at capacity: TotalEnergies",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897313-saudi-satorp-refinery-at-capacity-totalenergies",
+      "date": "2026-10-29",
+      "source": "Argus"
+    },
+    {
+      "title": "Nabors sees ‘huge potential’ in Venezuela",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897309-nabors-sees-huge-potential-in-venezuela",
+      "date": "2026-10-29",
+      "source": "Argus"
+    },
+    {
+      "title": "UK liquids production rises in September",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2897219-uk-liquids-production-rises-in-september",
+      "date": "2026-10-29",
+      "source": "Argus"
+    },
+    {
+      "title": "Incoming BC gov't questions oil tanker ban: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896968-incoming-bc-gov-t-questions-oil-tanker-ban-update",
+      "date": "2026-10-28",
+      "source": "Argus"
+    },
+    {
+      "title": "US pushing further cuts to methane regulations",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896940-us-pushing-further-cuts-to-methane-regulations",
+      "date": "2026-10-28",
+      "source": "Argus"
+    },
+    {
+      "title": "Oil futures: WTI rises above $102/bl",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896932-oil-futures-wti-rises-above-102-bl",
+      "date": "2026-10-28",
+      "source": "Argus"
+    },
+    {
+      "title": "Incoming British Columbia govt questions oil tanker ban",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896743-incoming-british-columbia-govt-questions-oil-tanker-ban",
+      "date": "2026-10-28",
+      "source": "Argus"
+    },
+    {
+      "title": "International fossil fuel finance down under Cop pledge",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896131-international-fossil-fuel-finance-down-under-cop-pledge",
+      "date": "2026-10-27",
+      "source": "Argus"
+    },
+    {
+      "title": "Climate plans improve but off track for 1.5°C goal: UN",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896033-climate-plans-improve-but-off-track-for-1",
+      "date": "2026-10-27",
+      "source": "Argus"
+    },
+    {
+      "title": "Australia’s Woodside to sell East Timor gas stakes",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896008-australia-s-woodside-to-sell-east-timor-gas-stakes",
+      "date": "2026-10-27",
+      "source": "Argus"
+    },
+    {
+      "title": "Trump claims Venezuela crude 'gift': Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896473-trump-claims-venezuela-crude-gift-update",
+      "date": "2026-10-27",
+      "source": "Argus"
+    },
+    {
+      "title": "Exit polls hint at Israel's Netanyahu staying in office",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896424-exit-polls-hint-at-israel-s-netanyahu-staying-in-office",
+      "date": "2026-10-27",
+      "source": "Argus"
+    },
+    {
+      "title": "Fire reported near Saudi Arabia’s Ras Tanura complex",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2896184-fire-reported-near-saudi-arabia-s-ras-tanura-complex",
+      "date": "2026-10-27",
+      "source": "Argus"
+    },
+    {
+      "title": "Conservatives win majority in British Columbia",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895742-conservatives-win-majority-in-british-columbia",
+      "date": "2026-10-26",
+      "source": "Argus"
+    },
+    {
+      "title": "Galp open to mergers after failure with Moeve: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895702-galp-open-to-mergers-after-failure-with-moeve-update",
+      "date": "2026-10-26",
+      "source": "Argus"
+    },
+    {
+      "title": "Bolsonaro to challenge Brazil election results",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895661-bolsonaro-to-challenge-brazil-election-results",
+      "date": "2026-10-26",
+      "source": "Argus"
+    },
+    {
+      "title": "US majors set for profit boost from refining tailwinds",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895626-us-majors-set-for-profit-boost-from-refining-tailwinds",
+      "date": "2026-10-26",
+      "source": "Argus"
+    },
+    {
+      "title": "Moeve, Galp abandon downstream merger talks",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895509-moeve-galp-abandon-downstream-merger-talks",
+      "date": "2026-10-26",
+      "source": "Argus"
+    },
+    {
+      "title": "Return of Venezuela's Machado fills streets",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895444-return-of-venezuela-s-machado-fills-streets",
+      "date": "2026-10-25",
+      "source": "Argus"
+    },
+    {
+      "title": "Lula completes comeback, wins Brazil elections",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895443-lula-completes-comeback-wins-brazil-elections",
+      "date": "2026-10-25",
+      "source": "Argus"
+    },
+    {
+      "title": "Energy security backs stalled fossil fuel shift",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2895122-energy-security-backs-stalled-fossil-fuel-shift",
+      "date": "2026-10-23",
+      "source": "Argus"
+    },
+    {
+      "title": "Tight presidential runoff in store for Brazil",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2894958-tight-presidential-runoff-in-store-for-brazil",
+      "date": "2026-10-23",
+      "source": "Argus"
+    },
+    {
+      "title": "EU parliament wants three-year delay to methane law",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2894241-eu-parliament-wants-three-year-delay-to-methane-law",
+      "date": "2026-10-22",
+      "source": "Argus"
+    },
+    {
+      "title": "Kuwait's crude exports near pre-war levels: KPC",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2894313-kuwait-s-crude-exports-near-pre-war-levels-kpc",
+      "date": "2026-10-22",
+      "source": "Argus"
+    },
+    {
+      "title": "New climate plans will not reach Paris targets: Unep",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893690-new-climate-plans-will-not-reach-paris-targets-unep",
+      "date": "2026-10-21",
+      "source": "Argus"
+    },
+    {
+      "title": "UK approves North Sea Jackdaw gas development",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893586-uk-approves-north-sea-jackdaw-gas-development",
+      "date": "2026-10-21",
+      "source": "Argus"
+    },
+    {
+      "title": "No damage at Aramco Yanbu, Shaybah facilities: Source",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893583-no-damage-at-aramco-yanbu-shaybah-facilities-source",
+      "date": "2026-10-21",
+      "source": "Argus"
+    },
+    {
+      "title": "'Real PdV' to appoint new Citgo board: Attorney",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2894039-real-pdv-to-appoint-new-citgo-board-attorney",
+      "date": "2026-10-21",
+      "source": "Argus"
+    },
+    {
+      "title": "TMX pull on Canadian crude stronger than US Gulf",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893957-tmx-pull-on-canadian-crude-stronger-than-us-gulf",
+      "date": "2026-10-21",
+      "source": "Argus"
+    },
+    {
+      "title": "Energy markets unlikely to normalise in 2027: IEA Birol",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893129-energy-markets-unlikely-to-normalise-in-2027-iea-birol",
+      "date": "2026-10-20",
+      "source": "Argus"
+    },
+    {
+      "title": "UK to provide air defence for Saudi Arabia",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893151-uk-to-provide-air-defence-for-saudi-arabia",
+      "date": "2026-10-20",
+      "source": "Argus"
+    },
+    {
+      "title": "Staff at Mexico's Pemex face layoffs, demotions",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893221-staff-at-mexico-s-pemex-face-layoffs-demotions",
+      "date": "2026-10-20",
+      "source": "Argus"
+    },
+    {
+      "title": "Phillips 66 Bayway refinery locks out union employees",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893460-phillips-66-bayway-refinery-locks-out-union-employees",
+      "date": "2026-10-20",
+      "source": "Argus"
+    },
+    {
+      "title": "Kalshi seeks to list WTI perpetual contract",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893453-kalshi-seeks-to-list-wti-perpetual-contract",
+      "date": "2026-10-20",
+      "source": "Argus"
+    },
+    {
+      "title": "US plan to utilize shadow fleet faces headwinds",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893395-us-plan-to-utilize-shadow-fleet-faces-headwinds",
+      "date": "2026-10-20",
+      "source": "Argus"
+    },
+    {
+      "title": "US seeking to re-open shuttered oil refineries",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2893393-us-seeking-to-re-open-shuttered-oil-refineries",
+      "date": "2026-10-20",
+      "source": "Argus"
+    },
+    {
+      "title": "Trump sought role in Mexican oil: Sheinbaum",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2892909-trump-sought-role-in-mexican-oil-sheinbaum",
+      "date": "2026-10-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Attacks on tankers in Mideast Gulf increase",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2892885-attacks-on-tankers-in-mideast-gulf-increase",
+      "date": "2026-10-19",
+      "source": "Argus"
+    },
+    {
+      "title": "EU restates opposition to Arctic oil and gas",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2892700-eu-restates-opposition-to-arctic-oil-and-gas",
+      "date": "2026-10-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Independence costs seen as high in Alberta referendum",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2892688-independence-costs-seen-as-high-in-alberta-referendum",
+      "date": "2026-10-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Apache strike could close UK North Sea FPS: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2892648-apache-strike-could-close-uk-north-sea-fps-update",
+      "date": "2026-10-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Venezuela turns to getting its house in order",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2892637-venezuela-turns-to-getting-its-house-in-order",
+      "date": "2026-10-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Joint presidencies a first for Cop 31",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2892051-joint-presidencies-a-first-for-cop-31",
+      "date": "2026-10-16",
+      "source": "Argus"
+    },
+    {
+      "title": "Hormuz attacks up but many unreported: UKMTO",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2891959-hormuz-attacks-up-but-many-unreported-ukmto",
+      "date": "2026-10-16",
+      "source": "Argus"
+    },
+    {
+      "title": "Aramco offers spot crude to Europe",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2891266-aramco-offers-spot-crude-to-europe",
+      "date": "2026-10-15",
+      "source": "Argus"
+    },
+    {
+      "title": "Mideast crude weakens as more sales ease Hormuz fears",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2891187-mideast-crude-weakens-as-more-sales-ease-hormuz-fears",
+      "date": "2026-10-15",
+      "source": "Argus"
+    },
+    {
+      "title": "Global oil supply rebounds in September: IEA",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890467-global-oil-supply-rebounds-in-september-iea",
+      "date": "2026-10-14",
+      "source": "Argus"
+    },
+    {
+      "title": "IEA says 96mn bl yet to be released from stocks",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890487-iea-says-96mn-bl-yet-to-be-released-from-stocks",
+      "date": "2026-10-14",
+      "source": "Argus"
+    },
+    {
+      "title": "Container ship sinks in strait of Hormuz: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890518-container-ship-sinks-in-strait-of-hormuz-update",
+      "date": "2026-10-14",
+      "source": "Argus"
+    },
+    {
+      "title": "Saudi Aramco administrative building in Dahran attacked",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890433-saudi-aramco-administrative-building-in-dahran-attacked",
+      "date": "2026-10-14",
+      "source": "Argus"
+    },
+    {
+      "title": "Eni CEO calls for ETS suspension to help refineries",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890670-eni-ceo-calls-for-ets-suspension-to-help-refineries",
+      "date": "2026-10-14",
+      "source": "Argus"
+    },
+    {
+      "title": "Saudi-led forces hit Sana'a fuel facility: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890273-saudi-led-forces-hit-sana-a-fuel-facility-update",
+      "date": "2026-10-13",
+      "source": "Argus"
+    },
+    {
+      "title": "US awards up to 25mn bl SPR crude: Sources",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890203-us-awards-up-to-25mn-bl-spr-crude-sources",
+      "date": "2026-10-13",
+      "source": "Argus"
+    },
+    {
+      "title": "Saudi-led forces issue Sana'a fuel facility warning",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890091-saudi-led-forces-issue-sana-a-fuel-facility-warning",
+      "date": "2026-10-13",
+      "source": "Argus"
+    },
+    {
+      "title": "Opec sees China oil demand falling in 2026",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2890051-opec-sees-china-oil-demand-falling-in-2026",
+      "date": "2026-10-13",
+      "source": "Argus"
+    },
+    {
+      "title": "IMF upgrades outlook modestly despite war risks",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2889923-imf-upgrades-outlook-modestly-despite-war-risks",
+      "date": "2026-10-12",
+      "source": "Argus"
+    },
+    {
+      "title": "About 30pc of Gulf of Mexico oil output still shut in",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2889851-about-30pc-of-gulf-of-mexico-oil-output-still-shut-in",
+      "date": "2026-10-12",
+      "source": "Argus"
+    },
+    {
+      "title": "Saudi Arabia eyes 3mn b/d more Hormuz bypass capacity",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2889621-saudi-arabia-eyes-3mn-b-d-more-hormuz-bypass-capacity",
+      "date": "2026-10-12",
+      "source": "Argus"
+    },
+    {
+      "title": "Oil sands producers prime the pump for pending boom",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2889599-oil-sands-producers-prime-the-pump-for-pending-boom",
+      "date": "2026-10-12",
+      "source": "Argus"
+    },
+    {
+      "title": "US Gulf production being restored post-Isaias",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2889397-us-gulf-production-being-restored-post-isaias",
+      "date": "2026-10-11",
+      "source": "Argus"
+    },
+    {
+      "title": "Devon sharpens focus with $4.2bn shale asset sale",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2889136-devon-sharpens-focus-with-4",
+      "date": "2026-10-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Assembly talks key to Venezuela elections: Rubio",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2889008-assembly-talks-key-to-venezuela-elections-rubio",
+      "date": "2026-10-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Opec+ output hits Iran-war high",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2888831-opec-output-hits-iran-war-high",
+      "date": "2026-10-09",
+      "source": "Argus"
+    },
+    {
+      "title": "Canadian oil sector to grow in 2027: ATB survey",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2888588-canadian-oil-sector-to-grow-in-2027-atb-survey",
+      "date": "2026-10-08",
+      "source": "Argus"
+    },
+    {
+      "title": "No plans to attack Iran before 3 Nov: Trump",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2888463-no-plans-to-attack-iran-before-3-nov-trump",
+      "date": "2026-10-08",
+      "source": "Argus"
+    },
+    {
+      "title": "Hurricane heads for US Gulf coast: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2888459-hurricane-heads-for-us-gulf-coast-update",
+      "date": "2026-10-08",
+      "source": "Argus"
+    },
+    {
+      "title": "Hurricane heads for US Gulf coast, causing shut-ins",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2888293-hurricane-heads-for-us-gulf-coast-causing-shut-ins",
+      "date": "2026-10-08",
+      "source": "Argus"
+    },
+    {
+      "title": "Increase in Iran ship attacks follows rise in targets",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2888264-increase-in-iran-ship-attacks-follows-rise-in-targets",
+      "date": "2026-10-08",
+      "source": "Argus"
+    },
+    {
+      "title": "Houthis renew threats against Saudi oil facilities",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2888237-houthis-renew-threats-against-saudi-oil-facilities",
+      "date": "2026-10-08",
+      "source": "Argus"
+    },
+    {
+      "title": "US set to weaken methane rules for oil, gas",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2887924-us-set-to-weaken-methane-rules-for-oil-gas",
+      "date": "2026-10-07",
+      "source": "Argus"
+    },
+    {
+      "title": "US Gulf operators shut-in output before storm: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2887918-us-gulf-operators-shut-in-output-before-storm-update",
+      "date": "2026-10-07",
+      "source": "Argus"
+    },
+    {
+      "title": "Pacific Islands eye fossil fuel exit roadmap",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2887762-pacific-islands-eye-fossil-fuel-exit-roadmap",
+      "date": "2026-10-07",
+      "source": "Argus"
+    },
+    {
+      "title": "IEA discusses stock release, details still scant",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2887710-iea-discusses-stock-release-details-still-scant",
+      "date": "2026-10-07",
+      "source": "Argus"
+    }
+  ]
+}

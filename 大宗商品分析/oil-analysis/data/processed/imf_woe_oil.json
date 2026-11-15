@@ -1,0 +1,121 @@
+{
+  "editions": [
+    "2025",
+    "2026"
+  ],
+  "byEdition": {
+    "2025": {
+      "months": [
+        "2025-01",
+        "2025-04",
+        "2025-07",
+        "2025-10"
+      ],
+      "price": {
+        "2025": [
+          69.76,
+          66.94,
+          68.18,
+          68.92
+        ],
+        "2026": [
+          67.96,
+          62.38,
+          64.33,
+          65.84
+        ]
+      },
+      "actual": {
+        "2025": 67.74
+      },
+      "meta": {
+        "edition": "2025",
+        "oilSrc": "数据：取自 IMF《世界经济展望》每年各期次（1/4/7/10 月 Update / 正刊）「全球假设」中的石油价格基准值 —— 口径为Brent/Dubai/WTI 的简单平均值，由期货市场推导，（源文件：手工维护于 src/fetch/demand/pmi_gdp.py 的 WOE_OIL_VINTAGES）。",
+        "latest": {
+          "2025": 68.92,
+          "2026": 65.84
+        },
+        "futuresAsOf": "2025-08-29",
+        "vintages": [
+          {
+            "key": "2025-01",
+            "label": "2025 年 1 月更新（WEO Update, January 2025）",
+            "futuresAsOf": "2024-11-20"
+          },
+          {
+            "key": "2025-04",
+            "label": "2025 年 4 月（WEO April 2025）",
+            "futuresAsOf": "2025-03-10"
+          },
+          {
+            "key": "2025-07",
+            "label": "2025 年 7 月更新（WEO Update, July 2025）",
+            "futuresAsOf": "2025-06-26"
+          },
+          {
+            "key": "2025-10",
+            "label": "2025 年 10 月（WEO October 2025）",
+            "futuresAsOf": "2025-08-29"
+          }
+        ],
+        "boundary": null
+      }
+    },
+    "2026": {
+      "months": [
+        "2026-01",
+        "2026-04",
+        "2026-07",
+        "2026-10"
+      ],
+      "price": {
+        "2026": [
+          62.13,
+          82.22,
+          89.27,
+          95.74
+        ],
+        "2027": [
+          62.17,
+          75.97,
+          78.7,
+          87.39
+        ]
+      },
+      "actual": {},
+      "meta": {
+        "edition": "2026",
+        "oilSrc": "数据：取自 IMF《世界经济展望》每年各期次（1/4/7/10 月 Update / 正刊）「全球假设」中的石油价格基准值 —— 口径为Brent/Dubai/WTI 的简单平均值，由期货市场推导，（源文件：手工维护于 src/fetch/demand/pmi_gdp.py 的 WOE_OIL_VINTAGES）。",
+        "latest": {
+          "2026": 95.74,
+          "2027": 87.39
+        },
+        "futuresAsOf": "",
+        "vintages": [
+          {
+            "key": "2026-01",
+            "label": "2026 年 1 月更新（WEO Update, January 2026）",
+            "futuresAsOf": "2025-11-20"
+          },
+          {
+            "key": "2026-04",
+            "label": "2026 年 4 月（WEO April 2026）",
+            "futuresAsOf": "2026-03-10"
+          },
+          {
+            "key": "2026-07",
+            "label": "2026 年 7 月更新（WEO Update, July 2026）",
+            "futuresAsOf": "2026-06-10"
+          },
+          {
+            "key": "2026-10",
+            "label": "2026 年 10 月 13 日更新（WEO October 2026）",
+            "futuresAsOf": ""
+          }
+        ],
+        "boundary": null
+      }
+    }
+  },
+  "retrieved": "2026-10"
+}
