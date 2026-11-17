@@ -675,13 +675,13 @@ function esc(v){
     return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
   });
 }
-/* 卡片右上角 Fetch 按钮：调用本地服务端的 /api/news 做**整页完整抓取**
-   （抓 Argus filtered 完整 feed 第一页 ≈ 最近 27 条，服务端按 URL 去重后写回 news.json）。
-   ⚠️ 两个使用前提：
-     ① 本页必须经 `python run.py serve` 打开才有 /api/news；直接双击静态 HTML 会 404
-        （与首屏「拉取实时」按钮同一限制）。
-     ② Argus 有 AWS WAF 挑战，服务端直连会被拦；此时返回 blocked=true，
-        这里把原因如实显示，**不假装抓取成功**。 */
+/* 卡片右上角 Fetch 按钮：抓 Argus filtered 完整 feed 第一页（≈最近 27 条）。
+   两条可用通道：
+     ① 线上：Cloudflare Worker 的 /api/news，借 Browser Rendering 起真实 Chromium
+        过 AWS WAF 挑战，再读渲染后的 DOM（无状态，合并去重在前端完成）；
+     ② 本地：`python run.py serve` 的 /api/news（headless Chromium 渲染 + 写回 news.json）。
+   ⚠️ Argus 有 AWS WAF 挑战，任何无法执行 JS 的通道都会被拦；此时返回 blocked=true，
+      这里把原因如实显示，**不假装抓取成功**。直接双击静态 HTML（file://）无任何通道。 */
 function fetchNews(btn){
   const st=$("newsstatus");
   const setStatus=(msg,cls)=>{ if(st){ st.textContent=msg||""; st.className="newsstatus"+(cls?" "+cls:""); } };
@@ -696,12 +696,22 @@ function fetchNews(btn){
       return;
     }
     const items=res.items||[];
-    if(items.length) STATE.crudeNews=items;   // 服务端已去重并按日期倒序
-    renderNews();
-    setStatus(res.added
-      ? ("新增 "+res.added+" 条 · 区间 "+res.since+" → "+res.until)
-      : ("已是最新 · 区间 "+res.since+" → "+res.until),
-      res.added ? "ok" : "");
+    if(items.length){
+      // /api/news 无状态：返回的是「本次整页抓取结果」，合并去重交给前端
+      const prev=STATE.crudeNews||[];
+      const oldUrls=new Set(prev.map(function(x){return x&&x.url;}).filter(Boolean));
+      const merged=new Map();
+      prev.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
+      items.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
+      STATE.crudeNews=Array.from(merged.values())
+        .sort(function(a,b){ return String(b.date||"").localeCompare(String(a.date||"")); });
+      const added=items.filter(function(x){ return x&&x.url&&!oldUrls.has(x.url); }).length;
+      renderNews();
+      setStatus("抓到 "+items.length+" 条 · 新增 "+added+" 条 · 最新 "+(items[0].date||"—"),
+        added ? "ok" : "");
+      return;
+    }
+    setStatus("已渲染但未解析到新闻，页面结构可能变更", "warn");
   }).catch(function(){
     setStatus("抓取失败：请用 python run.py serve 打开本页（静态页面无 /api/news）", "warn");
   }).then(function(){

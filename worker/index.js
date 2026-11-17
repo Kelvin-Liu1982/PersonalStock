@@ -63,6 +63,9 @@ export default {
     if (url.pathname === '/api/eia') {
       return handleEia(url, env, ctx);
     }
+    if (url.pathname === '/api/news') {
+      return handleNews(env);
+    }
 
     // 其余路径：回落到仓库根的静态资源
     if (env.ASSETS) {
@@ -266,6 +269,177 @@ function writeCache(cacheKeyStr, obj, ctx) {
     ctx.waitUntil(caches.default.put(new Request(cacheKeyStr), res.clone()).catch(() => {}));
   } catch (_) { /* 无 ctx 或缓存不可用时忽略 */ }
   return res;
+}
+
+/* ------------------------------ 快讯抓取（Browser Rendering） ------------------------------ */
+// Argus 站点为 AWS WAF + CloudFront，非浏览器请求只会拿到 202 的 JS 挑战页
+// （window.gokuProps）。Worker 自身无法执行 JS，需借 Browser Rendering 起的真实
+// Chromium 过挑战，再读渲染后的 DOM。解析口径与 Python 侧
+// src/fetch/news/argus.py::parse_html 对齐（标题取 dateline "(Argus)" 之前、
+// 日期取「City, 14 October」月名写法或 DD/MM/YY 兜底）。
+const NEWS_LIST_URL = 'https://www.argusmedia.com/en/news-and-insights/latest-market-news'
+  + '?filter_language=en-gb&filter_commodity=crude:crude+oil,condensate&page=1';
+const ARTICLE_HREF_RE = /\/en\/news-and-insights\/latest-market-news\/(\d+)-([a-z0-9-]+)/;
+const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july',
+  'august', 'september', 'october', 'november', 'december'];
+
+// 在页面上下文执行：抓所有新闻卡锚点，按文章 id 去重，取信息量最大的那次
+const EXTRACT_EXPR = `(() => {
+  const head = document.documentElement.innerHTML.slice(0, 6000);
+  const waf = /gokuProps/.test(head);
+  const seen = new Map();
+  document.querySelectorAll('a[href*="/en/news-and-insights/latest-market-news/"]').forEach(a => {
+    const href = a.getAttribute('href') || '';
+    const m = href.match(/\\/latest-market-news\\/(\\d+)-([a-z0-9-]+)/);
+    if (!m) return;
+    const txt = (a.innerText || a.textContent || '').replace(/\\s+/g, ' ').trim();
+    const prev = seen.get(m[1]);
+    if (!prev || txt.length > prev.txt.length) {
+      seen.set(m[1], { id: m[1], slug: m[2], href, txt });
+    }
+  });
+  return { waf, title: document.title, count: seen.size, items: Array.from(seen.values()) };
+})()`;
+
+/** 最小 CDP 客户端：一条 WebSocket 上按 id 收发命令 */
+function cdpClient(socket) {
+  let seq = 0;
+  const pending = new Map();
+  socket.addEventListener('message', (ev) => {
+    let msg;
+    try { msg = JSON.parse(ev.data); } catch (_) { return; }
+    if (!msg.id || !pending.has(msg.id)) return;
+    const p = pending.get(msg.id);
+    pending.delete(msg.id);
+    if (msg.error) p.reject(new Error(msg.error.message || 'CDP error'));
+    else p.resolve(msg.result);
+  });
+  return function send(method, params = {}) {
+    const id = ++seq;
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        pending.delete(id);
+        reject(new Error(`CDP ${method} 超时`));
+      }, 30000);
+      pending.set(id, {
+        resolve: (v) => { clearTimeout(timer); resolve(v); },
+        reject: (e) => { clearTimeout(timer); reject(e); },
+      });
+      socket.send(JSON.stringify({ id, method, params }));
+    });
+  };
+}
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+/** 从卡片纯文本里解析 date / title（口径同 argus.py） */
+function parseNewsCard(row) {
+  const txt = (row.txt || '').replace(/\s+/g, ' ').trim();
+  if (!txt) return null;
+
+  // 日期：优先「City, 14 October」，再 DD/MM/YY
+  let iso = null;
+  const named = txt.match(new RegExp(`,\\s*(\\d{1,2})\\s+(${MONTHS.join('|')})\\b`, 'i'));
+  const numeric = txt.match(/\b(\d{2})\/(\d{2})\/(\d{2})\b/);
+  if (named) {
+    const mon = MONTHS.indexOf(named[2].toLowerCase()) + 1;
+    iso = `${new Date().getUTCFullYear()}-${pad2(mon)}-${pad2(parseInt(named[1], 10))}`;
+  } else if (numeric) {
+    iso = `20${numeric[3]}-${numeric[2]}-${numeric[1]}`;
+  }
+
+  // 标题：取 (Argus) 之前，剥掉样板字与日期前缀
+  let t = txt.replace(/^latest crude oil news\s*/i, '');
+  const argusAt = t.indexOf('(Argus)');
+  if (argusAt > 0) t = t.slice(0, argusAt);
+  t = t.replace(/^,\s*/, '')
+    .replace(new RegExp(`^\\d{1,2}\\s+(${MONTHS.join('|')})\\s*`, 'i'), '')
+    .replace(/^\d{2}\/\d{2}\/\d{2}\s*/, '')
+    .replace(/^[:\-|\s]+/, '')
+    .replace(/[:\-|\s]+$/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  // 卡片式布局里标题常重复两次（可见 + 读屏副本），去重取前半
+  if (t.length >= 4 && t.length % 2 === 0 && t.slice(0, t.length / 2) === t.slice(t.length / 2)) {
+    t = t.slice(0, t.length / 2).trim();
+  }
+  if (!t) t = row.slug.replace(/-/g, ' ');
+  return { title: t, url: 'https://www.argusmedia.com' + row.href, date: iso };
+}
+
+async function handleNews(env) {
+  if (!env || !env.BROWSER) {
+    return json({
+      ok: false,
+      error: 'Browser Rendering 未绑定：需 Workers 付费版，并在 wrangler.toml 声明 [browser] binding = "BROWSER"',
+    }, 501, 0);
+  }
+
+  let session = null;
+  let socket = null;
+  try {
+    // 1) 开一个浏览器会话并连上 CDP
+    session = await env.BROWSER.launch({ keepAlive: 60000 });
+    const conn = await session.webSocket.fetch('https://browser-binding.invalid', {
+      headers: { Upgrade: 'websocket' },
+    });
+    if (!conn.webSocket) throw new Error('Browser Rendering 未返回 WebSocket');
+    socket = conn.webSocket;
+    socket.accept();
+    const send = cdpClient(socket);
+
+    // 2) 打开 Argus 列表页（WAF 挑战由浏览器自身完成）
+    await send('Page.enable');
+    await send('Page.navigate', { url: NEWS_LIST_URL });
+
+    // 3) 轮询等新闻锚点出现；一旦确认是 WAF 挑战页就不再空等
+    let probe = null;
+    for (let i = 0; i < 30; i++) {
+      await new Promise((r) => setTimeout(r, 1000));
+      const r = await send('Runtime.evaluate', {
+        expression: EXTRACT_EXPR, returnByValue: true, awaitPromise: true,
+      });
+      probe = (r && r.result && r.result.value) || null;
+      if (probe && probe.count > 0) break;
+      if (probe && probe.waf) break;
+    }
+
+    if (!probe || probe.count === 0) {
+      return json({
+        ok: false,
+        blocked: !!(probe && probe.waf),
+        error: probe && probe.waf
+          ? 'Argus 返回 AWS WAF 挑战页，浏览器未能通过'
+          : '已渲染但未找到任何新闻锚点（页面结构可能变更）',
+        debug: { title: (probe && probe.title) || '', count: (probe && probe.count) || 0 },
+      }, 502, 0);
+    }
+
+    // 4) 解析并按日期倒序
+    const items = [];
+    const seen = new Set();
+    for (const row of probe.items) {
+      const it = parseNewsCard(row);
+      if (!it || !it.title || seen.has(it.url)) continue;
+      seen.add(it.url);
+      items.push(it);
+    }
+    items.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+
+    return json({
+      ok: true,
+      source: 'argusmedia.com（Browser Rendering 渲染）',
+      fetchedAt: new Date().toISOString(),
+      items,
+      count: items.length,
+      debug: { pageTitle: probe.title || '', anchors: probe.count },
+    }, 200, 0);
+  } catch (err) {
+    return json({ ok: false, error: String((err && err.message) || err) }, 502, 0);
+  } finally {
+    try { if (socket) socket.close(); } catch (_) { /* ignore */ }
+    try { if (session) await env.BROWSER.closeSession(session.sessionId); } catch (_) { /* ignore */ }
+  }
 }
 
 /* ------------------------------ 上游抓取 ------------------------------ */

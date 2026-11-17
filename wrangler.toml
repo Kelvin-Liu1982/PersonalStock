@@ -1,5 +1,12 @@
 name = "personalstock"
-compatibility_date = "2025-04-01"
+# 2026-11 升至当日：Browser Rendering 的 acquire/launch/CDP 绑定 API 需要较新兼容日期
+compatibility_date = "2026-11-17"
+
+# Browser Rendering 绑定：供 /api/news 用真实 Chromium 渲染 Argus（绕过 AWS WAF 的 JS 挑战）
+# ⚠️ 需 Workers 付费版（Workers Paid）；免费版声明此绑定会导致部署失败
+# 未绑定或不可用时，/api/news 返回 501 并说明原因，其余功能不受影响
+[browser]
+binding = "BROWSER"
 
 # Worker 入口：处理 /api/quote（行情）、/api/fred、/api/eia（宏观代理），
 # 其余请求回落静态资源
