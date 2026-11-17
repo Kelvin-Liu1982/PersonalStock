@@ -1,15 +1,16 @@
 name = "personalstock"
-# 2026-11 升至当日：Browser Rendering 的 acquire/launch/CDP 绑定 API 需要较新兼容日期
-compatibility_date = "2026-11-17"
+compatibility_date = "2025-04-01"
 
-# Browser Rendering 绑定：供 /api/news 用真实 Chromium 渲染 Argus（绕过 AWS WAF 的 JS 挑战）
-# ⚠️ 需 Workers 付费版（Workers Paid）；免费版声明此绑定会导致部署失败
-# 未绑定或不可用时，/api/news 返回 501 并说明原因，其余功能不受影响
-[browser]
-binding = "BROWSER"
+# Browser Rendering 绑定（方案4 试点）已暂时移除：
+# 该绑定要求 Workers 付费版，免费版声明会导致**整个构建失败**（站点停留在旧版本）。
+# worker/index.js 中的 handleNews() 保留，未绑定时 /api/news 返回 501 并说明原因，
+# 前端据此自动回落到仓库内已发布快照（../data/dataset/news.json）。
+# 升级 Workers Paid 后，取消下面两行注释即可重启方案4：
+# [browser]
+# binding = "BROWSER"
 
-# Worker 入口：处理 /api/quote（行情）、/api/fred、/api/eia（宏观代理），
-# 其余请求回落静态资源
+# Worker 入口：处理 /api/quote（行情）、/api/fred、/api/eia（宏观代理）、
+# /api/news（快讯，需 Browser Rendering，未绑定则 501），其余请求回落静态资源
 main = "worker/index.js"
 
 # ⚠️ 宏观代理所需密钥**不写在此文件**（本仓库公开），须在 Cloudflare Dashboard 配置为

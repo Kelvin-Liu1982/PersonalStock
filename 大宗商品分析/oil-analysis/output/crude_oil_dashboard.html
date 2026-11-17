@@ -923,44 +923,60 @@ function esc(v){
   });
 }
 /* 卡片右上角 Fetch 按钮：抓 Argus filtered 完整 feed 第一页（≈最近 27 条）。
-   两条可用通道：
-     ① 线上：Cloudflare Worker 的 /api/news，借 Browser Rendering 起真实 Chromium
-        过 AWS WAF 挑战，再读渲染后的 DOM（无状态，合并去重在前端完成）；
-     ② 本地：`python run.py serve` 的 /api/news（headless Chromium 渲染 + 写回 news.json）。
-   ⚠️ Argus 有 AWS WAF 挑战，任何无法执行 JS 的通道都会被拦；此时返回 blocked=true，
-      这里把原因如实显示，**不假装抓取成功**。直接双击静态 HTML（file://）无任何通道。 */
+   三级通道，逐级回落：
+     ① 本地：`python run.py serve` 的 /api/news（headless Chromium 渲染 + 写回 news.json）；
+     ② 线上：Cloudflare Worker 的 /api/news，借 Browser Rendering 起真实 Chromium 过
+        AWS WAF（需 Workers 付费版；未绑定时返回 501）；
+     ③ 兜底：读取仓库内已发布的 data/dataset/news.json 快照（只重载、不新增抓取）。
+   ⚠️ Argus 有 AWS WAF 挑战，任何无法执行 JS 的通道都会被拦；状态栏如实标注来源，
+      不假装实时抓取成功。 */
 function fetchNews(btn){
   const st=$("newsstatus");
   const setStatus=(msg,cls)=>{ if(st){ st.textContent=msg||""; st.className="newsstatus"+(cls?" "+cls:""); } };
+  // 合并去重：/api/news 与静态快照返回的都是「条目列表」，统一在这里并入 STATE
+  const applyItems=function(items){
+    const prev=STATE.crudeNews||[];
+    const oldUrls=new Set(prev.map(function(x){return x&&x.url;}).filter(Boolean));
+    const merged=new Map();
+    prev.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
+    items.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
+    STATE.crudeNews=Array.from(merged.values())
+      .sort(function(a,b){ return String(b.date||"").localeCompare(String(a.date||"")); });
+    renderNews();
+    return items.filter(function(x){ return x&&x.url&&!oldUrls.has(x.url); }).length;
+  };
+  // 线上无 Browser Rendering（免费版）时 /api/news 返回 501 → 回落读仓库内已发布快照
+  const loadSnapshot=function(reason){
+    setStatus("实时抓取不可用（"+reason+"）· 加载已发布快照…", "warn");
+    fetch("../data/dataset/news.json", {cache:"no-cache"})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        const items=(d && d.crudeNews) || [];
+        if(!items.length){ setStatus("实时抓取不可用，且未找到已发布快照", "warn"); return; }
+        const added=applyItems(items);
+        const meta=(d && d.crudeNewsMeta) || {};
+        setStatus("已发布快照 · 抓取于 "+(meta.lastFetched||"—")+" · 最新 "+(items[0].date||"—")
+          +(added ? " · 新增 "+added+" 条" : ""), added ? "ok" : "");
+      })
+      .catch(function(){ setStatus("实时抓取不可用，快照亦无法读取", "warn"); });
+  };
   if(btn){ btn.disabled=true; btn.textContent="…"; }
   setStatus("正在抓取…");
   fetch("/api/news").then(function(r){ return r.json(); }).then(function(res){
     if(!res || !res.ok){
       const why=(res && res.blocked)
-        ? (res.message || "Argus 返回 AWS WAF 挑战页，非浏览器请求取不到新闻")
+        ? (res.message || "Argus 返回 AWS WAF 挑战页")
         : ((res && res.error) || "抓取失败");
-      setStatus(why, "warn");
+      loadSnapshot(why);
       return;
     }
     const items=res.items||[];
-    if(items.length){
-      // /api/news 无状态：返回的是「本次整页抓取结果」，合并去重交给前端
-      const prev=STATE.crudeNews||[];
-      const oldUrls=new Set(prev.map(function(x){return x&&x.url;}).filter(Boolean));
-      const merged=new Map();
-      prev.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
-      items.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
-      STATE.crudeNews=Array.from(merged.values())
-        .sort(function(a,b){ return String(b.date||"").localeCompare(String(a.date||"")); });
-      const added=items.filter(function(x){ return x&&x.url&&!oldUrls.has(x.url); }).length;
-      renderNews();
-      setStatus("抓到 "+items.length+" 条 · 新增 "+added+" 条 · 最新 "+(items[0].date||"—"),
-        added ? "ok" : "");
-      return;
-    }
-    setStatus("已渲染但未解析到新闻，页面结构可能变更", "warn");
+    if(!items.length){ setStatus("已渲染但未解析到新闻，页面结构可能变更", "warn"); return; }
+    const added=applyItems(items);
+    setStatus("抓到 "+items.length+" 条 · 新增 "+added+" 条 · 最新 "+(items[0].date||"—"),
+      added ? "ok" : "");
   }).catch(function(){
-    setStatus("抓取失败：请用 python run.py serve 打开本页（静态页面无 /api/news）", "warn");
+    loadSnapshot("无 /api/news 服务");
   }).then(function(){
     if(btn){ btn.disabled=false; btn.textContent="↻ Fetch"; }
   });
