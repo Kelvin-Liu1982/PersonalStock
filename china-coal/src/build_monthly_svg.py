@@ -25,6 +25,7 @@ x 轴：1月…9月（共 9 个月度点）。
 import os
 import datetime
 import openpyxl
+from openpyxl.utils.datetime import from_excel
 
 # ── 路径基准 ───────────────────────────────────────────────────────
 # 本脚本位于 <项目根>/src/，统一把工作目录切到项目根，
@@ -42,9 +43,14 @@ MONTH_LABELS = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", 
 
 
 def _year_of(m):
-    """从月份单元格判断年份：字符串 'YYYY年N月' 或 datetime。"""
+    """从月份单元格判断年份：'YYYY年N月' 字符串 / datetime / Excel serial 数字。"""
     if isinstance(m, datetime.datetime):
         return m.year
+    if isinstance(m, (int, float)) and not isinstance(m, bool):
+        try:
+            return from_excel(m).year
+        except Exception:
+            return None
     if isinstance(m, str):
         for y in (2026, 2025, 2024, 2023):
             if m.startswith(str(y) + "年"):
@@ -53,9 +59,14 @@ def _year_of(m):
 
 
 def _label_of(m):
-    """月份单元格 → 'N月' 短标签（与 MONTH_LABELS 对齐）。"""
+    """月份单元格 → 'N月' 短标签（由真实日期派生，不依赖硬编码月份表）。"""
     if isinstance(m, datetime.datetime):
         return f"{m.month}月"
+    if isinstance(m, (int, float)) and not isinstance(m, bool):
+        try:
+            return f"{from_excel(m).month}月"
+        except Exception:
+            return str(m)
     if isinstance(m, str) and "年" in m:
         return m.split("年", 1)[1]
     return str(m) if m is not None else ""
@@ -172,7 +183,7 @@ def build_trend_m(series, fname, title, color="#c53030", unit="万吨", series2=
         cx, cy = xs[i], yp(v)
         svg.append(f'<circle cx="{cx:.1f}" cy="{cy:.1f}" r="3.6" fill="{color}" stroke="#fff" stroke-width="1"/>')
         svg.append(f'<text x="{cx:.1f}" y="{cy-12:.1f}" font-size="12" font-weight="600" fill="#374151" text-anchor="middle">{v:.0f}</text>')
-        svg.append(f'<text x="{cx:.1f}" y="{plot_bottom+18:.1f}" font-size="11" fill="#6b7280" text-anchor="middle">{MONTH_LABELS[i]}</text>')
+        svg.append(f'<text x="{cx:.1f}" y="{plot_bottom+18:.1f}" font-size="11" fill="#6b7280" text-anchor="middle">{lab}</text>')
     svg.append('</svg>')
     with open(fname, "w", encoding="utf-8") as f:
         f.write("".join(svg))
@@ -264,9 +275,9 @@ def build_trend_m_multi(labels, data, fname, title, series_meta, unit="万吨", 
             if v is None:
                 continue
             svg.append(f'<circle cx="{xs[i]:.1f}" cy="{yp(v):.1f}" r="2.8" fill="{color}" stroke="#fff" stroke-width="1"/>')
-    # x 轴月份
+    # x 轴月份（用序列自带的真实标签，自动适配月数，不再依赖硬编码表）
     for i in range(n):
-        svg.append(f'<text x="{xs[i]:.1f}" y="{plot_bottom+18:.1f}" font-size="11" fill="#6b7280" text-anchor="middle">{MONTH_LABELS[i]}</text>')
+        svg.append(f'<text x="{xs[i]:.1f}" y="{plot_bottom+18:.1f}" font-size="11" fill="#6b7280" text-anchor="middle">{labels[i]}</text>')
     # 底部产品图例已移除（改置于右上角第二行）
     svg.append('</svg>')
     with open(fname, "w", encoding="utf-8") as f:
