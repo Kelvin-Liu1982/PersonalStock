@@ -42,29 +42,38 @@
 
 .stock-card .links{display:flex;gap:12px;margin-top:18px;width:100%;justify-content:center}
 .stock-card .links a{
-  flex:1;max-width:120px;padding:9px 14px;border-radius:8px;
+  flex:1;max-width:120px;padding:9px 10px;border-radius:8px;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;
   background:var(--soft);border:1px solid var(--line);color:var(--ink);
   text-decoration:none;font-size:13px;font-weight:600;text-align:center;
   transition:background .15s,color .15s,border-color .15s,box-shadow .15s;
 }
+/* 「追踪看板」按钮右侧箭头：取本行业色，悬停时随底色反白 */
+.stock-card .links > a::after{content:"→";font-size:14px;font-weight:700;line-height:1;color:var(--cat, var(--acc2));transition:transform .15s,color .15s}
 .stock-card .links a:hover{
   background:var(--cat, var(--acc2));color:#fff;border-color:var(--cat, var(--acc2));
   box-shadow:0 4px 12px rgba(21,97,109,.25);transform:none;
 }
+.stock-card .links > a:hover::after{color:#fff;transform:translateX(2px)}
 
 /* ===== 财报分析下拉菜单 ===== */
 .stock-card .links{position:relative;z-index:1}
 .report-menu{position:relative;flex:1;max-width:120px}
 .report-menu .rm-btn{
-  width:100%;padding:9px 14px;border-radius:8px;cursor:pointer;font:inherit;
+  width:100%;padding:9px 10px;border-radius:8px;cursor:pointer;font:inherit;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;
   background:var(--soft);border:1px solid var(--line);color:var(--ink);
   font-size:13px;font-weight:600;text-align:center;
   transition:background .15s,color .15s,border-color .15s,box-shadow .15s;
 }
+/* 「财报分析」按钮右侧下拉箭头，展开时翻转朝上 */
+.report-menu .rm-btn::after{content:"▾";font-size:11px;line-height:1;color:var(--dim);transition:transform .15s,color .15s}
 .report-menu .rm-btn:hover,.report-menu.open .rm-btn{
   background:var(--cat, var(--acc2));color:#fff;border-color:var(--cat, var(--acc2));
   box-shadow:0 4px 12px rgba(21,97,109,.25);
 }
+.report-menu .rm-btn:hover::after,.report-menu.open .rm-btn::after{color:#fff}
+.report-menu.open .rm-btn::after{transform:rotate(180deg)}
 .report-menu .rm-list{
   display:none;position:absolute;left:50%;transform:translateX(-50%);
   top:calc(100% + 8px);min-width:max-content;max-width:220px;z-index:100;

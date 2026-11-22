@@ -1,319 +1,425 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>腾讯控股 2026 半年度 财报分析</title>
-
-<style>
-  :root{
-    --bg:#f4f6f9; --card:#ffffff; --ink:#1f2733; --ink-2:#5b6675; --ink-3:#8a94a6;
-    --line:#e7ebf1; --line-2:#eef1f6;
-    --brand:#13406b; --brand-soft:#eaf1f8;
-    --up:#c0392b; --up-soft:#fbecea;      /* 涨·红 */
-    --down:#1f8a4c; --down-soft:#e9f6ee;   /* 跌·绿 */
-    --flat:#6b7280; --flat-soft:#f1f3f6;
-    --amber:#b7791f; --amber-soft:#fdf3e3;  /* 关注·琥珀 */
-    --shadow:0 1px 3px rgba(20,40,80,.05),0 6px 20px rgba(20,40,80,.04);
-    --radius:14px;
-  }
-  *{box-sizing:border-box}
-  body{margin:0;background:var(--bg);color:var(--ink);
-    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
-    line-height:1.6;-webkit-font-smoothing:antialiased;}
-  .wrap{max-width:980px;margin:0 auto;padding:28px 20px 48px;}
-  /* 头部 */
-  .head{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    box-shadow:var(--shadow);padding:22px 24px;display:flex;flex-wrap:wrap;gap:18px;
-    justify-content:space-between;align-items:flex-start;}
-  .head .co{font-size:26px;font-weight:800;letter-spacing:.5px;}
-  .head .meta{margin-top:6px;color:var(--ink-3);font-size:13px;display:flex;gap:10px;flex-wrap:wrap;}
-  .head .meta span{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--line-2);}
-  .head .right{text-align:right;min-width:200px;}
-  .period{font-size:15px;font-weight:700;color:var(--brand);}
-  .pdate{font-size:13px;color:var(--ink-3);margin-top:4px;}
-  .badge{display:inline-block;margin-top:10px;padding:5px 14px;border-radius:999px;font-size:13px;font-weight:700;}
-  .badge.up{background:var(--up-soft);color:var(--up);}
-  .badge.down{background:var(--down-soft);color:var(--down);}
-  .badge.flat{background:var(--flat-soft);color:var(--flat);}
-  /* 区块标题 */
-  .sec{margin-top:26px;}
-  .sec-h{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;margin:0 0 14px;}
-  .sec-h::before{content:"";width:4px;height:18px;border-radius:3px;background:var(--brand);}
-  .sec-sub{font-size:12.5px;color:var(--ink-3);font-weight:500;margin-left:4px;}
-  /* 指标卡 */
-  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;}
-  .mcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow);}
-  .mcard .lab{font-size:12.5px;color:var(--ink-3);}
-  .mcard .val{font-size:25px;font-weight:800;margin:4px 0 2px;letter-spacing:.3px;}
-  .mcard .delta{font-size:13px;font-weight:700;}
-  .mcard .delta.up{color:var(--up);} .mcard .delta.down{color:var(--down);} .mcard .delta.flat{color:var(--flat);}
-  /* 表格 */
-  .tbl{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);
-    border-radius:12px;overflow:hidden;box-shadow:var(--shadow);font-size:14px;}
-  .tbl th,.tbl td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--line-2);}
-  .tbl th{background:var(--brand-soft);color:var(--brand);font-weight:700;font-size:13px;}
-  .tbl tr:last-child td{border-bottom:none;}
-  .tbl td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;}
-  .tbl .up{color:var(--up);font-weight:700;} .tbl .down{color:var(--down);font-weight:700;} .tbl .flat{color:var(--flat);}
-  .tbl .note{font-size:12px;color:var(--ink-3);font-weight:500;}
-  /* 双栏：亮点 / 风险 */
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);}
-  .panel h4{margin:0 0 10px;font-size:15px;display:flex;align-items:center;gap:8px;}
-  .panel.hl h4{color:var(--up);} .panel.rk h4{color:var(--down);}
-  .panel ul{margin:0;padding-left:18px;} .panel li{margin:7px 0;font-size:14px;color:var(--ink);}
-  /* 核心结论摘要（v2 结论置顶） */
-  .summary{background:linear-gradient(180deg,#ffffff,#f7fafd);border:1px solid var(--line);
-    border-left:5px solid var(--brand);border-radius:12px;padding:18px 20px;box-shadow:var(--shadow);}
-  .summary .tone{display:inline-block;font-size:13px;font-weight:800;padding:3px 12px;border-radius:999px;margin-bottom:10px;}
-  .summary .tone.up{background:var(--up-soft);color:var(--up);}
-  .summary .tone.flat{background:var(--flat-soft);color:var(--flat);}
-  .summary .tone.down{background:var(--down-soft);color:var(--down);}
-  .summary .oneliner{font-size:15.5px;font-weight:700;color:var(--ink);margin:0 0 12px;line-height:1.5;}
-  .summary .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .summary .col h5{margin:0 0 6px;font-size:13.5px;}
-  .summary .col.hl h5{color:var(--up);} .summary .col.rk h5{color:var(--down);}
-  .summary .col ul{margin:0;padding-left:18px;} .summary .col li{font-size:13.5px;margin:5px 0;color:var(--ink-2);}
-  /* 通用正文卡 */
-  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);font-size:14px;color:var(--ink);}
-  .card p{margin:0 0 10px;} .card p:last-child{margin-bottom:0;}
-  /* 排雷清单（v2 第 9 章） */
-  .redflags{background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
-  .rf{display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--line-2);align-items:flex-start;}
-  .rf:last-child{border-bottom:none;}
-  .rf .k{min-width:150px;max-width:160px;font-weight:700;color:var(--ink);flex-shrink:0;font-size:13.5px;}
-  .rf .v{flex:1;color:var(--ink-2);font-size:13.5px;line-height:1.55;}
-  .verdict{display:inline-block;font-weight:800;font-size:12px;padding:1px 9px;border-radius:999px;margin-right:8px;vertical-align:middle;}
-  .verdict.up{background:var(--up-soft);color:var(--up);}
-  .verdict.down{background:var(--down-soft);color:var(--down);}
-  .verdict.amber{background:var(--amber-soft);color:var(--amber);}
-  .verdict.flat{background:var(--flat-soft);color:var(--flat);}
-  /* 关键指标可视化（三图） */
-  .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
-  .chartbox{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:var(--shadow);}
-  .chartbox .ct{font-size:13.5px;font-weight:700;color:var(--brand);margin-bottom:8px;}
-  /* 下季跟踪 */
-  .track{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;box-shadow:var(--shadow);}
-  .track ol{margin:0;padding-left:20px;} .track li{font-size:14px;margin:7px 0;color:var(--ink-2);}
-  /* 页脚 */
-  .foot{margin-top:26px;font-size:12px;color:var(--ink-3);line-height:1.7;
-    border-top:1px dashed var(--line);padding-top:14px;}
-  .foot b{color:var(--ink-2);}
-  @media(max-width:640px){
-    .two{grid-template-columns:1fr;}
-    .summary .grid{grid-template-columns:1fr;}
-    .head .right{text-align:left;}
-    .rf{flex-direction:column;gap:4px;}
-    .rf .k{max-width:none;}
-  }
-  @media print{ body{background:#fff;} .wrap{padding:0;} .mcard,.tbl,.panel,.summary,.card,.redflags,.chartbox,.track,.head{box-shadow:none;} }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="referrer" content="no-referrer">
+  <!-- SECURITY_NOTE: Local scripts and styles only; inline styles set the widths of static chart bars. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="description" content="腾讯控股2026年第二季度及上半年财报分析：分部毛利率、经营利润、AI算力投入、自由现金流及股东回报。">
+  <title>腾讯控股 · 2026 Q2 / H1 财务研究</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="assets/report.css">
+  <script src="assets/lucide.min.js" defer></script>
+  <script src="assets/report.js" defer></script>
 </head>
 <body>
-<div class="wrap">
+  <a class="skip-link" href="#report">跳至报告正文</a>
+  <aside class="sidebar" aria-label="报告目录">
+    <a class="publication" href="#report" aria-label="财务研究首页">
+      <span class="publication-symbol" aria-hidden="true"><i data-lucide="chart-no-axes-combined"></i></span>
+      <span>财务研究<span class="publication-en">EQUITY RESEARCH</span></span>
+    </a>
+    <div class="sidebar-company">
+      <span class="ticker">00700.HK</span>
+      <strong>腾讯控股</strong>
+      <span class="muted">2026 年第二季度及上半年</span>
+    </div>
+    <nav class="section-nav" aria-label="章节导航">
+      <a class="nav-link active" href="#overview" aria-current="location"><span class="nav-number">01</span>财务与运营速览<i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+      <a class="nav-link" href="#business"><span class="nav-number">02</span>主业与毛利结构<i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+      <a class="nav-link" href="#capital"><span class="nav-number">03</span>AI 投入与现金流<i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+      <a class="nav-link" href="#risks"><span class="nav-number">04</span>投资与风险核查<i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+      <a class="nav-link" href="#outlook"><span class="nav-number">05</span>结论与跟踪重点<i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+    </nav>
+    <a class="methodology-link" href="#methodology"><i data-lucide="notebook-tabs" aria-hidden="true"></i>口径与数据说明</a>
+    <div class="source-document">
+      <span class="sidebar-caption">SOURCE DOCUMENT</span>
+      <a class="document-link" href="materials/00700.HK-2026Q2.pdf" target="_blank" rel="noopener noreferrer"><i data-lucide="file-text" aria-hidden="true"></i><span>原始业绩公告<small>PDF · 50 页 · 中文</small></span><i data-lucide="arrow-up-right" aria-hidden="true"></i></a>
+      <p>未经审计 / 经核数师审阅<br>仅依据随附公告，非公司官方研究。</p>
+    </div>
+  </aside>
 
+  <div class="workspace">
+    <header class="topbar">
+      <div class="breadcrumbs"><span>港股科技</span><span aria-hidden="true">/</span><strong>第二季度及中期业绩</strong></div>
+      <time class="report-date" datetime="2026-08-12">2026.08.12</time>
+    </header>
 
-  <div class="head">
-    <div>
-      <div class="co">腾讯控股</div>
-      <div class="meta">
-        <span>00700.HK</span><span>传媒互联网</span><span>港交所</span>
+    <main id="report" class="report" tabindex="-1">
+      <header class="report-heading">
+        <div>
+          <div class="eyebrow"><span class="edition-marker"></span>INTERIM FINANCIAL REVIEW<span class="edition">2026 / Q2 + H1</span></div>
+          <h1>腾讯控股<span class="heading-ticker">00700.HK</span></h1>
+          <p class="report-subtitle">游戏拉动毛利改善，算力投入压低利润率与现金回报</p>
+        </div>
+        <div class="heading-meta"><span>TENCENT HOLDINGS</span><strong>2026 年第二季度及上半年</strong><small>报告期截至 2026.06.30</small></div>
+      </header>
+
+      <div class="investment-view">
+        <span class="view-label">核心判断</span>
+        <p>二季度收入与主业利润同比增长，但经营费用增长更快。<strong>集团毛利率上升，不等于核心经营利润率上升；剔除算力预付后 FCF 为正，也不等于当季实际可分配现金为正。</strong></p>
+        <a href="#outlook" class="text-link">结论<i data-lucide="arrow-right" aria-hidden="true"></i></a>
       </div>
-    </div>
-    <div class="right">
-      <div class="period">2026 半年度</div>
-      <div class="pdate">披露日期：2026-08-12</div>
-      <div class="badge up">偏积极 · 主业双引擎提速，AI 资本开支压制自由现金流</div>
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">核心结论摘要</div>
-    <div class="summary">
-      <span class="tone up">偏积极（H1 营收与 Non-IFRS 净利均 +10%，但 AI CapEx 使 Q2 FCF 转负）</span>
-      <p class="oneliner">腾讯控股 2026 年上半年延续<b>「主业稳增、利润质量扎实、AI 投入加码」</b>的格局：H1 营业收入 <b>4,012.43 亿元（+10.1%）</b>、毛利 2,296.98 亿元（+11.8%）、<b>毛利率 57.25%（+0.85pp）</b>、经营盈利 1,346.51 亿元（<b>+14.4%</b>）、<b>IFRS 归母净利润 1,141.15 亿元（+10.3%）</b>、<b>Non-IFRS 净利润 1,363.20 亿元（+9.6%）</b>、基本每股收益 12.638 元（+11.2%）。<b>Q2 单季的结构变化是本期的核心看点</b>：营收 2,047.85 亿元（<b>+11.0%，增速较 Q1 的 +9.0% 提速</b>）、毛利率 58%（+1pp）、Non-IFRS 净利 684.15 亿元（<b>+8.5%，超预期</b>，市场预期约 670 亿元），但 <b>IFRS 归母仅 560.22 亿元（+0.7%）</b>——差额来自<b>联营公司一次性公允价值亏损</b>，属口径与一次性因素而非主业恶化。<b>增长引擎完成切换</b>：营销服务（广告）Q2 <b>435.65 亿元（+22%，较 Q1 的 +20% 再提速）</b>，由 AI 广告推荐（RankUp / AIM+）、视频号时长 +20%、微信小店闭环驱动；<b>本土游戏 +17%</b>（《三角洲行动》《无畏契约》《洛克王国：世界》拉动），<b>国际游戏 −0.8%</b>（汇率拖累，固定汇率 +4%）；金融科技及企业服务 +9%（云受 AI 需求与国际拓展驱动）；增值服务 +8%。<b>微信月活 14.39 亿（+2%）</b>，生态持续扩张。<b>本期最刺眼的变化在现金流</b>：Q2 资本开支 <b>527.84 亿元（+176%）</b>、<b>H1 累计 847 亿元</b>，致 <b>Q2 自由现金流 −138 亿元（首次转负）</b>、<b>OCF/归母降至 0.94×</b>；但<b>剔除 AI 算力预付款后 FCF 仍为 +376 亿元</b>，主业造血未受损。<b>现金净额由 Q1 的 1,469 亿元降至 582 亿元</b>，反映本季资本支付 593 亿元 + 2025 年度股息 416 亿元的双重流出。<b>估值</b>：2026-08-12 收 <b>HK$461.60</b>、市值约 <b>4.19 万亿港元</b>，<b>PE(TTM) 约 15.7×、2026E Non-IFRS PE 约 15.8×、PB 3.2×、股息率 TTM 1.15%</b>（以回购为主要回报方式）；<b>一致目标价 HK$692–727（现价空间 +50%）</b>。<b>核心矛盾：收入端（广告 +22%、本土游戏 +17%）与利润率（毛利率 58%）都在改善，但 AI 资本开支把自由现金流从「强劲」打到「单季为负」——这意味着 2026 年的估值锚正从「FCF 收益率」转向「AI 投入的回报能见度」，管理层能否证明这笔钱花得值，是股价的第一变量。</b></p>
-      <div class="grid">
-        <div class="col hl"><h5>✓ 核心利好</h5><ul><li><b>Q2 营收提速至 +11%</b>：2,047.85 亿元（Q1 +9.0% → Q2 +11.0%），<b>超越市场预期（约 2,025–2,030 亿）</b>；毛利率 58%（+1pp），广告与本土游戏的高毛利结构调整持续生效</li><li><b>广告 +22% 是本季最强引擎</b>：营销服务 435.65 亿元（<b>+22%，较 Q1 的 +20% 再提速</b>），AI 广告推荐（RankUp/AIM+）+ 视频号时长 +20% + 微信小店闭环；收入增量贡献约 38%，为最大拉动项</li></ul></div>
-        <div class="col rk"><h5>⚠ 核心风险</h5><ul><li><b>AI 资本开支致自由现金流首次转负（核心风险）</b>：Q2 CapEx <b>527.84 亿元（+176%）</b>、H1 累计 <b>847 亿元</b>，Q2 <b>FCF −138 亿元</b>、<b>OCF/归母 0.94×</b>（首次低于 1）；若全年 CapEx 达 1,500 亿元级，<b>自由现金流将持续承压，回购规模可能收缩</b></li><li><b>IFRS 归母仅 +0.7%，与 Non-IFRS +8.5% 严重背离</b>：差额源于<b>联营公司一次性公允价值亏损</b>，虽属非经营性，但说明投资组合对利润表的扰动正在加大，<b>IFRS 口径的利润波动性上升</b></li></ul></div>
+      <section class="kpi-strip" aria-label="二季度关键财务指标">
+        <div class="kpi"><span class="kpi-label">营业收入 <span class="unit">人民币亿元</span></span><strong>2,047.85</strong><span class="kpi-change positive"><i data-lucide="trending-up" aria-hidden="true"></i>+10.99%<span>同比</span></span></div>
+        <div class="kpi"><span class="kpi-label">Core OP 代理值 <span class="unit">人民币亿元</span><a class="info-link" href="#core-definition" aria-label="查看 Core OP 口径"><i data-lucide="info" aria-hidden="true"></i></a></span><strong>677.56</strong><span class="kpi-change positive"><i data-lucide="trending-up" aria-hidden="true"></i>+6.40%<span>同比</span></span></div>
+        <div class="kpi"><span class="kpi-label">公司口径自由现金流 <span class="unit">人民币亿元，约数</span></span><strong class="negative">-138</strong><span class="kpi-context">含算力预付及租赁付款</span></div>
+        <div class="kpi"><span class="kpi-label">期末净现金 <span class="unit">人民币亿元</span></span><strong>581.91</strong><span class="kpi-change negative"><i data-lucide="trending-down" aria-hidden="true"></i>-886.69<span>亿元 / 环比</span></span></div>
+      </section>
+      <div class="report-context">
+        <span>二季度：2026.04.01–06.30；上半年：2026.01.01–06.30。金额默认人民币亿元。</span>
+        <span>信息截至 <strong>2026.08.12 公告日</strong> · IFRS 中期财务资料未经审计、经审阅。</span>
       </div>
-    </div>
+
+      <section id="overview" class="report-section" aria-labelledby="overview-title">
+        <div class="section-heading"><div class="section-title"><span class="section-number">01</span><h2 id="overview-title">核心财务与运营指标速览</h2></div><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=1" target="_blank" rel="noopener noreferrer">公告 P.1–3<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="section-toolbar">
+          <div class="period-tabs" role="tablist" aria-label="财务指标报告期间">
+            <button id="tab-quarter" class="period-tab active" role="tab" type="button" aria-selected="true" aria-controls="panel-quarter" tabindex="0">2026 Q2</button>
+            <button id="tab-half" class="period-tab" role="tab" type="button" aria-selected="false" aria-controls="panel-half" tabindex="-1">2026 上半年</button>
+          </div>
+          <span class="table-unit">金额：人民币亿元 / 比率变动：百分点（pp）</span>
+        </div>
+        <div id="panel-quarter" role="tabpanel" aria-labelledby="tab-quarter">
+          <div class="table-scroll" role="region" aria-label="季度集团财务数据" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">集团指标</th><th scope="col" class="current-column">2026 Q2</th><th scope="col">2026 Q1</th><th scope="col">2025 Q2</th><th scope="col">同比</th><th scope="col">环比</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">营业收入</th><td class="current-column">2,047.85</td><td>1,964.58</td><td>1,845.04</td><td class="positive">+10.99%</td><td class="positive">+4.24%</td></tr>
+              <tr><th scope="row">毛利</th><td class="current-column">1,184.33</td><td>1,112.65</td><td>1,050.13</td><td class="positive">+12.78%</td><td class="positive">+6.44%</td></tr>
+              <tr><th scope="row">集团毛利率</th><td class="current-column">57.83%</td><td>56.64%</td><td>56.92%</td><td class="positive">+0.92 pp</td><td class="positive">+1.20 pp</td></tr>
+              <tr><th scope="row">IFRS 经营盈利</th><td class="current-column">672.76</td><td>673.75</td><td>601.04</td><td class="positive">+11.93%</td><td class="negative">-0.15%</td></tr>
+              <tr><th scope="row">Core OP 代理值</th><td class="current-column">677.56</td><td>661.22</td><td>636.82</td><td class="positive">+6.40%</td><td class="positive">+2.47%</td></tr>
+              <tr><th scope="row">Core OP 利润率</th><td class="current-column">33.09%</td><td>33.66%</td><td>34.52%</td><td class="negative">-1.43 pp</td><td class="negative">-0.57 pp</td></tr>
+              <tr><th scope="row">Non-IFRS 经营盈利</th><td class="current-column">756.36</td><td>756.27</td><td>692.48</td><td class="positive">+9.22%</td><td class="positive">+0.01%</td></tr>
+              <tr><th scope="row">IFRS 集团税后盈利</th><td class="current-column">579.77</td><td>593.92</td><td>560.44</td><td class="positive">+3.45%</td><td class="negative">-2.38%</td></tr>
+              <tr><th scope="row">IFRS 归母净利润</th><td class="current-column">560.22</td><td>580.93</td><td>556.28</td><td class="positive">+0.71%</td><td class="negative">-3.56%</td></tr>
+              <tr><th scope="row">Non-IFRS 归母净利润</th><td class="current-column">684.15</td><td>679.05</td><td>630.52</td><td class="positive">+8.51%</td><td class="positive">+0.75%</td></tr>
+              <tr><th scope="row">经营现金流净额 OCF</th><td class="current-column">527.10</td><td>1,013.51</td><td>743.76</td><td class="negative">-29.13%</td><td class="negative">-47.99%</td></tr>
+              <tr><th scope="row">净现比（集团口径）</th><td class="current-column">90.92%</td><td>170.65%</td><td>132.71%</td><td class="negative">-41.79 pp</td><td class="negative">-79.73 pp</td></tr>
+              <tr><th scope="row">窄口径 FCF</th><td class="negative current-column">约 -66</td><td>约 644</td><td class="unavailable">未披露</td><td class="unavailable">—</td><td class="negative">约 -710 亿元</td></tr>
+              <tr><th scope="row">广义 FCF（租赁付款前）</th><td class="negative current-column">约 -116</td><td>约 585</td><td class="unavailable">未披露</td><td class="unavailable">—</td><td class="negative">约 -701 亿元</td></tr>
+              <tr><th scope="row">公司口径 FCF</th><td class="negative current-column">约 -138</td><td>约 567</td><td class="unavailable">未披露</td><td class="unavailable">—</td><td class="negative">约 -705 亿元</td></tr>
+              <tr><th scope="row">剔除算力预付的 FCF</th><td class="current-column">约 376</td><td class="unavailable">未披露</td><td class="unavailable">未披露</td><td class="unavailable">—</td><td class="unavailable">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+          <p class="table-note">损益原数见 <a href="materials/00700.HK-2026Q2.pdf#page=5" target="_blank" rel="noopener noreferrer">P.5</a>、P.9、P.14–18。2026 Q2 与 2025 Q2 的 OCF 均为同口径推导：<a href="materials/00700.HK-2026Q2.pdf#page=24" target="_blank" rel="noopener noreferrer">中期公告 P.24</a> 同年累计减 <a href="materials/00700.HK-2026Q1.pdf#page=22" target="_blank" rel="noopener noreferrer">一季公告 P.22</a> 的 Q1 原数；净现比以集团税后盈利为分母。FCF 桥仍用 <a href="materials/00700.HK-2026Q2.pdf#page=17" target="_blank" rel="noopener noreferrer">中期公告 P.17</a> 的约 527 亿元 OCF 和同口径付款约数，上季 FCF 取 <a href="materials/00700.HK-2026Q1.pdf#page=15" target="_blank" rel="noopener noreferrer">一季公告 P.15</a>。FCF 由正转负，环比列金额变动；缺 2025 Q2 同口径付款桥，不估同比。</p>
+        </div>
+        <div id="panel-half" role="tabpanel" aria-labelledby="tab-half" hidden>
+          <div class="table-scroll" role="region" aria-label="上半年累计集团财务数据" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">集团指标</th><th scope="col" class="current-column">2026 H1</th><th scope="col">2025 H1</th><th scope="col">同比</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">营业收入</th><td class="current-column">4,012.43</td><td>3,645.26</td><td class="positive">+10.07%</td></tr>
+              <tr><th scope="row">毛利</th><td class="current-column">2,296.98</td><td>2,055.06</td><td class="positive">+11.77%</td></tr>
+              <tr><th scope="row">集团毛利率</th><td class="current-column">57.25%</td><td>56.38%</td><td class="positive">+0.87 pp</td></tr>
+              <tr><th scope="row">IFRS 经营盈利</th><td class="current-column">1,346.51</td><td>1,176.70</td><td class="positive">+14.43%</td></tr>
+              <tr><th scope="row">Core OP 代理值</th><td class="current-column">1,338.78</td><td>1,226.45</td><td class="positive">+9.16%</td></tr>
+              <tr><th scope="row">Core OP 利润率</th><td class="current-column">33.37%</td><td>33.65%</td><td class="negative">-0.28 pp</td></tr>
+              <tr><th scope="row">Non-IFRS 经营盈利</th><td class="current-column">1,512.63</td><td>1,385.68</td><td class="positive">+9.16%</td></tr>
+              <tr><th scope="row">IFRS 集团税后盈利</th><td class="current-column">1,173.69</td><td>1,057.69</td><td class="positive">+10.97%</td></tr>
+              <tr><th scope="row">IFRS 归母净利润</th><td class="current-column">1,141.15</td><td>1,034.49</td><td class="positive">+10.31%</td></tr>
+              <tr><th scope="row">Non-IFRS 归母净利润</th><td class="current-column">1,363.20</td><td>1,243.81</td><td class="positive">+9.60%</td></tr>
+              <tr><th scope="row">经营现金流净额 OCF</th><td class="current-column">1,540.61</td><td>1,512.65</td><td class="positive">+1.85%</td></tr>
+              <tr><th scope="row">净现比（集团口径）</th><td class="current-column">131.26%</td><td>143.01%</td><td class="negative">-11.75 pp</td></tr>
+              <tr><th scope="row">窄口径 FCF</th><td class="current-column">约 578</td><td class="unavailable">无法计算</td><td class="unavailable">—</td></tr>
+              <tr><th scope="row">广义 FCF（租赁付款前）</th><td class="current-column">约 469</td><td class="unavailable">无法计算</td><td class="unavailable">—</td></tr>
+              <tr><th scope="row">公司口径 FCF</th><td class="current-column">约 429</td><td class="unavailable">无法计算</td><td class="unavailable">—</td></tr>
+              <tr><th scope="row">剔除算力预付的 FCF</th><td class="unavailable current-column">无法计算</td><td class="unavailable">无法计算</td><td class="unavailable">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+          <p class="table-note">累计损益见 P.2、15–18，OCF 原数见 P.24。表中 2026 H1 的三种未调整 FCF 为单季加总估算，来自 <a href="materials/00700.HK-2026Q1.pdf#page=15" target="_blank" rel="noopener noreferrer">一季公告 P.15</a> 和 <a href="materials/00700.HK-2026Q2.pdf#page=17" target="_blank" rel="noopener noreferrer">中期公告 P.17</a> 的同口径整亿现金桥，不是累计披露原数；不以发生额或摊销替代实际付款。2025 H1 缺同口径付款桥；2026 H1 也缺 Q1 剔除算力预付口径，故不算调整后的累计 FCF。</p>
+        </div>
+
+        <div class="subsection-heading"><h3>生态用户：微信活跃增长，收费会员减少</h3><span class="small-source">公告 P.3–4</span></div>
+        <div class="table-scroll" role="region" aria-label="运营指标" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">指标（百万）</th><th scope="col" class="current-column">2026 Q2</th><th scope="col">2026 Q1</th><th scope="col">2025 Q2</th><th scope="col">同比</th><th scope="col">环比</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">微信及 WeChat MAU</th><td class="current-column">1,439</td><td>1,432</td><td>1,411</td><td class="positive">+1.98%</td><td class="positive">+0.49%</td></tr>
+              <tr><th scope="row">手机 QQ MAU</th><td class="current-column">520</td><td>516</td><td>532</td><td class="negative">-2.26%</td><td class="positive">+0.78%</td></tr>
+              <tr><th scope="row">收费增值服务订阅会员</th><td class="current-column">259</td><td>266</td><td>264</td><td class="negative">-1.89%</td><td class="negative">-2.63%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">微信及手机 QQ 为期末月份活跃账户，收费会员为季度日均数，不是注册人数。本季视频号总使用时长同比增超 20%（公告口径，未披露原数）；时长增长与收费会员下滑并存，不足以推算 ARPU 或视频号收入。</p>
+
+        <div class="subsection-heading"><h3>集团资金头寸：净现金仍为正</h3><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=17" target="_blank" rel="noopener noreferrer">公告 P.12、17、20–21、24<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="table-scroll" role="region" aria-label="期末资金头寸" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">集团余额</th><th scope="col" class="current-column">2026.06 末</th><th scope="col">2026.03 末</th><th scope="col">2025.06 末</th><th scope="col">同比变动额</th><th scope="col">环比变动额</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">现金及现金等价物</th><td class="current-column">2,069.30</td><td>2,177.70</td><td>1,820.57</td><td class="positive">+248.73 亿元</td><td class="negative">-108.40 亿元</td></tr>
+              <tr><th scope="row">定期存款及其他</th><td class="current-column">3,042.24</td><td>3,158.95</td><td class="unavailable">未披露</td><td class="unavailable">—</td><td class="negative">-116.71 亿元</td></tr>
+              <tr><th scope="row">借款</th><td class="current-column">2,989.42</td><td>2,589.95</td><td class="unavailable">未披露</td><td class="unavailable">—</td><td class="positive">+399.47 亿元</td></tr>
+              <tr><th scope="row">应付票据</th><td class="current-column">1,540.21</td><td>1,278.10</td><td class="unavailable">未披露</td><td class="unavailable">—</td><td class="positive">+262.11 亿元</td></tr>
+              <tr><th scope="row">公司口径净现金</th><td class="current-column">581.91</td><td>1,468.60</td><td>745.92</td><td class="negative">-164.01 亿元</td><td class="negative">-886.69 亿元</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">公司口径净现金＝现金及等价物＋定存及其他−借款−票据；“定存及其他”包含表内定存 2,669.99 亿元及符合口径的高流动性产品，不能再加一遍定存或理财。受限现金 77.29 亿元单列，不重复扣除；租赁负债 188.65 亿元未扣。净现金不等于可自由分配资金。回购与股息见 <a href="#shareholder-returns">股份回购与股息</a>。</p>
+      </section>
+
+      <section id="business" class="report-section" aria-labelledby="business-title">
+        <div class="section-heading"><div class="section-title"><span class="section-number">02</span><h2 id="business-title">核心主业增长质量与毛利结构</h2></div><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=26" target="_blank" rel="noopener noreferrer">公告 P.5–11；附注 2–3<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="section-thesis"><span class="thesis-label">结构验证</span><p>二季度毛利同比 <strong>+12.78%</strong>，快于收入 <strong>+10.99%</strong>；集团毛利率 <strong>57.83%（+0.92 pp）</strong>。改善主要来自分部内变化，并非收入权重整体向高毛利业务迁移。</p></div>
+        <div class="table-scroll" role="region" aria-label="季度分部收入及毛利" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">分部</th><th scope="col" class="current-column">Q2 收入</th><th scope="col">收入同比</th><th scope="col">收入环比</th><th scope="col">Q2 毛利 / 亏损</th><th scope="col">Q2 毛利率</th><th scope="col">去年 Q2 毛利率</th><th scope="col">同比变动</th><th scope="col">Q1 毛利率</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">增值服务 VAS</th><td class="current-column">984.14</td><td class="positive">+7.71%</td><td class="positive">+2.40%</td><td>629.26</td><td>63.94%</td><td>60.44%</td><td class="positive">+3.50 pp</td><td>62.56%</td></tr>
+              <tr><th scope="row">营销服务</th><td class="current-column">435.65</td><td class="positive">+21.82%</td><td class="positive">+14.13%</td><td>249.69</td><td>57.31%</td><td>57.56%</td><td class="negative">-0.25 pp</td><td>54.99%</td></tr>
+              <tr><th scope="row">金融科技及企业服务 FBS</th><td class="current-column">602.86</td><td class="positive">+8.55%</td><td class="positive">+0.67%</td><td>314.22</td><td>52.12%</td><td>52.13%</td><td class="negative">-0.01 pp</td><td>52.06%</td></tr>
+              <tr><th scope="row">其他</th><td class="current-column">25.20</td><td class="positive">+37.11%</td><td class="positive">+9.95%</td><td>-8.84</td><td>-35.08%</td><td>13.76%</td><td class="negative">-48.84 pp</td><td>-44.85%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">二季度分部收入、毛利原数见附注 2。Q1 分部的收入与毛利先用同口径上半年减 Q2，再计算环比与毛利率，不用取整后的增长率倒推。金额为人民币亿元。</p>
+        <figure class="margin-figure" aria-labelledby="margin-chart-title">
+          <div class="figure-heading"><figcaption id="margin-chart-title">三大分部毛利率｜游戏拉动 VAS，营销承受算力成本</figcaption><div class="chart-legend"><span><span class="legend-swatch current-swatch"></span>2026 Q2</span><span><span class="legend-swatch previous-swatch"></span>2025 Q2</span></div></div>
+          <div class="margin-columns">
+            <div class="margin-comparison"><div class="comparison-label"><strong>增值服务 VAS</strong><span class="positive">+3.50 pp</span></div><div class="bar-row"><span class="bar-period">26Q2</span><div class="bar-track" aria-hidden="true"><div class="bar-fill vas-fill" style="width:63.94%"></div></div><span class="bar-value">63.94%</span></div><div class="bar-row"><span class="bar-period">25Q2</span><div class="bar-track" aria-hidden="true"><div class="bar-fill previous-fill" style="width:60.44%"></div></div><span class="bar-value muted">60.44%</span></div><p>自研游戏贡献增加，但不是单独游戏业务的毛利率。</p></div>
+            <div class="margin-comparison"><div class="comparison-label"><strong>营销服务</strong><span class="negative">-0.25 pp</span></div><div class="bar-row"><span class="bar-period">26Q2</span><div class="bar-track" aria-hidden="true"><div class="bar-fill marketing-fill" style="width:57.31%"></div></div><span class="bar-value">57.31%</span></div><div class="bar-row"><span class="bar-period">25Q2</span><div class="bar-track" aria-hidden="true"><div class="bar-fill previous-fill" style="width:57.56%"></div></div><span class="bar-value muted">57.56%</span></div><p>广告放量，同时承担 AI 基础设施的折旧及运营成本。</p></div>
+            <div class="margin-comparison"><div class="comparison-label"><strong>金融科技及企业服务 FBS</strong><span class="negative">-0.01 pp</span></div><div class="bar-row"><span class="bar-period">26Q2</span><div class="bar-track" aria-hidden="true"><div class="bar-fill fbs-fill" style="width:52.12%"></div></div><span class="bar-value">52.12%</span></div><div class="bar-row"><span class="bar-period">25Q2</span><div class="bar-track" aria-hidden="true"><div class="bar-fill previous-fill" style="width:52.13%"></div></div><span class="bar-value muted">52.13%</span></div><p>收入增长，分部毛利率基本持平。</p></div>
+          </div>
+        </figure>
+
+        <div class="subsection-heading"><h3>毛利率同比变化的两部分</h3><span class="small-source">用全部四个分部的原数拆分</span></div>
+        <div class="table-scroll" role="region" aria-label="季度集团毛利率同比贡献" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">分部</th><th scope="col">Q2 收入权重</th><th scope="col">去年 Q2 权重</th><th scope="col">分部内变化贡献</th><th scope="col">结构变化贡献</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">增值服务 VAS</th><td>48.06%</td><td>49.52%</td><td class="positive">+1.68 pp</td><td class="negative">-0.88 pp</td></tr>
+              <tr><th scope="row">营销服务</th><td>21.27%</td><td>19.38%</td><td class="negative">-0.05 pp</td><td class="positive">+1.09 pp</td></tr>
+              <tr><th scope="row">金融科技及企业服务 FBS</th><td>29.44%</td><td>30.10%</td><td class="negative">0.00 pp</td><td class="negative">-0.34 pp</td></tr>
+              <tr><th scope="row">其他</th><td>1.23%</td><td>1.00%</td><td class="negative">-0.60 pp</td><td class="positive">+0.03 pp</td></tr>
+              <tr><th scope="row">集团毛利率变动分解</th><td>100%</td><td>100%</td><td class="positive">+1.03 pp</td><td class="negative">-0.11 pp</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">分部内变化以本期收入权重计，贡献 +1.03 pp；收入结构变化以基期毛利率计，贡献 -0.11 pp。其中 VAS 分部内贡献 +1.68 pp，而“其他”分部由毛利转毛亏，分部内拖累 -0.60 pp。公告未拆分“其他”转亏的具体归因。</p>
+        <details>
+          <summary><span>上半年各分部收入与毛利（H1）</span><i data-lucide="plus" aria-hidden="true"></i></summary>
+          <div class="details-content"><div class="table-scroll" role="region" aria-label="上半年分部收入及毛利" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">分部</th><th scope="col" class="current-column">H1 收入</th><th scope="col">收入同比</th><th scope="col">H1 毛利 / 亏损</th><th scope="col">H1 毛利率</th><th scope="col">去年 H1 毛利率</th><th scope="col">同比变动</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">增值服务 VAS</th><td class="current-column">1,945.24</td><td class="positive">+6.01%</td><td>1,230.53</td><td>63.26%</td><td>60.02%</td><td class="positive">+3.24 pp</td></tr>
+              <tr><th scope="row">营销服务</th><td class="current-column">817.36</td><td class="positive">+20.88%</td><td>459.59</td><td>56.23%</td><td>56.61%</td><td class="negative">-0.38 pp</td></tr>
+              <tr><th scope="row">金融科技及企业服务 FBS</th><td class="current-column">1,201.71</td><td class="positive">+8.81%</td><td>625.98</td><td>52.09%</td><td>51.20%</td><td class="positive">+0.89 pp</td></tr>
+              <tr><th scope="row">其他</th><td class="current-column">48.12</td><td class="positive">+62.18%</td><td>-19.12</td><td>-39.73%</td><td>18.34%</td><td class="negative">-58.07 pp</td></tr>
+            </tbody>
+          </table>
+        </div><p>合计毛利率较上年上半年 +0.87 pp。上半年、当季绝对数均见公告附注 2，P.26–27，不能把累计金额当作 Q2。</p></div>
+        </details>
+
+        <div class="analysis-grid">
+          <article class="analysis-column"><span class="analysis-label">VAS / GAMES</span><h3>本土游戏拉动，国际游戏受汇率扰动</h3><p>本土游戏约 473 亿元（公告同比 +17%、环比 +4%），国际游戏约 186 亿元（同比 −0.8%、固定汇率同比 +4%、环比 −0.7%），社交网络约 325 亿元（同比 +0.8%、环比 +2%）。比较原数不足，这些增速不复算。</p><p>公告称《三角洲行动》《无畏契约》日活创新高，《洛克王国：世界》有增量；国际收入受部分 Supercell 游戏回落拖累。缺少各游戏毛利、完整流水与递延结构，不能将 VAS 整体毛利率当作游戏毛利率。见 P.4、6、10。</p></article>
+          <article class="analysis-column"><span class="analysis-label">MARKETING / WECHAT</span><h3>广告收入扩张，尚未带来同比毛利率提升</h3><p>管理层将增长归因于广告推荐模型、AIM+、微信内闭环投放及“618”的季节性提振。营销毛利率 <strong>57.31%</strong>，同比 -0.25 pp：广告增量基本抵消 AI 折旧和运营成本，但未带来同比提率。</p><p>视频号时长与广告收入同向，但未披露视频号、搜一搜、小程序或小游戏的收入与毛利拆分，也无曝光量、广告价格及转化率组合，不能对 AI 投放提效作精确归因。见 P.4、6–7、10。</p></article>
+          <article class="analysis-column"><span class="analysis-label">FBS / AI CLOUD</span><h3>商付、理财与云服务增长，成本收益需跟踪</h3><p>公告称商业支付、理财及消贷带动金融科技收入；云服务受 AI 需求、海外扩张及定价推动，环比增长部分被商付季节性回落抵销。</p><p>分部盈利率大体稳定，但未单列 AI 云收入或利润、信用成本及内外部算力单位成本。WorkBuddy 已有订阅和充值付费意愿的披露，没有可核实的单位经济性数据。见 P.3–4、7–8、10。</p></article>
+        </div>
+
+        <div class="subsection-heading"><h3>递延收入与游戏流水：不能把集团余额当作游戏订单</h3><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=21" target="_blank" rel="noopener noreferrer">公告 P.21<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="deferred-band">
+          <div><span>6 月末集团递延收入</span><strong>1,358.03<small>亿元</small></strong></div>
+          <div><span>较 2025 年末变动额</span><strong>+232.84<small>亿元</small></strong></div>
+          <div><span>较 2025 年末变动幅度</span><strong>+20.69%</strong></div>
+          <p>包含流动及非流动递延收入。附件未列 3 月末余额及本土、国际和非游戏拆分；日活与单款游戏流水排名仅是信号，不能判定流水领先收入，或收入提前确认。</p>
+        </div>
+
+        <div class="subsection-heading"><h3>费用与经营杠杆：毛利扩张被增量费用吞掉一部分</h3><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=28" target="_blank" rel="noopener noreferrer">公告 P.8–11、28<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="table-scroll" role="region" aria-label="运营成本和费用率" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">项目</th><th scope="col" class="current-column">本季金额</th><th scope="col">Q2 / 收入</th><th scope="col">Q1 / 收入</th><th scope="col">去年 Q2 / 收入</th><th scope="col">同比费用率变动</th><th scope="col">金额同比</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">一般及行政开支</th><td class="current-column">388.08</td><td>18.95%</td><td>17.20%</td><td>17.30%</td><td class="positive">+1.65 pp</td><td class="positive">+21.58%</td></tr>
+              <tr><th scope="row">销售及市场推广开支</th><td class="current-column">118.69</td><td>5.80%</td><td>5.77%</td><td>5.10%</td><td class="positive">+0.70 pp</td><td class="positive">+26.13%</td></tr>
+              <tr><th scope="row">研发开支（费用性质口径）</th><td class="current-column">约 272.78</td><td>约 13.32%</td><td>约 11.47%</td><td>约 10.98%</td><td class="positive">约 +2.34 pp</td><td class="positive">约 +34.70%</td></tr>
+              <tr><th scope="row">技术基础设施运营成本（不含折旧）</th><td class="current-column">152.12</td><td>7.43%</td><td>5.42%</td><td>4.09%</td><td class="positive">+3.34 pp</td><td class="positive">+101.59%</td></tr>
+              <tr><th scope="row">综合折旧（含使用权资产等）</th><td class="current-column">111.61</td><td>5.45%</td><td>5.04%</td><td>4.15%</td><td class="positive">+1.30 pp</td><td class="positive">+45.88%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="body-note">Core OP 达 <strong>677.56 亿元（同比 +6.40%）</strong>，但利润率为 33.09%（同比 -1.43 pp、环比 -0.57 pp）。上半年代理利润 1,338.78 亿元（同比 +9.16%）。一般行政开支增长的主要原因是研发投入；研发、技术设施运营成本和综合折旧按性质列报，不另从 Core OP 叠扣，也不等同于纯 AI 成本。Q1 这三项由 H1 减 Q2；费用率按原数复算。</p>
+        <p class="body-note"><strong>累计基数敏感性：</strong>若仅把 <a href="materials/00700.HK-2026Q1.pdf#page=7" target="_blank" rel="noopener noreferrer">一季公告 P.7</a> 披露的 2025 Q1 一次性 SBC 约 40 亿元加回上年上半年基数，2026 H1 Core OP 同比约 +5.7%，利润率同比约 -1.4 pp。只调整上年累计比较基数，不重列主表，也不改变 Q2 单季比较。</p>
+        <p class="analyst-note"><strong>利润口径：</strong>IFRS 经营盈利 672.76 亿元，同比 +11.93%；其中其他经营亏损同比收窄 +30.98 亿元。公司 Non-IFRS 经营盈利 756.36 亿元，率值环比 -1.56 pp。若剔除新 AI 产品，公司报约 861 亿元，差额 约 105 亿元；对应 Hy、元宝、CodeBuddy、WorkBuddy、小微等，不能当作集团全部 AI 投入、现金 CapEx 或实际当期利润。公告称剔除后同比 +19%、环比 +2%，缺少比较原数，不能精确复算。</p>
+
+        <div class="subsection-heading"><h3>IFRS 归母利润桥：联营转亏抵消主业与投资收益改善</h3><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=18" target="_blank" rel="noopener noreferrer">公告 P.5、9、18；附注 4–5<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="table-scroll" role="region" aria-label="IFRS 归母利润桥" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">项目</th><th scope="col" class="current-column">2026 Q2</th><th scope="col">2026 Q1</th><th scope="col">2025 Q2</th><th scope="col">同比差额</th><th scope="col">环比差额</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">IFRS 经营盈利</th><td class="current-column">672.76</td><td>673.75</td><td>601.04</td><td class="positive">+71.72</td><td class="negative">-0.99</td></tr>
+              <tr><th scope="row">投资收益净额及其他</th><td class="current-column">111.84</td><td>19.28</td><td>26.38</td><td class="positive">+85.46</td><td class="positive">+92.56</td></tr>
+              <tr><th scope="row">利息收入</th><td class="current-column">42.02</td><td>40.25</td><td>41.21</td><td class="positive">+0.81</td><td class="positive">+1.77</td></tr>
+              <tr><th scope="row">财务成本</th><td class="current-column">-29.79</td><td>-29.79</td><td>-39.41</td><td class="positive">+9.62</td><td>0.00</td></tr>
+              <tr><th scope="row">分占联营及合营损益</th><td class="current-column">-99.93</td><td>36.20</td><td>44.73</td><td class="negative">-144.66</td><td class="negative">-136.13</td></tr>
+              <tr><th scope="row">税前盈利</th><td class="current-column">696.90</td><td>739.69</td><td>673.95</td><td class="positive">+22.95</td><td class="negative">-42.79</td></tr>
+              <tr><th scope="row">所得税开支</th><td class="current-column">-117.13</td><td>-145.77</td><td>-113.51</td><td class="negative">-3.62</td><td class="positive">+28.64</td></tr>
+              <tr><th scope="row">集团税后盈利</th><td class="current-column">579.77</td><td>593.92</td><td>560.44</td><td class="positive">+19.33</td><td class="negative">-14.15</td></tr>
+              <tr><th scope="row">扣非控股权益应占盈利</th><td class="current-column">-19.55</td><td>-12.99</td><td>-4.16</td><td class="negative">-15.39</td><td class="negative">-6.56</td></tr>
+              <tr><th scope="row">IFRS 归母净利润</th><td class="current-column">560.22</td><td>580.93</td><td>556.28</td><td class="positive">+3.94</td><td class="negative">-20.71</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">费用及扣非控股权益在桥表中以负数列示。联营及合营损益环比变动 -136.13 亿元、同比 -144.66 亿元；投资收益及其他同比 +85.46 亿元，非控股权益应占盈利同比 +15.39 亿元。归母盈利同比 +0.71%、环比 -3.56%，不能直接用来衡量主业。</p>
+
+        <div class="subsection-heading"><h3>Non-IFRS 调节：经营、联营、集团税后与归母分别核对</h3><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=14" target="_blank" rel="noopener noreferrer">公告 P.14–16<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="table-scroll" role="region" aria-label="二季度 Non-IFRS 调节" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">Q2 指标</th><th scope="col">IFRS</th><th scope="col">股份酬金</th><th scope="col">投资相关</th><th scope="col">收购摊销</th><th scope="col">减值调整</th><th scope="col">捐款等</th><th scope="col">其他</th><th scope="col">税项</th><th scope="col">Non-IFRS</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">经营盈利</th><td>672.76</td><td>+65.79</td><td>—</td><td>+16.02</td><td>—</td><td>+1.79</td><td>—</td><td>—</td><td>756.36</td></tr>
+              <tr><th scope="row">分占联营及合营</th><td>-99.93</td><td>+13.27</td><td>+128.34</td><td>+13.56</td><td>+1.88</td><td>—</td><td>+6.47</td><td>—</td><td>63.59</td></tr>
+              <tr><th scope="row">集团税后盈利</th><td>579.77</td><td>+79.06</td><td>+43.16</td><td>+29.58</td><td>-20.64</td><td>+8.64</td><td>+6.47</td><td>-20.13</td><td>705.91</td></tr>
+              <tr><th scope="row">归母净利润</th><td>560.22</td><td>+77.56</td><td>+45.27</td><td>+26.11</td><td>-20.64</td><td>+8.61</td><td>+6.47</td><td>-19.45</td><td>684.15</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">集团税后层面已合并经营及联营相关调整，四行不能相加。投资相关调整包括处置、公允价值和股权交易影响；“其他”按公告主要为非经常性合规及诉讼相关费用。<a href="#core-definition">查看 Core OP 公式</a>。</p>
+      </section>
+
+      <section id="capital" class="report-section" aria-labelledby="capital-title">
+        <div class="section-heading"><div class="section-title"><span class="section-number">03</span><h2 id="capital-title">CapEx、AI 算力投入与自由现金流</h2></div><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=17" target="_blank" rel="noopener noreferrer">公告 P.12、17、20–24<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <div class="section-thesis"><span class="thesis-label caution-label">现金质量</span><p>二季度经营现金流 <strong>527.10 亿元（同口径推导）</strong>，未覆盖现金资本开支；公司口径 FCF 由上季约 567 亿元转为 <strong>约 -138 亿元</strong>。剔除算力预付后约 376 亿元，不能当作本期已收回资金。</p></div>
+        <figure class="cash-flow-figure" aria-labelledby="cash-flow-title">
+          <div class="figure-heading"><figcaption id="cash-flow-title">二季度自由现金流桥｜先扣资本与内容付款，再扣租赁</figcaption><span class="table-unit">人民币亿元 · 公告取整约数</span></div>
+          <div class="cash-flow-equation">
+            <div class="flow-item"><span class="flow-label">经营现金流 OCF</span><strong>527</strong><span class="flow-caption">已包含算力预付的影响</span></div>
+            <span class="flow-operator" aria-label="减">−</span>
+            <div class="flow-item"><span class="flow-label">资本开支现金付款</span><strong>593</strong><span class="flow-caption">不含媒体内容</span></div>
+            <span class="flow-operator" aria-label="减">−</span>
+            <div class="flow-item"><span class="flow-label">媒体内容付款</span><strong>50</strong><span class="flow-caption">公告现金流桥单列</span></div>
+            <span class="flow-operator" aria-label="等于">=</span>
+            <div class="flow-item flow-result"><span class="flow-label">广义 FCF</span><strong class="negative">-116</strong><span class="flow-caption">租赁付款前</span></div>
+          </div>
+          <div class="cash-flow-footer"><span>再扣约 22 亿元租赁负债付款，得公司口径 FCF <strong>约 -138 亿元</strong>。</span><a class="text-link" href="#fcf-definition">复核算式<i data-lucide="arrow-right" aria-hidden="true"></i></a></div>
+        </figure>
+        <div class="capital-facts">
+          <div><span>CapEx 发生额 / 收入</span><strong>25.78%</strong><small>人民币 527.84 亿元，不含媒体内容</small></div>
+          <div><span>现金 CapEx（含内容） / 收入</span><strong>约 31.4%</strong><small>不含内容：约 29.0%</small></div>
+          <div><span>现金 CapEx（含内容） / OCF</span><strong>约 122%</strong><small>分母取推导 OCF，已受算力预付影响</small></div>
+        </div>
+        <div class="table-scroll" role="region" aria-label="资本开支发生额与强度" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">项目</th><th scope="col" class="current-column">2026 Q2</th><th scope="col">2026 Q1</th><th scope="col">2025 Q2</th><th scope="col">Q2 同比</th><th scope="col">Q2 环比</th><th scope="col">2026 H1</th><th scope="col">2025 H1</th><th scope="col">H1 同比</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">资本开支发生额（不含媒体内容）</th><td class="current-column">527.84</td><td>319.36</td><td>191.07</td><td class="positive">+176.25%</td><td class="positive">+65.28%</td><td>847.20</td><td>465.83</td><td class="positive">+81.87%</td></tr>
+              <tr><th scope="row">发生额占收入</th><td class="current-column">25.78%</td><td>16.26%</td><td>10.36%</td><td class="positive">+15.42 pp</td><td class="positive">+9.52 pp</td><td>21.11%</td><td>12.78%</td><td class="positive">+8.34 pp</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="table-note">发生额含 IT 设备、软件、数据中心、土地、办公园区与非媒体知识产权（P.12）；不能把发生额全归 GPU。现金资本开支本季约 593 亿元，上季约 370 亿元，按公告约数环比约 +60.3%；媒体和租赁付款分别为本季约 50、22 亿元，上季约 59、18 亿元。来源：一季公告 P.15、中期公告 P.17。去年同期缺同口径付款，不算同比；不能用发生额解释付款时间差。</p>
+        <div class="capital-commentary">
+          <article><h3>预付增加不等于算力交付，更不等于利润</h3><p>未调整与调整后 FCF 差额约 514 亿元，是按公告唯一排除项推得的当季预付影响，不等于预付款资产余额。6 月末集团流动及非流动预付款、按金及其他资产合计 2,286.52 亿元，较年末 +928.42 亿元；同期物业设备器材 +490.04 亿元、应付账款 +544.52 亿元。余额变化受付款、转固、并购、汇兑及重分类影响，无法建立分项现金流桥。</p></article>
+          <article><h3>累计经营现金流仍为正，资金缓冲在下降</h3><p>上半年 OCF 1,540.61 亿元，同比 +1.85%，同期 CapEx 发生额同比 +81.87%，两者增幅分化。6 月末净现金 581.91 亿元，环比 -886.69 亿元，借款及票据合计环比 +661.58 亿元。公告将资本付款和上年度股息列为主要因素，不能仅凭反推出的预付额解释全部净现金变动。</p></article>
+        </div>
+        <div class="subsection-heading" id="shareholder-returns"><h3>股份回购与股息：分开港元交易代价、人民币权益变动和实际 FCF</h3><a class="source-link" href="materials/00700.HK-2026Q2.pdf#page=44" target="_blank" rel="noopener noreferrer">公告 P.17、22–24、33、44<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></div>
+        <p class="body-note"><strong>回购：</strong>据附表 P.44 的实际总交易代价（不含开支），Q2 回购 37,381,100 股、168.54 亿港元；H1 回购 50,031,100 股、244.08 亿港元。上半年人民币回购权益变动合计 214.49 亿元（同比 -36.25%），是权益列报，并非可直接当作现金流的金额。未披露可以据此确认的全年回购金额承诺。</p>
+        <p class="body-note"><strong>股息：</strong>截至本公告，2025 年度末期股息每股 5.30 港元已经股东大会批准，并于上半年实际支付约 479 亿港元。P.17 将付款归在第二季度，以约 416 亿元叙述；P.22 向母公司股东支付的现金股息列示为 416.80 亿元。保留各自披露精度，未给出差额调节，不倒算汇率。董事会未宣派 2026 年中期股息。</p>
+        <div class="warning-note"><i data-lucide="triangle-alert" aria-hidden="true"></i><p><strong>二季度实际集团 FCF 为负，未覆盖当季母公司股东的回购和派息支出。</strong>未披露可核验的同币种实际回购现金付款，不给 Q2 或 H1 覆盖倍数。H1 约 429 亿元也是单季加总估算，且集团 FCF 不等于母公司可分配现金。未覆盖不等于即将出现偿债危机。</p></div>
+      </section>
+
+      <section id="risks" class="report-section" aria-labelledby="risks-title">
+        <div class="section-heading"><div class="section-title"><span class="section-number">04</span><h2 id="risks-title">腾讯专属财务与投资组合核查</h2></div><span class="section-meta">已见信号 / 信息不足分别列示</span></div>
+        <div class="risk-list">
+          <article class="risk-row"><div class="risk-index">01</div><div class="risk-content"><div class="risk-heading"><h3>联营、合营及公允价值</h3><span class="risk-status">已见信号 · 估值波动</span></div>
+            <p>Q2 分占联营及合营损益为 -99.93 亿元。管理层指向一家未上市投资公司的可转换可赎回优先股因估值上升重估，产生分占亏损；公告未点名、未完整披露条款或单一标的损益。剔除相关调整后，Non-IFRS 分占盈利为 63.59 亿元，上年同期 63.48 亿元。</p>
+            <p>投资收益净额及其他包含 FVTPL 公允价值收益 96.10 亿元、处置及视同处置收益 6.57 亿元、联营减值转回 23.46 亿元。上半年附注分别列出实际处置、视同处置和持股摊薄，后两者不等于现金回收。六月末上市投资（非附属、含应占 SPV 权益）公允价值约 4,872 亿元（环比约 -599 亿元）；非上市投资为账面约 3,879 亿元（环比约 +228 亿元），不能视为即时可变现。</p>
+            <span class="evidence">依据：<a href="materials/00700.HK-2026Q2.pdf#page=29" target="_blank" rel="noopener noreferrer">附注 4</a>、8–10；P.8、14、17。三类投资滚存与期末账面数已核对。</span>
+          </div></article>
+          <article class="risk-row"><div class="risk-index">02</div><div class="risk-content"><div class="risk-heading"><h3>SBC 与净缩股</h3><span class="risk-status">已见信号 · 股东成本仍在</span></div>
+            <div class="table-scroll" role="region" aria-label="股份酬金口径" tabindex="0">
+          <table class="financial-table">
+            <thead><tr><th scope="col">口径</th><th scope="col" class="current-column">2026 Q2</th><th scope="col">2026 H1</th><th scope="col">Q2 / 同口径 Non-IFRS 净利</th><th scope="col">H1 / 同口径 Non-IFRS 净利</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">合并费用</th><td class="current-column">65.79</td><td>131.13</td><td>—</td><td>—</td></tr>
+              <tr><th scope="row">其中：按权益结算（EBITDA 口径）</th><td class="current-column">55.96</td><td>110.46</td><td>—</td><td>—</td></tr>
+              <tr><th scope="row">Non-IFRS 集团调整（含联营等）</th><td class="current-column">79.06</td><td>152.50</td><td>11.20%</td><td>10.86%</td></tr>
+              <tr><th scope="row">Non-IFRS 归母调整</th><td class="current-column">77.56</td><td>149.49</td><td>11.34%</td><td>10.97%</td></tr>
+            </tbody>
+          </table>
+        </div>
+            <p>上半年行权 13,184,582 份、奖励股份归属及过户 17,582,978 股。部分期权允许净额行权；归属过户不等于发行新股。公告称上半年所购股份其后注销，6 月末权益表仍有待注销库存股账面 21.80 亿元、员工奖励计划所持股份账面 83.15 亿元；账面金额不是股份数。</p>
+            <p class="risk-limitation">缺期初期末可比实际已发行股份及库存股数量，不能算净缩股率。基本 EPS 用的加权平均股数同比 -0.79%，仅为 EPS 分母变化；不以回购股数减期权及奖励归属数冒充净缩股。</p>
+            <span class="evidence">依据：<a href="materials/00700.HK-2026Q2.pdf#page=37" target="_blank" rel="noopener noreferrer">附注 12</a>、附注 3、6；P.13–16、21–23、44。</span>
+          </div></article>
+          <article class="risk-row"><div class="risk-index">03</div><div class="risk-content"><div class="risk-heading"><h3>FBS 消费与合规</h3><span class="risk-status neutral-status">信息不足 · 信用成本未拆</span></div>
+            <p>公告将支付、理财、消贷和云列为同比增长来源。环比商付季节性回落和云增长并存，不等于消费趋势反转。没有支付量、笔均额、费率或信用损失拆分，亦不能把分部毛利率稳定等同于信用风险稳定。</p>
+            <span class="evidence">依据：<a href="materials/00700.HK-2026Q2.pdf#page=7" target="_blank" rel="noopener noreferrer">公告 P.7</a>、10；附注 2、11。</span>
+          </div></article>
+          <article class="risk-row"><div class="risk-index">04</div><div class="risk-content"><div class="risk-heading"><h3>游戏监管、授权及内容摊销</h3><span class="risk-status neutral-status">未见整体摊销上升</span></div>
+            <p>二季度媒体内容摊销约 60.75 亿元（上年约 74.10 亿元，约 -18.02%）。按费用性质披露的不含摊销内容成本同期上升，不能仅凭摊销下滑判断内容投入或项目风险下降。附注 4 未列本期商誉及收购无形资产减值，但未披露游戏单项、版号安排或递延结构。</p>
+            <span class="evidence">依据：<a href="materials/00700.HK-2026Q2.pdf#page=28" target="_blank" rel="noopener noreferrer">附注 3–4</a>；P.4、6、21。</span>
+          </div></article>
+          <article class="risk-row"><div class="risk-index">05</div><div class="risk-content"><div class="risk-heading"><h3>AI 资产、研发资本化与商业化回收</h3><span class="risk-status">已见信号 · 资金占用上升</span></div>
+            <p><strong>存量业务提效：</strong>管理层将广告增长部分归于 AI 推荐、AIM+ 与闭环投放，现有分部数据不能量化可归因的增量收入。</p>
+            <p><strong>对外云与算力：</strong>云收入增长，AI 需求是管理层列出的因素之一，但未拆分独立 AI 云收入。<strong>新产品直接变现：</strong>WorkBuddy 有订阅、充值的付费意愿线索，未披露当季已确认收入；7 月 Hy3 正式版和公告前数周小微灰度均不作为二季度收入证据。</p>
+            <p class="risk-limitation">三条路径均无可归属利润或现金回收数据。公告称无重大开发开支资本化，算力预付同时支持自有产品与外部云；未拆分预付对手方、交付转固、设备折旧年限与利用率。</p>
+            <span class="evidence">依据：<a href="materials/00700.HK-2026Q2.pdf#page=3" target="_blank" rel="noopener noreferrer">公告 P.3–4</a>、6–7、17、20–21；附注 3。</span>
+          </div></article>
+          <article class="risk-row"><div class="risk-index">06</div><div class="risk-content"><div class="risk-heading"><h3>资金期限、并购与承诺</h3><span class="risk-status">已见信号 · 短期借款上升</span></div>
+            <p>流动借款 862.92 亿元，较年末 +436.74 亿元。6 月内发行 24.50 亿美元及 150 亿元人民币优先票据，多币种债务及浮息会带来汇率与利率敏感度；不能用存款总额替代可动用流动性。本公告未提供完整的跨境资金可调拨性、对外担保、关联资金及算力采购承诺附表。</p>
+            <p>上半年腾讯音乐收购在线音频业务总代价约 140 亿元、现金约 80 亿元、确认商誉约 92 亿元；购并不计有机 CapEx。7 月出售一家上市联营公司部分股份是期后事项，剩余仍为联营，不计入 6 月末资金头寸。</p>
+            <span class="evidence">依据：<a href="materials/00700.HK-2026Q2.pdf#page=40" target="_blank" rel="noopener noreferrer">附注 14–17</a>，P.40–43。</span>
+          </div></article>
+        </div>
+      </section>
+
+      <section id="outlook" class="report-section" aria-labelledby="outlook-title">
+        <div class="section-heading"><div class="section-title"><span class="section-number">05</span><h2 id="outlook-title">核心结论与下季度重点</h2></div><span class="section-meta">下一报告期：2026 Q3</span></div>
+        <div class="conclusion-lines">
+          <p><span>01</span>自研游戏与广告生态支撑毛利增长，但保留 SBC 及当期已计入损益的 AI 成本和费用后，Q2 Core OP 同比 +6.40%，低于收入增速，代理利润率仍承压。</p>
+          <p><span>02</span>广告提效是管理层归因，外部云有收入增长、WorkBuddy 有付费意愿，但都不能验证各自利润与现金回收；本季含算力预付的公司口径 FCF 约为 -138 亿元。</p>
+          <p><span>03</span>归母估值宜由主业企业价值扣除对应非控股权益，再加入去重、按可实现价值评估的投资及匹配的净现金；缺少股价、实际股数及估值假设，无法判断安全边际或给出目标价。</p>
+        </div>
+        <div class="subsection-heading"><h3>下一季跟踪的三个验证指标</h3></div>
+        <div class="table-scroll" role="region" aria-label="下季度跟踪指标" tabindex="0">
+          <table class="financial-table tracking-table">
+            <thead><tr><th scope="col">指标</th><th scope="col">当期基准</th><th scope="col">需要取得的数据与验证方向</th></tr></thead>
+            <tbody>
+              <tr><th scope="row">营销服务毛利率</th><td>57.31%（同比 -0.25 pp）</td><td>看分部毛利、广告变现与基础设施成本；毛利率回升且非仅季节性，才支持 AI 提效覆盖成本。</td></tr>
+              <tr><th scope="row">未调整的公司口径 FCF</th><td>约 -138 亿元，调整差额约 514 亿元</td><td>取得现金 CapEx、预付、交付与租赁付款；验证现金回升能否由经营现金流改善推动，而非仅取决于预付节奏。</td></tr>
+              <tr><th scope="row">集团净现金与短期借款</th><td>581.91 / 862.92 亿元</td><td>看净现金、债务期限与资金实际可调拨性；负债期限缩短同时净现金下降，则资金弹性进一步减弱。</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="methodology" class="methodology" aria-labelledby="methodology-title">
+        <h2 id="methodology-title">关键口径与未披露清单</h2>
+        <details id="core-definition">
+          <summary><span>[1] Core OP 代理值与两种经营盈利口径</span><i data-lucide="plus" aria-hidden="true"></i></summary>
+          <div class="details-content">
+            <p>Q2 Core OP＝毛利 1,184.33 − 销售及市场推广开支 118.69 − 一般及行政开支 388.08 ＝ 677.56 亿元。IFRS 经营盈利 672.76 亿元减“其他收益／亏损净额” -4.80 亿元得到同一代理值。其他经营项目细项未拆清，不保证全部是非核心；投资收益及联营、合营损益列在经营盈利之后，不重复扣除（P.5、9、18）。</p>
+            <p>Core OP 保留 SBC 与当期已计入损益的 AI 相关成本和费用，不重复扣除已计入收入成本或单列经营费用的研发、折旧等；未进损益的设备采购及预付不纳入。公司 Non-IFRS 的调节见 P.14–16，不能与之互换。估值若单列投资组合，应剔除已进入主业估值的利润与子公司，不重复计入净现金口径的理财；非上市账面值应考虑流动性、税费及归属限制。</p>
+          </div>
+        </details>
+        <details id="fcf-definition">
+          <summary><span>[2] 现金流、预付款与资本开支复核</span><i data-lucide="plus" aria-hidden="true"></i></summary>
+          <div class="details-content">
+            <p>P.17 的 Q2 各项均为公告整亿约数：窄口径 527 − 593 ＝ -66；广义口径再扣 50 ＝ -116；公司口径再扣租赁 22 ＝ -138 亿元。媒体付款按该桥单列，不重复扣除。调整后 376 −（-138）≈ 514 亿元，是公司仅剔除算力预付后的差额，不能再从实际 FCF 扣一次。公告未分拆租赁付款的利息及本金细项。</p>
+            <p>H1 用 P.24 核对累计现金滚存。累计 FCF 只估算：按两份公告的同口径季度桥加总，现金资本开支（不含内容）、媒体及租赁付款约 963、109、40 亿元，累计公司口径 FCF 约为 567 ＋（-138）＝ 429 亿元。缺 Q1 调整后 FCF，不能计算 H1 调整后 FCF。权益变动和港元交易代价不作同币种实际回购付款的替代。</p>
+          </div>
+        </details>
+        <details id="basis-disclosures">
+          <summary><span>[3] 数据来源、取整与不能验证的事项</span><i data-lucide="plus" aria-hidden="true"></i></summary>
+          <div class="details-content">
+            <p>使用 <a href="materials/00700.HK-2026Q2.pdf" target="_blank" rel="noopener noreferrer">中期公告</a> 与截止日前已披露的 <a href="materials/00700.HK-2026Q1.pdf" target="_blank" rel="noopener noreferrer">一季公告</a>。派生数字用 Python Decimal：人民币百万元 ÷ 100 展示为亿元；增速＝本期 ÷ 比较期−1；百分点＝两期原始比率之差。毛利率拆解纳入四个分部（含“其他”）：分部内贡献＝∑本期收入权重×分部毛利率变动；结构贡献＝∑收入权重变动×基期分部毛利率。按未舍入原数勾稽。</p>
+            <p>本次按模板 1.2 补入一季公告，单季 OCF 比较由原约数或缺项改为同口径原数及差减结果，增加累计 FCF 估算及累计一次性 SBC 基数敏感性。Q2 OCF 推导值 527.10 亿元用于增速和比率；P.17 的约 527 亿元仍用于复核公告现金桥。</p>
+            <p>收入成本、经营利润及归母桥、Non-IFRS 各层、Q1＋Q2 与 H1、分部总和、期初期末资产负债、现金滚存、净现金、投资滚存及回购合计均已核对。P.17 整亿股息与权益表原数分别保留；未验证独立 AI 盈利、累计精确或调整后 FCF、实际已发行股数变动或估值。</p>
+            <p>本分析未补入公告日之后的财务数据、市场价格、汇率或估值假设，也未独立核验材料真实性；“未披露”不代表零。期后事项仅用作观察线索。</p>
+          </div>
+        </details>
+      </section>
+      <footer class="report-footer"><span>腾讯控股 / 2026 Q2 · H1 财务研究</span><span>依据所附业绩公告分析 · 非个性化投资建议</span><span>信息截至 2026.08.12</span></footer>
+    </main>
   </div>
-
-
-  <div class="sec">
-    <div class="sec-h">关键指标可视化</div>
-    <div class="charts">
-      <div class="chartbox"><div class="ct">营业收入趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026Q2 分部收入（亿元）</text><rect x="96.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#13406b"/><text x="135.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">984.1</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">增值服务</text><rect x="246.0" y="120.1" width="78.0" height="77.9" rx="3" fill="#13406b"/><text x="285.0" y="115.1" font-size="10.5" fill="#1f2733" text-anchor="middle">602.9</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">金科企服</text><rect x="396.0" y="141.7" width="78.0" height="56.3" rx="3" fill="#13406b"/><text x="435.0" y="136.7" font-size="10.5" fill="#1f2733" text-anchor="middle">435.7</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营销服务</text><rect x="546.0" y="194.7" width="78.0" height="3.3" rx="3" fill="#13406b"/><text x="585.0" y="189.7" font-size="10.5" fill="#1f2733" text-anchor="middle">25.2</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">其他</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
-      <div class="chartbox"><div class="ct">归母净利润趋势</div><svg viewBox="0 0 680 230" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="230" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026Q2 分部收入同比增速（%）</text><rect x="96.0" y="170.5" width="78.0" height="27.5" rx="3" fill="#13406b"/><text x="135.0" y="165.5" font-size="10.5" fill="#1f2733" text-anchor="middle">+8%</text><text x="135.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">增值服务</text><rect x="246.0" y="167.1" width="78.0" height="30.9" rx="3" fill="#13406b"/><text x="285.0" y="162.1" font-size="10.5" fill="#1f2733" text-anchor="middle">+9%</text><text x="285.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">金科企服</text><rect x="396.0" y="122.4" width="78.0" height="75.6" rx="3" fill="#13406b"/><text x="435.0" y="117.4" font-size="10.5" fill="#1f2733" text-anchor="middle">+22%</text><text x="435.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">营销服务</text><rect x="546.0" y="70.9" width="78.0" height="127.1" rx="3" fill="#c0392b"/><text x="585.0" y="65.9" font-size="10.5" fill="#1f2733" text-anchor="middle">+37%</text><text x="585.0" y="214.0" font-size="10.5" fill="#5b6675" text-anchor="middle">其他</text><line x1="60" y1="198" x2="660" y2="198" stroke="#e7ebf1"/></svg></div>
-      <div class="chartbox"><div class="ct">同比增速</div><svg viewBox="0 0 680 236" xmlns="http://www.w3.org/2000/svg" role="img"><rect width="680" height="236" fill="#ffffff"/><text x="20" y="26" font-size="14" font-weight="700" fill="#13406b">2026H1 / Q2 关键指标同比增速（%）</text><line x1="60" y1="202.6" x2="660" y2="202.6" stroke="#c3ccd9" stroke-dasharray="4 3"/><text x="55" y="205.6" font-size="10" fill="#8a94a6" text-anchor="end">0</text><rect x="85.0" y="193.7" width="50.0" height="8.9" rx="3" fill="#c0392b"/><text x="110.0" y="187.7" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+10.1%</text><text x="110.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">H1营收</text><rect x="185.0" y="194.2" width="50.0" height="8.4" rx="3" fill="#c0392b"/><text x="210.0" y="188.2" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+9.6%</text><text x="210.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">H1 Non-IFRS</text><rect x="285.0" y="193.0" width="50.0" height="9.7" rx="3" fill="#c0392b"/><text x="310.0" y="187.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+11.0%</text><text x="310.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q2营收</text><rect x="385.0" y="202.0" width="50.0" height="0.6" rx="3" fill="#c0392b"/><text x="410.0" y="196.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+0.7%</text><text x="410.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q2 IFRS归母</text><rect x="485.0" y="201.9" width="50.0" height="0.7" rx="3" fill="#c0392b"/><text x="510.0" y="195.9" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+0.85pp</text><text x="510.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">毛利率</text><rect x="585.0" y="48.0" width="50.0" height="154.6" rx="3" fill="#c0392b"/><text x="610.0" y="42.0" font-size="10.5" font-weight="700" fill="#c0392b" text-anchor="middle">+176%</text><text x="610.0" y="218.0" font-size="10.5" fill="#5b6675" text-anchor="middle">Q2资本开支</text></svg></div>
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">核心财务指标变动</div>
-    <div class="metrics">
-<div class="mcard"><div class="lab">H1营业收入</div><div class="val">4,012.43亿</div><div class="delta up">+10.1%</div></div>
-      <div class="mcard"><div class="lab">H1归母净利(IFRS)</div><div class="val">1,141.15亿</div><div class="delta up">+10.3%</div></div>
-      <div class="mcard"><div class="lab">H1 Non-IFRS净利</div><div class="val">1,363.20亿</div><div class="delta up">+9.6%</div></div>
-      <div class="mcard"><div class="lab">Q2单季营收</div><div class="val">2,047.85亿</div><div class="delta up">+11.0%</div></div>
-      <div class="mcard"><div class="lab">Q2 Non-IFRS净利</div><div class="val">684.15亿</div><div class="delta up">+8.5%</div></div>
-      <div class="mcard"><div class="lab">Q2 IFRS归母</div><div class="val">560.22亿</div><div class="delta flat">+0.7%</div></div>
-      <div class="mcard"><div class="lab">Q2综合毛利率</div><div class="val">58%</div><div class="delta up">+1pp</div></div>
-      <div class="mcard"><div class="lab">H1毛利率</div><div class="val">57.25%</div><div class="delta up">+0.85pp</div></div>
-      <div class="mcard"><div class="lab">Q2资本开支</div><div class="val">527.84亿</div><div class="delta down">+176%</div></div>
-      <div class="mcard"><div class="lab">Q2自由现金流</div><div class="val">-138亿</div><div class="delta down">首次转负</div></div>
-      <div class="mcard"><div class="lab">Q2经营现金流</div><div class="val">527亿</div><div class="delta down">OCF/归母0.94x</div></div>
-      <div class="mcard"><div class="lab">PE(TTM)/PB/目标价</div><div class="val">15.7x/3.2x</div><div class="delta flat">HK$692-727</div></div>
-
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">与历史同期对比</div>
-    <table class="tbl">
-      <thead><tr><th>指标</th><th style="text-align:right">本期</th><th style="text-align:right">去年同期</th><th style="text-align:right">同比变动</th></tr></thead>
-      <tbody>
-<tr><td>营业收入(亿元)</td><td class="num">4,012.43</td><td class="num">3,645.26</td><td class="num up">+10.1%</td></tr>
-        <tr><td>毛利(亿元)</td><td class="num">2,296.98</td><td class="num">2,055.06</td><td class="num up">+11.8%</td></tr>
-        <tr><td>综合毛利率(%)</td><td class="num">57.25</td><td class="num">56.40</td><td class="num up">+0.85pp</td></tr>
-        <tr><td>经营盈利(亿元)</td><td class="num">1,346.51</td><td class="num">1,176.70</td><td class="num up">+14.4%</td></tr>
-        <tr><td>IFRS归母净利(亿元)</td><td class="num">1,141.15</td><td class="num">1,034.49</td><td class="num up">+10.3%</td></tr>
-        <tr><td>Non-IFRS净利(亿元)</td><td class="num">1,363.20</td><td class="num">1,243.81</td><td class="num up">+9.6%</td></tr>
-        <tr><td>净利率(IFRS，%)</td><td class="num">28.44</td><td class="num">28.38</td><td class="num up">+0.06pp</td></tr>
-        <tr><td>基本每股收益(元)</td><td class="num">12.638</td><td class="num">11.367</td><td class="num up">+11.2%</td></tr>
-        <tr><td>Q2资本开支(亿元)</td><td class="num">527.84</td><td class="num">191.07</td><td class="num down">+176%</td></tr>
-
-      </tbody>
-    </table>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">与市场预期对比</div>
-    <table class="tbl">
-      <thead><tr><th>指标</th><th style="text-align:right">实际</th><th style="text-align:right">市场预期</th><th style="text-align:right">差异</th><th style="text-align:right">判断</th></tr></thead>
-      <tbody>
-<tr><td>Q2营业收入</td><td class="num">2,047.85亿(+11.0%)</td><td class="num">预期2,025-2,030亿</td><td class="num up">超约1%</td><td class="num up">超预期</td></tr>
-        <tr><td>Q2 Non-IFRS净利</td><td class="num">684.15亿(+8.5%)</td><td class="num">预期约670亿</td><td class="num up">超约2%</td><td class="num up">超预期</td></tr>
-        <tr><td>Q2 IFRS归母</td><td class="num">560.22亿(+0.7%)</td><td class="num">预期较高</td><td class="num down">联营一次性亏损</td><td class="num down">低于预期</td></tr>
-        <tr><td>Q2资本开支</td><td class="num">527.84亿(+176%)</td><td class="num">预估约321亿</td><td class="num down">超64%</td><td class="num down">显著超预期</td></tr>
-        <tr><td>Q2综合毛利率</td><td class="num">58%(+1pp)</td><td class="num">预期约57%</td><td class="num up">高于预期</td><td class="num up">超预期</td></tr>
-
-      </tbody>
-    </table>
-    <p class="note" style="margin-top:8px;font-size:12.5px;color:var(--ink-3)">预期来源与统计时点：预期差判断（2026H1 业绩公布，市场预期取自华源证券 / 野村 / hedgwatch 等公开研报与预览）：① <b>营收超预期</b>：Q2 实际 2,047.85 亿元（+11.0%）vs 预期约 2,025–2,030 亿元（+10%），<b>超约 1%</b>；② <b>Non-IFRS 净利超预期</b>：684.15 亿元（+8.5%）vs 预期约 670 亿元（+6~7%），<b>超约 2%</b>；③ <b>IFRS 归母大幅低于预期</b>：560.22 亿元（<b>仅 +0.7%</b>）——<b>差异源于联营公司一次性公允价值亏损</b>，属口径与一次性因素，非主业恶化；④ <b>资本开支大幅超预期</b>：527.84 亿元 vs 预估约 321 亿元（<b>超 64%</b>），<b>这是业绩公布当日股价承压的主因</b>。<b>综合判定「<b>收入与核心利润超预期、IFRS 归母因一次性因素大幅低于预期、CapEx 显著超预期</b>」——三个方向的信号同时存在，市场选择聚焦 CapEx（因为它决定未来两年的自由现金流与回购能力）。<b>须提示</b>：港股须单列 Non-IFRS 口径，<b>IFRS 归母（+0.7%）与 Non-IFRS（+8.5%）不可直接比较</b>。</p>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">行业坐标与供需</div>
-    <div class="card">
-      <p><b>行业所处阶段与传导方向：</b>中国互联网平台 2026 年上半年处于<b>「主业景气回升 + AI 资本开支竞赛」</b>的双轨期：① <b>广告</b>——AI 推荐（RankUp/AIM+）显著提升 eCPM，视频号商业化继续放量，行业增速回升至 20% 区间；② <b>游戏</b>——版号常态化、长青 IP 与新游共同发力，头部厂商流水创新高，但收入确认受节奏扰动；③ <b>云与 AI</b>——算力供需偏紧，云收入提速（腾讯云 +20%），同时<b>全行业进入「AI 资本开支军备竞赛」</b>，CapEx 强度成为估值的新变量；④ <b>监管</b>——平台反垄断与数据安全监管常态化，AI 治理框架推进，不确定性较 2021–2022 显著下降。<b>行业坐标：腾讯的「α」在于微信 14.39 亿月活的生态闭环（广告 + 小店 + 支付 + 小程序）与长青游戏 IP，这两块在 AI 加持下的变现效率正在提升；「β」则是全行业的 AI 资本开支周期——它既是护城河投入，也是短期利润与现金流的压力源。H1 的分化说明：<b>腾讯的收入端已明确受益于 AI（广告 +22%），成本端则在为 AI 付账（CapEx +176%）——这正是「投入期」的典型形态。</b></p>
-      <p><b>量价 / 供需 / 价格位置 / 政策：</b>量：Q2 营销服务 435.65 亿元（+22%）、增值服务 984.14 亿元（+8%，本土游戏 +17%、国际游戏 −0.8%）、金融科技及企业服务 602.86 亿元（+9%）、其他 25.20 亿元（+37%）；微信月活 14.39 亿（+2%）、视频号使用时长 +20%。价：广告 eCPM 因 AI 推荐上行、视频号广告加载率仍有余量。成本：AI 算力资本开支骤升（Q2 527.84 亿元、H1 847 亿元），销售费用与研发费用维持高位。毛利率：Q2 58%（+1pp）、H1 57.25%（+0.85pp）。现金流：Q2 OCF 527 亿元、FCF −138 亿元（剔除算力预付 +376 亿元）。<b>同业参照</b>：腾讯广告增速（+22%）领先阿里/美团等平台，Non-IFRS 净利率（Q2 约 33%）显著高于多数同业；<b>同业共同点是 AI CapEx 大幅抬升</b>（阿里、字节同样加码算力），差异在于腾讯的资本开支强度相对收入体量更高。</p>
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">盈利质量与增长归因</div>
-    <div class="card">
-      <p><b>ROIC − WACC（创造价值判据）：</b>轻资产平台模式，用 <b>ROIC − WACC</b> 与隐含 COE 双向验证（v2 修正 C）。<b>ROIC 侧</b>：H1 年化 ROE 约 <b>20%</b>；NOPAT ≈ 经营盈利 1,346.51 亿 ×（1 − 有效税率约 18%）≈ 1,104 亿元（半年），年化约 2,208 亿元；投入资本 IC ≈ 归母权益 11,500 亿元级 + 有息负债 3,868 亿元 − 类现金 3,396 亿元 ≈ 12,000 亿元级 → <b>年化 ROIC ≈ 18%</b>。<b>WACC 侧</b>：Re ≈ 无风险利率（港股以美元/港元定价，参考美债约 4.0%）+ β（约 1.0）× ERP 5.5% ≈ <b>9.5%</b>；债权成本税后约 3.5%，债占比约 25% → <b>WACC ≈ 8.0%</b>。<b>ROIC − WACC ≈ +10pp，显著创造价值</b>。<b>反推市场隐含 COE</b>：以 PB 3.2×、ROE 20% 计，<b>隐含 COE ≈ 6.3%</b>——低于合理 WACC 8.0%，说明<b>当前股价隐含的回报要求已相当低，市场对腾讯的长期增长与确定性给予了较高溢价</b>。<b>须提示的关键变化</b>：<b>AI 资本开支正在抬高投入资本基数（H1 CapEx 已 847 亿元），若这些资本短期内不产生对应的经营利润，ROIC 将被稀释</b>——这是「AI 投入年」对资本回报率的直接侵蚀，也是 2027–2028 年最需要验证的指标。</p>
-      <p><b>增长归因（量 / 价 / 成本 / 非经）：</b><b>营收桥（Δ = 4,012.43 − 3,645.26 = +367.17 亿元，+10.1%）</b>：Q1 +164.36 亿元（广告 +63.6 亿、金科企服 +49.5 亿、增值 +37.0 亿、其他 +11.6 亿）、<b>Q2 +202.8 亿元（广告 +78.6 亿、增值 +72.9 亿、金科企服 +49.8 亿、其他 +6.8 亿）</b>——<b>Q2 增量结构明显改善：增值服务（本土游戏 +17%）从 Q1 的 +37 亿跃升至 +72.9 亿，接棒广告成为第二引擎</b>。<b>利润桥（Δ 经营盈利 = 1,346.51 − 1,176.70 = +169.81 亿元，+14.4%）</b>：<b>毛利 +241.92 亿元</b>（营收 +367.17 亿元、营业成本 +125.25 亿元；<b>毛利率 56.4% → 57.25%，+0.85pp</b>）为主力；<b>负向</b>——销售费用与研发费用合计多支出约 70–80 亿元（AI 应用推广 + 模型/算力投入），管理费用持平。<b>归母净利 +106.66 亿元（+10.3%）</b>低于经营盈利增速（+14.4%），<b>差额主要来自联营公司一次性公允价值亏损</b>（Q2 尤为明显，致 Q2 IFRS 归母仅 +0.7%）；<b>Non-IFRS 净利 +119.39 亿元（+9.6%）</b>剔除了该扰动，<b>是观察核心主业的正确口径</b>。<b>核心结论：收入端「广告 +22%、本土游戏 +17%」双引擎提速、毛利率创新高（Q2 58%），而利润端的缺口来自「AI 投入（费用 + CapEx）」与「投资端一次性亏损」两项——前者是主动选择，后者是外生扰动，都不改变主业的向上趋势。</b></p>
-      <p><b>盈利质量（扣非 vs 归母，真 / 虚）：</b><b>质量「真」但口径必须分清，本期尤其容易被 IFRS 数字误导</b>。① <b>Non-IFRS 净利 1,363.20 亿元（+9.6%）</b>是核心主业口径，<b>增速与营收 +10.1% 基本匹配</b>，说明主业盈利能力稳中有升；② <b>IFRS 归母 1,141.15 亿元（+10.3%）</b>，H1 整体看与 Non-IFRS 接近，<b>但 Q2 单季 IFRS 仅 +0.7%、Non-IFRS +8.5%，背离 7.8pp</b>——差额源于<b>联营公司一次性公允价值亏损</b>，属非经营性；③ <b>毛利率持续提升</b>（H1 57.25%、Q2 58%，均 +1pp 级），来自自研游戏、视频号、电商技术费的占比提升，<b>是「结构性改善」而非「会计调节」</b>；④ <b>现金流本期出现质的变化</b>：Q2 OCF/归母降至 <b>0.94×</b>（首次低于 1），FCF −138 亿元——<b>但拆解后主因是 AI 算力预付款占用营运资金，剔除后 FCF +376 亿元</b>，<b>属「投入性现金流出」而非「盈利质量恶化」</b>；⑤ <b>须警惕的趋势</b>：随着 CapEx 基数抬升，<b>折旧将逐年增加（未来 2–3 年持续压制利润率），且 OCF/净利 的「1.7× 高含量」将回归常态</b>——投资者不能再用 2026Q1 的现金流水平外推。</p>
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">业务分部与地区拆解</div>
-    <div class="card">腾讯按<b>四大分部</b>披露（<b>2026Q2 单季，人民币亿元；⚠️ 季度公布仅披露分部收入与集团毛利率，不披露分部经营利润</b>）：<br/>• <b>增值服务 984.14 亿元（+8%，毛利率 63% 级）</b>——<b>本土游戏 +17%</b>（《三角洲行动》《无畏契约》《洛克王国：世界》拉动，Q1 仅 +6% 受春节错位影响）、<b>国际游戏 −0.8%</b>（汇率拖累，固定汇率 +4%）、社交网络基本持平。<b>本土游戏的强势回归是 Q2 最大的边际改善</b>。<br/>• <b>营销服务（广告）435.65 亿元（+22%，增速第一）</b>——AI 广告推荐（RankUp/AIM+）+ 视频号时长 +20% + 微信小店闭环；<b>收入增量贡献约 38%，是最大拉动项</b>。<br/>• <b>金融科技及企业服务 602.86 亿元（+9%）</b>——商业支付稳健，<b>云受 AI 需求与国际拓展驱动提速</b>。<br/>• <b>其他 25.20 亿元（+37%）</b>——含 AI 原生应用等战略性业务，仍处投入期。<br/>• <b>生态指标</b>：<b>微信月活 14.39 亿（+2%）</b>，视频号使用时长 +20%，小程序/小店生态继续扩张。<br/><b>增量贡献（v2 修正 H）</b>：Q2 收入增量约 208 亿元中，<b>广告约 78.6 亿（38%）、增值约 72.9 亿（35%）、金科企服约 49.8 亿（24%）、其他约 6.8 亿（3%）</b>——<b>「广告 + 增值」双引擎合计贡献 73%</b>。须注意<b>存在未分配项</b>：AI 新业务单季拖累约 105 亿元未体现在分部中，故「分部合计」无法完整解释集团利润增量。</div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">资产负债与周转效率</div>
-    <div class="card"><b>资产负债表仍稳健，但净现金缓冲本期被快速消耗</b>：<b>现金净额由 Q1 的 1,469 亿元降至 582 亿元（−887 亿元）</b>，主因<b>本季资本支付 593 亿元（AI 算力）+ 2025 年度股息 416 亿元</b>的双重流出；总资产 2 万亿元级、<b>资产负债率约 41%</b>，在科技平台中仍属稳健区间。<b>资产端</b>：现金及现金等价物、类现金资产充裕；应收账款规模健康（周转天数约 27 天，H1 需跟踪账龄）；<b>无形资产（含商誉）约 1,990 亿元</b>；<b>投资组合（上市 + 非上市）体量巨大</b>，其公允价值波动通过 OCI 影响净资产。<b>负债端</b>：借款及票据合计 3,868 亿元级，短期债务占比不高；<b>递延收入（游戏预收）为良性负债</b>，随游戏流水增长而累积。<b>须提示</b>：① <b>净现金从 1,469 亿降至 582 亿的斜率值得警惕</b>——若 Q3/Q4 CapEx 维持 500 亿元/季，净现金将在年内见底；② <b>若 AI 投入超预期，公司可能重启债务融资</b>，届时财务费用与杠杆将同步上升；③ 投资组合的未实现损益（OCI）会持续扰动 BVPS 与 PB 读数。</div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">现金流健康度</div>
-    <div class="card">
-      <p><b>现金流匹配度：</b><b>本期现金流出现「质的变化」，是全部指标中最需要拆解的一项</b>。Q2 经营活动现金流净额 <b>527 亿元</b>、归母净利 560.22 亿元 → <b>OCF/归母 = 0.94×（首次低于 1）</b>；<b>自由现金流 −138 亿元（首次为负）</b>（OCF 527 − CapEx 527.84 − 内容与租赁支出）。<b>但这是「投入性失血」而非「盈利质量恶化」</b>：① <b>AI 算力采购预付款大幅占用营运资金</b>（本季资本支付 593 亿元）；② <b>剔除算力预付款后，FCF 仍为 +376 亿元</b>，主业造血充沛；③ H1 累计 CapEx <b>847 亿元</b>，若按此节奏年化将超 1,500 亿元，<b>远超 2025 年水平</b>。<b>结论：腾讯的现金流正在从「强劲正自由现金流」切换到「高投入、低自由现金流」的模式——这不是财务恶化，而是战略选择；但它直接改变了估值锚（从 FCF 收益率转向 AI 投入的回报能见度），也是当日股价承压的主因。</b></p>
-      <p><b>OCF 拆解归因：</b>OCF 拆解归因（v2 修正 E，估算）：<b>起点</b>归母净利 560.22 亿元 + 折旧摊销与股份酬金等非现金项（随 AI 算力资产投放，折旧基数递增）+ 递延收入变动（正向但增速放缓）− <b>营运资金占用（关键负项）：AI 算力采购预付款</b> − 应收账款增加 ≈ <b>527 亿元</b>。<b>与 Q1（OCF 1,014 亿元、OCF/净利 1.71×）的对比最能说明问题</b>：Q1 的高现金含量来自<b>递延收入 +310 亿元</b>的时点性积累；Q2 则因<b>算力预付款</b>占用了大量营运资金，<b>把 OCF/净利 从 1.71× 压到 0.94×</b>。<b>投资与筹资</b>：Q2 资本支付 593 亿元（AI 基建）+ 2025 年度股息 416 亿元，是现金净额从 1,469 亿降至 582 亿的直接原因。<b>注：腾讯季度业绩公布未单列折旧摊销与营运资金变动明细，上述拆解按资本支付与现金净额变动倒推，属估算、非审计数。</b></p>
-      <p><b>自由现金流与覆盖能力：</b><b>自由现金流首次转负，但剔除算力预付款后仍强</b>。Q2：OCF 527 亿元 − 资本开支 <b>527.84 亿元（+176%）</b> − 内容与租赁付款 ≈ <b>FCF −138 亿元</b>；<b>剔除 AI 算力预付款后 FCF +376 亿元</b>。H1 视角：CapEx 累计 <b>847 亿元</b>，若 Q3/Q4 维持 500 亿元/季，全年 CapEx 将达 <b>1,800 亿元级</b>，<b>FCF 全年可能压缩至 1,000–1,500 亿元区间</b>（较 2025 年显著下降）。<b>覆盖能力</b>：2025 年度股息 416 亿元已于 Q2 支付；回购已重启（静默期结束后），<b>若 FCF 进一步压缩，「回购规模」与「AI CapEx」将直接竞争同一笔现金</b>。<b>结论：腾讯的 FCF 问题不是「够不够花」，而是「先花在哪」——这是 2026 年最核心的资本配置考题，也是判断管理层对 AI 回报信心的直接窗口。</b></p>
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">估值与股东回报</div>
-    <div class="card">
-      <p><b>相对估值水位：</b>H 股 00700.HK（<b>2026-08-12 收盘 HK$461.60</b>）：<b>市值约 4.19 万亿港元</b>（≈3.82 万亿人民币）。<b>估值倍数</b>：<b>PE(TTM) 约 15.7×</b>（近 5 年均值约 20–25×，<b>处历史低位</b>）、<b>2026E Non-IFRS PE 约 15.8×</b>（基于 2026E Non-IFRS 净利约 2,656 亿元）、<b>PB 约 3.2×</b>、<b>股息率 TTM 约 1.15%</b>（以回购为主要回报方式）。<b>一致目标价 HK$692–727</b>，较现价空间约 <b>+50%</b>。<b>须提示三点</b>：① <b>PE 必须区分 IFRS 与 Non-IFRS</b>——用 IFRS 归母算 PE 会因投资盈亏与联营一次性亏损而失真；② <b>PB 3.2× 的参考意义弱</b>，因净资产被投资公允价值回撤压低；③ <b>FCF 收益率因 CapEx 抬升而下降（Q2 FCF 为负）</b>，<b>「低 PE + 高股息」的传统估值锚在 2026 年部分失效</b>，市场改为盯「AI 投入的回报能见度」——这是 8 月 12 日业绩后股价承压的根本原因（CapEx 超预期 64%）。</p>
-      <p><b>周期正常化估值：</b>腾讯属<b>非周期消费互联网平台</b>，不适用「周期正常化估值」（v2 修正 F）；但 2026 年的特殊性在于<b>利润与现金流被 AI 投入周期切割</b>，须做「投入期正常化」。<b>正常化基准</b>：2026E Non-IFRS 净利约 <b>2,656 亿元</b>（中性预期）；<b>若 AI 新业务拖累（约 105 亿元/季、年化 420 亿元级）在 2027–2028 年随规模效应收窄，Non-IFRS 净利有望向 3,000 亿元级靠拢</b>。<b>情景锚（2026E，Non-IFRS 净利）</b>：<br/>• <b>乐观</b>：AI 变现提速（广告/云）、本土游戏 +17% 延续 → 约 <b>2,800 亿元</b>，PE 回升至 <b>18–20×</b>；<br/>• <b>中性</b>：当前一致预期 → 约 <b>2,656 亿元</b>，PE 维持 <b>15–16×</b>；<br/>• <b>悲观</b>：AI 投入持续高企（CapEx 超 1,800 亿元）且变现滞后 → 约 <b>2,450 亿元</b>，PE 压缩至 <b>12–13×</b>。<b>结论：当前 HK$461.60 对应「中性偏悲观」定价（PE 15.7× 处历史低位），而目标价 692–727 港元隐含「乐观」情形。<b>这是一笔不对称赌注：下行有净现金（582 亿元，虽已大幅消耗）+ 年 Non-IFRS 净利 2,600 亿元级托底，上行看 AI 变现与广告/游戏的延续性。</b>核心验证点：CapEx 是否在 2027 年见顶、AI 相关收入能否单列并量化。</b></p>
-      <p><b>股东回报可持续性：</b><b>以回购为主、分红为辅，但本期受 CapEx 挤压</b>。① <b>2025 年度末期股息 416 亿元</b>已于 Q2 支付（这是 Q2 现金净额骤降的第二大原因）；② <b>回购</b>——2026 年 5 月股东会已授权最多 <b>10% 股份回购</b>；<b>7/13–8/11 为业绩前回购静默期</b>，8 月 12 日业绩发布后已<b>重启常态化回购</b>；③ 腾讯历行「大额回购 + 注销」策略，<b>回购注销直接增厚 EPS，是比现金分红更高效的回报方式</b>（故股息率仅 1.15%）。<b>可持续性三问</b>：① <b>现金流</b>——Q2 FCF −138 亿元、H1 CapEx 847 亿元，<b>若全年 CapEx 达 1,800 亿元级，FCF 将压缩至 1,000–1,500 亿元</b>，回购规模必然受影响；② <b>净现金</b>——由 1,469 亿元降至 <b>582 亿元</b>，缓冲快速消耗；③ <b>资本配置取舍</b>——<b>AI CapEx 与股东回报正在竞争同一笔现金</b>，管理层如何平衡（如以「回购节奏」而非「取消回购」来调节）是 2026 下半年的观察重点。<b>结论：股东回报的政策方向未变，但绝对规模取决于 CapEx 强度——这是本期与 Q1（FCF 567 亿元、回购从容）最实质的差别。</b></p>
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">管理层指引与前瞻</div>
-    <div class="card">管理层在中期业绩中的表述（前瞻性陈述，非承诺）：① <b>AI 战略</b>——延续「AI 投入年」定位，<b>资本开支将维持高位</b>（H1 已 847 亿元），强调核心业务现金流可支撑投入；② <b>产品与生态</b>——微信生态（视频号、小程序、小店、支付）继续深化，AI 赋能广告投放（RankUp/AIM+）与搜索；游戏端《三角洲行动》《无畏契约》《洛克王国：世界》等新游延续贡献，长青 IP 保持活力；③ <b>云与企业服务</b>——受 AI 需求与国际拓展驱动，云收入提速；④ <b>资本配置</b>——维持常态化回购（静默期后已重启）与年度分红，但<b>回购规模将与 CapEx 强度动态平衡</b>；⑤ <b>监管环境</b>——平台监管常态化，AI 治理框架推进，公司维持合规投入。<b>须注意</b>：管理层<b>未给出全年 CapEx 的精确区间</b>（仅强调「维持高位」），这是市场最大的不确定性来源；<b>若 Q3 业绩进一步上修 CapEx 指引，股价可能再次承压</b>。</div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">同业可比与相对表现</div>
-    <div class="card">中国互联网龙头横向（2026H1 / Q2 口径）：<br/>• <b>腾讯控股（00700.HK）</b>：H1 营收 4,012.43 亿元（+10.1%）、Non-IFRS 净利 1,363.20 亿元（+9.6%）、Q2 毛利率 <b>58%</b>、<b>广告 +22%</b>、<b>本土游戏 +17%</b>、PE(TTM) 15.7×、PB 3.2× —— <b>广告增速、毛利率、生态闭环三项领先</b>。<br/>• <b>阿里巴巴（09988.HK）</b>：电商 + 云双主业，<b>云增速随 AI 需求显著回升</b>，但电商货币化率承压、整体利润率低于腾讯；<b>AI CapEx 同样大幅抬升</b>，与腾讯面临相同的「投入 vs 回报」考验。<br/>• <b>美团（03690.HK）</b>：本地生活龙头，营收双位数增长但<b>即时零售补贴战拖累利润率</b>，盈利波动大于腾讯。<br/>• <b>网易（09999.HK）</b>：游戏为主、毛利率最高（60%+），但<b>广告与云缺失、增长引擎单一</b>。<br/>• <b>字节跳动（未上市）</b>：广告与 AI 应用（豆包）在国内最强势，<b>是腾讯在「广告 + AI 应用」两条线上的主要对手</b>，其 AI 助手落地节奏快于腾讯。<br/><b>结论</b>：腾讯的优势是<b>「微信生态 + 长青游戏 + 高毛利结构」</b>，本期广告 +22%、本土游戏 +17% 的提速证明其变现效率；短板在<b>消费端 AI 应用落地节奏</b>与<b>国际游戏增长乏力（−0.8%）</b>。<b>行业共同命题是 AI CapEx 的回报周期——谁的 AI 收入先跑出来，谁就能先修复估值。</b></div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">财务排雷</div>
-    <div class="redflags">
-
-<div class="rf"><div class="k">商誉</div><div class="v"><span class="verdict amber">关注</span>商誉<b>含于无形资产（约 1,990 亿元）之中，未单独列示</b>，占净资产 &lt;20%、占总资产约 10%，<b>在阈值内</b>。主要来自历史游戏资产并购（Supercell、Riot Games 等）与内容版权。<b>须留意</b>：① 游戏资产组减值测试高度依赖「流水与生命周期假设」，<b>若某款主力产品流水下滑，存在减值风险</b>；② 无形资产摊销属 Non-IFRS 剔除项，<b>故 Non-IFRS 净利「看不见」这部分成本</b>，需在 IFRS 口径下关注；③ 本期无新增减值迹象。</div></div>
-      <div class="rf"><div class="k">研发资本化</div><div class="v"><span class="verdict flat">低风险</span>研发费用维持高位（AI 基础设施与模型投入），<b>以费用化为主</b>，<b>不存在「开发支出资本化虚增利润」的空间</b>。腾讯的 AI 投入体现为三条线：<b>费用（研发/销售）</b>、<b>资本开支（GPU/IDC，H1 847 亿元）</b>、<b>预付款（算力长约，本季占用营运资金）</b>——<b>会计处理审慎，但三者的分类会影响利润率与现金流的读数</b>，需区分「费用化压制利润」与「资本化压制现金流」两种不同的影响路径。</div></div>
-      <div class="rf"><div class="k">资产减值</div><div class="v"><span class="verdict amber">关注</span><b>本期最值得关注的资产端变化不在减值计提，而在投资端</b>：① <b>联营公司一次性公允价值亏损</b>导致 Q2 IFRS 归母仅 +0.7%（Non-IFRS +8.5%），<b>两者背离 7.8pp</b>；② 上市投资公允价值随市波动，<b>通过 OCI 直接侵蚀净资产（不冲击利润表）</b>。资产减值损失本身规模不大、无「洗大澡」迹象。<b>须提示</b>：腾讯的投资组合体量巨大且层级复杂（Level 1/2/3），<b>「利润表看不见的净资产波动」是其报表最隐蔽的风险敞口</b>，需跟踪 OCI 与 BVPS 变化。</div></div>
-      <div class="rf"><div class="k">债务结构与财务杠杆</div><div class="v"><span class="verdict flat">低风险</span><b>杠杆仍低，但净现金缓冲本期被快速消耗</b>：<b>现金净额由 Q1 的 1,469 亿元降至 582 亿元（−887 亿元）</b>，主因<b>Q2 资本支付 593 亿元（AI 算力）+ 2025 年度股息 416 亿元</b>的双重流出；资产负债率约 41%（科技平台稳健区间）、借款及票据 3,868 亿元级、短期债务占比不高，<b>无流动性压力</b>。<b>须警惕的是斜率</b>：若 Q3/Q4 CapEx 维持 500 亿元/季，<b>净现金将在年内见底，届时可能重启债务融资</b>，财务费用与杠杆将同步上升。</div></div>
-      <div class="rf"><div class="k">审计意见</div><div class="v"><span class="verdict flat">—</span>中期业绩<b>未经审核</b>，但已由核数师按 <b>HKSA 2410（中期财务资料审阅准则）</b>审阅，<b>无保留结论</b>。<b>须提示</b>：港股中期公布的信息密度低于年报（<b>不披露分部经营利润、不披露现金流量表补充资料</b>），本报告的 OCF 拆解与分部利润归因均为估算，<b>投资者应以年报为最终依据</b>。</div></div>
-      <div class="rf"><div class="k">关联交易与资金往来</div><div class="v"><span class="verdict amber">关注</span><b>联营公司的一次性公允价值亏损是本期最需要解释的关联项</b>——它使 Q2 IFRS 归母（+0.7%）与 Non-IFRS（+8.5%）严重背离。<b>关联关系的具体形态</b>：① 联营/合营公司损益（含美团、拼多多等持仓）按权益法或公允价值计入；② 与联营企业之间的流量采购、内容分成、联合运营构成经常性关联交易；③ 对外投资（Q2 净流出）与投资组合重估。<b>须跟踪</b>：该一次性亏损的性质与金额、是否为个案、以及投资组合后续的减值风险；<b>关联交易定价的公允性需在年报核实</b>。</div></div>
-      <div class="rf"><div class="k">营收质量</div><div class="v"><span class="verdict amber">关注</span><b>收入真实、现金回款健康，但应收增速仍快于营收</b>：应收账款规模健康（周转天数约 27 天），<b>H1 应收增速高于营收增速</b>的结构性特征延续自 Q1（+16.4% vs +9.0%）；成因是广告主账期延长（宏观压力）与云/企业服务大客户账期。<b>反向证据较强</b>：Q2 OCF 527 亿元、递延收入累积、微信生态闭环（小店 + 支付）降低了坏账风险。<b>结论：需跟踪账龄结构，暂不升级为红旗。</b></div></div>
-      <div class="rf"><div class="k">存货</div><div class="v"><span class="verdict flat">低风险</span>存货规模极小（约 5.8 亿元），<b>占营收 0.3%，对轻资产平台模式可完全忽略</b>（主要为硬件周边与内容物料）。<b>该项无实质意义，属制度性低风险。</b></div></div>
-      <div class="rf"><div class="k">非经常性损益</div><div class="v"><span class="verdict amber">关注</span><b>腾讯的「非经常性」核心是投资相关损益，本期其扰动明显加大</b>：① <b>投资收益</b>（含联营损益、处置收益、公允价值变动）是 Non-IFRS 剔除项，<b>季度波动极大且可持续性弱</b>；② <b>Q2 联营公司一次性公允价值亏损</b>直接把 IFRS 归母压到 +0.7%，<b>是本期「利润表与核心经营背离」的主因</b>；③ <b>股份酬金</b>（Non-IFRS 剔除项）在去年同期形成高基数，使本期 IFRS 增速的解读更复杂。<b>须提示：IFRS 归母增速不可直接作为经营改善的证据，Non-IFRS 才是主业口径——这是解读腾讯最重要的一条纪律。</b></div></div>
-      <div class="rf"><div class="k">现金流背离</div><div class="v"><span class="verdict flat">低风险</span><b>本期出现「方向性变化」，但因主因明确且可还原，暂判为关注而非红旗</b>：Q2 <b>OCF/归母 = 0.94×</b>（首次低于 1）、<b>FCF −138 亿元（首次为负）</b>；<b>但拆解后主因是 AI 算力采购预付款占用营运资金（本季资本支付 593 亿元）</b>，<b>剔除算力预付款后 FCF 仍为 +376 亿元</b>，主业造血未受损。<b>与 Q1 的对比说明问题的性质</b>：Q1 OCF/净利 1.71×（含递延收入 +310 亿元的时点性积累），Q2 则被算力预付款反向压制——<b>两个季度的极端值都是「营运资金的时点效应」，而非盈利质量的真实变化</b>。<b>须盯：算力预付款何时回落、OCF/净利 能否回升至 >1。若连续两个季度低于 1 且找不到营运资金解释，则应升级为红旗。</b></div></div>
-      <div class="rf"><div class="k">收入确认激进（v2新增）</div><div class="v"><span class="verdict flat">低风险</span><b>递延收入的高企是「确认审慎」的直接证据</b>：游戏流水先收钱后确认，<b>递延收入在 Q1 已达 1,413 亿元（环比 +310 亿元）</b>；分业务看——游戏按道具消耗/服务期间确认、广告按投放完成度确认、金融科技按交易服务完成确认、云按履约进度确认，<b>均符合 IFRS 15 且与国际同业一致</b>。Q1 本土游戏流水 +10%+ 而收入仅 +6%、Q2 提速至 +17%，<b>「流水领先收入、递延先增后释」的节奏正是审慎确认的体现</b>。<b>无提前确认迹象。</b></div></div>
-      <div class="rf"><div class="k">表外 / 担保 / 或有负债（v2新增）</div><div class="v"><span class="verdict flat">低风险</span><b>对外担保余额低、并表范围稳定（无突发变动）</b>，未见大额未决诉讼或明股实债安排。<b>风险点在两处表外敞口</b>：① <b>非上市投资按 Level 3 公允价值计量</b>，估值假设主观性强，若被投企业估值下修将通过 OCI 或减值影响净资产；② <b>AI 算力长约与内容采购承诺</b>构成 CapEx 之外的刚性支出承诺——<b>若算力长约规模巨大，其现金流出可能跨期分摊，需在年报核实承诺金额与期限</b>。</div></div>
-      <div class="rf"><div class="k">AI 资本开支与利润率压制（行业特有·核心红旗）</div><div class="v"><span class="verdict down">核心红旗</span><b>本期最实质的经营性风险，且已经从「压制利润率」升级为「压制自由现金流」</b>：① <b>Q2 资本开支 527.84 亿元（+176%）、H1 累计 847 亿元</b>，<b>远超市场预估（Q2 约 321 亿元，超 64%）</b>；② 直接后果——<b>Q2 自由现金流 −138 亿元（首次为负）、OCF/净利 0.94×</b>，<b>这是本期股价承压的第一原因</b>；③ 若全年 CapEx 达 1,800 亿元级，<b>FCF 将压缩至 1,000–1,500 亿元，回购与 CapEx 将直接竞争同一笔现金</b>。<b>风险的本质</b>：AI 投入是「必须交的入场费」还是「能收回的投资」？三条变现路径的进展不均——<b>云（AI 需求驱动）、广告（AIM+ 已使广告 +22%）已见成效，C 端应用（元宝/WorkBuddy）仍在投入期</b>。<b>须盯：CapEx 是否在 2027 年见顶、AI 相关收入能否单列并量化、FCF 何时转正。</b></div></div>
-      <div class="rf"><div class="k">上市投资公允价值波动（行业特有·红旗）</div><div class="v"><span class="verdict down">红旗</span><b>腾讯的「第二张损益表」——投资组合，本期双向扰动利润与净资产</b>：① <b>联营公司一次性公允价值亏损</b>使 Q2 IFRS 归母仅 +0.7%，与 Non-IFRS +8.5% 背离；② <b>上市投资公允价值较年末显著回撤</b>（Q1 时点已 −1,256 亿元、FVTOCI 账面由 3,566 亿降至 2,980 亿），<b>通过 OCI 压低净资产与 BVPS，进而抬高 PB 读数</b>；③ 投资收益（Non-IFRS 剔除项）与 OCI 未实现损失方向相反，<b>「已实现收益 vs 未实现亏损」的时点错配明显</b>。<b>结论</b>：这部分不影响经营现金流与分红能力，但<b>在资本市场波动期会持续压制净资产与估值</b>；反之市场回暖时也会成为净资产修复的弹性来源。<b>须在年报核实投资组合的层级分布与减值政策。</b></div></div>
-
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">业务亮点与潜在风险</div>
-    <div class="two">
-      <div class="panel hl"><h4>✓ 业务亮点</h4><ul><li><b>Q2 营收提速至 +11%</b>：2,047.85 亿元（Q1 +9.0% → Q2 +11.0%），<b>超越市场预期（约 2,025–2,030 亿）</b>；毛利率 58%（+1pp），广告与本土游戏的高毛利结构调整持续生效</li><li><b>广告 +22% 是本季最强引擎</b>：营销服务 435.65 亿元（<b>+22%，较 Q1 的 +20% 再提速</b>），AI 广告推荐（RankUp/AIM+）+ 视频号时长 +20% + 微信小店闭环；收入增量贡献约 38%，为最大拉动项</li><li><b>本土游戏 +17% 强势回归</b>：Q1 受春节错位影响仅 +6%，<b>Q2 提速至 +17%</b>——《三角洲行动》《无畏契约》《洛克王国：世界》拉动；国际游戏 −0.8%（汇率拖累，<b>固定汇率 +4%</b>）；微信月活 <b>14.39 亿（+2%）</b></li><li><b>Non-IFRS 净利超预期</b>：Q2 684.15 亿元（<b>+8.5%</b>，市场预期约 670 亿），H1 累计 1,363.20 亿元（+9.6%）——<b>核心主业盈利能力稳中有升</b>，抵消了 AI 新业务的拖累</li><li><b>剔除算力预付款后 FCF 仍强</b>：Q2 FCF 表观 −138 亿元，但<b>剔除 AI 算力预付款后为 +376 亿元</b>；H1 经营现金流依然充沛，<b>主业造血能力未因 AI 投入而受损</b></li><li><b>股东回报持续</b>：2025 年度末期股息 <b>416 亿元</b>已于 Q2 支付；8 月 12 日业绩发布后已重启常态化回购（此前 7/13–8/11 为回购静默期）；2026 年 5 月股东会已授权最多 10% 股份回购</li></ul></div>
-      <div class="panel rk"><h4>⚠ 潜在风险</h4><ul><li><b>AI 资本开支致自由现金流首次转负（核心风险）</b>：Q2 CapEx <b>527.84 亿元（+176%）</b>、H1 累计 <b>847 亿元</b>，Q2 <b>FCF −138 亿元</b>、<b>OCF/归母 0.94×</b>（首次低于 1）；若全年 CapEx 达 1,500 亿元级，<b>自由现金流将持续承压，回购规模可能收缩</b></li><li><b>IFRS 归母仅 +0.7%，与 Non-IFRS +8.5% 严重背离</b>：差额源于<b>联营公司一次性公允价值亏损</b>，虽属非经营性，但说明投资组合对利润表的扰动正在加大，<b>IFRS 口径的利润波动性上升</b></li><li><b>现金净额骤降 887 亿元</b>：由 Q1 的 1,469 亿元降至 <b>582 亿元</b>，反映本季资本支付 593 亿元 + 股息 416 亿元的双重流出；<b>净现金缓冲快速消耗，未来若 CapEx 继续超预期，融资需求将上升</b></li><li><b>资本开支大幅超预期</b>：Q2 CapEx 527.84 亿元 vs 市场预估约 321 亿元（<b>超 64%</b>），<b>这是当日股价承压的主因</b>——市场对「AI 投入强度」的容忍度已明显下降</li><li><b>国际游戏收入负增长</b>：−0.8%（固定汇率 +4%），汇率对海外游戏业务的拖累持续；社交网络收入持平，<b>非游戏增值业务缺乏增长引擎</b></li><li><b>投资收益与公允价值双向波动</b>：投资收益是 Non-IFRS 剔除项，<b>可持续性弱</b>；同期上市投资公允价值随市波动，<b>净资产（BVPS）与 PB 读数的稳定性下降</b></li></ul></div>
-    </div>
-  </div>
-
-
-  <div class="sec">
-    <div class="sec-h">下季跟踪事项</div>
-    <div class="track"><ol><li><b>全年 CapEx 指引（第一优先级）</b>：H1 已 847 亿元、Q2 单季 527.84 亿元（超预期 64%）；跟踪 Q3 是否上修全年指引（若达 1,800 亿元级，FCF 与回购将同步受压）</li><li><b>自由现金流能否回正</b>：Q2 FCF −138 亿元、OCF/归母 0.94×；跟踪算力预付款回落后 OCF/净利 能否回升至 >1、FCF 转正</li><li><b>广告 +22% 的持续性</b>：跟踪视频号广告加载率、AIM+ 覆盖率（Q1 约 30% 广告主）、宏观广告主预算</li><li><b>本土游戏流水与递延释放</b>：本土游戏 Q2 +17%；跟踪新游流水与递延收入（Q1 已 1,413 亿元）的释放节奏</li><li><b>国际游戏能否转正</b>：−0.8%（固定汇率 +4%），汇率为主要拖累；跟踪固定汇率口径与新游海外表现</li><li><b>联营公司公允价值亏损的性质</b>：Q2 IFRS 归母仅 +0.7%（Non-IFRS +8.5%），差额源于联营一次性亏损；跟踪是否为一次性、以及投资组合的后续减值</li><li><b>净现金与回购节奏</b>：净现金 1,469 → 582 亿元；跟踪回购规模变化（CapEx 与股东回报的现金竞争）与是否重启债务融资</li></ol></div>
-  </div>
-
-  
-  <div class="foot">
-    <b>数据来源：</b>腾讯控股《截至 2026 年 6 月 30 日止三个月及六个月之业绩公布》（2026-08-13 发布，<b>IFRS 口径、未经审核</b>，已由核数师按 <b>HKSA 2410</b> 审阅；原文经雪球 PDF 转载）。<b>口径说明（重要）</b>：① <b>IFRS 与 Non-IFRS 双口径</b>——Non-IFRS 剔除股份酬金、投资盈亏、无形资产摊销、减值及 SSV/CPP，<b>用于观察核心主业；与 IFRS 归母不可直接比较</b>（本期 Q2 两者增速差 7.8pp，源于联营一次性亏损）；② <b>人民币列报、港元交易</b>——财务数据为人民币，股价与市值以港元计（2026-08-12 收 HK$461.60、市值约 4.19 万亿港元）；③ <b>H1 累计口径</b>——本报告除特别说明外采用 H1（1–6 月）累计：营收 4,012.43 亿元、归母 1,141.15 亿元、Non-IFRS 1,363.20 亿元（= Q1 + Q2 相加，与公司披露的「H1 +10%」一致）；④ <b>季度公布仅披露分部收入与集团毛利率，不披露分部经营利润</b>——第 3 章「增量利润贡献」以「收入增量贡献占比」近似替代，并已标注「存在未分配项」；⑤ <b>现金流量表未单列折旧摊销与营运资金变动</b>——OCF 拆解为按资本支付与现金净额变动倒推的<b>估算归因，非审计数</b>；⑥ <b>市场预期</b>取自华源证券/野村/hedgwatch 预览，统计时点为业绩公布前；⑦ <b>估值</b>取 2026-08-12 收盘（HK$461.60）、PE(TTM) 15.7×、2026E Non-IFRS PE 15.8×、PB 3.2×、股息率 1.15%、一致目标价 HK$692–727。<b>免责声明</b>：基于公开数据的量化分析，仅供参考，不构成投资建议。<br/>
-  </div>
-
-</div>
+  <button id="back-to-top" class="back-to-top" type="button" title="回到报告顶部" aria-label="回到报告顶部" hidden><i data-lucide="arrow-up" aria-hidden="true"></i></button>
+  <noscript><p class="noscript-note">脚本已禁用，无法切换报告期间；正文与来源链接仍可阅读。</p></noscript>
 </body>
 </html>
