@@ -32,5 +32,9 @@ Thumbs.db
 .idea/
 .vscode/
 
+# ---- 财报原始 PDF 素材（体积大，仅本地留存，不入库）----
+# 报告 HTML 内 materials/xxx.pdf 溯源链接在线将 404，属用户确认的取舍
+reports/materials/
+
 # ---- WorkBuddy 本地记忆（不入库）----
 .workbuddy/
