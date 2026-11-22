@@ -1,0 +1,19 @@
+# wrangler.toml: assets = { directory = "." } → 整个仓库根都当静态资源上传
+# 本文件是 Wrangler 上传静态资源的忽略清单（格式同 .gitignore），
+# 与 .gitignore 职责不同：后者只管 GitHub 入库，前者管 Cloudflare 上传。
+
+# Git 元数据：完整 clone 的 pack 文件（含历史大文件）远超 Workers 单文件 25 MiB 上限，
+# 是线上 "Asset too large" 报错的根因（pack-be93...pack 48.2 MiB）。
+.git
+.git/**
+
+# 本地虚拟环境 / 依赖 / 缓存：不属于站点内容，本地干跑会扫到超大 dylib/so。
+**/.venv
+**/.venv/**
+**/node_modules
+**/node_modules/**
+**/__pycache__
+**/__pycache__/**
+
+# WorkBuddy 本地记忆
+.workbuddy
