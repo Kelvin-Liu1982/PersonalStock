@@ -11,7 +11,7 @@
    徽章 = 合计 20.80 · 截至 26/09 → 页尾单段 STEO 表 3d 文案 → axisPointer.link → JS 报错数。
    ⚠️ 该图是 ECharts，实例挂在 ecCharts（不是 charts）。 */
 const {chromium}=require('playwright');
-const FILE='file:///Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/output/crude_oil_dashboard.html';
+const FILE='file:///Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis/output/crude_oil_dashboard.html';
 (async()=>{
   const b=await chromium.launch();
   const p=await b.newPage({viewport:{width:1440,height:1600}});
@@ -159,7 +159,7 @@ const FILE='file:///Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/o
   console.log('\n--- 断言 ---');
   console.log(fails.length?('FAIL\n  '+fails.join('\n  '))
     :'ALL OK — OPEC 月图（STEO API 11 国）：上格沙特 / 下格十国、57 月历史段、末点仅数值且自动避叠、无阿联酋');
-  await el.screenshot({path:'/Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/output/_shot_opec_11.png'}).catch(()=>{});
+  await el.screenshot({path:'/Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis/output/_shot_opec_11.png'}).catch(()=>{});
   await b.close();
   process.exit(fails.length?1:0);
 })();

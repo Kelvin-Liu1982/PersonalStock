@@ -3,11 +3,137 @@
     "baseDate": "2026-10-14",
     "source": "Argus Media (filtered crude feed, page 1)",
     "sourceUrl": "https://www.argusmedia.com/en/news-and-insights/latest-market-news?filter_language=en-gb&filter_commodity=crude:crude+oil,condensate&page=1",
-    "lastFetched": "2026-11-15",
+    "lastFetched": "2026-11-23",
     "note": "原油快讯抓取域。Argus 站点有 AWS WAF 挑战（非浏览器请求一律返回 gokuProps 挑战页），由 src/fetch/news/argus.py 经 tools/fetch_argus_news.cjs 无头 Chromium 渲染后解析；抓取 filtered 完整 feed 第一页（≈最近 27 条），按 URL 去重写回本文件。",
     "fetchMode": "整页完整 feed（headless 浏览器渲染，按 URL 去重）"
   },
   "crudeNews": [
+    {
+      "title": "Cop: Countries reject cover decision: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2907785-cop-countries-reject-cover-decision-update",
+      "date": "2026-11-22",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Cover text not adopted as countries object",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2907784-cop-cover-text-not-adopted-as-countries-object",
+      "date": "2026-11-22",
+      "source": "Argus"
+    },
+    {
+      "title": "Countries battle over fossil fuels, CCUS at Cop 31",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2907602-countries-battle-over-fossil-fuels-ccus-at-cop-31",
+      "date": "2026-11-20",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: CCUS drawn to centre of negotiations",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2907290-cop-ccus-drawn-to-centre-of-negotiations",
+      "date": "2026-11-20",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: New draft keeps electrification, cuts fossil fuels",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2906782-cop-new-draft-keeps-electrification-cuts-fossil-fuels",
+      "date": "2026-11-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Senators urge STB to reject UP-NS merger",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2906660-senators-urge-stb-to-reject-up-ns-merger",
+      "date": "2026-11-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Energy security key focus, still boosts transition: IEA",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2906410-energy-security-key-focus-still-boosts-transition-iea",
+      "date": "2026-11-19",
+      "source": "Argus"
+    },
+    {
+      "title": "IEA says Hormuz crisis to leave lasting scars",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2906409-iea-says-hormuz-crisis-to-leave-lasting-scars",
+      "date": "2026-11-19",
+      "source": "Argus"
+    },
+    {
+      "title": "Venezuela opposition seeks more oil law changes",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2906336-venezuela-opposition-seeks-more-oil-law-changes",
+      "date": "2026-11-18",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Electrification goal backed by 75 countries",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2906188-cop-electrification-goal-backed-by-75-countries",
+      "date": "2026-11-18",
+      "source": "Argus"
+    },
+    {
+      "title": "CFTC nominees pressed over oil probe, 24/7 trading",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905797-cftc-nominees-pressed-over-oil-probe-24-7-trading",
+      "date": "2026-11-17",
+      "source": "Argus"
+    },
+    {
+      "title": "US Senate closing in on final permitting vote",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905745-us-senate-closing-in-on-final-permitting-vote",
+      "date": "2026-11-17",
+      "source": "Argus"
+    },
+    {
+      "title": "VLGC attacked, drifting in strait of Hormuz",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905703-vlgc-attacked-drifting-in-strait-of-hormuz",
+      "date": "2026-11-17",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: EU backs Turkey’s electrification goal: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905571-cop-eu-backs-turkey-s-electrification-goal-update",
+      "date": "2026-11-17",
+      "source": "Argus"
+    },
+    {
+      "title": "N Dakota oil line shut in on quality concerns: Sources",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905287-n-dakota-oil-line-shut-in-on-quality-concerns-sources",
+      "date": "2026-11-17",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: EU backs Turkey’s '35 by 35' electrification goal",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905470-cop-eu-backs-turkey-s-35-by-35-electrification-goal",
+      "date": "2026-11-17",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Tuvalu, Vanuatu join fossil subsidy phaseout group",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905376-cop-tuvalu-vanuatu-join-fossil-subsidy-phaseout-group",
+      "date": "2026-11-17",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Text faces fossil fuel, electrification opposition",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2905111-cop-text-faces-fossil-fuel-electrification-opposition",
+      "date": "2026-11-16",
+      "source": "Argus"
+    },
+    {
+      "title": "Canadian carbon capture talks enter crucial stage",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904990-canadian-carbon-capture-talks-enter-crucial-stage",
+      "date": "2026-11-16",
+      "source": "Argus"
+    },
+    {
+      "title": "US shale oil firms seek more value from gas",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904979-us-shale-oil-firms-seek-more-value-from-gas",
+      "date": "2026-11-16",
+      "source": "Argus"
+    },
+    {
+      "title": "Yemen's Houthis claim control of Bab el-Mandeb strait",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904968-yemen-s-houthis-claim-control-of-bab-el-mandeb-strait",
+      "date": "2026-11-16",
+      "source": "Argus"
+    },
     {
       "title": "FAA halts aircraft takeoffs nationwide: Update",
       "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2904594-faa-halts-aircraft-takeoffs-nationwide-update",

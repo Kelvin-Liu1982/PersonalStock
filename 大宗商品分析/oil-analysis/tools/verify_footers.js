@@ -14,7 +14,7 @@
      4) 逐段与定稿文案 JSON 全等（WANT_LINES 里改措辞必须同步改这里）。
 */
 const { chromium } = require('playwright');
-const FILE = 'file:///Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/output/crude_oil_dashboard.html';
+const FILE = 'file:///Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis/output/crude_oil_dashboard.html';
 
 /* 定稿文案（2026-10-07）。⚠️ 改页尾措辞时必须同步改这里，否则这里会 FAIL —— 那是刻意的。 */
 const WANT_LINES = {

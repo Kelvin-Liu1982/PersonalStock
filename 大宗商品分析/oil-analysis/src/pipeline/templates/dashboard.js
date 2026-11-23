@@ -675,61 +675,35 @@ function esc(v){
     return ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[c];
   });
 }
-/* 卡片右上角 Fetch 按钮：抓 Argus filtered 完整 feed 第一页（≈最近 27 条）。
-   三级通道，逐级回落：
-     ① 本地：`python run.py serve` 的 /api/news（headless Chromium 渲染 + 写回 news.json）；
-     ② 线上：Cloudflare Worker 的 /api/news，借 Browser Rendering 起真实 Chromium 过
-        AWS WAF（需 Workers 付费版；未绑定时返回 501）；
-     ③ 兜底：读取仓库内已发布的 data/dataset/news.json 快照（只重载、不新增抓取）。
-   ⚠️ Argus 有 AWS WAF 挑战，任何无法执行 JS 的通道都会被拦；状态栏如实标注来源，
-      不假装实时抓取成功。 */
+/* 卡片右上角 Fetch 按钮：调用本地服务端的 /api/news 做**整页完整抓取**
+   （抓 Argus filtered 完整 feed 第一页 ≈ 最近 27 条，服务端按 URL 去重后写回 news.json）。
+   ⚠️ 两个使用前提：
+     ① 本页必须经 `python run.py serve` 打开才有 /api/news；直接双击静态 HTML 会 404
+        （与首屏「拉取实时」按钮同一限制）。
+     ② Argus 有 AWS WAF 挑战，服务端直连会被拦；此时返回 blocked=true，
+        这里把原因如实显示，**不假装抓取成功**。 */
 function fetchNews(btn){
   const st=$("newsstatus");
   const setStatus=(msg,cls)=>{ if(st){ st.textContent=msg||""; st.className="newsstatus"+(cls?" "+cls:""); } };
-  // 合并去重：/api/news 与静态快照返回的都是「条目列表」，统一在这里并入 STATE
-  const applyItems=function(items){
-    const prev=STATE.crudeNews||[];
-    const oldUrls=new Set(prev.map(function(x){return x&&x.url;}).filter(Boolean));
-    const merged=new Map();
-    prev.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
-    items.forEach(function(x){ if(x&&x.url) merged.set(x.url,x); });
-    STATE.crudeNews=Array.from(merged.values())
-      .sort(function(a,b){ return String(b.date||"").localeCompare(String(a.date||"")); });
-    renderNews();
-    return items.filter(function(x){ return x&&x.url&&!oldUrls.has(x.url); }).length;
-  };
-  // 线上无 Browser Rendering（免费版）时 /api/news 返回 501 → 回落读仓库内已发布快照
-  const loadSnapshot=function(reason){
-    setStatus("实时抓取不可用（"+reason+"）· 加载已发布快照…", "warn");
-    fetch("../data/dataset/news.json", {cache:"no-cache"})
-      .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(d){
-        const items=(d && d.crudeNews) || [];
-        if(!items.length){ setStatus("实时抓取不可用，且未找到已发布快照", "warn"); return; }
-        const added=applyItems(items);
-        const meta=(d && d.crudeNewsMeta) || {};
-        setStatus("已发布快照 · 抓取于 "+(meta.lastFetched||"—")+" · 最新 "+(items[0].date||"—")
-          +(added ? " · 新增 "+added+" 条" : ""), added ? "ok" : "");
-      })
-      .catch(function(){ setStatus("实时抓取不可用，快照亦无法读取", "warn"); });
-  };
   if(btn){ btn.disabled=true; btn.textContent="…"; }
   setStatus("正在抓取…");
   fetch("/api/news").then(function(r){ return r.json(); }).then(function(res){
     if(!res || !res.ok){
       const why=(res && res.blocked)
-        ? (res.message || "Argus 返回 AWS WAF 挑战页")
+        ? (res.message || "Argus 返回 AWS WAF 挑战页，非浏览器请求取不到新闻")
         : ((res && res.error) || "抓取失败");
-      loadSnapshot(why);
+      setStatus(why, "warn");
       return;
     }
     const items=res.items||[];
-    if(!items.length){ setStatus("已渲染但未解析到新闻，页面结构可能变更", "warn"); return; }
-    const added=applyItems(items);
-    setStatus("抓到 "+items.length+" 条 · 新增 "+added+" 条 · 最新 "+(items[0].date||"—"),
-      added ? "ok" : "");
+    if(items.length) STATE.crudeNews=items;   // 服务端已去重并按日期倒序
+    renderNews();
+    setStatus(res.added
+      ? ("新增 "+res.added+" 条 · 区间 "+res.since+" → "+res.until)
+      : ("已是最新 · 区间 "+res.since+" → "+res.until),
+      res.added ? "ok" : "");
   }).catch(function(){
-    loadSnapshot("无 /api/news 服务");
+    setStatus("抓取失败：请用 python run.py serve 打开本页（静态页面无 /api/news）", "warn");
   }).then(function(){
     if(btn){ btn.disabled=false; btn.textContent="↻ Fetch"; }
   });
@@ -3295,11 +3269,9 @@ function switchTab(key,el){
 
 /* ---------- live fetch ---------- */
 async function loadLive(){
-  /* key 可为空：留空时由服务端代理补 key —— Cloudflare Worker 的 /api/fred、/api/eia
-     读取环境变量 FRED_KEY / EIA_KEY，密钥不下发到浏览器（公开部署即走这条路径）。
-     显式内嵌 key（EMBED_KEYS=1 构建）只用于本地 python -m src.serve 调试。 */
   const key=(API_KEYS.fred||"").trim();
-  if(window.location.protocol==="file:"){$("status").textContent="实时拉取需经服务端：本地运行 python -m src.serve，或直接访问已部署的看板地址";return;}
+  if(!key){$("status").textContent="未配置 FRED API Key（src/config.py 或环境变量 FRED_KEY）";return;}
+  if(window.location.protocol==="file:"){$("status").textContent="实时拉取需本地服务：运行 python -m src.serve 后访问 http://localhost:8000/";return;}
   $("status").textContent="拉取实时数据中…";
   /* 2026-10-22 故障隔离（此前 FRED 一挂就 throw，价格与 EIA 周度根本没机会执行）：
      三个源各自独立 try/catch —— FRED 宏观 / 价格 / EIA 周度。
@@ -3379,8 +3351,10 @@ async function loadLive(){
     const series={dates,brent:getP("brent"),wti:getP("wti"),dxy:get("dxy"),dff:get("dff"),dgs10:get("dgs10"),gas:get("gas")};
     // ---- 源 3：EIA 周度（库存/产量；失败 → 仅该源缺失，仍有价格与宏观可渲染） ----
     let eia=null;
-    try{eia=await fetchEIA(eiakey,dates);}   // key 可为空：服务端代理补 key
-    catch(e2){console.warn("[dashboard] EIA 周度拉取失败（仅该源缺失）",e2);noteFail("EIA周度");}
+    if(eiakey){
+      try{eia=await fetchEIA(eiakey,dates);}
+      catch(e2){console.warn("[dashboard] EIA 周度拉取失败（仅该源缺失）",e2);noteFail("EIA周度");}
+    }
     // OPEC 月度原油产量（来自 MOMR PDF，静态嵌入快照），无需实时拉取；computeDerived 回落 SNAPSHOT 取值。
     STATE=computeDerived(series,eia);
     STATE.kpis.latest_date=dates[dates.length-1];STATE.kpis.n=dates.length;
@@ -3408,7 +3382,7 @@ async function loadLive(){
 async function fetchPrices(eiakey,fredkey){
   const out={__src:""};
   const ids=(EIA_PRICE_IDS&&EIA_PRICE_IDS.ids)||{};
-  if(Object.keys(ids).length){   // key 可为空：服务端代理补 key
+  if(eiakey&&Object.keys(ids).length){
     try{
       const r=await fetch(`/api/eia?key=${encodeURIComponent(eiakey)}&ids=${Object.values(ids).join(",")}&length=${(EIA_PRICE_IDS&&EIA_PRICE_IDS.len)||1500}`);
       const j=await r.json();
@@ -3423,7 +3397,7 @@ async function fetchPrices(eiakey,fredkey){
   }
   const fb=(EIA_PRICE_IDS&&EIA_PRICE_IDS.fallback)||{};
   for(const k in fb) delete out[k];
-  if(Object.keys(fb).length){    // key 可为空：服务端代理补 key
+  if(fredkey&&Object.keys(fb).length){
     try{
       const r2=await fetch(`/api/fred?key=${encodeURIComponent(fredkey)}&ids=${Object.values(fb).join(",")}&start=__START_DATE__`);
       const j2=await r2.json();

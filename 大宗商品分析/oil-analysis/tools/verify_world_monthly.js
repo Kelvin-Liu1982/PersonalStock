@@ -23,7 +23,7 @@
      F 徽章落在**末个历史月**（世界 75.97 + 26/09），不再落到预测末点 27/12
 */
 const { chromium } = require('playwright');
-const ROOT = '/Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis';
+const ROOT = '/Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis';
 const SNAP = 'file://' + ROOT + '/output/crude_oil_dashboard.html';
 
 const ID = 'supply_prodcap_worldq';

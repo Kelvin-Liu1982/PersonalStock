@@ -19,7 +19,7 @@
    ⚠️ 读 element.y 前必须 c.update('none')：默认动画下 meta.data 是中间值。
 */
 const { chromium } = require('playwright');
-const ROOT = '/Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis';
+const ROOT = '/Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis';
 const SNAP = 'file://' + ROOT + '/output/crude_oil_dashboard.html';
 const LIVE = process.env.DASH_URL || 'http://localhost:8123/';
 const NODE = '/Users/sto1/.workbuddy/binaries/node/versions/22.22.2-6/bin/node';

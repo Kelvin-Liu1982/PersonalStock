@@ -22,7 +22,7 @@
    ⚠️ 读 element.y 前必须 c.update('none')：默认动画下 meta.data 里是动画中间值。
 */
 const { chromium } = require('playwright');
-const FILE = 'file:///Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/output/crude_oil_dashboard.html';
+const FILE = 'file:///Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis/output/crude_oil_dashboard.html';
 const ID = 'supply_sparecap_spare';
 const STAT = 'opecSpare';
 /* 页尾三段定稿文案（数据源段于 2026-10-08 随价格换源同步改写，逐字）。 */

@@ -5,7 +5,7 @@
    检查：两张图的序列末值 → 需求侧 KPI 芯片（中国原油加工量 / 中国原油进口）→
    卡片徽章 → 落库数组长度与末月 → JS 报错数。 */
 const {chromium}=require('playwright');
-const FILE='file:///Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/output/crude_oil_dashboard.html';
+const FILE='file:///Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis/output/crude_oil_dashboard.html';
 (async()=>{
   const b=await chromium.launch();
   const p=await b.newPage({viewport:{width:1440,height:1400}});

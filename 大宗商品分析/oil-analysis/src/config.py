@@ -1,30 +1,14 @@
 # -*- coding: utf-8 -*-
 """运行配置：API 凭据与时间窗常量。
 
-凭据读取优先级：环境变量（``EIA_KEY`` / ``FRED_KEY``）
-> 本地私钥文件 ``src/_keys_local.py``（已 gitignore，不入库）> 空。
-
-仓库内**不保存任何真实凭据**；key 为空时抓取脚本跳过需鉴权的序列、
-看板仅展示已烘焙的快照数据（优雅回退）。本地开发只需自建
-``src/_keys_local.py`` 并写入 ``EIA_KEY`` / ``FRED_KEY``。
+凭据优先读环境变量（``EIA_KEY`` / ``FRED_KEY``），取不到才回落到内置默认值，
+这样既能在本地零配置重跑，也允许用环境变量覆盖成自己的 key。
+注意：默认 key 会随渲染一起注入 HTML，仅适合本地/内网看板，不要用于公开部署。
 """
 import os
 
-
-def _local_key(name):
-    """从 src/_keys_local.py 读取本地私钥（该文件已被 .gitignore 排除）。"""
-    try:
-        from . import _keys_local as _k
-    except Exception:
-        try:
-            import _keys_local as _k  # 兼容以 src/ 为工作目录直接运行的脚本
-        except Exception:
-            return ""
-    return str(getattr(_k, name, "") or "").strip()
-
-
-EIA_KEY = os.environ.get("EIA_KEY") or _local_key("EIA_KEY")
-FRED_KEY = os.environ.get("FRED_KEY") or _local_key("FRED_KEY")
+EIA_KEY = os.environ.get("EIA_KEY") or "de8q5z7QnC66e71u7it6VBUYrTP8sJi1rMAOfZLc"
+FRED_KEY = os.environ.get("FRED_KEY") or "fb21897ac02e392cce06b3f9209a3e1f"
 
 # ---- 时间窗 ----
 START_DATE = "2024-01-01"   # FRED / EIA 日度序列起点（2024 起，供裂解价差等派生序列回溯到 2024）

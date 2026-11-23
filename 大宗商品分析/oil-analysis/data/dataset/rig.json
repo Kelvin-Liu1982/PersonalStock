@@ -620,8 +620,7 @@
     1822.0,
     1878.8,
     1906.8,
-    1919.2,
-    1933.2
+    1919.2
   ],
   "rigMonths": [
     "1975-01",
@@ -1244,8 +1243,7 @@
     "2026-06",
     "2026-07",
     "2026-08",
-    "2026-09",
-    "2026-10"
+    "2026-09"
   ],
   "rigMonthlyMeta": "Baker Hughes Worldwide Rig Count (rigcount.bakerhughes.com) | Worldwide = 美国 + 加拿大 + 国际（Baker Hughes 全球旋转钻井平台数）"
 }

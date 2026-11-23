@@ -16,7 +16,7 @@
      （默认，带 spr）   期望：图表仍在，末点==注入值，且不是空画布
 */
 const { chromium } = require('playwright');
-const ROOT = '/Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis';
+const ROOT = '/Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis';
 // ⚠️ 必须走 http：dashboard.js::loadLive() 在非 http(s) 协议下会直接 return
 // （"实时拉取需本地服务"），那样根本测不到开页自动拉取那一次重绘。
 // 先起服务：python -m src.serve 8123

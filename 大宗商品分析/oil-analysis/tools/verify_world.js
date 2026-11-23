@@ -7,7 +7,7 @@
    2026-09 满足 World ≈ OPEC + DoC + Others 且 Others ≈ 41.12（=55.17−14.05）；
    Others 全段 = Non-OPEC − DoC（与图内数据集一致，且恒非负）。 */
 const {chromium}=require('playwright');
-const FILE='file:///Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/output/crude_oil_dashboard.html';
+const FILE='file:///Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis/output/crude_oil_dashboard.html';
 (async()=>{
   const b=await chromium.launch();
   const p=await b.newPage({viewport:{width:1440,height:1600}});
@@ -73,7 +73,7 @@ const FILE='file:///Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/o
   console.log('\n--- 断言 ---');
   console.log(fails.length?('FAIL\n  '+fails.join('\n  '))
     :'ALL OK — 全球图 4 线（World/OPEC/Non-OPEC DoC/Others）：Others=Non-OPEC−DoC，@26-09 恒等式成立');
-  await el.screenshot({path:'/Users/sto1/WorkBuddy/大宗商品分析追踪/oil-analysis/output/_shot_world_4line.png'}).catch(()=>{});
+  await el.screenshot({path:'/Users/sto1/WorkBuddy/业绩追踪看板/大宗商品分析/oil-analysis/output/_shot_world_4line.png'}).catch(()=>{});
   await b.close();
   process.exit(fails.length?1:0);
 })();

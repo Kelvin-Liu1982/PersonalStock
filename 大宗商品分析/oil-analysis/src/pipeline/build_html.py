@@ -193,11 +193,9 @@ def build():
     # 相关系数矩阵不再需要占位符：computeDerived 用 corrMatrix 实时重算，
     # 此前恒用快照矩阵，导致「拉取实时」后矩阵还是旧数据的。
     # API Key 注入到 dashboard.js 的 API_KEYS 常量（界面上不再显示输入框）。
-    # ⚠️ 默认**不注入**：产物会进公开仓库并对外发布，view-source 即可拿到 Key。
-    # 仅本地/内网调试需要页面内实时刷新时，显式设置 EMBED_KEYS=1 再构建。
-    _embed_keys = os.environ.get("EMBED_KEYS", "").strip().lower() in ("1", "true", "yes")
-    html = (html.replace("__FRED_KEY__", config.FRED_KEY if _embed_keys else "")
-                .replace("__EIA_KEY__", config.EIA_KEY if _embed_keys else "")
+    # ⚠️ 这意味着产物里带明文 Key，仅限本地/内网使用；公开部署前必须改走服务端代理。
+    html = (html.replace("__FRED_KEY__", config.FRED_KEY)
+                .replace("__EIA_KEY__", config.EIA_KEY)
                 .replace("__START_DATE__", config.START_DATE))
     return html
 
