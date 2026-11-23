@@ -2,6 +2,15 @@
 output/
 !assets/
 
+# ---- 原始报告 PDF（体积大，仅本地留存，已 filter-repo 从 Git 历史清除）----
+# 数据快照与看板所依赖的 JSON 仍在 data/dataset、data/processed 中正常入库；
+# 此处仅排除体积达 211MB 的原始报告下载件，避免撑爆仓库与 Cloudflare 25MiB 单文件上限。
+data/raw/eia_aeo/
+data/raw/eia_steo/
+data/raw/iea_oil/
+data/raw/opec_momr/
+data/raw/opec_woo/
+
 # ---- Python ----
 __pycache__/
 *.py[cod]
