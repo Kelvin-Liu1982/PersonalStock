@@ -5,7 +5,8 @@ output/
 # ---- Python ----
 __pycache__/
 *.py[cod]
-.venv/
+# 不带斜杠：同时忽略本地 .venv 目录与其符号链接（链接指向本机绝对路径，不可入库）
+.venv
 venv/
 
 # ---- 前端校验依赖（puppeteer-core，仅供 tools/verify_oecd.cjs 使用）----
