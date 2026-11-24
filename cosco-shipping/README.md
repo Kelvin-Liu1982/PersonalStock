@@ -159,7 +159,11 @@ python src/build.py
 | `COSCO` | 14 | COSCO Group 一行：排名/份额/总运力/艘数/自有/租入/手持订单（32 期） |
 | `分析要点` | 6 | 来源「全球」/「COSCO」各 5 条，随每期快照自动重算 |
 
-页面上按来源分两块：**GLOBAL 全球船队 → COSCO 中远海控**，顶部锚点导航。
+页面上按来源分两块：**GLOBAL 全球船队 → COSCO 中远海控**。2026-11-24 起与 Drewry 页统一为
+左侧垂直菜单 + 右侧全宽内容区（`.vlayout/.vside/.vmain`，三页共用）：侧栏两项来源 +
+「同步 Alphaliner TOP100」按钮与状态 + 返回主看板，滚动自动高亮；两块纵向堆叠，
+图表网格固定 2 列等宽，全宽图与 9 期快照表占满行。`id="global"` / `id="cosco"` 保留供深链。
+两块底部 `.note` 口径说明已删除（与「本期要点」重复），两张快照表由 8 期扩为 **9 期**。
 Alphaliner 官网**只给数字、没有任何文字洞察**，所以这一页的分析全部由本表数据生成：
 每张图下的 `.ann` 与块顶的「本期要点」都是脚本按当期数据算的（`al_points_global()` /
 `al_points_cosco()`），不依赖人工撰写；同一份要点也会写进 `分析要点` 表，便于核对或手工改写
@@ -220,18 +224,34 @@ Alphaliner 官网**只给数字、没有任何文字洞察**，所以这一页�
 
 ## Drewry 周报（drewry-weekly.html）
 
+**页面布局（2026-11-24 起三页统一）**：参照 Tabler「Fluid vertical layout」，三张周报页共用
+`.vlayout/.vside/.vmain` 组件——左侧 212px 粘性菜单（Drewry 四项来源 / Alphaliner 两项+同步按钮 /
+SSE 两项），右侧全宽内容区，滚动自动高亮当前块；≤1100px 菜单回落为静态，≤700px 图表网格单列。
+各来源块纵向堆叠，块内 `.vmain .chart-grid` 固定 2 列等宽；全宽图与表格用 `wide` 占满行。
+页高 58px，故侧栏 `top:68px`、锚点 `scroll-margin-top:68px`。改动须落在脚本源头再重渲染，
+勿直接改 HTML。「本期要点」沿用 `<details>` 默认折叠。
+三页共用页尾脚本提供 **SVG 悬停读数**（2026-11-24）：鼠标在任意 `svg.cv` 上移动时，按 SVG 坐标
+定位最近数据点，画黑色虚线竖线并在跟随浮层中列出该日期的所有序列值（折线取 `circle[data-s]`、
+柱状取 `rect[data-s]`）；图例点击隐藏与双击放大不受影响。首次读取时 `<title>` 文本转存到
+`data-tt` 并清空，避免浏览器原生 tooltip 与浮层重复；图标题移入 `aria-label`。
+
+**顶层入口（2026-11-24）**：根目录 `index.html` 的 `.quicklinks` 新增第三张「航运周报」卡
+（`--ind-shipping`），直接指向 `output/drewry-weekly.html`（默认周报）；曾建的 `weekly-hub.html`
+聚合层已按用户要求移除，Alphaliner / SSE 页仍可由 Drewry 页顶部页签切换进入。
+主看板 `render_html.py` 模板中的顶部 `wk-nav` 三个周报按钮已移除（脉搏条中的带数据入口保留）。
+
 数据已独立成文件 **`数据源/中远海控_Drewry周报数据.xlsx`**（2026-11-13 从
 `中远海控_行业供需与运价数据.xlsx` 拆出），一源一表：
 
 | sheet | 来源 | 频率 | 内容 |
 |---|---|---|---|
-| `WCI` | [World Container Index](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry) | 每周四 | 综合 + 周环比 + 4 条上海出口航线（46 期） |
-| `IACI` | [Intra-Asia Container Index](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/intra-asia-container-index) | 每周四 | 综合 + 周环比 + 8 条航线（24 期，自 2026-06-04） |
-| `CST` | [Cancelled Sailings Tracker](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/cancelled-sailings-tracker) | 每周五 | 覆盖周数 / 计划 / 停航 / 停航率 / 三干线结构 / 营运率（46 期） |
-| `RST` | [Red Sea Diversion Tracker](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/red-sea-diversion-tracker) | 每两周（周二） | 经苏伊士 / 经好望角 周度通航艘数 + 亚欧运力占比（57 周） |
+| `WCI` | [World Container Index](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/world-container-index-assessed-by-drewry) | 每周四 | 综合 + 周环比 + 4 条上海出口航线（47 期） |
+| `IACI` | [Intra-Asia Container Index](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/intra-asia-container-index) | 每周四 | 综合 + 周环比 + 8 条航线（25 期，自 2026-06-04） |
+| `CST` | [Cancelled Sailings Tracker](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/cancelled-sailings-tracker) | 每周五 | 覆盖周数 / 计划 / 停航 / 停航率 / 三干线结构 / 营运率（47 期） |
+| `RST` | [Red Sea Diversion Tracker](https://www.drewry.co.uk/supply-chain-advisors/supply-chain-expertise/red-sea-diversion-tracker) | 每两周（周二） | 经苏伊士 / 经好望角 周度通航艘数 + 亚欧运力占比（59 周） |
 | `分析要点` | 上述四源 | 随各期 | 官方原文提炼，键＝(数据截止, 来源) |
 
-页面上四个来源各成一块，从上到下：**WCI → IACI → CST → RST**，顶部有锚点导航。
+页面上四个来源各成一块，从上到下：**WCI → IACI → CST → RST**，由左侧垂直菜单导航。
 三张数据表**各用自己的发布日**（WCI/IACI 周四、CST 周五），合并时按 **ISO 周**
 （`date.isocalendar()`）对齐，不要求日期字符串相同；`read_drewry()` 在建页前会校验
 两表周序一一对应、同日期间日期差 ≤3 天、IACI 是 WCI 的子集，任一条不满足直接报错。
@@ -250,6 +270,14 @@ Alphaliner 官网**只给数字、没有任何文字洞察**，所以这一页�
 
 ### 单位约定（与拆分前的单表不同）
 
+> **2026-11-23 更新**：录入 CST 20 Nov 版（W48–W52，724 计划 / 42 停航 / 6%，跨太 48% / 亚欧 33% /
+> 跨大西洋 19%，94% 执行率）。因构建时强制 `set(WCI 周) == set(CST 周)`，同期补录 WCI 19 Nov 版
+> （$4,176，-3%；RTM 3,496 / LAX 7,026 / GOA 4,436 / NYC 8,194）及其官方要点。
+>
+> **2026-11-23 IACI 补录**：19 Nov 期 IACI 综合 $1,444（+$4 / +0.28%），8 条航线同步写入。
+> Nehru / Singapore / Busan 取官网正文（3141 / 2064 / 203），其余 5 条从官网 Canva 矢量图按
+> Y 轴刻度线性拟合，并用 11-12 期已知值逐序列校准（统一下移 3.7 美元）。
+
 `CST` 表的停航率 / 取消量占比 / 营运率按 **百分数** 存储（`7` 表示 7%），
 旧单表是小数比例（`0.07`）。读取端在各自边界归一：
 `build_tracker.py::_drewry_weekly()` 除 100 还原比例，`build_weekly_pages.py` 直接用百分数。
@@ -267,7 +295,7 @@ Alphaliner 官网**只给数字、没有任何文字洞察**，所以这一页�
 对应 IACMI 报告里的 Key signals 版式。
 
 > **CST 日期口径**：CST 每周五发布，比 WCI/IACI（周四）**晚 1 天**，所以 CST 表按**自己的周五日期**记录
-> （例如同一期 WCI 记 `2026-11-12`、CST 记 `2026-11-13`）。跨表合并按 ISO 周，两个日期都保留在记录里：
+> （例如同一期 WCI 记 `2026-11-19`、CST 记 `2026-11-20`）。跨表合并按 ISO 周，两个日期都保留在记录里：
 > `d` 为 WCI 侧（统一键）、`d_cst` 为 CST 侧，CST 块的三张图用 `d_cst` 成图。
 > 停航率是「未来五周」的**前瞻**值，不是当周实际执行率。
 >
@@ -287,8 +315,8 @@ Alphaliner 官网**只给数字、没有任何文字洞察**，所以这一页�
 
 | sheet | 列 | 覆盖 |
 |---|---|---|
-| `SCFI&CCFI` | 日期 / SCFI 综合 / SCFI 周环比 / CCFI 综合 / CCFI 周环比 / SCFI÷CCFI 即期溢价倍数 | 2021-01-08 起 **290 期** |
-| `SCFI 分线` | 日期 / 欧洲 / 地中海 / 美西 / 美东 / 波斯湾 / 舱位利用率(定性) / 市场行情简评 | 仅当年，2026 年内 **43 期** |
+| `SCFI&CCFI` | 日期 / SCFI 综合 / SCFI 周环比 / CCFI 综合 / CCFI 周环比 / SCFI÷CCFI 即期溢价倍数 | 2021-01-08 起 **292 期** |
+| `SCFI 分线` | 日期 / 欧洲 / 地中海 / 美西 / 美东 / 波斯湾 / 舱位利用率(定性) / 市场行情简评 | 仅当年，2026 年内 **45 期** |
 
 页面两大块（`build_sse()`）：
 
@@ -297,6 +325,11 @@ Alphaliner 官网**只给数字、没有任何文字洞察**，所以这一页�
 | ① SCFI·CCFI | SCFI 全序列（2021 起）+ CCFI + 即期溢价倍数 + 周环比柱状（近 104 期）+ 最近 9 期表 |
 | ② SCFI 分线 | 5 条主干航线，按单位分「欧地 / 美线 / 波斯湾」三张图 + 6 张 KPI + 最近 9 期表 |
 
+> 排版自 2026-11-24 起与其余两张周报页统一：左侧两项垂直菜单 + 右侧全宽内容区，两块纵向堆叠；
+> 综合块四图与分线块三图+9期表均按 2 列等宽排布（分线表与波斯湾图并排）。
+> `id="sseidx"` / `id="sseroute"` 保留供深链引用；本期要点沿用 `kps_block()` 的 `<details>` 默认折叠。
+
+> 两块底部的 `.note` 口径说明已删除（与「本期要点」重复）；图卡内 `.ann` 数据注解保留。
 > 「官方原文 / 近 10 期简评摘要」板块已移除（2026-11-14）；`SCFI 分线` 表的「市场行情简评」列仍保留在数据文件中，只是不再上页。
 
 ```bash
@@ -314,12 +347,19 @@ Alphaliner 官网**只给数字、没有任何文字洞察**，所以这一页�
   分线只有当年，不与 WCI 四航线同图对照（Drewry 与 SSE 口径不同）。
 - 周环比在源表里是**小数比例**（0.0051 = 0.51%），页面 `_pctp()` 与主看板 `pct()` 统一 ×100；
   两列的字段值已与相邻两期实际差分逐期核对，0 异常。
-- 主看板 `build_tracker.py` 的 `fr` 宽表由 **`_sse_wide()`** 按日期内连接两张 sheet 得到（43 期），
+- 主看板 `build_tracker.py` 的 `fr` 宽表由 **`_sse_wide()`** 按日期内连接两张 sheet 得到（45 期），
   不再读已删除的 `周运价指数(SCFI&CCFI)`。
+- **官方周报正文有时只给 SCFI 与分航线、不给 CCFI**（如 2026-11-20 期）：CCFI 取上海航交所
+  同日发布的《航运指数丨YYYY.MM.DD》（由新浪财经等转载，署名「来源：上海航交所」），
+  并在分线表「市场行情简评」列注明出处；禁止用上期 CCFI 代填。
+  2026-11-20 期实测：SCFI 3503.78 / CCFI 1923.21（+0.2%），与上一期 3572.33 / 1919.27 差分吻合。
 
 ### 每期更新
 
 1. 两张 sheet 末尾各加一行（同一发布日，均为周五；分线表可只更新 5 列与正文）；
+   **不要用 openpyxl 直接保存整个工作簿**——它会抹掉全部公式缓存值，使 `data_only=True` 读到 `None`、
+   即期溢价倍数整列断裂。做法：直接补 xlsx 内 `xl/worksheets/sheet1.xml` / `sheet2.xml` 的 `<row>`，
+   同步改 `<dimension>`，公式单元格写 `<f>…</f><v>缓存值</v>`（必要时补 `xl/calcChain.xml`）。
 2. 重跑 `src/build_weekly_pages.py --only sse`（只重建 SSE 页）+ `build_tracker.py` + `render_html.py`（主看板）；
    若要一次性重建三张周报页，才不带 `--only`。
 

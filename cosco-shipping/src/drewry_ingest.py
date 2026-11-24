@@ -173,7 +173,11 @@ def _ensure_analysis_sheet(wb):
 
 
 def _upsert_analysis(ws, asof, source, title, points):
-    """删除同一 (数据截止, 来源) 的旧要点后整组重写，保证幂等。"""
+    """删除同一 (数据截止, 来源) 的旧要点后整组重写，保证幂等。
+
+    新一期要点插到表头下方（第 2 行），即最新一期永远排在最上方；
+    同键重写时先删旧行再插，故不会重复。Drewry 与 Alphaliner 共用本函数。
+    """
     asof_d = _as_date(asof)
     drop = []
     for r in range(2, ws.max_row + 1):
@@ -184,14 +188,19 @@ def _upsert_analysis(ws, asof, source, title, points):
     for r in reversed(drop):
         ws.delete_rows(r, 1)
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
-    # 插在数据区末尾（表下还有「口径与来源说明」区块，不能简单 append）
-    row = _last_data_row(ws) + 1
+    # 插在表头下方最上方（第 2 行）：最新一期永远排在最前。
+    # 样式不能照抄插入位置上方——第 1 行是表头（深蓝底白字），故先记下
+    # 插入前的首个数据行样式，插入后再套到新行。表下「口径与来源说明」随之整体下移。
+    style_src = 2 if _last_data_row(ws) >= 2 else None
+    tpl = ([copy(ws.cell(style_src, c)._style) for c in range(1, 7)]
+           if style_src else None)
+    row = 2
     ws.insert_rows(row, amount=len(points))
-    for i, p in enumerate(points):
+    for i in range(len(points)):
         r = row + i
-        if r > 2:                    # 沿用上一数据行的样式
+        if tpl:                      # 套用原首个数据行的样式（非表头）
             for c in range(1, 7):
-                ws.cell(r, c)._style = copy(ws.cell(r - 1, c)._style)
+                ws.cell(r, c)._style = tpl[c - 1]
     for i, p in enumerate(points, 1):
         vals = [asof_d, source, title if i == 1 else None, p, i, now if i == 1 else None]
         for c, v in enumerate(vals, 1):

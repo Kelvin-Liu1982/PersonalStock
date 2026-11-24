@@ -698,7 +698,7 @@ nav.tabs{display:flex;gap:6px;margin-left:auto;align-items:center}
 nav.tabs a{font-size:11.5px;color:var(--dim);text-decoration:none;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:4px 11px;white-space:nowrap}
 nav.tabs a.on{background:var(--acc2);color:#fff;border-color:var(--acc2);font-weight:600}
 nav.tabs a.back{color:var(--acc2)}
-.wrap{max-width:1200px;margin:0 auto;padding:22px 22px 80px}
+.wrap{max-width:1600px;margin:0 auto;padding:22px 28px 80px}
 /* Alphaliner 同步按钮：置于顶部分块导航行的最右侧 */
 .al-sync-btn{font-size:12px;color:#fff;background:var(--acc2);border:1px solid var(--acc2);border-radius:9px;padding:5px 12px;cursor:pointer;white-space:nowrap;margin-left:auto}
 .al-sync-btn:hover{background:#0e4a55}
@@ -707,6 +707,10 @@ nav.tabs a.back{color:var(--acc2)}
 .al-status:empty{display:none}
 .al-status.ok{color:var(--acc2)}
 .al-status.err{color:#c53030}
+/* Alphaliner 同步操作条：导航移除后独立成一行，按钮靠右、状态跟后 */
+.al-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.al-bar .al-sync-btn{margin-left:auto}
+.al-bar .al-status{flex:0 1 auto;margin-left:0;text-align:right}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:12px;margin-bottom:20px}
 .kpis.k3{grid-template-columns:repeat(3,1fr)}
 .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px 10px;box-shadow:0 1px 3px rgba(20,30,50,.04);position:relative;overflow:hidden}
@@ -723,22 +727,64 @@ nav.tabs a.back{color:var(--acc2)}
 .sec-n{width:24px;height:24px;border-radius:7px;background:var(--acc2);color:#fff;display:inline-grid;place-items:center;font-size:12px;font-weight:700;flex:none}
 .sec h2{font-size:16px;font-weight:700}
 .sec-sub{font-size:11.5px;color:var(--dim);margin-left:4px}
-/* 三大来源分块 */
+/* Drewry 专属：左侧垂直导航 + 右侧全宽内容（Tabler sidebar 风格） */
+.vlayout{display:grid;grid-template-columns:212px minmax(0,1fr);gap:18px;align-items:start}
+.vside{position:sticky;top:68px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 10px;box-shadow:0 1px 3px rgba(20,30,50,.04)}
+.vside h3{font-size:10px;font-weight:700;color:var(--todo);letter-spacing:.9px;margin:2px 10px 10px}
+.vside a{display:flex;gap:9px;align-items:center;padding:8px 10px;border-radius:9px;color:var(--dim);text-decoration:none;font-size:12px;margin-bottom:2px;line-height:1.3}
+.vside a:hover{background:var(--soft);color:var(--acc2)}
+.vside a.on{background:var(--acc2);color:#fff;font-weight:600}
+.vside .di{width:22px;height:22px;border-radius:7px;background:var(--soft);color:var(--acc2);display:grid;place-items:center;font-size:10px;font-weight:700;flex:none}
+.vside a.on .di{background:rgba(255,255,255,.22);color:#fff}
+.vside small{display:block;font-size:10px;color:var(--todo);font-weight:400;margin-top:2px}
+.vside a.on small{color:rgba(255,255,255,.82)}
+.vside .back{margin-top:9px;border-top:1px dashed var(--line);padding-top:10px;border-radius:0}
+.vside .al-sync-btn{width:100%;margin:10px 0 0;text-align:center}
+.vside .al-status{flex:none;display:block;margin:6px 0 0;text-align:left;line-height:1.4}
+.vmain{min-width:0}
+.vmain .chart-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.vmain .blk{margin-top:0;margin-bottom:30px;scroll-margin-top:68px}
+@media(max-width:1100px){.vlayout{grid-template-columns:1fr}.vside{position:static}.vmain .blk{margin-bottom:24px}}
+@media(max-width:700px){.vmain .chart-grid{grid-template-columns:1fr}}
+/* 三张来源分块 */
 nav.anchors{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
 nav.anchors span{font-size:10.5px;color:var(--todo)}
 nav.anchors a{font-size:11.5px;color:var(--dim);text-decoration:none;border:1px solid var(--line);background:var(--card);border-radius:9px;padding:4px 11px;white-space:nowrap}
 nav.anchors a:hover{color:var(--acc2);border-color:var(--acc2)}
 nav.anchors a b{color:var(--acc2);margin-right:5px;font-weight:700}
 .blk{margin-top:32px;scroll-margin-top:70px}
+/* PC 宽屏：四大来源 2×2 卡片并排（仅 .dash 包裹层生效，不影响其它页） */
+.dash{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+.dash .blk{margin-top:0;scroll-margin-top:70px}
+/* 半宽卡片内 KPI 更紧凑，确保 WCI 5 个能排成一行（每列约143px）；仅 2 列宽屏生效 */
+@media(min-width:1201px){
+.dash .kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:9px}
+.dash .kpi{padding:11px 11px 8px}
+.dash .kpi-v{font-size:20px}
+/* SSE：综合 4 项单行；分线 6 项走 3×2，避免 5+1 孤行 */
+.vmain #sseidx .kpis{grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.vmain #sseroute .kpis{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+}
+/* Tabler 风格卡片：来源块整体成卡，header/body 分层 */
+.dash .blk{background:transparent}
+.dash .blk-hd{border-left-width:4px}
 .blk-hd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--acc2);border-radius:12px;padding:11px 15px;margin-bottom:12px;box-shadow:0 1px 3px rgba(20,30,50,.04)}
 .blk-badge{font-size:10.5px;font-weight:700;letter-spacing:.7px;color:#fff;background:var(--acc2);padding:3px 9px;border-radius:6px;white-space:nowrap}
 .blk-hd h2{font-size:15.5px;font-weight:700}
 .blk-sub{font-size:11.5px;color:var(--dim)}
 .blk-meta{margin-left:auto;font-size:10.5px;color:var(--todo);text-align:right;line-height:1.55}
 .blk-meta b{color:var(--acc2);font-weight:600;font-variant-numeric:tabular-nums}
-.kps{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px 13px;margin-bottom:13px;box-shadow:0 1px 3px rgba(20,30,50,.04)}
-.kps-h{font-size:11px;font-weight:700;color:var(--acc2);letter-spacing:.4px;margin-bottom:8px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.kps{background:var(--card);border:1px solid var(--line);border-radius:12px;margin-bottom:13px;box-shadow:0 1px 3px rgba(20,30,50,.04)}
+.kps-h{font-size:11px;font-weight:700;color:var(--acc2);letter-spacing:.4px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
 .kps-h em{font-style:normal;font-weight:400;color:var(--todo);letter-spacing:0}
+/* 本期要点默认折叠：summary 一行概览，展开后见完整要点 */
+details.kps>summary{list-style:none;cursor:pointer;padding:10px 16px;user-select:none}
+details.kps>summary::-webkit-details-marker{display:none}
+details.kps>summary::before{content:"▸";color:var(--acc2);font-size:12px;margin-right:2px;display:inline-block;transition:transform .15s}
+details.kps[open]>summary::before{transform:rotate(90deg)}
+details.kps>summary:hover{background:var(--soft);border-radius:12px}
+details.kps .kps-body{padding:0 16px 13px;border-top:1px dashed var(--line);margin-top:0;padding-top:9px}
+details.kps .kps-h{margin-bottom:6px}
 .kps ol{margin:0;padding-left:19px}
 .kps li{font-size:12px;line-height:1.75;margin-bottom:5px;color:var(--ink)}
 .kps li:last-child{margin-bottom:0}
@@ -758,7 +804,7 @@ nav.anchors a b{color:var(--acc2);margin-right:5px;font-weight:700}
 .ann b{color:var(--ink);font-weight:600}
 .kpi-2{font-size:10.5px;color:var(--todo);font-variant-numeric:tabular-nums;margin-top:1px}
 .kpi-2 i{font-style:normal;color:var(--dim);margin-left:3px}
-.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(440px,1fr));gap:13px;align-items:start}
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:13px;align-items:start}
 .chart{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(20,30,50,.04);overflow:hidden}
 .chart.wide{grid-column:1/-1}
 .chart-hd{font-size:12.5px;font-weight:600;margin-bottom:4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -786,12 +832,21 @@ details.all-log summary{font-size:12px;font-weight:600;cursor:pointer;color:var(
 #zoom .zbox{max-width:1400px;margin:0 auto;background:#fff;border-radius:12px;padding:14px}
 #zoom svg{width:100%;height:auto;cursor:zoom-out}
 #zoom .zhint{font-size:11px;color:var(--dim);margin-bottom:8px}
+/* SVG 悬停读数：黑色竖线 + 数值浮层（三张周报页共用） */
+svg.cv{cursor:crosshair}
+#chartTip{position:fixed;z-index:99998;display:none;pointer-events:none;background:#fff;
+  border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 14px rgba(20,30,50,.16);
+  padding:7px 10px;font-size:11.5px;color:var(--ink);line-height:1.65;max-width:240px}
+#chartTip .tt-d{font-weight:700;color:var(--acc2);margin-bottom:3px}
+#chartTip .tt-r{white-space:nowrap}
+#chartTip .tt-c{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle}
+@media(max-width:1200px){.dash{grid-template-columns:1fr}}
 @media(max-width:700px){.chart-grid{grid-template-columns:1fr}.kpis,.kpis.k3{grid-template-columns:repeat(2,1fr)}nav.tabs{margin-left:0}}
 </style>
 </head>
 <body>
 <header class="top"><h1>__H1__</h1><span class="sub">__SUB__</span>
-<nav class="tabs"><a href="drewry-weekly.html" class="__ON_DR__">运价与停航</a><a href="alphaliner-weekly.html" class="__ON_AL__">运力与公司</a><a href="sse-weekly.html" class="__ON_SSE__">SSE 运价指数</a><a href="cosco-dashboard.html" class="back">返回主看板</a></nav></header>
+<nav class="tabs"><a href="drewry-weekly.html" class="__ON_DR__">Drewry周报</a><a href="alphaliner-weekly.html" class="__ON_AL__">Alphaliner周报</a><a href="sse-weekly.html" class="__ON_SSE__">SSE周报</a><a href="cosco-dashboard.html" class="back">返回主看板</a></nav></header>
 <div class="wrap">
 """
 
@@ -820,6 +875,83 @@ function closeZoom(e){
 }
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape')document.getElementById('zoom').classList.remove('on');});
+/* 左侧垂直菜单：滚动高亮当前来源（三张周报页共用） */
+(function(){var as=[].slice.call(document.querySelectorAll(".vside .vlink[href^='#']"));
+function upd(){var y=window.scrollY+130,i0=0;
+  as.forEach(function(a,i){var el=document.querySelector(a.getAttribute("href"));
+    if(el&&el.offsetTop<=y)i0=i;});
+  as.forEach(function(a,i){a.classList.toggle("on",i===i0);});}
+window.addEventListener("scroll",upd,{passive:true});upd();})();
+/* SVG 悬停读数：黑色竖线定位最近数据点，浮层显示该日期各序列数值 */
+(function(){
+  var tip=document.createElement('div');tip.id='chartTip';document.body.appendChild(tip);
+  var cache=new WeakMap(),layer=null,cur=null;
+  function pickText(el){
+    var txt=el.getAttribute('data-tt');
+    if(!txt){
+      var t=el.querySelector('title');
+      if(!t)return '';
+      txt=t.textContent;
+      el.setAttribute('data-tt',txt);   /* 转存文本，供放大图克隆后继续读数 */
+      t.textContent='';                 /* 清空原生 tooltip 来源 */
+    }
+    return txt;
+  }
+  function data(svg){
+    if(cache.has(svg))return cache.get(svg);
+    var out=[];
+    var root=svg.querySelector(':scope > title');
+    if(root){svg.setAttribute('aria-label',root.textContent);root.textContent='';}
+    svg.querySelectorAll('circle[data-s]').forEach(function(c){
+      var txt=pickText(c);if(!txt)return;
+      var a=txt.split(' · ');
+      out.push({x:parseFloat(c.getAttribute('cx')),d:a[0],lab:a.slice(1).join(' · '),c:c.getAttribute('fill')});
+    });
+    if(!out.length){
+      svg.querySelectorAll('rect[data-s]').forEach(function(r){
+        var txt=pickText(r);if(!txt)return;
+        var a=txt.split(' · ');
+        out.push({x:parseFloat(r.getAttribute('x'))+parseFloat(r.getAttribute('width'))/2,
+                  d:a[0],lab:a.slice(1).join(' · '),c:r.getAttribute('fill')});
+      });
+    }
+    cache.set(svg,out);return out;
+  }
+  document.addEventListener('mousemove',function(ev){
+    var svg=ev.target&&ev.target.closest?ev.target.closest('svg.cv'):null;
+    if(!svg){if(layer){layer.remove();layer=null;cur=null;}tip.style.display='none';return;}
+    var arr=data(svg);if(!arr.length){tip.style.display='none';return;}
+    var pt=svg.createSVGPoint();pt.x=ev.clientX;pt.y=ev.clientY;
+    var m=svg.getScreenCTM();if(!m)return;
+    var x=pt.matrixTransform(m.inverse()).x,best=arr[0],bd=1e9;
+    for(var i=0;i<arr.length;i++){var dd=Math.abs(arr[i].x-x);if(dd<bd){bd=dd;best=arr[i];}}
+    if(cur!==svg||!layer){
+      if(layer)layer.remove();
+      layer=document.createElementNS('http://www.w3.org/2000/svg','g');
+      layer.setAttribute('pointer-events','none');
+      var first=svg.querySelector('path[data-s],rect[data-s]');
+      if(first)svg.insertBefore(layer,first);else svg.appendChild(layer);
+      cur=svg;
+    }
+    while(layer.firstChild)layer.removeChild(layer.firstChild);
+    var vb=svg.viewBox.baseVal;
+    var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',best.x.toFixed(1));ln.setAttribute('x2',best.x.toFixed(1));
+    ln.setAttribute('y1','30');ln.setAttribute('y2',String(vb.height-26));
+    ln.setAttribute('stroke','#111');ln.setAttribute('stroke-width','1');
+    ln.setAttribute('stroke-dasharray','4 3');ln.setAttribute('opacity','.75');
+    layer.appendChild(ln);
+    var rows=arr.filter(function(p){return Math.abs(p.x-best.x)<0.7;});
+    tip.innerHTML='<div class="tt-d">'+best.d+'</div>'+rows.map(function(p){
+      return '<div class="tt-r"><i class="tt-c" style="background:'+p.c+'"></i>'+p.lab+'</div>';
+    }).join('');
+    tip.style.display='block';
+    var L=ev.clientX+14,T=ev.clientY-12;
+    if(L+240>window.innerWidth)L=ev.clientX-250;
+    if(T+120>window.innerHeight)T=ev.clientY-120;
+    tip.style.left=L+'px';tip.style.top=T+'px';
+  });
+})();
 </script>
 </body></html>"""
 
@@ -910,6 +1042,22 @@ def shell(title, h1, sub, active, body):
     return css + body + TAIL
 
 
+def vside(title, items, extra=""):
+    """左侧垂直菜单：items = [(href, 徽标字符, 名称, 副标题), ...]。"""
+    links = "".join(
+        f'<a class="vlink" href="{href}"><span class="di">{ch}</span>'
+        f'<span>{name}<small>{sub}</small></span></a>'
+        for href, ch, name, sub in items)
+    back = ('<a class="vlink back" href="cosco-dashboard.html">'
+            '<span class="di">←</span><span>返回主看板</span></a>')
+    return f'<aside class="vside"><h3>{esc(title)}</h3>{links}{extra}{back}</aside>'
+
+
+def vlayout(side, main):
+    """左侧粘性菜单 + 右侧全宽内容区。"""
+    return '<div class="vlayout">' + side + '<main class="vmain">' + main + '</main></div>'
+
+
 def kpi_cards(items):
     """items: (name, value, unit, delta, is_pct_point, spark_svg, source, color)"""
     out = []
@@ -949,17 +1097,22 @@ def blk(bid, badge, title, sub, meta, inner):
 
 
 def kps_block(heading, an, fallback=""):
-    """本期要点卡：标题来自官方原文，要点由 drewry_ingest.py 落库。"""
+    """本期要点卡：标题来自官方原文，要点由 drewry_ingest.py 落库。
+
+    默认折叠为 details（摘要行显示期次+标题），点击展开完整要点，
+    以降低每张卡片的纵向占用，适配 2×2 并排布局。
+    """
     if not an or not an.get("points"):
         if not fallback:
             return ""
-        return (f'<div class="kps"><div class="kps-h">{esc(heading)}'
-                f'<em>官方要点未录入</em></div>'
-                f'<div class="kps-none">{fallback}</div></div>')
+        return (f'<div class="kps"><div class="kps-body" style="border-top:none">'
+                f'<div class="kps-h">{esc(heading)}<em>官方要点未录入</em></div>'
+                f'<div class="kps-none">{fallback}</div></div></div>')
     t = an.get("title") or ""
     items = "".join(f"<li>{_emph(p)}</li>" for p in an["points"])
-    return (f'<div class="kps"><div class="kps-h">{esc(heading)}'
-            f'<em>{esc(t)}</em></div><ol>{items}</ol></div>')
+    return (f'<details class="kps"><summary>'
+            f'<span class="kps-h">{esc(heading)}<em>{esc(t)}</em></span></summary>'
+            f'<div class="kps-body"><ol>{items}</ol></div></details>')
 
 
 def kpi2(items, cls=""):
@@ -1172,7 +1325,7 @@ def build_drewry():
             f'{rs[k]["lo"]:,.0f}', f'{rs[k]["hi"]:,.0f}')
            for k, nm, _ in DR_ROUTES if rs[k]],
         note="「周环比」按本表相邻两期实际值计算，与官方取整表述可能有 ±0.5pct 差异；"
-             "「年内」区间取本表已录期次的最小/最大值。", wide=False)
+             "「年内」区间取本表已录期次的最小/最大值。", wide=True)
 
     blk_wci = blk("wci", "WCI", "世界集装箱运价指数",
                   "World Container Index · 8 条东西向主干航线加权即期价",
@@ -1187,7 +1340,7 @@ def build_drewry():
                   + chart_ann("四条上海出口航线", w2, w2_ann,
                               "上鹿/上洛/上热/上纽 · 美线与欧地线量级差 1–2 倍，共用 y 轴",
                               wide=True)
-                  + chart_ann("WCI 综合周环比", w3, w3_ann, "正值红、负值绿")
+                  + chart_ann("WCI 综合周环比", w3, w3_ann, "正值红、负值绿", wide=True)
                   + wtab
                   + "</div>"
                   + '<div class="note">WCI 是<b>即期运价</b>（USD/FEU，不含长协与码头操作费），'
@@ -1493,18 +1646,19 @@ def build_drewry():
                         '这是运价中枢的供给侧变量，<b>与停航率（船司主动调控）是两套独立机制</b>。</div>')
 
     # ================================================================ 组装
-    nav = ('<nav class="anchors"><span>四大来源</span>'
-           '<a href="#wci"><b>WCI</b>世界集装箱运价指数</a>'
-           '<a href="#iaci"><b>IACI</b>亚洲区内运价</a>'
-           '<a href="#cst"><b>CST</b>取消航次追踪</a>'
-           '<a href="#rst"><b>RST</b>红海绕航追踪</a></nav>')
+    side = vside("四大追踪来源", [
+        ("#wci", "W", "WCI", "世界集装箱运价"),
+        ("#iaci", "I", "IACI", "亚洲区内运价"),
+        ("#cst", "C", "CST", "取消航次追踪"),
+        ("#rst", "R", "RST", "红海绕航追踪"),
+    ])
 
-    body = (nav + blk_wci + blk_iaci + blk_cst + blk_rst
-            + f'<div class="foot"><span>数据来源：Drewry World Container Index / Intra-Asia Container '
-              f'Index / Cancelled Sailings Tracker / Red Sea Diversion Tracker 官网；'
-              f'本期要点为官方原文提炼，RST 艘数为图表数字化。</span>'
-              f'<span>更新：WCI 与 IACI 每周四、CST 每周五、RST 每两周周二；'
-              f'本页由 build_weekly_pages.py 从 xlsx 重建，非实时。</span></div>')
+    foot = (f'<div class="foot"><span>数据来源：Drewry World Container Index / Intra-Asia Container '
+            f'Index / Cancelled Sailings Tracker / Red Sea Diversion Tracker 官网；'
+            f'本期要点为官方原文提炼，RST 艘数为图表数字化。</span>'
+            f'<span>更新：WCI 与 IACI 每周四、CST 每周五、RST 每两周周二；'
+            f'本页由 build_weekly_pages.py 从 xlsx 重建，非实时。</span></div>')
+    body = vlayout(side, blk_wci + blk_iaci + blk_cst + blk_rst + foot)
     doc = shell("Drewry 周报 · 运价与停航", "Drewry 周报 · 运价与停航",
                 f"WCI / IACI / CST / RST 四大来源分块 · 2026 年内 {n_period} 期 · 单一 xlsx 数据源",
                 "dr", body)
@@ -1660,10 +1814,10 @@ def build_alphaliner():
 
     g1 = multi_svg("g1", "全球船队运力", "万TEU",
                    [("全部在运营", ds, fleet_w), ("全集装箱船", ds, fully_w)],
-                   [C_TEAL, C_BLUE], W_TEU, W=780, hl=True)
+                   [C_TEAL, C_BLUE], W_TEU, W=560, hl=True)
     g2 = multi_svg("g2", "三大干线周运力投放", "万TEU",
                    [("跨太平洋", ds, tp_w), ("远东-欧洲", ds, fe_w), ("跨大西洋", ds, ta_w)],
-                   [C_RED, C_BLUE, C_GRAY], W_TEU, W=780, hl=True)
+                   [C_RED, C_BLUE, C_GRAY], W_TEU, W=560, hl=True)
     g3 = multi_svg("g3", "单船平均运力（大型化）", "TEU/艘",
                    [("单船平均", ds, c("per_ship"))], [C_AMBER], W_N, W=560, hl=True)
     g4 = multi_svg("g4", "在运营船舶数与全集装箱船", "艘",
@@ -1697,7 +1851,7 @@ def build_alphaliner():
               f'集装箱船的增长略快于总体，说明新增运力集中在集装箱板块。')
 
     tab_g = grid_table(
-        "最近 8 期快照",
+        "最近 9 期快照",
         ["发布时间", "在运营运力(万TEU)", "在运营船舶(艘)", "单船平均(TEU)",
          "跨太平洋(万TEU/周)", "远东-欧洲", "跨大西洋"],
         [[esc(r["d"]),
@@ -1707,7 +1861,7 @@ def build_alphaliner():
           f'{r["tp"] / 1e4:,.1f}' if r["tp"] else "—",
           f'{r["fe"] / 1e4:,.1f}' if r["fe"] else "—",
           f'{r["ta"] / 1e4:,.1f}' if r["ta"] else "—"]
-         for r in al[-8:]],
+         for r in al[-9:]],
         note="快照不定期，行间间隔 4–28 天，相邻行不可直接当作「一周」比较。")
 
     blk_g = blk("global", "GLOBAL", "全球船队",
@@ -1718,19 +1872,14 @@ def build_alphaliner():
                 + kpi_g()
                 + '<div class="chart-grid">'
                 + chart_ann("全球船队运力", g1, g1_ann,
-                            f'{len(al)} 期不定期快照 · 末年橙圈为最新一期', wide=True)
+                            f'{len(al)} 期不定期快照 · 末年橙圈为最新一期')
                 + chart_ann("三大干线周运力", g2, g2_ann,
-                            "同一 y 轴；跨大西洋量级仅为另两条的 1/4", wide=True)
+                            "同一 y 轴；跨大西洋量级仅为另两条的 1/4")
                 + chart_ann("单船平均运力", g3, g3_ann, "全球运力 ÷ 在运营船舶艘数")
                 + chart_ann("在运营船舶数 / 全集装箱船", g4, g4_ann,
                             "艘数口径；两线差额＝非全集装箱船")
                 + tab_g
-                + "</div>"
-                + '<div class="note">口径三条：'
-                  '<b>①「全部在运营」是 global figures 首行，含全集装箱船以外船型</b>，'
-                  '「全集装箱船」为 fully cellular 口径，两者不可混用；'
-                  '<b>② 快照不定期（4–28 天）</b>，图上按真实日期定位，不做等距、不插值；'
-                  '<b>③ 三大干线周运力是「每周投入的舱位」</b>，不是运价，也不代表需求量。</div>')
+                + "</div>")
 
     # ============================================================ ② COSCO
     def kpi_c():
@@ -1759,13 +1908,13 @@ def build_alphaliner():
 
     s1 = multi_svg("s1", "中远 vs 全球（年初 = 100）", "指数",
                    [("全球运力", ds, idx_fleet), ("中远海控", ds, idx_cosco)],
-                   [C_GRAY, C_RED], lambda v: f"{v:.1f}", W=560, hl=True)
+                   [C_GRAY, C_RED], lambda v: f"{v:.1f}", W=780, hl=True)
     s2 = multi_svg("s2", "中远全球运力份额", "%",
                    [("全球份额", ds, c("share"))], [C_PURPLE], W_PCT, W=560, hl=True)
     # 手持订单绝对量与「订单/现有运力」本质是同一序列的两种标度（分母仅缓慢变化），
     # 双轴画出来会完全重合，故只画绝对量；比例放在 KPI 与注解里。
     s3 = multi_svg("s3", "手持订单（未交付运力）", "万TEU",
-                   [("手持订单", ds, order_w)], [C_GREEN], W_TEU, W=780, hl=True)
+                   [("手持订单", ds, order_w)], [C_GREEN], W_TEU, W=560, hl=True)
     # 自有与租入拆成两张图：两者量级差 1.5 倍，合画时租入的波动会被压平
     s4 = multi_svg("s4", "自有运力", "万TEU",
                    [("自有运力", ds, owned_w)], [C_TEAL], W_TEU, W=560, hl=True)
@@ -1803,7 +1952,7 @@ def build_alphaliner():
               f'<b>租入是弹性成本：运价上行时放大利润，下行时也是最先被退掉的那部分。</b>')
 
     tab_c = grid_table(
-        "最近 8 期快照",
+        "最近 9 期快照",
         ["发布时间", "总运力(万TEU)", "艘数", "全球份额", "自有(万TEU)",
          "租入(万TEU)", "租入占比", "订单(万TEU)", "订单/现有"],
         [[esc(r["d"]),
@@ -1815,7 +1964,7 @@ def build_alphaliner():
           f'{r["chart_pct"]:.1f}%' if r["chart_pct"] else "—",
           f'{r["order"] / 1e4:,.1f}' if r["order"] else "—",
           f'{r["order_pct"]:.1f}%' if r["order_pct"] else "—"]
-         for r in al[-8:]],
+         for r in al[-9:]],
         note="「—」为源表该期缺列或串列（2026-06-17、2026-10-02 整段缺拆分；"
              "2026-06-25 租入列少一位数，已按拆分不自洽剔除）。")
 
@@ -1826,34 +1975,31 @@ def build_alphaliner():
                           "本期要点生成失败，下图注解仍可用。")
                 + kpi_c()
                 + '<div class="chart-grid">'
-                + chart_ann("中远 vs 全球（年初=100）", s1, s1_ann, "两条线间距＝累计相对强弱")
+                + chart_ann("中远 vs 全球（年初=100）", s1, s1_ann,
+                            "两条线间距＝累计相对强弱", wide=True)
                 + chart_ann("全球运力份额", s2, s2_ann, "公司运力 ÷ 全球运力，非源表 #REF! 列")
                 + chart_ann("手持订单（未交付运力）", s3, s3_ann,
-                            "单轴绝对量；比例见 KPI 卡「手持订单 / 现有运力」", wide=True)
+                            "单轴绝对量；比例见 KPI 卡「手持订单 / 现有运力」")
                 + chart_ann("自有运力", s4, s4_ann, "刚性成本端，一年仅微调")
                 + chart_ann("租入运力", s5, s5_ann,
                             "弹性成本端 · 2026-06-25 租入列少一位数，该点断线")
                 + tab_c
-                + "</div>"
-                + '<div class="note">这一块回答的是<b>「中远在行业里的相对位置」</b>：'
-                  '<b>① 份额</b>看相对强弱，<b>② 订单/运力</b>看两年后的供给，'
-                  '<b>③ 租入占比</b>看船队杠杆。三者共同决定运价下行时的利润弹性。'
-                  '源表「全球份额(%)」列在 Excel 里是 <b>#REF! 断链</b>，本页一律按 '
-                  '公司总运力 ÷ 全球运力 重算，不用源表值。</div>')
+                + "</div>")
 
     # ============================================================ 组装
-    nav = ('<nav class="anchors"><span>两大模块</span>'
-           '<a href="#global"><b>GLOBAL</b>全球船队</a>'
-           '<a href="#cosco"><b>COSCO</b>中远海控</a>'
-           '<button class="al-sync-btn" id="al-btn" onclick="syncAlphaliner(this)">'
-           '同步 Alphaliner TOP100</button>'
-           '<span class="al-status" id="al-status"></span></nav>')
+    sync_extra = ('<button class="al-sync-btn" id="al-btn" onclick="syncAlphaliner(this)">'
+                  '同步 Alphaliner TOP100</button>'
+                  '<span class="al-status" id="al-status"></span>')
+    side = vside("两大模块", [
+        ("#global", "G", "GLOBAL", "全球船队"),
+        ("#cosco", "C", "COSCO", "中远海控"),
+    ], extra=sync_extra)
 
     n_gap = sum(1 for r in al if r["owned"] is None)
-    body = (AL_SYNC_BLOCK + nav + blk_g + blk_c
-            + f'<div class="foot"><span>数据来源：Alphaliner PublicTop100（Global figures / '
-              f'Regional Trades / TOP100 第 4 行 COSCO Group），官网每日更新，本页每周六取一次快照。</span>'
-              f'<span>本页 {len(al)} 期不定期快照；分析要点与图表注解由本表数据生成（官网无文字洞察）。</span></div>')
+    foot = (f'<div class="foot"><span>数据来源：Alphaliner PublicTop100（Global figures / '
+            f'Regional Trades / TOP100 第 4 行 COSCO Group），官网每日更新，本页每周六取一次快照。</span>'
+            f'<span>本页 {len(al)} 期不定期快照；分析要点与图表注解由本表数据生成（官网无文字洞察）。</span></div>')
+    body = AL_SYNC_BLOCK + vlayout(side, blk_g + blk_c + foot)
     doc = shell("Alphaliner 周报 · 运力与公司", "Alphaliner 周报 · 运力与公司",
                 f"全球船队 / 中远海控 两大模块 · {len(al)} 期快照 · 单一 xlsx 数据源",
                 "al", body)
@@ -2102,12 +2248,12 @@ def build_sse():
         return kpi2(items)
 
     s1 = multi_svg("s1", "SCFI 综合指数", "点",
-                   [("SCFI 综合", di, c("scfi"))], [C_RED], W=780, hl=True)
+                   [("SCFI 综合", di, c("scfi"))], [C_RED], W=560, hl=True)
     s2 = multi_svg("s2", "CCFI 综合指数", "点",
                    [("CCFI 综合", dc, col(cc, "ccfi"))], [C_BLUE], W=560, hl=True)
     s3 = multi_svg("s3", "SCFI / CCFI 即期溢价倍数", "倍",
                    [("即期溢价", drr, col(rr, "ratio"))], [C_AMBER], W=560, hl=True)
-    s4 = bar_svg("s4", "SCFI 综合周环比", "%", dw, col(ww, "scfi_wow"), W=780)
+    s4 = bar_svg("s4", "SCFI 综合周环比", "%", dw, col(ww, "scfi_wow"), W=560, H=300)
 
     sign, nstr = _streak(c("scfi"))
     s1_ann = (f'本期 <b>{ss["v"]:,.2f}</b> 点（周环比 <b>{ss["wow"]:+.2f}%</b>'
@@ -2151,28 +2297,21 @@ def build_sse():
 
     t1, p1 = sse_points_index(idx, cc, i26)
     blk_idx = blk("sseidx", "SCFI·CCFI", "上海出口集装箱运价指数 / 中国出口集装箱运价指数",
-                  "Shanghai Containerized Freight Index · 即期　|　China Containerized Freight Index · 长协加权",
+                  "即期 | 长协加权",
                   f'数据截止 <b>{ss["d"]}</b><br>上海航运交易所 · 每周五',
                   kps_block(f'本期要点 · {ss["d"]}', dict(title=t1, points=p1))
                   + kpi_idx()
                   + '<div class="chart-grid">'
                   + chart_ann("SCFI 综合指数（2021-01 起）", s1, s1_ann,
-                              f"{n_period} 期 · 末年橙圈为最新一期 · 点击图例隐藏、双击放大",
-                              wide=True)
+                              f"{n_period} 期 · 末年橙圈为最新一期 · 点击图例隐藏、双击放大")
                   + chart_ann("CCFI 综合指数", s2, s2_ann,
-                              f"{len(cc)} 期")
+                              f"{len(cc)} 期 · 末年橙圈为最新一期 · 点击图例隐藏、双击放大")
+                  + chart_ann("SCFI 综合周环比（近 104 期）", s4, s4_ann,
+                              "正值红、负值绿 · 全样本极值见注解")
                   + chart_ann("SCFI / CCFI 即期溢价倍数", s3, s3_ann,
                               "= SCFI ÷ CCFI，>1 即期高于长协")
-                  + chart_ann("SCFI 综合周环比（近 104 期）", s4, s4_ann,
-                              "正值红、负值绿 · 全样本极值见注解", wide=True)
                   + dtab
-                  + "</div>"
-                  + '<div class="note">两种指数的<b>加权口径不同</b>，不能直接比大小：'
-                    '<b>SCFI</b> 是即期市场订舱价（每周五发布，反映当下成交）；'
-                    '<b>CCFI</b> 是包含长协的加权指数（基期 1998-01-01=1000，变动更平缓）。'
-                    '对中远海控而言，<b>SCFI 决定即期舱位的边际收入，CCFI 更接近报表口径的收入中枢</b>，'
-                    '两者价差（即期溢价倍数）是利润弹性的来源。'
-                    '本页数据为<b>周度</b>，遇春节等长假发布间隔会拉长到 14 天，属正常节奏。</div>')
+                  + "</div>")
 
     # ================================================================ ② 分航线
     def kpi_routes():
@@ -2247,7 +2386,7 @@ def build_sse():
 
     t2, p2 = sse_points_routes(fl)
     blk_rt = blk("sseroute", "SCFI 分线", "上海出口集装箱分航线运价",
-                 "5 条主干航线 · 仅当年（2026）· 单位 USD/TEU 与 USD/FEU 并存",
+                 "5 条主干航线 · 单位 USD/TEU 与 USD/FEU 并存",
                  f'数据截止 <b>{cur["d"]}</b><br>上海航运交易所 · {len(fl)} 期',
                  kps_block(f'本期要点 · {cur["d"]}', dict(title=t2, points=p2))
                  + kpi_routes()
@@ -2256,26 +2395,19 @@ def build_sse():
                  + chart_ann("美线（USD/FEU）", r2, r2_ann, "美西 / 美东 · 末年橙圈为最新")
                  + chart_ann("波斯湾线（USD/TEU）", r3, r3_ann, "地缘溢价最敏感的一条")
                  + rtab
-                 + "</div>"
-                 + '<div class="note">分航线数据<b>只有当年</b>（2026 年起 %d 期），'
-                   '历史周报未逐期录入，因此本块不与 WCI 的四条上海出口航线做可比对照——'
-                   'WCI 是 Drewry 口径（USD/FEU、东西向主干线），'
-                   'SCFI 分线是上海航交所口径（欧地/波斯湾用 TEU），'
-                   '<b>名称相同不等于口径相同</b>。'
-                   '「舱位利用率」为周报正文的定性判断，本表只做三档标签，不做数值化。</div>' % len(fl))
+                 + "</div>")
 
     # ================================================================ 组装
-    nav = ('<nav class="anchors"><span>两大板块</span>'
-           '<a href="#sseidx"><b>SCFI·CCFI</b>综合指数</a>'
-           '<a href="#sseroute"><b>分线</b>五条主干航线</a>'
-           '</nav>')
-
-    body = (nav + blk_idx + blk_rt
-            + f'<div class="foot"><span>数据来源：上海航运交易所（sse.net.cn）SCFI / CCFI 周度指数、'
-              f'SCFI 分航线运价与周报正文；综合指数 2021-01 起 {n_period} 期，'
-              f'分航线为 2026 年内 {len(fl)} 期。</span>'
-              f'<span>更新：每周五发布；本页由 build_weekly_pages.py 从 '
-              f'中远海控_SSE周报数据.xlsx 重建，非实时。</span></div>')
+    side = vside("两大板块", [
+        ("#sseidx", "S", "SCFI·CCFI", "综合运价指数"),
+        ("#sseroute", "R", "分线", "五条主干航线"),
+    ])
+    foot = (f'<div class="foot"><span>数据来源：上海航运交易所（sse.net.cn）SCFI / CCFI 周度指数、'
+            f'SCFI 分航线运价与周报正文；综合指数 2021-01 起 {n_period} 期，'
+            f'分航线为 2026 年内 {len(fl)} 期。</span>'
+            f'<span>更新：每周五发布；本页由 build_weekly_pages.py 从 '
+            f'中远海控_SSE周报数据.xlsx 重建，非实时。</span></div>')
+    body = vlayout(side, blk_idx + blk_rt + foot)
     doc = shell("SSE 周报 · 上海航运交易所运价指数", "SSE 周报 · 上海航运交易所运价指数",
                 f"SCFI / CCFI 综合指数 · SCFI 五条分航线 · "
                 f"综合 {n_period} 期 / 分线 {len(fl)} 期 · 单一 xlsx 数据源",

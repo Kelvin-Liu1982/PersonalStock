@@ -54,13 +54,6 @@ header.top{background:var(--card);border-bottom:1px solid var(--line);padding:18
 .top h1{font-size:19px;font-weight:700;letter-spacing:.5px}
 .top .sub{color:var(--dim);font-size:12px;margin-top:3px}
 .wrap{max-width:1200px;margin:0 auto;padding:24px 22px 90px}
-/* 周报视图导航：从主看板进入两个独立周报页 */
-.wk-nav{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin-bottom:14px;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.wk-nav-t{font-size:11px;font-weight:700;color:#fff;background:var(--acc2);padding:2px 9px;border-radius:10px;white-space:nowrap}
-.wk-nav a{font-size:12px;color:var(--acc2);text-decoration:none;border:1px solid var(--line);background:var(--soft);border-radius:10px;padding:3px 10px;white-space:nowrap}
-.wk-nav a:hover{background:#eef2f6;border-color:var(--acc2)}
-.wk-nav-n{font-size:10.5px;color:var(--todo);margin-left:auto}
-@media(max-width:700px){.wk-nav-n{display:none}}
 /* 周度脉搏：四个独立数据源的截止日与关键数 */
 .pulse{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 14px;margin-bottom:16px;display:flex;gap:0;flex-wrap:wrap;align-items:stretch}
 .pulse .pi{display:flex;flex-direction:column;gap:1px;padding:1px 14px;border-left:1px solid var(--line);min-width:148px}
@@ -190,13 +183,6 @@ footer.foot2{margin-top:34px;text-align:center;color:var(--todo);font-size:11px}
 </head>
 <body>
 <div class="wrap">
-  <div class="wk-nav">
-    <span class="wk-nav-t">周报视图</span>
-    <a href="drewry-weekly.html">Drewry · 运价与停航</a>
-    <a href="alphaliner-weekly.html">Alphaliner · 运力与公司</a>
-    <a href="sse-weekly.html">SSE · 运价指数</a>
-    <span class="wk-nav-n">独立页面 · 与卡片指标同源 xlsx</span>
-  </div>
   <div class="quotebar" data-a-code="sh601919" data-h-code="hk01919" id="quotebar"></div>
   <div class="pulse" id="pulse"></div>
 

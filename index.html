@@ -25,7 +25,8 @@ h1{font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:.5px}
 @media (max-width:560px){.actions{grid-template-columns:1fr}}
 
 /* ===== 大宗商品分析 · 快捷小卡（置顶，独立于标的卡片） ===== */
-.quicklinks{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:0 0 32px;text-align:left}
+.quicklinks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:0 0 32px;text-align:left}
+@media (max-width:900px){.quicklinks{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:700px){.quicklinks{grid-template-columns:1fr}}
 .qcard{
   --cat:var(--acc2);
@@ -70,6 +71,14 @@ h1{font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:.5px}
       <span class="q-body">
         <span class="q-name">原油五维度</span>
         <span class="q-desc">Brent 价格 · 期限结构 · 相关性热力图</span>
+      </span>
+      <span class="q-arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="qcard" href="./cosco-shipping/output/drewry-weekly.html" style="--cat:var(--ind-shipping)" title="Drewry 周报 · WCI / IACI / CST / RST">
+      <span class="q-tag">航运</span>
+      <span class="q-body">
+        <span class="q-name">航运周报</span>
+        <span class="q-desc">Drewry · 运价与停航 · 四大来源</span>
       </span>
       <span class="q-arrow" aria-hidden="true">→</span>
     </a>
