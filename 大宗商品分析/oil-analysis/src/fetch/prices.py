@@ -70,8 +70,13 @@ def _fetch_eia_daily(ids, start, length=EIA_DAILY_LENGTH):
     """
     out = {}
     for key, series_id in ids.items():
-        url = (f"https://api.eia.gov/v2/seriesid/{series_id}"
-               f"?api_key={config.EIA_KEY}&length={length}")
+        # ⚠️ 2026-11-27 实测：**不带 ``length``，也不带 ``sort[]``/``data[]`` 方括号参数**。
+        #    - ``length=1500`` → 返回陈旧分页（末日停在 11-17、耗时 ~22s）；无 length 返回
+        #      全量 5000 条、2s 到位且末日最新（11-24）—— 更快更正确。
+        #    - 方括号参数（sort[0][column]/data[0]）会让请求挂起超时。
+        #    故只发 ``?api_key=``，靠下方本地 ``period < start`` 过滤（本就有）。
+        #    ``length`` 形参保留仅为兼容 fetch_brent_monthly 的调用，不再拼入 URL。
+        url = f"https://api.eia.gov/v2/seriesid/{series_id}?api_key={config.EIA_KEY}"
         payload = fetch_json_curl(url, timeout=40) or {}
         rows = payload.get("response", {}).get("data", [])
         series = {}
@@ -94,6 +99,12 @@ def fetch(start=None):
 
     Brent / WTI 优先 EIA 日度；任一条拿不到就**两条一起**回落 FRED ——
     两条同源，只回落一条会让 BW 价差变成「新 vs 旧」的假价差。
+
+    ⚠️ 2026-11-27「较新者优先」：EIA 的 seriesid 接口有**发布节奏差异**（实测 Brent
+    到 11-24 而 WTI 停在 11-17），也可能偶发返回陈旧副本。故两条源都取，用**两序列
+    最小末日**（min(brent_last, wti_last)）作判据：FRED 的最小末日更新时，整体改用
+    FRED（DCOILBRENTEU/DCOILWTICO 与 EIA 同值、仅转载渠道，切换不引入口径差）。
+    用 min 而非只看 brent，可避免「一新一旧」在末尾几日算出失真的 BW 价差。
     """
     start = start or config.START_DATE
     out = {}
@@ -103,10 +114,32 @@ def fetch(start=None):
         out[key] = eia.get(key) or {}
 
     missing = [k for k in EIA_PRICE_SERIES if not out.get(k)]
-    if missing:
+    # 判据用**两序列最小末日**：EIA 的 WTI（RWTC）发布常比 Brent 晚（实测 Brent 到 11-24
+    # 而 WTI 停在 11-17）。若只看 brent 会误判「EIA 已最新」而保留一侧陈旧的 WTI，
+    # 导致末尾几日 BW 价差用旧 WTI 失真。用 min 保证两条都新才认新。
+    def _pair_edge(d):
+        a = max((d or {}).get("brent") or {}, default=None)
+        b = max((d or {}).get("wti") or {}, default=None)
+        return min(a, b) if (a and b) else None
+
+    eia_edge = _pair_edge(out)
+    # EIA 缺失 → 必须回落；EIA 非空但任一条陈旧 → 也比对 FRED 取新
+    fred = {}
+    if missing or eia_edge is None:
         print(f"  [prices]  ⚠ EIA 日度价缺 {missing}，Brent/WTI 整体回落 FRED（同值，滞后约一周）")
-        for key, series in fetch_fred_group(FRED_PRICE_FALLBACK, start, "prices-fb").items():
-            out[key] = series
+        fred = fetch_fred_group(FRED_PRICE_FALLBACK, start, "prices-fb")
+    else:
+        fred = fetch_fred_group(FRED_PRICE_FALLBACK, start, "prices-fb")
+        fred_edge = _pair_edge(fred)
+        if fred_edge and eia_edge and fred_edge > eia_edge:
+            print(f"  [prices]  ⚠ EIA 副本较旧（两序列最小末日 {eia_edge} < FRED {fred_edge}），"
+                  f"整体改用 FRED（较新者优先，同值同源）")
+            missing = list(EIA_PRICE_SERIES)
+        else:
+            fred = {}   # FRED 不比 EIA 新，保留 EIA
+    for key in ("brent", "wti"):
+        if fred.get(key):
+            out[key] = fred[key]
 
     for key in EIA_PRICE_SERIES:
         ks = sorted(out[key])

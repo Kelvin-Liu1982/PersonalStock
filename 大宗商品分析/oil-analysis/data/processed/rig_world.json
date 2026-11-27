@@ -620,7 +620,8 @@
     "2026-06",
     "2026-07",
     "2026-08",
-    "2026-09"
+    "2026-09",
+    "2026-10"
   ],
   "world": [
     2694.0,
@@ -1243,16 +1244,17 @@
     1822.0,
     1878.8,
     1906.8,
-    1919.2
+    1919.2,
+    1933.2
   ],
   "unit": "rig count (台)",
   "scope": "Worldwide = 美国 + 加拿大 + 国际（Baker Hughes 全球旋转钻井平台数）",
   "source": "Baker Hughes Worldwide Rig Count (rigcount.bakerhughes.com)",
-  "retrieved": "2026-11-23",
-  "latest_month": "2026-09",
+  "retrieved": "2026-11-27",
+  "latest_month": "2026-10",
   "files": [
     "30c1d107-938c-4c66-bb40-206588f2f79e.xlsx",
-    "September-2026  WorldWide Rig Count Report.xlsx",
+    "October-2026  WorldWide Rig Count Report.xlsx",
     "b1528137-e6e5-473a-b39e-03793ea811b0.xlsx",
     "ee2f783a-97f4-4ca1-be03-e685d301fc28.xlsx"
   ]

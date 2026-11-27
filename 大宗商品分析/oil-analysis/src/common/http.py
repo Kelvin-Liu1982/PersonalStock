@@ -13,7 +13,9 @@ import urllib.request
 
 
 def _curl(url, timeout=40, retries=0, retry_delay=2, user_agent=None):
-    cmd = ["curl", "-s", "--max-time", str(timeout)]
+    # -g（--globoff）：关闭 URL 的 glob 展开。EIA v2 的排序参数形如 sort[0][column]=period，
+    # 方括号会被 curl 当作 range 语法解析并报 "bad range in URL position"，必须关掉。
+    cmd = ["curl", "-g", "-s", "--max-time", str(timeout)]
     if user_agent:
         cmd += ["-A", user_agent]
     if retries:
@@ -95,3 +97,26 @@ def fetch_json_urlopen(url, headers=None, timeout=40):
     except Exception as exc:
         print("   fetch_json_urlopen failed:", exc)
         return {}
+
+
+def fetch_text_curl(url, timeout=40, tries=2, pause=2, encoding="cp1252"):
+    """用 curl 抓纯文本（CSV 等）。失败返回 ""（空串）。
+
+    ⚠️ 必须带 ``-L``：EIA 的 ``ir.eia.gov/wpsr/*.csv`` 会 302 到 ``/secure/...?Policy=…&Signature=…``
+    的签名地址，不跟随就只拿到 0 字节（2026-11-27 实测：直接取返回 302、size=0）。
+    ⚠️ 默认 ``encoding="cp1252"``：EIA WPSR CSV 是 Windows-1252 编码（含 0x96 等字节，
+    按 UTF-8 解码会 UnicodeDecodeError），用 errors="replace" 容错。
+    """
+    for attempt in range(tries):
+        try:
+            raw = subprocess.check_output(
+                ["curl", "-g", "-sSL", "--max-time", str(timeout), url],
+                stderr=subprocess.DEVNULL,
+            )
+            return raw.decode(encoding, errors="replace")
+        except Exception as exc:
+            if attempt == tries - 1:
+                print("   fetch_text_curl failed:", exc)
+                return ""
+            time.sleep(pause)
+    return ""

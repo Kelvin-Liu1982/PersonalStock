@@ -10,8 +10,126 @@
     eiaWeekly  原生周度网格（不做填充），图表周轴使用，避免出现假的每日台阶
 """
 from src import config
-from src.common.http import fetch_json_curl, fetch_json_urlopen
+from src.common.http import fetch_json_curl, fetch_json_urlopen, fetch_text_curl
 from src.common.series import align
+import re
+
+# ⚠️ 2026-11-27：`api.eia.gov/v2/seriesid` 端点会**滞后官网 WPSR 一期**（实测 API 的
+#    prod/gasSupplied/total/cushing/gasinv 只到 11-13，而官网 WPSR 已发 11-20 期、
+#    11-25 发布）。官网提供当期 CSV（ir.eia.gov/wpsr/table{1,4}.csv），故用 CSV 补
+#    「比 API 更晚的那一期」，历史仍由 API 提供（CSV 只有最近两期+去年同期）。
+_WPSR_TABLES = {
+    "table1": "https://ir.eia.gov/wpsr/table1.csv",   # U.S. Petroleum Balance Sheet
+    "table4": "https://ir.eia.gov/wpsr/table4.csv",   # Stocks of Crude Oil by PAD / 汽油库存
+}
+# key → (表, 分组关键词|None, 行标签关键词, 单位换算系数到 API 口径)
+#   table1 库存单位=百万桶 → ×1000 得千桶；产/供为千桶/日 → ×1。
+_WPSR_MAP = {
+    "total":       ("table1", None,                  "commercial (excluding spr)", 1000.0),
+    "spr":         ("table1", None,                  "strategic petroleum reserve", 1000.0),
+    "prod":        ("table1", "crude oil supply",    "domestic production", 1.0),
+    "gasSupplied": ("table1", "products supplied",   "finished motor gasoline", 1.0),
+    "cushing":     ("table4", None,                  "cushing", 1000.0),
+    "gasinv":      ("table4", None,                  "total motor gasoline", 1000.0),
+}
+
+
+def _num(s):
+    """CSV 数值（含千分位逗号）→ float；占位符返回 None。"""
+    if s is None:
+        return None
+    t = str(s).strip().replace(",", "")
+    if not t or t in ("--", "NA", "N/A", "W"):
+        return None
+    try:
+        return float(t)
+    except ValueError:
+        return None
+
+
+def _mdy_to_iso(s):
+    m = re.match(r"^(\d{1,2})/(\d{1,2})/(\d{2,4})$", (s or "").strip())
+    if not m:
+        return None
+    mo, dy, yr = int(m.group(1)), int(m.group(2)), int(m.group(3))
+    if yr < 100:
+        yr += 2000
+    return f"{yr:04d}-{mo:02d}-{dy:02d}"
+
+
+def _parse_wpsr(text):
+    """解析 WPSR CSV → (header_dates: [(col_idx, iso)], rows)。
+
+    ⚠️ CSV 有两种行结构：单级行（r[0]=标签, r[1]=最新值）与两级行
+    （r[0]=分组, r[1]=子项标签, r[2]=最新值）。故取「值列」时要按行加 0/1 偏移，
+    与表头日期列对齐（表头形如 STUB_1, 11/20/26, 11/13/26, …）。
+    """
+    import csv, io
+    rows = list(csv.reader(io.StringIO(text)))
+    if not rows:
+        return [], []
+    header = rows[0]
+    hdates = []
+    for i, cell in enumerate(header):
+        iso = _mdy_to_iso(cell)
+        if iso:
+            hdates.append((i, iso))
+    return hdates, rows[1:]
+
+
+def _match_row(r, grp, lab):
+    c0 = (r[0] if r else "").strip().lower()
+    c1 = (r[1] if len(r) > 1 else "").strip().lower()
+    if grp:
+        return grp in c0 and lab in c1
+    # 单级行：r[0] 命中标签，且 r[1] 是数值（不是子标签文字）
+    return lab in c0 and _num(c1) is not None
+
+
+def _wpsr_points():
+    """返回 {key: {iso_date: value(API 单位)}}，只用比 API 更新的那几期（调用方再判断）。"""
+    cache, out = {}, {}
+    for key, (tbl, grp, lab, mult) in _WPSR_MAP.items():
+        if tbl not in cache:
+            txt = fetch_text_curl(_WPSR_TABLES[tbl], timeout=40, tries=2)
+            cache[tbl] = _parse_wpsr(txt)
+        hdates, rows = cache[tbl]
+        if not hdates:
+            continue
+        for r in rows:
+            if not _match_row(r, grp, lab):
+                continue
+            two_level = (grp is not None) or (_num(r[1] if len(r) > 1 else None) is None)
+            offset = 1 if two_level else 0
+            pts = {}
+            for col, iso in hdates:
+                j = col + offset
+                v = _num(r[j]) if j < len(r) else None
+                if v is not None:
+                    pts[iso] = v * mult
+            if pts:
+                out[key] = pts
+            break   # 每个 key 只取第一条命中行
+    return out
+
+
+def _supplement_with_wpsr(raw):
+    """用 WPSR 官网 CSV 补齐 API 滞后的最新期（只补比 API max 更新的日期）。"""
+    wpsr = _wpsr_points()
+    if not wpsr:
+        return
+    added = []
+    for key, pts in wpsr.items():
+        series = raw.get(key)
+        if series is None:
+            continue
+        api_max = max(series) if series else None
+        for iso, v in pts.items():
+            if api_max is None or iso > api_max:
+                series[iso] = v
+                added.append(f"{key}@{iso}")
+    if added:
+        print(f"  [supply]  EIA API 滞后，已用 WPSR 官网 CSV 补最新期：{', '.join(sorted(set(added)))}")
 
 # ⚠️ 2026-10-07 口径订正（此前「库欣 / 全美商业」两张图序列用反了）：
 #    库欣（Cushing, OK）≈ 22–30 百万桶，全美商业原油 ≈ 425–430 百万桶，两者差一个数量级。
@@ -36,6 +154,9 @@ EIA_SERIES = {
 # 这些序列原始单位为千桶，需换算成百万桶
 MILLION_UNITS = ("cushing", "total", "prod", "gasinv", "gasSupplied", "spr")
 
+# EIA API 每序列请求次数（取并集以弥合副本不同步；util 无 CSV 兜底、主要靠这个）。
+_API_TRIES = 2
+
 # 派生序列：没有自己的 seriesid，由已有序列算出。
 # 恒等（逐周精确成立，2026-09-25 实测 711,087 = 427,320 + 283,767）：
 #    含SPR原油总库存 = 全美商业原油(ex-SPR) + SPR
@@ -52,28 +173,33 @@ CUSHING_HIGH_THRESHOLD = config.CUSHING_HIGH_THRESHOLD
 
 
 def fetch():
-    """抓取全部周度序列，返回 ``{key: {period: float}}``。单个序列失败不影响其它。"""
+    """抓取全部周度序列，返回 ``{key: {period: float}}``。单个序列失败不影响其它。
+
+    ⚠️ 2026-11-27：EIA API 的 seriesid 端点有两类不稳定 ——
+    (1) **副本不同步**：同一序列两次请求可能返回不同末日（实测 util 一次到 10-30、
+        一次到 11-20），故每序列取 ``_API_TRIES`` 次并**合并并集**，弥合副本差异；
+    (2) **滞后官网一期**：prod/gasSupplied/total/cushing/gasinv 常比官网 WPSR 少一周，
+        由 :func:`_supplement_with_wpsr` 用官网 CSV 补（util 无 CSV 兜底，靠上面的重试）。
+    """
     raw = {}
     for key, series_id in EIA_SERIES.items():
         url = f"https://api.eia.gov/v2/seriesid/{series_id}?api_key={config.EIA_KEY}"
-        payload = fetch_json_curl(url, timeout=40)
-        points = payload.get("response", {}).get("data", [])
         series = {}
-        for point in points:
-            try:
-                series[point["period"]] = float(point["value"])
-            except (KeyError, TypeError, ValueError):
-                pass
+        for _attempt in range(_API_TRIES):
+            payload = fetch_json_curl(url, timeout=40)
+            for point in payload.get("response", {}).get("data", []):
+                try:
+                    series[point["period"]] = float(point["value"])
+                except (KeyError, TypeError, ValueError):
+                    pass
         raw[key] = series
-        # ⚠️ EIA v2 的 seriesid 接口默认按 period **降序**（最新在最前）返回，
-        #    直接取 ``list(series.values())[-1]`` 拿到的是 **最早** 那期 —— 实测会打印出
-        #    「prod last=8634 / util last=84 / spr last=270455」这种 1982 年的数，
-        #    看起来像「数据源串了」实则只是日志误导（2026-10-07 排查发现）。
-        #    这里显式按 max(period) 取最新一期，并连日期一起打印。
-        last_period = max(series) if series else None
-        last = series[last_period] if last_period else None
-        print(f"  [supply]  eia {key}: {len(series)} pts, "
-              f"last={last} ({last_period})")
+    # API 常滞后官网一期：用 WPSR CSV 补最新（只补比 API max 更新的日期）。
+    _supplement_with_wpsr(raw)
+    for key in EIA_SERIES:
+        s = raw.get(key) or {}
+        lp = max(s) if s else None
+        print(f"  [supply]  eia {key}: {len(s)} pts, "
+              f"last={s.get(lp) if lp else None} ({lp})")
     return raw
 
 

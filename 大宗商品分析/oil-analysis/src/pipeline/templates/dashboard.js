@@ -3382,36 +3382,56 @@ async function loadLive(){
 async function fetchPrices(eiakey,fredkey){
   const out={__src:""};
   const ids=(EIA_PRICE_IDS&&EIA_PRICE_IDS.ids)||{};
+  const fb=(EIA_PRICE_IDS&&EIA_PRICE_IDS.fallback)||{};
+  const lastDate=o=>{const ks=Object.keys(o||{}).sort();return ks.length?ks[ks.length-1]:null;};
+  // 两序列最小末日：EIA 的 WTI(RWTC) 发布常比 Brent 晚，只看 brent 会误判「已最新」
+  const pairEdge=o=>{const a=lastDate(o&&o.brent),b=lastDate(o&&o.wti);return (a&&b)?(a<b?a:b):null;};
+  // 取 FRED 回落价（brent/wti），供「较新者优先」对比；失败返回 null
+  async function fredPrices(){
+    if(!fredkey||!Object.keys(fb).length) return null;
+    try{
+      const r2=await fetch(`/api/fred?key=${encodeURIComponent(fredkey)}&ids=${Object.values(fb).join(",")}&start=__START_DATE__`);
+      const j2=await r2.json();
+      if(!r2.ok||j2.error) return null;
+      const m=j2.map||{}; const o={};
+      for(const k in fb){
+        const sid=fb[k];const s={};
+        for(const d in m){if(m[d]&&m[d][sid]!=null)s[d]=m[d][sid];}
+        o[k]=s;
+      }
+      return o;
+    }catch(e){console.warn("[dashboard] FRED 价格回落失败",e);return null;}
+  }
   if(eiakey&&Object.keys(ids).length){
     try{
-      const r=await fetch(`/api/eia?key=${encodeURIComponent(eiakey)}&ids=${Object.values(ids).join(",")}&length=${(EIA_PRICE_IDS&&EIA_PRICE_IDS.len)||1500}`);
+      // ⚠️ 2026-11-27：**不带 &length**。实测 EIA 的 length 参数返回陈旧分页且慢 10 倍
+      //    （length=1500 约 22s、末日停在 11-17；无 length 2s 返回全量 5000 条、末日最新）。
+      //    前端下方按 __START_DATE__ 过滤即可。
+      const r=await fetch(`/api/eia?key=${encodeURIComponent(eiakey)}&ids=${Object.values(ids).join(",")}`);
       const j=await r.json();
       if(r.ok&&!j.error){
         const raw=j.map||{};
         for(const k in ids) out[k]=raw[ids[k]]||{};
         if(Object.keys(out.brent||{}).length&&Object.keys(out.wti||{}).length){
+          // 「较新者优先」：EIA 可能返回陈旧副本；对比 FRED 的两序列最小末日，
+          // FRED 更新则整体改用 FRED（同值同源，brent/wti 不混用）。
+          const eiaEdge=pairEdge(out);
+          const fp=await fredPrices();
+          const fredEdge=fp?pairEdge(fp):null;
+          if(fredEdge&&eiaEdge&&fredEdge>eiaEdge){
+            for(const k in fb) delete out[k];
+            for(const k in fb) out[k]=fp[k];
+            out.__src="FRED回落";
+            return out;
+          }
           out.__src="EIA日度";return out;
         }
       }
     }catch(e){console.warn("[dashboard] EIA 价格拉取失败，回落 FRED",e);}
   }
-  const fb=(EIA_PRICE_IDS&&EIA_PRICE_IDS.fallback)||{};
   for(const k in fb) delete out[k];
-  if(fredkey&&Object.keys(fb).length){
-    try{
-      const r2=await fetch(`/api/fred?key=${encodeURIComponent(fredkey)}&ids=${Object.values(fb).join(",")}&start=__START_DATE__`);
-      const j2=await r2.json();
-      if(r2.ok&&!j2.error){
-        const m=j2.map||{};
-        for(const k in fb){
-          const sid=fb[k];const s={};
-          for(const d in m){if(m[d]&&m[d][sid]!=null)s[d]=m[d][sid];}
-          out[k]=s;
-        }
-        out.__src="FRED回落";return out;
-      }
-    }catch(e2){console.warn("[dashboard] FRED 价格回落失败",e2);}
-  }
+  const fp=await fredPrices();
+  if(fp){for(const k in fb) out[k]=fp[k];out.__src="FRED回落";return out;}
   return out;
 }
 async function fetchEIA(key,dates){

@@ -3,11 +3,71 @@
     "baseDate": "2026-10-14",
     "source": "Argus Media (filtered crude feed, page 1)",
     "sourceUrl": "https://www.argusmedia.com/en/news-and-insights/latest-market-news?filter_language=en-gb&filter_commodity=crude:crude+oil,condensate&page=1",
-    "lastFetched": "2026-11-23",
+    "lastFetched": "2026-11-27",
     "note": "原油快讯抓取域。Argus 站点有 AWS WAF 挑战（非浏览器请求一律返回 gokuProps 挑战页），由 src/fetch/news/argus.py 经 tools/fetch_argus_news.cjs 无头 Chromium 渲染后解析；抓取 filtered 完整 feed 第一页（≈最近 27 条），按 URL 去重写回本文件。",
     "fetchMode": "整页完整 feed（headless 浏览器渲染，按 URL 去重）"
   },
   "crudeNews": [
+    {
+      "title": "Opec rejects blame for Cop 31 deal failure",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2909273-opec-rejects-blame-for-cop-31-deal-failure",
+      "date": "2026-11-25",
+      "source": "Argus"
+    },
+    {
+      "title": "North Dakota Pipeline still at reduced rates: Enbridge",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2909144-north-dakota-pipeline-still-at-reduced-rates-enbridge",
+      "date": "2026-11-25",
+      "source": "Argus"
+    },
+    {
+      "title": "US plans new tariffs on top trading partners",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2909141-us-plans-new-tariffs-on-top-trading-partners",
+      "date": "2026-11-25",
+      "source": "Argus"
+    },
+    {
+      "title": "Houthis hit Saudi Ras Tanura refinery: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2909080-houthis-hit-saudi-ras-tanura-refinery-update",
+      "date": "2026-11-25",
+      "source": "Argus"
+    },
+    {
+      "title": "House Democrats seek changes to permitting bill",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2908825-house-democrats-seek-changes-to-permitting-bill",
+      "date": "2026-11-24",
+      "source": "Argus"
+    },
+    {
+      "title": "Venezuela talks wrap without clear election roadmap",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2908675-venezuela-talks-wrap-without-clear-election-roadmap",
+      "date": "2026-11-24",
+      "source": "Argus"
+    },
+    {
+      "title": "Cop: Fossil fuel divisions left for Cop 32 to bridge",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2908508-cop-fossil-fuel-divisions-left-for-cop-32-to-bridge",
+      "date": "2026-11-24",
+      "source": "Argus"
+    },
+    {
+      "title": "Iran rules out US talks unless conditions are met",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2908434-iran-rules-out-us-talks-unless-conditions-are-met",
+      "date": "2026-11-24",
+      "source": "Argus"
+    },
+    {
+      "title": "US administration wins 2 offshore drilling cases",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2908265-us-administration-wins-2-offshore-drilling-cases",
+      "date": "2026-11-23",
+      "source": "Argus"
+    },
+    {
+      "title": "Libya El Sharara crude pipeline reopens: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2908082-libya-el-sharara-crude-pipeline-reopens-update",
+      "date": "2026-11-23",
+      "source": "Argus"
+    },
     {
       "title": "Cop: Countries reject cover decision: Update",
       "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2907785-cop-countries-reject-cover-decision-update",
@@ -29,6 +89,12 @@
     {
       "title": "Cop: CCUS drawn to centre of negotiations",
       "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2907290-cop-ccus-drawn-to-centre-of-negotiations",
+      "date": "2026-11-20",
+      "source": "Argus"
+    },
+    {
+      "title": "N Dakota expects line contamination fix ‘soon’: Update",
+      "url": "https://www.argusmedia.com/en/news-and-insights/latest-market-news/2907586-n-dakota-expects-line-contamination-fix-soon-update",
       "date": "2026-11-20",
       "source": "Argus"
     },

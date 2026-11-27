@@ -47,9 +47,11 @@ _CT = {
 
 
 def _curl_json(url, label):
-    # 用 curl 而非 urllib：本环境 Python 的 ssl 栈连 FRED 会 SSL EOF，curl 正常
+    # 用 curl 而非 urllib：本环境 Python 的 ssl 栈连 FRED 会 SSL EOF，curl 正常。
+    # -g（--globoff）：URL 含 sort[0][column]=period 这类方括号参数，不关 glob 会被
+    # curl 当 range 语法解析并报 "bad range in URL position"（2026-11-26 实测）。
     out = subprocess.run(
-        ["curl", "-sS", "--fail", "--max-time", "40", url],
+        ["curl", "-g", "-sS", "--fail", "--max-time", "40", url],
         capture_output=True, text=True,
     )
     if out.returncode != 0:
@@ -68,22 +70,66 @@ def _proxy_fred(key, ids, start):
     return {"map": merged}
 
 
+# WPSR CSV 缓存（秒）：同一页面拉取会连发多个 EIA 请求，避免重复抓 CSV。
+_WPSR_CACHE = {"ts": 0.0, "pts": {}}
+_WPSR_TTL = 300
+
+
+def _wpsr_supplement(merged):
+    """用 WPSR 官网 CSV 补 EIA API 滞后的最新一期（仅周度序列）。
+
+    ⚠️ 2026-11-27：API 的 seriesid 端点常比官网 WPSR 少一周（实测 prod/gasSupplied/total/
+    cushing/gasinv 停在 11-13，官网已发 11-20）。前端「拉取实时」若只取 API 会退回旧值，
+    故在代理层按 ``eia_weekly._WPSR_MAP`` 用官网 CSV 补齐（逻辑与抓取侧共用同一份映射）。
+    """
+    try:
+        import time
+        from src.fetch.supply import eia_weekly
+        id2key = {v: k for k, v in eia_weekly.EIA_SERIES.items()}
+        # 本次请求不含任何周度序列（如纯价格 brent/wti）时直接跳过，省去抓 CSV 的几秒。
+        if not any(id2key.get(sid) in eia_weekly._WPSR_MAP for sid in merged):
+            return
+        if time.time() - _WPSR_CACHE["ts"] > _WPSR_TTL or not _WPSR_CACHE["pts"]:
+            _WPSR_CACHE["pts"] = eia_weekly._wpsr_points()
+            _WPSR_CACHE["ts"] = time.time()
+        pts = _WPSR_CACHE["pts"]
+        if not pts:
+            return
+        for sid, series in merged.items():
+            key = id2key.get(sid)
+            if not key or key not in pts:
+                continue
+            api_max = max(series) if series else None
+            for iso, v in pts[key].items():
+                if api_max is None or iso > api_max:
+                    series[iso] = v
+    except Exception as exc:   # 补数据失败不影响主流程
+        print(f"[serve] WPSR 补最新期失败（忽略）：{exc!r}")
+
+
 def _proxy_eia(key, ids, length=None):
-    """代理 EIA v2 seriesid。``length`` 用于限流：日度序列默认会返回 5000 个观测
-    （2006 年至今），而看板只需要 2024 起的那一段 —— 不限流会白传三千多个点，
-    在单线程 HTTPServer 上直接体现为「拉取实时」多等几十秒（2026-10-08 实测）。
+    """代理 EIA v2 seriesid。
+
+    ⚠️ 2026-11-27 实测：**绝不带 ``length`` 参数，也不带 ``sort[]`` / ``data[]`` 方括号参数**。
+    - ``length=1500`` 返回的是**陈旧分页**（数据末日停在 11-17、耗时 ~22s）；**无 length
+      返回全量 5000 条，2s 到位且数据末日最新（11-24）**，反而更快更正确。
+    - ``sort[0][column]=period`` / ``data[0]=value`` 这类方括号参数会让请求**挂起超时**
+      （curl 需 ``-g`` 才不报 bad range，但服务器端仍不返回）。
+    故这里只发 ``?api_key=``，由前端 / 本层按 ``START_DATE`` 本地过滤（日度 5000 条 ≈ 2006 起）。
+    ``length`` 形参保留仅为向后兼容既有调用方，**不再拼入 URL**。
+
+    周度序列在 API 滞后时由 :func:`_wpsr_supplement` 用官网 CSV 补最新一期。
     """
     merged = {}
     for sid in ids:
         url = f"{EIA_URL}/{sid}?api_key={key}"
-        if length:
-            url += f"&length={length}"
         data = _curl_json(url, "EIA")
         m = {}
         for p in data.get("response", {}).get("data", []):
             if p.get("value") is not None:
                 m[p["period"]] = float(p["value"])
         merged[sid] = m
+    _wpsr_supplement(merged)
     return {"map": merged}
 
 
