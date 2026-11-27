@@ -20,11 +20,18 @@
 （历史背景：2020 年需求崩塌时该序列一度冲高至近 6 Mb/d。）
 """
 import urllib.parse
+import json
+import os
+import datetime
 
 from src import config
 from src.common.http import fetch_json_curl
+from src.paths import DATA_PROCESSED
 
 SERIES_ID = "COPS_OPEC_R05"
+
+# 最近一次成功抓取的缓存（抓取失败时回退，避免整图空白）。
+_CACHE_PATH = os.path.join(DATA_PROCESSED, "opec_spare.json")
 
 
 def fetch(start=None, display_from=None, tries=5):
@@ -63,10 +70,42 @@ def fetch(start=None, display_from=None, tries=5):
         months.append(period)
         values.append(raw[period])
 
+    # ⚠️ 2026-11-27：STEO 端点（v2/steo/data + 方括号参数）在 build 的密集请求下常超时，
+    #    单独跑却能成功（实测 21s 通）。为避免一次抖动就让图整张空白，成功后写缓存，
+    #    失败时回退**上次成功值**（数值口径不变，仅日期可能略旧，脚注可见）。
     if months:
+        _write_cache(months, values)
         print(f"  [supply]  opecSpare: {len(months)} pts, "
               f"{months[0]} - {months[-1]}, last={values[-1]}")
     else:
-        print("  [supply]  opecSpare: 无有效数据")
+        cm, cv = _read_cache()
+        if cm:
+            months, values = cm, cv
+            print(f"  [supply]  ⚠ opecSpare 抓取失败，回退上次成功缓存：{len(cm)} pts, "
+                  f"{cm[0]} - {cm[-1]}, last={cv[-1]}")
+        else:
+            print("  [supply]  opecSpare: 无有效数据（且无缓存可回退）")
 
     return months, values
+
+
+def _write_cache(months, values):
+    """保存最近一次成功结果，供后续抓取失败时回退。"""
+    try:
+        os.makedirs(DATA_PROCESSED, exist_ok=True)
+        with open(_CACHE_PATH, "w", encoding="utf-8") as f:
+            json.dump({"months": months, "values": values,
+                       "retrieved": datetime.date.today().isoformat()},
+                      f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+def _read_cache():
+    """读取上次成功缓存；不存在/损坏返回两个空列表。"""
+    try:
+        with open(_CACHE_PATH, encoding="utf-8") as f:
+            d = json.load(f)
+        return d.get("months") or [], d.get("values") or []
+    except Exception:
+        return [], []
